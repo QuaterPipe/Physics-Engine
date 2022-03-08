@@ -35,7 +35,7 @@ namespace physics
 			Smoother _smoother;
 			DynamicsWorld _world;
 			std::vector<std::unique_ptr<Entity>> _entities;
-			std::array<sf::Texture> _textures;
+			std::vector<sf::Texture> _textures;
 			geometry::Vector _gravity = geometry::Vector(0, -9.81);
 		public:
 			Scene(const geometry::Vector& gravity) noexcept;
@@ -45,7 +45,7 @@ namespace physics
 			Entity& GetEntity(const size_t& index) noexcept;
 			const std::vector<std::unique_ptr<Entity>>& GetEntities() const noexcept;
 			sf::Texture& GetTexture(const size_t& index) noexcept;
-			const std::array<sf::Texture>& GetTextures() const noexcept;
+			const std::vector<sf::Texture>& GetTextures() const noexcept;
 			void RemoveEntity(Entity& e) noexcept;
 			void SetGravity(const geometry::Vector& g) noexcept;
 			void Update(f64 dt) noexcept;

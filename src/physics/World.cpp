@@ -41,12 +41,12 @@ namespace physics
 	//bouncing
 	void ImpulseSolver:: Solve(std::vector<Collision>& collisions, f64 dt) noexcept
 	{
-		for (Collision& cin collisions)
+		for (Collision& c: collisions)
 		{
 			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
 			Rigidbody* a = (Rigidbody*) c.a;
 			Rigidbody* b = (Rigidbody*) c.b;
-			f64 e = a->GetRestitution() > b->GetRestitution() ? a->GetRestitution() in b->GetRestitution();
+			f64 e = a->GetRestitution() > b->GetRestitution() ? a->GetRestitution(): b->GetRestitution();
 			a->ApplyForce(e * -c.points.normal * c.points.depth * (b->GetMass() / (a->GetMass() + b->GetMass())), c.points.b);
 			b->ApplyForce(e * c.points.normal * c.points.depth * (a->GetMass() / (a->GetMass() + b->GetMass())), c.points.a);
 		}
@@ -54,7 +54,7 @@ namespace physics
 
 	void PositionalCorrectionSolver::Solve(std::vector<Collision>& collisions, f64 dt) noexcept
 	{
-		for (Collision& cin collisions)
+		for (Collision& c: collisions)
 		{
 			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
 			Rigidbody* a = (Rigidbody*) c.a;
@@ -76,7 +76,7 @@ namespace physics
 	{
 		bool reachedVal = false;
 		T minVal;
-		for (T itemin v)
+		for (T item: v)
 		{
 			if (!reachedVal)
 				minVal = item; reachedVal = true; continue;
@@ -91,7 +91,7 @@ namespace physics
 	{
 		bool reachedVal = false;
 		T maxVal;
-		for (T itemin v)
+		for (T item: v)
 		{
 			if (!reachedVal)
 			{
@@ -138,9 +138,9 @@ namespace physics
 	void CollisionWorld::ResolveCollisions(f64 dt) noexcept
 	{
 		std::vector<Collision> collisions;
-		for (auto& ain _objects)
+		for (auto& a: _objects)
 		{
-			for (auto& bin _objects)
+			for (auto& b: _objects)
 			{
 				if (a == b) break;
 				Square BoundingBoxA;
@@ -191,7 +191,7 @@ namespace physics
 				}
 			}
 		}
-		for (auto solverin _solvers)
+		for (auto solver: _solvers)
 		{
 			solver->Solve(collisions, dt);
 		}
@@ -228,7 +228,7 @@ namespace physics
 
 	void CollisionWorld::SendCollisionCallBacks(std::vector<Collision>& collisions, f64 dt) noexcept
 	{
-		for (Collision& c in collisions)
+		for (Collision& c: collisions)
 		{
 			_onCollision(c, dt);
 			const auto& a = c.a->GetOnCollisionFunction();
@@ -250,7 +250,7 @@ namespace physics
 
 	void DynamicsWorld::ApplyGravity(f64 dt) noexcept
 	{
-		for (auto& objin _objects)
+		for (auto& obj: _objects)
 		{
 			if (!obj->IsDynamic()) continue;
 			Rigidbody* rigidbody = (Rigidbody*) obj;
@@ -261,7 +261,7 @@ namespace physics
 
 	void DynamicsWorld::MoveObjects(f64 dt) noexcept
 	{
-		for (auto& objin _objects)
+		for (auto& obj: _objects)
 		{
 			if (!obj->IsDynamic()) continue;
 			Rigidbody* rigidbody = (Rigidbody*)obj;

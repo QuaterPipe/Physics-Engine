@@ -5,6 +5,6 @@
 #include "OstreamOverloads.hpp"
 #include "Rigidbody.hpp"
 #include "Scene.hpp"
-#include "Serializer.hpp"
+#include "Serializable.hpp"
 #include "Time.hpp"
 #define PHYSICS_MAIN

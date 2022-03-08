@@ -89,56 +89,6 @@ namespace physics
 		return _transform;
 	}
 
-	std::vector<unsigned char> Entity::Serialize() const
-	{
-		std::vector<byte> v = _collider->Serialize();
-		/*v.push_back(0xff);
-		v.push_back(0x00);
-		for (const byte& bin _transform.Serialize())
-		{
-			v.push_back(b);
-		}
-		v.push_back(0xff);
-		v.push_back(0x00);
-		//totally safe ;)
-		//const byte* iter=(const byte*)&_texture;
-		//for (unsigned i = 0; i < sizeof(_texture); i++)
-		//{
-			//v.push_back(*(iter + i));
-		//}
-		v.push_back(0xff);
-		v.push_back(0x00);
-		for (const char cin _name)
-		{
-			v.push_back(c);
-		}
-		v.push_back(0xff);
-		v.push_back(0x00);
-		v.push_back(ClassCode);
-		v.push_back(0xff);
-		v.push_back(0xff);
-		v.push_back(0xff);*/
-		return v;
-	}
-
-	serialization::Serializable* Entity::Deserialize(std::vector<byte> v) const
-	{
-		Entity* e = new Entity(*this);
-		/*CircleCollider cClass;
-		int nullCount = 0;
-		std::vector<byte> ColliderArr;
-		for (const byte& bin v)
-		{
-			if (b == 0x00)
-				nullCount++;
-			if (nullCount > 1)
-				break;
-			ColliderArr.push_back(b);
-		}*/
-		//Collider* c = cClass.Deserialize();
-		return e;
-	}
-
 	void Entity::FixedUpdate() noexcept
 	{
 	}
@@ -146,11 +96,6 @@ namespace physics
 	bool Entity::NotEquals(const Hashable& other) const noexcept
 	{
 		return !Equals(other);
-	}
-
-	const unsigned long Entity::TotalByteSize() const noexcept
-	{
-		return 0ul;
 	}
 
 	void Entity::SetCollisionObject(CollisionObject& c) noexcept

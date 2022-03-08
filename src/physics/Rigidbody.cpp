@@ -19,13 +19,13 @@ namespace physics
 	}
 
 
-	Rigidbody::Rigidbody() noexceptin CollisionObject()
+	Rigidbody::Rigidbody() noexcept: CollisionObject()
 	{
 	}
 
 	Rigidbody::Rigidbody(const Transform& t, Collider& c, bool isTrigger, f64 mass,
 		bool usesGravity, f64 staticFriction, f64 kineticFriction,
-		f64 restitution) noexcept in CollisionObject(t, c, isTrigger)
+		f64 restitution) noexcept : CollisionObject(t, c, isTrigger)
 	{
 		_isDynamic = true;
 		_mass = mass;
@@ -36,7 +36,7 @@ namespace physics
 	}
 
 	Rigidbody::Rigidbody(const Rigidbody& r) noexcept
-		in CollisionObject((const CollisionObject&)r)
+		:CollisionObject((const CollisionObject&)r)
 	{
 		_isDynamic = true;
 		_mass = r.GetMass();
@@ -271,102 +271,5 @@ namespace physics
 	bool Rigidbody::UsesGravity() const noexcept
 	{
 		return _usesGravity;
-	}
-	std::vector<unsigned char> Rigidbody::Serialize() const
-	{
-		/*std::vector<unsigned char> v = _transform.Serialize();
-		std::vector<unsigned char> tmp = _lastTransform.Serialize();
-		v.insert(v.end(), tmp.begin(), tmp.end());
-		v.push_back(_collider->classCode);
-		tmp = _collider->Serialize();
-		v.insert(v.end(), tmp.begin(), tmp.end());
-		v.push_back((unsigned char)_isTrigger);
-		if (BIG_ENDIAN)
-		{
-			reader c = (reader)&_onCollision;
-			for (unsigned i = 0; i < sizeof(_onCollision); i++)
-			{
-				v.push_back(c[i]);
-			}
-			//all pointers to doubles
-			reader ptrs[11] = {
-				(reader)&_gravity.x,
-				(reader)&_gravity.y,
-				(reader)&_force.x,
-				(reader)&_force.y,
-				(reader)&_velocity.x,
-				(reader)&_velocity.y,
-				(reader)&_mass,
-				(reader)&_invMass,
-				(reader)&_staticFriction,
-				(reader)&_kineticFriction,
-				(reader)&_restitution
-			};
-			for (unsigned i = 0; i < 11; i++)
-			{
-				c = ptrs[i];
-				for (unsigned j = 0; j < sizeof(f64); j++)
-				{
-					v.push_back(c[j]);
-				}
-			}
-			v.push_back((uchar)_usesGravity);
-			v.push_back(0xff);
-			v.push_back(0xff);
-			v.push_back(0xff);
-		}
-		else
-		{
-			reader c = (reader)&_onCollision;
-			for (unsigned i = 0; i < sizeof(_onCollision); i++)
-			{
-				v.push_back(c[i]);
-			}
-			//all pointers to doubles
-			reader ptrs[11] = {
-				(reader)&_gravity.x,
-				(reader)&_gravity.y,
-				(reader)&_force.x,
-				(reader)&_force.y,
-				(reader)&_velocity.x,
-				(reader)&_velocity.y,
-				(reader)&_mass,
-				(reader)&_invMass,
-				(reader)&_staticFriction,
-				(reader)&_kineticFriction,
-				(reader)&_restitution
-			};
-			for (unsigned i = 0; i < 11; i++)
-			{
-				c = ptrs[i];
-				for (unsigned j = 0; j < sizeof(f64); j++)
-				{
-					v.push_back(c[sizeof(f64) - 1 - j]);
-				}
-			}
-			v.push_back((uchar)_usesGravity);
-			v.push_back(0xff);
-			v.push_back(0xff);
-			v.push_back(0xff);
-		}
-		return v;*/
-		return std::vector<unsigned char>();
-	}
-	serialization::Serializable* Rigidbody::Deserialize(std::vector<unsigned char> v) const
-	{
-		/*if (v.size() < TotalByteSize())
-		{
-			throw std::runtime_error("Bytes are not sufficient for Deserialization of object");
-		}
-		auto iter = v.begin();
-		Transform* t = (Transform*)Transform().Deserialize(v);
-		Transform* lt = (Transform*)Transform().Deserialize(std::vector<byte>(v.begin() + Transform().TotalByteSize(), v.end()));
-		iter += Transform().TotalByteSize() * 2;*/
-		return (Serializable*) new Rigidbody();
-		
-	}
-	const unsigned long Rigidbody::TotalByteSize() const noexcept
-	{
-		return Transform().TotalByteSize() * 2 + _collider->TotalByteSize() + 3 + sizeof(f64) * 11;
 	}
 }

@@ -35,7 +35,7 @@ namespace physics
 		return geometry::Vector(tmp.x, tmp.y);
 	}
 
-	std::vector<unsigned char> Transform::Serialize() const
+	/*std::vector<unsigned char> Transform::Serialize() const
 	{
 		std::vector<unsigned char> v;
 		if (IS_BIG_ENDIAN)
@@ -173,5 +173,5 @@ namespace physics
 		//t->scale.y = scaleY;
 		//t->rotation = rot;
 		return t;
-	}
+	}*/
 }

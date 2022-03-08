@@ -1,6 +1,7 @@
 #include "../include/physics/Collision.hpp"
 namespace physics
 {
+	using namespace serialization;
 	PolygonCollider::PolygonCollider(const PolygonCollider& d) noexcept
 	{
 		this->pos = d.pos;

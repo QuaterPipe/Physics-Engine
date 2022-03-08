@@ -72,7 +72,7 @@ namespace physics
 			void SetTorque(f64 torque) noexcept;
 			void SetUsesGravity(bool usesGravity) noexcept;
 			void SetVelocity(const geometry::Vector& vel) noexcept;
-			geometry::Vector GetVelocity() const noexcept;std::vector<unsigned char> Serialize() const override;
+			geometry::Vector GetVelocity() const noexcept;
 			void Update(f64 dt) const noexcept;
 			bool UsesGravity() const noexcept;
 			virtual Serializable* Deserialize(const std::vector<byte>& v,

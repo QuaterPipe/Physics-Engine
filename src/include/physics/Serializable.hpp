@@ -18,7 +18,7 @@ namespace physics::serialization
 		DataPacket(const std::vector<unsigned char>& bytes) noexcept;
 		DataPacket operator+(const DataPacket& other) const noexcept;
 		void Reverse() noexcept;
-	}
+	};
 
 	class Archive
 	{

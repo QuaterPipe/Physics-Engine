@@ -179,7 +179,7 @@ namespace physics
 		_transform = t;
 	}
 
-	std::vector<unsigned char> CollisionObject::Serialize() const
+	/*std::vector<unsigned char> CollisionObject::Serialize() const noexcept
 	{
 		std::vector<unsigned char> v = _transform.Serialize();
 		std::vector<unsigned char> tmp = _lastTransform.Serialize();
@@ -208,9 +208,9 @@ namespace physics
 		v.push_back(0xff);
 		v.push_back(0xff);
 		return v;
-	}
+	}*/
 
-	serialization::Serializable* CollisionObject::Deserialize(std::vector<unsigned char> v) const
+	/*serialization::Serializable* CollisionObject::Deserialize(std::vector<unsigned char> v) const
 	{
 		CollisionObject* c = new CollisionObject(*this);
 		auto iter = v.begin();
@@ -264,5 +264,5 @@ namespace physics
 	const unsigned long CollisionObject::TotalByteSize() const noexcept
 	{
 		return _transform.TotalByteSize() * 2 + _collider->TotalByteSize() + sizeof(_onCollision) + 5;
-	}
+	}*/
 }

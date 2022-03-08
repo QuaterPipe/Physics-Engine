@@ -26,7 +26,7 @@ namespace physics
 			t = clamp(t);
 			return geometry::Vector(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
 		};
-		for (auto& ptrin _s->GetEntities())
+		for (auto& ptr: _s->GetEntities())
 		{
 			Transform t = ptr->GetCollisionObject().GetTransform();
 			CollisionObject& object = ptr->GetCollisionObject();
@@ -81,7 +81,7 @@ namespace physics
 	void Scene::RemoveEntity(Entity& e) noexcept
 	{
 		size_t ind;
-		for (auto& ptrin _entities)
+		for (auto& ptr: _entities)
 		{
 			if (*ptr == e)
 			{
@@ -117,7 +117,7 @@ namespace physics
 				_world.Update(_physicsUpdateCounter.total + dt);
 				_world.ResolveCollisions(_physicsUpdateCounter.total + dt);
 				_physicsUpdateCounter.total = 0;
-				for (auto& ptrin _entities)
+				for (auto& ptr: _entities)
 				{
 					ptr->FixedUpdate();
 					ptr->Update();
@@ -132,7 +132,7 @@ namespace physics
 		if (display)
 		{
 			display->Update();
-			for (auto& ptrin _entities)
+			for (auto& ptr: _entities)
 			{
 				display->Draw(ptr->GetSprite());
 				ptr->Update();
