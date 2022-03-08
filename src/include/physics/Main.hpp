@@ -1,0 +1,10 @@
+#include "Algo.hpp"
+#include "Collision.hpp"
+#include "Display.hpp"
+#include "Entity.hpp"
+#include "OstreamOverloads.hpp"
+#include "Rigidbody.hpp"
+#include "Scene.hpp"
+#include "Serializer.hpp"
+#include "Time.hpp"
+#define PHYSICS_MAIN

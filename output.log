@@ -1,0 +1,805 @@
+src/physics/Algo.cpp: In function ‘physics::CollisionPoints algo::FindCircleMeshCollisionPoints(const physics::CircleCollider*, const physics::Transform&, const physics::MeshCollider*, const physics::Transform&)’:
+src/physics/Algo.cpp:54:30: error: expected ‘;’ before ‘b’
+   for (const Collider* ptrin b->colliders)
+                              ^
+src/physics/Algo.cpp:54:33: error: could not convert ‘b->physics::MeshCollider::colliders’ from ‘const std::vector<physics::Collider*>’ to ‘bool’
+   for (const Collider* ptrin b->colliders)
+                              ~~~^~~~~~~~~
+src/physics/Algo.cpp:54:42: error: expected ‘;’ before ‘)’ token
+   for (const Collider* ptrin b->colliders)
+                                          ^
+src/physics/Algo.cpp:56:8: error: ‘ptr’ was not declared in this scope
+    c = ptr->TestCollision(tb, a, ta);
+        ^~~
+src/physics/Algo.cpp:56:8: note: suggested alternative: ‘ptrin’
+    c = ptr->TestCollision(tb, a, ta);
+        ^~~
+        ptrin
+src/physics/Algo.cpp: In function ‘physics::CollisionPoints algo::FindPolygonCircleCollisionPoints(const physics::PolygonCollider*, const physics::Transform&, const physics::CircleCollider*, const physics::Transform&)’:
+src/physics/Algo.cpp:75:36: error: expected ‘;’ before ‘a’
+   for (const geometry::Vector& vin a->points)
+                                    ^
+src/physics/Algo.cpp:75:39: error: could not convert ‘a->physics::PolygonCollider::points’ from ‘const std::vector<geometry::Vector>’ to ‘bool’
+   for (const geometry::Vector& vin a->points)
+                                    ~~~^~~~~~
+src/physics/Algo.cpp:75:45: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& vin a->points)
+                                             ^
+src/physics/Algo.cpp:77:41: error: ‘v’ was not declared in this scope
+    APoints.push_back(ta.TransformVector(v + a->pos));
+                                         ^
+src/physics/Algo.cpp:89:34: error: expected ‘;’ before ‘lines’
+   for (const geometry::Line& lin lines)
+                                  ^~~~~
+src/physics/Algo.cpp:89:34: error: could not convert ‘lines’ from ‘std::vector<geometry::Line>’ to ‘bool’
+src/physics/Algo.cpp:89:39: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Line& lin lines)
+                                       ^
+src/physics/Algo.cpp:91:66: error: ‘l’ was not declared in this scope
+    geometry::Vector proj = geometry::Vector::Projection(BCenter, l);
+                                                                  ^
+src/physics/Algo.cpp: In function ‘physics::CollisionPoints algo::FindPolygonPolygonCollisionPoints(const physics::PolygonCollider*, const physics::Transform&, const physics::PolygonCollider*, const physics::Transform&)’:
+src/physics/Algo.cpp:206:36: error: expected ‘;’ before ‘a’
+   for (const geometry::Vector& vin a->points)
+                                    ^
+src/physics/Algo.cpp:206:39: error: could not convert ‘a->physics::PolygonCollider::points’ from ‘const std::vector<geometry::Vector>’ to ‘bool’
+   for (const geometry::Vector& vin a->points)
+                                    ~~~^~~~~~
+src/physics/Algo.cpp:206:45: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& vin a->points)
+                                             ^
+src/physics/Algo.cpp:208:41: error: ‘v’ was not declared in this scope
+    APoints.push_back(ta.TransformVector(v) + a->pos);
+                                         ^
+src/physics/Algo.cpp:210:36: error: expected ‘;’ before ‘b’
+   for (const geometry::Vector& vin b->points)
+                                    ^
+src/physics/Algo.cpp:210:39: error: could not convert ‘b->physics::PolygonCollider::points’ from ‘const std::vector<geometry::Vector>’ to ‘bool’
+   for (const geometry::Vector& vin b->points)
+                                    ~~~^~~~~~
+src/physics/Algo.cpp:210:45: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& vin b->points)
+                                             ^
+src/physics/Algo.cpp:212:41: error: ‘v’ was not declared in this scope
+    BPoints.push_back(ta.TransformVector(v) + b->pos);
+                                         ^
+src/physics/Algo.cpp:216:36: error: expected ‘;’ before ‘BPoints’
+   for (const geometry::Vector& pin BPoints)
+                                    ^~~~~~~
+src/physics/Algo.cpp:216:36: error: could not convert ‘BPoints’ from ‘std::vector<geometry::Vector>’ to ‘bool’
+src/physics/Algo.cpp:216:43: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& pin BPoints)
+                                           ^
+src/physics/Algo.cpp:218:48: error: ‘p’ was not declared in this scope
+    if (PolygonColliderVectorIsColliding(a, ta, p))
+                                                ^
+src/physics/Algo.cpp:228:36: error: expected ‘;’ before ‘pointIntersectsB’
+   for (const geometry::Vector& pin pointIntersectsB)
+                                    ^~~~~~~~~~~~~~~~
+src/physics/Algo.cpp:228:36: error: could not convert ‘pointIntersectsB’ from ‘std::vector<geometry::Vector>’ to ‘bool’
+src/physics/Algo.cpp:228:52: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& pin pointIntersectsB)
+                                                    ^
+src/physics/Algo.cpp:232:31: error: ‘p’ was not declared in this scope
+     reached = true; closest = p; continue;
+                               ^
+src/physics/Algo.cpp:234:34: error: ‘p’ was not declared in this scope
+    if (geometry::DistanceSquared(p, centroidA) < geometry::DistanceSquared(closest, centroidA))
+                                  ^
+src/physics/Algo.cpp:239:36: error: expected ‘;’ before ‘APoints’
+   for (const geometry::Vector& pin APoints)
+                                    ^~~~~~~
+src/physics/Algo.cpp:239:36: error: could not convert ‘APoints’ from ‘std::vector<geometry::Vector>’ to ‘bool’
+src/physics/Algo.cpp:239:43: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& pin APoints)
+                                           ^
+src/physics/Algo.cpp:241:48: error: ‘p’ was not declared in this scope
+    if (PolygonColliderVectorIsColliding(b, tb, p))
+                                                ^
+src/physics/Algo.cpp:251:36: error: expected ‘;’ before ‘pointIntersectsA’
+   for (const geometry::Vector& pin pointIntersectsA)
+                                    ^~~~~~~~~~~~~~~~
+src/physics/Algo.cpp:251:36: error: could not convert ‘pointIntersectsA’ from ‘std::vector<geometry::Vector>’ to ‘bool’
+src/physics/Algo.cpp:251:52: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& pin pointIntersectsA)
+                                                    ^
+src/physics/Algo.cpp:255:31: error: ‘p’ was not declared in this scope
+     reached = true; closest = p; continue;
+                               ^
+src/physics/Algo.cpp:257:34: error: ‘p’ was not declared in this scope
+    if (geometry::DistanceSquared(p, centroidB) < geometry::DistanceSquared(closest, centroidB))
+                                  ^
+src/physics/Algo.cpp: In function ‘physics::CollisionPoints algo::FindPolygonMeshCollisionPoints(const physics::PolygonCollider*, const physics::Transform&, const physics::MeshCollider*, const physics::Transform&)’:
+src/physics/Algo.cpp:289:30: error: expected ‘;’ before ‘b’
+   for (const Collider* ptrin b->colliders)
+                              ^
+src/physics/Algo.cpp:289:33: error: could not convert ‘b->physics::MeshCollider::colliders’ from ‘const std::vector<physics::Collider*>’ to ‘bool’
+   for (const Collider* ptrin b->colliders)
+                              ~~~^~~~~~~~~
+src/physics/Algo.cpp:289:42: error: expected ‘;’ before ‘)’ token
+   for (const Collider* ptrin b->colliders)
+                                          ^
+src/physics/Algo.cpp:291:8: error: ‘ptr’ was not declared in this scope
+    c = ptr->TestCollision(tb, a, ta);
+        ^~~
+src/physics/Algo.cpp:291:8: note: suggested alternative: ‘ptrin’
+    c = ptr->TestCollision(tb, a, ta);
+        ^~~
+        ptrin
+src/physics/Algo.cpp: In function ‘physics::CollisionPoints algo::FindBoxMeshCollisionPoints(const physics::BoxCollider*, const physics::Transform&, const physics::MeshCollider*, const physics::Transform&)’:
+src/physics/Algo.cpp:320:30: error: expected ‘;’ before ‘b’
+   for (const Collider* ptrin b->colliders)
+                              ^
+src/physics/Algo.cpp:320:33: error: could not convert ‘b->physics::MeshCollider::colliders’ from ‘const std::vector<physics::Collider*>’ to ‘bool’
+   for (const Collider* ptrin b->colliders)
+                              ~~~^~~~~~~~~
+src/physics/Algo.cpp:320:42: error: expected ‘;’ before ‘)’ token
+   for (const Collider* ptrin b->colliders)
+                                          ^
+src/physics/Algo.cpp:322:8: error: ‘ptr’ was not declared in this scope
+    c = ptr->TestCollision(tb, a, ta);
+        ^~~
+src/physics/Algo.cpp:322:8: note: suggested alternative: ‘ptrin’
+    c = ptr->TestCollision(tb, a, ta);
+        ^~~
+        ptrin
+src/physics/Algo.cpp: In function ‘physics::CollisionPoints algo::FindMeshMeshCollisionPoints(const physics::MeshCollider*, const physics::Transform&, const physics::MeshCollider*, const physics::Transform&)’:
+src/physics/Algo.cpp:335:31: error: expected ‘;’ before ‘a’
+   for (const Collider* ptrAin a->colliders)
+                               ^
+src/physics/Algo.cpp:335:34: error: could not convert ‘a->physics::MeshCollider::colliders’ from ‘const std::vector<physics::Collider*>’ to ‘bool’
+   for (const Collider* ptrAin a->colliders)
+                               ~~~^~~~~~~~~
+src/physics/Algo.cpp:335:43: error: expected ‘;’ before ‘)’ token
+   for (const Collider* ptrAin a->colliders)
+                                           ^
+src/physics/Algo.cpp:337:32: error: expected ‘;’ before ‘a’
+    for (const Collider* ptrBin a->colliders)
+                                ^
+src/physics/Algo.cpp:337:35: error: could not convert ‘a->physics::MeshCollider::colliders’ from ‘const std::vector<physics::Collider*>’ to ‘bool’
+    for (const Collider* ptrBin a->colliders)
+                                ~~~^~~~~~~~~
+src/physics/Algo.cpp:337:44: error: expected ‘;’ before ‘)’ token
+    for (const Collider* ptrBin a->colliders)
+                                            ^
+src/physics/Algo.cpp:339:9: error: ‘ptrA’ was not declared in this scope
+     c = ptrA->TestCollision(ta, ptrB, tb);
+         ^~~~
+src/physics/Algo.cpp:339:9: note: suggested alternative: ‘ptrAin’
+     c = ptrA->TestCollision(ta, ptrB, tb);
+         ^~~~
+         ptrAin
+src/physics/Algo.cpp:339:33: error: ‘ptrB’ was not declared in this scope
+     c = ptrA->TestCollision(ta, ptrB, tb);
+                                 ^~~~
+src/physics/Algo.cpp:339:33: note: suggested alternative: ‘ptrBin’
+     c = ptrA->TestCollision(ta, ptrB, tb);
+                                 ^~~~
+                                 ptrBin
+src/physics/Algo.cpp: In function ‘physics::CollisionPoints algo::CircleInsidePolygon(const physics::PolygonCollider*, const physics::Transform&, const physics::CircleCollider*, const physics::Transform&)’:
+src/physics/Algo.cpp:380:36: error: expected ‘;’ before ‘a’
+   for (const geometry::Vector& vin a->points)
+                                    ^
+src/physics/Algo.cpp:380:39: error: could not convert ‘a->physics::PolygonCollider::points’ from ‘const std::vector<geometry::Vector>’ to ‘bool’
+   for (const geometry::Vector& vin a->points)
+                                    ~~~^~~~~~
+src/physics/Algo.cpp:380:45: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& vin a->points)
+                                             ^
+src/physics/Algo.cpp:382:41: error: ‘v’ was not declared in this scope
+    APoints.push_back(ta.TransformVector(v) + a->pos);
+                                         ^
+src/physics/Algo.cpp: In function ‘physics::CollisionPoints algo::PolygonInsidePolygon(const physics::PolygonCollider*, const physics::Transform&, const physics::PolygonCollider*, const physics::Transform&)’:
+src/physics/Algo.cpp:418:36: error: expected ‘;’ before ‘a’
+   for (const geometry::Vector& vin a->points)
+                                    ^
+src/physics/Algo.cpp:418:39: error: could not convert ‘a->physics::PolygonCollider::points’ from ‘const std::vector<geometry::Vector>’ to ‘bool’
+   for (const geometry::Vector& vin a->points)
+                                    ~~~^~~~~~
+src/physics/Algo.cpp:418:45: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& vin a->points)
+                                             ^
+src/physics/Algo.cpp:420:41: error: ‘v’ was not declared in this scope
+    APoints.push_back(ta.TransformVector(v) + a->pos);
+                                         ^
+src/physics/Algo.cpp:422:36: error: expected ‘;’ before ‘b’
+   for (const geometry::Vector& vin b->points)
+                                    ^
+src/physics/Algo.cpp:422:39: error: could not convert ‘b->physics::PolygonCollider::points’ from ‘const std::vector<geometry::Vector>’ to ‘bool’
+   for (const geometry::Vector& vin b->points)
+                                    ~~~^~~~~~
+src/physics/Algo.cpp:422:45: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& vin b->points)
+                                             ^
+src/physics/Algo.cpp:424:41: error: ‘v’ was not declared in this scope
+    BPoints.push_back(tb.TransformVector(v) + b->pos);
+                                         ^
+src/physics/Algo.cpp: In function ‘bool algo::PolygonColliderVectorIsColliding(const physics::PolygonCollider*, const physics::Transform&, const geometry::Vector&)’:
+src/physics/Algo.cpp:521:36: error: expected ‘;’ before ‘a’
+   for (const geometry::Vector& vin a->points)
+                                    ^
+src/physics/Algo.cpp:521:39: error: could not convert ‘a->physics::PolygonCollider::points’ from ‘const std::vector<geometry::Vector>’ to ‘bool’
+   for (const geometry::Vector& vin a->points)
+                                    ~~~^~~~~~
+src/physics/Algo.cpp:521:45: error: expected ‘;’ before ‘)’ token
+   for (const geometry::Vector& vin a->points)
+                                             ^
+src/physics/Algo.cpp:523:41: error: ‘v’ was not declared in this scope
+    APoints.push_back(ta.TransformVector(v) + a->pos);
+                                         ^
+src/physics/Algo.cpp:526:72: error: ‘in’ was not declared in this scope
+   geometry::Line line(b, geometry::Vector(max.x + (1 * max.x > b.x ? 1 in -1), b.y));
+                                                                        ^~
+src/physics/Algo.cpp:526:72: note: suggested alternative: ‘yn’
+   geometry::Line line(b, geometry::Vector(max.x + (1 * max.x > b.x ? 1 in -1), b.y));
+                                                                        ^~
+                                                                        yn
+src/physics/Algo.cpp:526:42: error: expected primary-expression before ‘(’ token
+   geometry::Line line(b, geometry::Vector(max.x + (1 * max.x > b.x ? 1 in -1), b.y));
+                                          ^
+src/physics/Algo.cpp:526:72: error: expected ‘:’ before ‘in’
+   geometry::Line line(b, geometry::Vector(max.x + (1 * max.x > b.x ? 1 in -1), b.y));
+                                                                        ^~
+src/physics/Archive.cpp: In member function ‘physics::serialization::Archive& physics::serialization::Archive::operator<<(const physics::serialization::Serializable&)’:
+src/physics/Archive.cpp:23:26: error: expected ‘;’ before ‘objectBytes’
+   for (unsigned char bin objectBytes)
+                          ^~~~~~~~~~~
+src/physics/Archive.cpp:23:26: error: could not convert ‘objectBytes’ from ‘std::vector<unsigned char>’ to ‘bool’
+src/physics/Archive.cpp:23:37: error: expected ‘;’ before ‘)’ token
+   for (unsigned char bin objectBytes)
+                                     ^
+src/physics/Archive.cpp:24:20: error: ‘b’ was not declared in this scope
+    bytes.push_back(b);
+                    ^
+src/physics/Archive.cpp: In member function ‘std::ostream& physics::serialization::Archive::operator<<(std::ostream&)’:
+src/physics/Archive.cpp:2:12: error: expected ‘;’ before ‘in’
+ #define in in
+            ^
+src/physics/Archive.cpp:30:27: note: in expansion of macro ‘in’
+   for (unsigned char byte in bytes)
+                           ^~
+src/physics/Archive.cpp:2:12: error: ‘in’ was not declared in this scope
+ #define in in
+            ^
+src/physics/Archive.cpp:30:27: note: in expansion of macro ‘in’
+   for (unsigned char byte in bytes)
+                           ^~
+src/physics/Archive.cpp:2:12: note: suggested alternative: ‘int’
+ #define in in
+            ^
+src/physics/Archive.cpp:30:27: note: in expansion of macro ‘in’
+   for (unsigned char byte in bytes)
+                           ^~
+src/physics/Archive.cpp:30:30: error: expected ‘;’ before ‘bytes’
+   for (unsigned char byte in bytes)
+                              ^~~~~
+src/physics/BoxCollider.cpp:70:2: error: ‘Serializable’ does not name a type
+  Serializable* BoxCollider::Deserialize(const std::vector<byte>& v,
+  ^~~~~~~~~~~~
+src/physics/BoxCollider.cpp:75:10: error: ‘byte’ does not name a type
+  virtual byte GetByte(const size_t& index) const override;
+          ^~~~
+src/physics/BoxCollider.cpp:76:2: error: ‘virtual’ outside class declaration
+  virtual const unsigned long TotalByteSize() const noexcept override;
+  ^~~~~~~
+src/physics/BoxCollider.cpp:76:61: error: virt-specifiers in ‘TotalByteSize’ not allowed outside a class definition
+  virtual const unsigned long TotalByteSize() const noexcept override;
+                                                             ^~~~~~~~
+src/physics/BoxCollider.cpp:76:61: error: non-member function ‘const long unsigned int physics::TotalByteSize()’ cannot have cv-qualifier
+src/physics/BoxCollider.cpp:77:22: error: ‘byte’ was not declared in this scope
+  virtual std::vector<byte> Serialize() const noexcept override;
+                      ^~~~
+src/physics/BoxCollider.cpp:77:26: error: template argument 1 is invalid
+  virtual std::vector<byte> Serialize() const noexcept override;
+                          ^
+src/physics/BoxCollider.cpp:77:26: error: template argument 2 is invalid
+src/physics/BoxCollider.cpp:77:2: error: ‘virtual’ outside class declaration
+  virtual std::vector<byte> Serialize() const noexcept override;
+  ^~~~~~~
+src/physics/BoxCollider.cpp:77:55: error: virt-specifiers in ‘Serialize’ not allowed outside a class definition
+  virtual std::vector<byte> Serialize() const noexcept override;
+                                                       ^~~~~~~~
+src/physics/BoxCollider.cpp:77:55: error: non-member function ‘int physics::Serialize()’ cannot have cv-qualifier
+src/physics/CircleCollider.cpp:46:29: error: declaration of ‘virtual std::vector<unsigned char> physics::CircleCollider::Serialize() const’ has a different exception specifier
+  std::vector<unsigned char> CircleCollider::Serialize() const
+                             ^~~~~~~~~~~~~~
+In file included from src/physics/../include/physics/Collision.hpp:6:0,
+                 from src/physics/CircleCollider.cpp:1:
+src/physics/../include/physics/CircleCollider.hpp:43:29: note: from previous declaration ‘virtual std::vector<unsigned char> physics::CircleCollider::Serialize() const noexcept’
+   virtual std::vector<byte> Serialize() const noexcept override;
+                             ^~~~~~~~~
+src/physics/CircleCollider.cpp:69:31: error: prototype for ‘physics::serialization::Serializable* physics::CircleCollider::Deserialize(std::vector<unsigned char>) const’ does not match any in class ‘physics::CircleCollider’
+  serialization::Serializable* CircleCollider::Deserialize(std::vector<unsigned char> v) const
+                               ^~~~~~~~~~~~~~
+In file included from src/physics/../include/physics/Collision.hpp:6:0,
+                 from src/physics/CircleCollider.cpp:1:
+src/physics/../include/physics/CircleCollider.hpp:39:25: error: candidate is: virtual physics::serialization::Serializable* physics::CircleCollider::Deserialize(const std::vector<unsigned char>&, const size_t&, const size_t&) const
+   virtual Serializable* Deserialize(const std::vector<byte>& v,
+                         ^~~~~~~~~~~
+src/physics/CollisionObject.cpp:182:29: error: declaration of ‘virtual std::vector<unsigned char> physics::CollisionObject::Serialize() const’ has a different exception specifier
+  std::vector<unsigned char> CollisionObject::Serialize() const
+                             ^~~~~~~~~~~~~~~
+In file included from src/physics/CollisionObject.cpp:2:0:
+src/physics/../include/physics/CollisionObject.hpp:55:30: note: from previous declaration ‘virtual std::vector<unsigned char> physics::CollisionObject::Serialize() const noexcept’
+    virtual std::vector<byte> Serialize() const noexcept override;
+                              ^~~~~~~~~
+src/physics/CollisionObject.cpp:213:31: error: prototype for ‘physics::serialization::Serializable* physics::CollisionObject::Deserialize(std::vector<unsigned char>) const’ does not match any in class ‘physics::CollisionObject’
+  serialization::Serializable* CollisionObject::Deserialize(std::vector<unsigned char> v) const
+                               ^~~~~~~~~~~~~~~
+In file included from src/physics/CollisionObject.cpp:2:0:
+src/physics/../include/physics/CollisionObject.hpp:51:26: error: candidate is: virtual physics::serialization::Serializable* physics::CollisionObject::Deserialize(const std::vector<unsigned char>&, const size_t&, const size_t&) const
+    virtual Serializable* Deserialize(const std::vector<byte>& v,
+                          ^~~~~~~~~~~
+In file included from src/physics/Entity.cpp:2:0:
+src/physics/../include/physics/Rigidbody.hpp:82:30: error: ‘virtual std::vector<unsigned char> physics::Rigidbody::Serialize() const’ cannot be overloaded
+    virtual std::vector<byte> Serialize() const noexcept override;
+                              ^~~~~~~~~
+src/physics/../include/physics/Rigidbody.hpp:75:77: error: with ‘std::vector<unsigned char> physics::Rigidbody::Serialize() const’
+    geometry::Vector GetVelocity() const noexcept;std::vector<unsigned char> Serialize() const override;
+                                                                             ^~~~~~~~~
+src/physics/../include/physics/Rigidbody.hpp:75:77: error: looser throw specifier for ‘virtual std::vector<unsigned char> physics::Rigidbody::Serialize() const’
+In file included from src/physics/../include/physics/Entity.hpp:4:0,
+                 from src/physics/Entity.cpp:1:
+src/physics/../include/physics/CollisionObject.hpp:55:30: error:   overriding ‘virtual std::vector<unsigned char> physics::CollisionObject::Serialize() const noexcept’
+    virtual std::vector<byte> Serialize() const noexcept override;
+                              ^~~~~~~~~
+src/physics/Entity.cpp:92:29: error: declaration of ‘virtual std::vector<unsigned char> physics::Entity::Serialize() const’ has a different exception specifier
+  std::vector<unsigned char> Entity::Serialize() const
+                             ^~~~~~
+In file included from src/physics/Entity.cpp:1:0:
+src/physics/../include/physics/Entity.hpp:41:30: note: from previous declaration ‘virtual std::vector<unsigned char> physics::Entity::Serialize() const noexcept’
+    virtual std::vector<byte> Serialize() const noexcept override;
+                              ^~~~~~~~~
+src/physics/Entity.cpp:124:31: error: prototype for ‘physics::serialization::Serializable* physics::Entity::Deserialize(std::vector<unsigned char>) const’ does not match any in class ‘physics::Entity’
+  serialization::Serializable* Entity::Deserialize(std::vector<byte> v) const
+                               ^~~~~~
+In file included from src/physics/Entity.cpp:1:0:
+src/physics/../include/physics/Entity.hpp:37:26: error: candidate is: virtual physics::serialization::Serializable* physics::Entity::Deserialize(const std::vector<unsigned char>&, const size_t&, const size_t&) const
+    virtual Serializable* Deserialize(const std::vector<byte>& v,
+                          ^~~~~~~~~~~
+src/physics/Entity.cpp:124:56: error: ‘typedef unsigned char physics::serialization::Serializable::byte’ is protected within this context
+  serialization::Serializable* Entity::Deserialize(std::vector<byte> v) const
+                                                        ^~~~~~~~~~~~
+In file included from src/physics/../include/physics/Transform.hpp:3:0,
+                 from src/physics/../include/physics/Collider.hpp:3,
+                 from src/physics/../include/physics/BoxCollider.hpp:2,
+                 from src/physics/../include/physics/Collision.hpp:5,
+                 from src/physics/../include/physics/Entity.hpp:3,
+                 from src/physics/Entity.cpp:1:
+src/physics/../include/physics/Serializable.hpp:31:26: note: declared protected here
+    typedef unsigned char byte;
+                          ^~~~
+src/physics/MeshCollider.cpp: In copy constructor ‘physics::MeshCollider::MeshCollider(const physics::MeshCollider&)’:
+src/physics/MeshCollider.cpp:19:23: error: expected ‘;’ before ‘in’
+   for (Collider* cldr in c.colliders)
+                       ^~
+src/physics/MeshCollider.cpp:19:23: error: ‘in’ was not declared in this scope
+src/physics/MeshCollider.cpp:19:23: note: suggested alternative: ‘Min’
+   for (Collider* cldr in c.colliders)
+                       ^~
+                       Min
+src/physics/MeshCollider.cpp:19:26: error: expected ‘;’ before ‘c’
+   for (Collider* cldr in c.colliders)
+                          ^
+src/physics/MeshCollider.cpp: In member function ‘virtual geometry::Vector physics::MeshCollider::GetCenterOfMass() const’:
+src/physics/MeshCollider.cpp:58:20: error: expected ‘;’ before ‘in’
+   for (Collider* c in colliders)
+                    ^~
+src/physics/MeshCollider.cpp:58:20: error: ‘in’ was not declared in this scope
+src/physics/MeshCollider.cpp:58:20: note: suggested alternative: ‘Min’
+   for (Collider* c in colliders)
+                    ^~
+                    Min
+src/physics/MeshCollider.cpp:58:23: error: expected ‘;’ before ‘colliders’
+   for (Collider* c in colliders)
+                       ^~~~~~~~~
+src/physics/MeshCollider.cpp: In member function ‘virtual geometry::Vector physics::MeshCollider::Max() const’:
+src/physics/MeshCollider.cpp:73:16: error: expected ‘;’ before ‘in’
+   for (auto& c in this->colliders)
+                ^~
+src/physics/MeshCollider.cpp:73:16: error: ‘in’ was not declared in this scope
+src/physics/MeshCollider.cpp:73:16: note: suggested alternative: ‘Min’
+   for (auto& c in this->colliders)
+                ^~
+                Min
+src/physics/MeshCollider.cpp:73:19: error: expected ‘;’ before ‘this’
+   for (auto& c in this->colliders)
+                   ^~~~
+src/physics/MeshCollider.cpp:75:20: error: use of ‘c’ before deduction of ‘auto’
+    maxes.push_back(c->Max());
+                    ^
+src/physics/MeshCollider.cpp: In member function ‘virtual geometry::Vector physics::MeshCollider::Min() const’:
+src/physics/MeshCollider.cpp:83:16: error: expected ‘;’ before ‘in’
+   for (auto& c in this->colliders)
+                ^~
+src/physics/MeshCollider.cpp:83:16: error: ‘in’ was not declared in this scope
+src/physics/MeshCollider.cpp:83:16: note: suggested alternative: ‘Min’
+   for (auto& c in this->colliders)
+                ^~
+                Min
+src/physics/MeshCollider.cpp:83:19: error: expected ‘;’ before ‘this’
+   for (auto& c in this->colliders)
+                   ^~~~
+src/physics/MeshCollider.cpp:85:19: error: use of ‘c’ before deduction of ‘auto’
+    mins.push_back(c->Min());
+                   ^
+src/physics/PolygonCollider.cpp:84:29: error: declaration of ‘virtual std::vector<unsigned char> physics::PolygonCollider::Serialize() const’ has a different exception specifier
+  std::vector<unsigned char> PolygonCollider::Serialize() const
+                             ^~~~~~~~~~~~~~~
+In file included from src/physics/../include/physics/Collision.hpp:7:0,
+                 from src/physics/PolygonCollider.cpp:1:
+src/physics/../include/physics/PolygonCollider.hpp:45:29: note: from previous declaration ‘virtual std::vector<unsigned char> physics::PolygonCollider::Serialize() const noexcept’
+   virtual std::vector<byte> Serialize() const noexcept override;
+                             ^~~~~~~~~
+src/physics/PolygonCollider.cpp: In member function ‘virtual std::vector<unsigned char> physics::PolygonCollider::Serialize() const’:
+src/physics/PolygonCollider.cpp:105:37: error: expected ‘;’ before ‘in’
+    for (const geometry::Vector& vec in points)
+                                     ^~
+src/physics/PolygonCollider.cpp:105:37: error: ‘in’ was not declared in this scope
+src/physics/PolygonCollider.cpp:105:37: note: suggested alternative: ‘Min’
+    for (const geometry::Vector& vec in points)
+                                     ^~
+                                     Min
+src/physics/PolygonCollider.cpp:105:40: error: expected ‘;’ before ‘points’
+    for (const geometry::Vector& vec in points)
+                                        ^~~~~~
+src/physics/PolygonCollider.cpp:140:37: error: expected ‘;’ before ‘in’
+    for (const geometry::Vector& vec in points)
+                                     ^~
+src/physics/PolygonCollider.cpp:140:37: error: ‘in’ was not declared in this scope
+src/physics/PolygonCollider.cpp:140:37: note: suggested alternative: ‘Min’
+    for (const geometry::Vector& vec in points)
+                                     ^~
+                                     Min
+src/physics/PolygonCollider.cpp:140:40: error: expected ‘;’ before ‘points’
+    for (const geometry::Vector& vec in points)
+                                        ^~~~~~
+src/physics/PolygonCollider.cpp: At global scope:
+src/physics/PolygonCollider.cpp:160:31: error: prototype for ‘physics::serialization::Serializable* physics::PolygonCollider::Deserialize(std::vector<unsigned char>) const’ does not match any in class ‘physics::PolygonCollider’
+  serialization::Serializable* PolygonCollider::Deserialize(std::vector<unsigned char> v) const
+                               ^~~~~~~~~~~~~~~
+In file included from src/physics/../include/physics/Collision.hpp:7:0,
+                 from src/physics/PolygonCollider.cpp:1:
+src/physics/../include/physics/PolygonCollider.hpp:41:25: error: candidate is: virtual physics::serialization::Serializable* physics::PolygonCollider::Deserialize(const std::vector<unsigned char>&, const size_t&, const size_t&) const
+   virtual Serializable* Deserialize(const std::vector<byte>& v,
+                         ^~~~~~~~~~~
+In file included from src/physics/Rigidbody.cpp:1:0:
+src/physics/../include/physics/Rigidbody.hpp:82:30: error: ‘virtual std::vector<unsigned char> physics::Rigidbody::Serialize() const’ cannot be overloaded
+    virtual std::vector<byte> Serialize() const noexcept override;
+                              ^~~~~~~~~
+src/physics/../include/physics/Rigidbody.hpp:75:77: error: with ‘std::vector<unsigned char> physics::Rigidbody::Serialize() const’
+    geometry::Vector GetVelocity() const noexcept;std::vector<unsigned char> Serialize() const override;
+                                                                             ^~~~~~~~~
+src/physics/../include/physics/Rigidbody.hpp:75:77: error: looser throw specifier for ‘virtual std::vector<unsigned char> physics::Rigidbody::Serialize() const’
+In file included from src/physics/../include/physics/Rigidbody.hpp:2:0,
+                 from src/physics/Rigidbody.cpp:1:
+src/physics/../include/physics/CollisionObject.hpp:55:30: error:   overriding ‘virtual std::vector<unsigned char> physics::CollisionObject::Serialize() const noexcept’
+    virtual std::vector<byte> Serialize() const noexcept override;
+                              ^~~~~~~~~
+src/physics/Rigidbody.cpp:22:25: error: expected initializer before ‘noexceptin’
+  Rigidbody::Rigidbody() noexceptin CollisionObject()
+                         ^~~~~~~~~~
+src/physics/Rigidbody.cpp:28:29: error: expected initializer before ‘in’
+   f64 restitution) noexcept in CollisionObject(t, c, isTrigger)
+                             ^~
+src/physics/Rigidbody.cpp:39:3: error: expected initializer before ‘in’
+   in CollisionObject((const CollisionObject&)r)
+   ^~
+src/physics/Rigidbody.cpp:355:31: error: prototype for ‘physics::serialization::Serializable* physics::Rigidbody::Deserialize(std::vector<unsigned char>) const’ does not match any in class ‘physics::Rigidbody’
+  serialization::Serializable* Rigidbody::Deserialize(std::vector<unsigned char> v) const
+                               ^~~~~~~~~
+In file included from src/physics/Rigidbody.cpp:1:0:
+src/physics/../include/physics/Rigidbody.hpp:78:26: error: candidate is: virtual physics::serialization::Serializable* physics::Rigidbody::Deserialize(const std::vector<unsigned char>&, const size_t&, const size_t&) const
+    virtual Serializable* Deserialize(const std::vector<byte>& v,
+                          ^~~~~~~~~~~
+In file included from src/physics/../include/physics/World.hpp:3:0,
+                 from src/physics/../include/physics/Scene.hpp:7,
+                 from src/physics/Scene.cpp:1:
+src/physics/../include/physics/Rigidbody.hpp:82:30: error: ‘virtual std::vector<unsigned char> physics::Rigidbody::Serialize() const’ cannot be overloaded
+    virtual std::vector<byte> Serialize() const noexcept override;
+                              ^~~~~~~~~
+src/physics/../include/physics/Rigidbody.hpp:75:77: error: with ‘std::vector<unsigned char> physics::Rigidbody::Serialize() const’
+    geometry::Vector GetVelocity() const noexcept;std::vector<unsigned char> Serialize() const override;
+                                                                             ^~~~~~~~~
+src/physics/../include/physics/Rigidbody.hpp:75:77: error: looser throw specifier for ‘virtual std::vector<unsigned char> physics::Rigidbody::Serialize() const’
+In file included from src/physics/../include/physics/Entity.hpp:4:0,
+                 from src/physics/../include/physics/Scene.hpp:5,
+                 from src/physics/Scene.cpp:1:
+src/physics/../include/physics/CollisionObject.hpp:55:30: error:   overriding ‘virtual std::vector<unsigned char> physics::CollisionObject::Serialize() const noexcept’
+    virtual std::vector<byte> Serialize() const noexcept override;
+                              ^~~~~~~~~
+In file included from src/physics/Scene.cpp:1:0:
+src/physics/../include/physics/Scene.hpp:38:26: error: wrong number of template arguments (1, should be 2)
+    std::array<sf::Texture> _textures;
+                          ^
+In file included from src/physics/../include/physics/Scene.hpp:2:0,
+                 from src/physics/Scene.cpp:1:
+/usr/include/c++/7/array:94:12: note: provided for ‘template<class _Tp, long unsigned int _Nm> struct std::array’
+     struct array
+            ^~~~~
+In file included from src/physics/Scene.cpp:1:0:
+src/physics/../include/physics/Scene.hpp:48:32: error: wrong number of template arguments (1, should be 2)
+    const std::array<sf::Texture>& GetTextures() const noexcept;
+                                ^
+In file included from src/physics/../include/physics/Scene.hpp:2:0,
+                 from src/physics/Scene.cpp:1:
+/usr/include/c++/7/array:94:12: note: provided for ‘template<class _Tp, long unsigned int _Nm> struct std::array’
+     struct array
+            ^~~~~
+src/physics/Scene.cpp: In member function ‘void physics::Scene::Smoother::Update(f64)’:
+src/physics/Scene.cpp:29:20: error: expected ‘;’ before ‘_s’
+   for (auto& ptrin _s->GetEntities())
+                    ^~
+src/physics/Scene.cpp:29:35: error: could not convert ‘((physics::Scene::Smoother*)this)->physics::Scene::Smoother::_s->physics::Scene::GetEntities()’ from ‘const std::vector<std::unique_ptr<physics::Entity> >’ to ‘bool’
+   for (auto& ptrin _s->GetEntities())
+                    ~~~~~~~~~~~~~~~^~
+src/physics/Scene.cpp:29:37: error: expected ‘;’ before ‘)’ token
+   for (auto& ptrin _s->GetEntities())
+                                     ^
+src/physics/Scene.cpp:31:18: error: ‘ptr’ was not declared in this scope
+    Transform t = ptr->GetCollisionObject().GetTransform();
+                  ^~~
+src/physics/Scene.cpp:31:18: note: suggested alternative: ‘putw’
+    Transform t = ptr->GetCollisionObject().GetTransform();
+                  ^~~
+                  putw
+src/physics/Scene.cpp: In member function ‘void physics::Scene::RemoveEntity(physics::Entity&)’:
+src/physics/Scene.cpp:84:20: error: expected ‘;’ before ‘_entities’
+   for (auto& ptrin _entities)
+                    ^~~~~~~~~
+src/physics/Scene.cpp:84:20: error: could not convert ‘((physics::Scene*)this)->physics::Scene::_entities’ from ‘std::vector<std::unique_ptr<physics::Entity> >’ to ‘bool’
+src/physics/Scene.cpp:84:29: error: expected ‘;’ before ‘)’ token
+   for (auto& ptrin _entities)
+                             ^
+src/physics/Scene.cpp:86:9: error: ‘ptr’ was not declared in this scope
+    if (*ptr == e)
+         ^~~
+src/physics/Scene.cpp:86:9: note: suggested alternative: ‘putw’
+    if (*ptr == e)
+         ^~~
+         putw
+src/physics/Scene.cpp: In member function ‘void physics::Scene::Update(f64)’:
+src/physics/Scene.cpp:120:22: error: expected ‘;’ before ‘_entities’
+     for (auto& ptrin _entities)
+                      ^~~~~~~~~
+src/physics/Scene.cpp:120:22: error: could not convert ‘((physics::Scene*)this)->physics::Scene::_entities’ from ‘std::vector<std::unique_ptr<physics::Entity> >’ to ‘bool’
+src/physics/Scene.cpp:120:31: error: expected ‘;’ before ‘)’ token
+     for (auto& ptrin _entities)
+                               ^
+src/physics/Scene.cpp:122:6: error: ‘ptr’ was not declared in this scope
+      ptr->FixedUpdate();
+      ^~~
+src/physics/Scene.cpp:122:6: note: suggested alternative: ‘putw’
+      ptr->FixedUpdate();
+      ^~~
+      putw
+src/physics/Scene.cpp:135:21: error: expected ‘;’ before ‘_entities’
+    for (auto& ptrin _entities)
+                     ^~~~~~~~~
+src/physics/Scene.cpp:135:21: error: could not convert ‘((physics::Scene*)this)->physics::Scene::_entities’ from ‘std::vector<std::unique_ptr<physics::Entity> >’ to ‘bool’
+src/physics/Scene.cpp:135:30: error: expected ‘;’ before ‘)’ token
+    for (auto& ptrin _entities)
+                              ^
+src/physics/Scene.cpp:137:19: error: ‘ptr’ was not declared in this scope
+     display->Draw(ptr->GetSprite());
+                   ^~~
+src/physics/Scene.cpp:137:19: note: suggested alternative: ‘putw’
+     display->Draw(ptr->GetSprite());
+                   ^~~
+                   putw
+src/physics/Serialize.cpp:1:10: fatal error: ../include/physics/Serializer.hpp: No such file or directory
+ #include "../include/physics/Serializer.hpp"
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+src/physics/Time.cpp: In static member function ‘static void physics::Time::Tick()’:
+src/physics/Time.cpp:8:39: error: expected ‘:’ before ‘in’
+   deltaTime = deltaTime == 0 ? 0.0001 in deltaTime;
+                                       ^~
+src/physics/Time.cpp:8:39: error: ‘in’ was not declared in this scope
+src/physics/Time.cpp:8:39: note: suggested alternative: ‘int’
+   deltaTime = deltaTime == 0 ? 0.0001 in deltaTime;
+                                       ^~
+                                       int
+src/physics/Transform.cpp:38:29: error: declaration of ‘virtual std::vector<unsigned char> physics::Transform::Serialize() const’ has a different exception specifier
+  std::vector<unsigned char> Transform::Serialize() const
+                             ^~~~~~~~~
+In file included from src/physics/Transform.cpp:1:0:
+src/physics/../include/physics/Transform.hpp:22:29: note: from previous declaration ‘virtual std::vector<unsigned char> physics::Transform::Serialize() const noexcept’
+   virtual std::vector<byte> Serialize() const noexcept override;
+                             ^~~~~~~~~
+src/physics/Transform.cpp:91:31: error: prototype for ‘physics::serialization::Serializable* physics::Transform::Deserialize(std::vector<unsigned char>) const’ does not match any in class ‘physics::Transform’
+  serialization::Serializable* Transform::Deserialize(std::vector<unsigned char> v) const
+                               ^~~~~~~~~
+In file included from src/physics/Transform.cpp:1:0:
+src/physics/../include/physics/Transform.hpp:18:25: error: candidate is: virtual physics::serialization::Serializable* physics::Transform::Deserialize(const std::vector<unsigned char>&, const size_t&, const size_t&) const
+   virtual Serializable* Deserialize(const std::vector<byte>& v,
+                         ^~~~~~~~~~~
+In file included from src/physics/../include/physics/World.hpp:3:0,
+                 from src/physics/World.cpp:1:
+src/physics/../include/physics/Rigidbody.hpp:82:30: error: ‘virtual std::vector<unsigned char> physics::Rigidbody::Serialize() const’ cannot be overloaded
+    virtual std::vector<byte> Serialize() const noexcept override;
+                              ^~~~~~~~~
+src/physics/../include/physics/Rigidbody.hpp:75:77: error: with ‘std::vector<unsigned char> physics::Rigidbody::Serialize() const’
+    geometry::Vector GetVelocity() const noexcept;std::vector<unsigned char> Serialize() const override;
+                                                                             ^~~~~~~~~
+src/physics/../include/physics/Rigidbody.hpp:75:77: error: looser throw specifier for ‘virtual std::vector<unsigned char> physics::Rigidbody::Serialize() const’
+In file included from src/physics/../include/physics/Rigidbody.hpp:2:0,
+                 from src/physics/../include/physics/World.hpp:3,
+                 from src/physics/World.cpp:1:
+src/physics/../include/physics/CollisionObject.hpp:55:30: error:   overriding ‘virtual std::vector<unsigned char> physics::CollisionObject::Serialize() const noexcept’
+    virtual std::vector<byte> Serialize() const noexcept override;
+                              ^~~~~~~~~
+src/physics/World.cpp: In member function ‘virtual void physics::FrictionSolver::Solve(std::vector<physics::Collision>&, f64)’:
+src/physics/World.cpp:12:23: error: expected ‘;’ before ‘collisions’
+   for (Collision& cin collisions)
+                       ^~~~~~~~~~
+src/physics/World.cpp:12:23: error: could not convert ‘collisions’ from ‘std::vector<physics::Collision>’ to ‘bool’
+src/physics/World.cpp:12:33: error: expected ‘;’ before ‘)’ token
+   for (Collision& cin collisions)
+                                 ^
+src/physics/World.cpp:14:9: error: ‘c’ was not declared in this scope
+    if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
+         ^
+src/physics/World.cpp:16:32: error: ‘c’ was not declared in this scope
+    Rigidbody* a = (Rigidbody*) c.a;
+                                ^
+src/physics/World.cpp: In member function ‘virtual void physics::ImpulseSolver::Solve(std::vector<physics::Collision>&, f64)’:
+src/physics/World.cpp:44:23: error: expected ‘;’ before ‘collisions’
+   for (Collision& cin collisions)
+                       ^~~~~~~~~~
+src/physics/World.cpp:44:23: error: could not convert ‘collisions’ from ‘std::vector<physics::Collision>’ to ‘bool’
+src/physics/World.cpp:44:33: error: expected ‘;’ before ‘)’ token
+   for (Collision& cin collisions)
+                                 ^
+src/physics/World.cpp:46:9: error: ‘c’ was not declared in this scope
+    if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
+         ^
+src/physics/World.cpp:47:32: error: ‘c’ was not declared in this scope
+    Rigidbody* a = (Rigidbody*) c.a;
+                                ^
+src/physics/World.cpp:49:76: error: expected ‘:’ before ‘in’
+    f64 e = a->GetRestitution() > b->GetRestitution() ? a->GetRestitution() in b->GetRestitution();
+                                                                            ^~
+src/physics/World.cpp:49:76: error: ‘in’ was not declared in this scope
+src/physics/World.cpp:49:76: note: suggested alternative: ‘yn’
+    f64 e = a->GetRestitution() > b->GetRestitution() ? a->GetRestitution() in b->GetRestitution();
+                                                                            ^~
+                                                                            yn
+src/physics/World.cpp: In member function ‘virtual void physics::PositionalCorrectionSolver::Solve(std::vector<physics::Collision>&, f64)’:
+src/physics/World.cpp:57:23: error: expected ‘;’ before ‘collisions’
+   for (Collision& cin collisions)
+                       ^~~~~~~~~~
+src/physics/World.cpp:57:23: error: could not convert ‘collisions’ from ‘std::vector<physics::Collision>’ to ‘bool’
+src/physics/World.cpp:57:33: error: expected ‘;’ before ‘)’ token
+   for (Collision& cin collisions)
+                                 ^
+src/physics/World.cpp:59:9: error: ‘c’ was not declared in this scope
+    if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
+         ^
+src/physics/World.cpp:60:32: error: ‘c’ was not declared in this scope
+    Rigidbody* a = (Rigidbody*) c.a;
+                                ^
+src/physics/World.cpp: In function ‘T physics::getMin(std::vector<T>&)’:
+src/physics/World.cpp:79:17: error: expected ‘;’ before ‘v’
+   for (T itemin v)
+                 ^
+src/physics/World.cpp:79:18: error: expected ‘;’ before ‘)’ token
+   for (T itemin v)
+                  ^
+src/physics/World.cpp:82:14: error: ‘item’ was not declared in this scope
+     minVal = item; reachedVal = true; continue;
+              ^~~~
+src/physics/World.cpp:82:14: note: suggested alternative: ‘itemin’
+     minVal = item; reachedVal = true; continue;
+              ^~~~
+              itemin
+src/physics/World.cpp:83:17: error: ‘item’ was not declared in this scope
+    if (minVal > item)
+                 ^~~~
+src/physics/World.cpp:83:17: note: suggested alternative: ‘itemin’
+    if (minVal > item)
+                 ^~~~
+                 itemin
+src/physics/World.cpp: In function ‘T physics::getMax(std::vector<T>&)’:
+src/physics/World.cpp:94:17: error: expected ‘;’ before ‘v’
+   for (T itemin v)
+                 ^
+src/physics/World.cpp:94:18: error: expected ‘;’ before ‘)’ token
+   for (T itemin v)
+                  ^
+src/physics/World.cpp:98:14: error: ‘item’ was not declared in this scope
+     maxVal = item;
+              ^~~~
+src/physics/World.cpp:98:14: note: suggested alternative: ‘itemin’
+     maxVal = item;
+              ^~~~
+              itemin
+src/physics/World.cpp:102:17: error: ‘item’ was not declared in this scope
+    if (maxVal < item)
+                 ^~~~
+src/physics/World.cpp:102:17: note: suggested alternative: ‘itemin’
+    if (maxVal < item)
+                 ^~~~
+                 itemin
+src/physics/World.cpp: In member function ‘void physics::CollisionWorld::ResolveCollisions(f64)’:
+src/physics/World.cpp:141:18: error: expected ‘;’ before ‘_objects’
+   for (auto& ain _objects)
+                  ^~~~~~~~
+src/physics/World.cpp:141:18: error: could not convert ‘((physics::CollisionWorld*)this)->physics::CollisionWorld::_objects’ from ‘std::vector<physics::CollisionObject*>’ to ‘bool’
+src/physics/World.cpp:141:26: error: expected ‘;’ before ‘)’ token
+   for (auto& ain _objects)
+                          ^
+src/physics/World.cpp:143:19: error: expected ‘;’ before ‘_objects’
+    for (auto& bin _objects)
+                   ^~~~~~~~
+src/physics/World.cpp:143:19: error: could not convert ‘((physics::CollisionWorld*)this)->physics::CollisionWorld::_objects’ from ‘std::vector<physics::CollisionObject*>’ to ‘bool’
+src/physics/World.cpp:143:27: error: expected ‘;’ before ‘)’ token
+    for (auto& bin _objects)
+                           ^
+src/physics/World.cpp:145:9: error: ‘a’ was not declared in this scope
+     if (a == b) break;
+         ^
+src/physics/World.cpp:145:14: error: ‘b’ was not declared in this scope
+     if (a == b) break;
+              ^
+src/physics/World.cpp:149:22: error: ‘a’ was not declared in this scope
+     Collider& cldr = a->GetCollider();
+                      ^
+src/physics/World.cpp:163:12: error: ‘b’ was not declared in this scope
+     cldr = b->GetCollider();
+            ^
+src/physics/World.cpp:194:22: error: expected ‘;’ before ‘_solvers’
+   for (auto solverin _solvers)
+                      ^~~~~~~~
+src/physics/World.cpp:194:22: error: could not convert ‘((physics::CollisionWorld*)this)->physics::CollisionWorld::_solvers’ from ‘std::vector<physics::Solver*>’ to ‘bool’
+src/physics/World.cpp:194:30: error: expected ‘;’ before ‘)’ token
+   for (auto solverin _solvers)
+                              ^
+src/physics/World.cpp:196:4: error: ‘solver’ was not declared in this scope
+    solver->Solve(collisions, dt);
+    ^~~~~~
+src/physics/World.cpp:196:4: note: suggested alternative: ‘Solver’
+    solver->Solve(collisions, dt);
+    ^~~~~~
+    Solver
+src/physics/World.cpp: In member function ‘void physics::CollisionWorld::SendCollisionCallBacks(std::vector<physics::Collision>&, f64)’:
+src/physics/World.cpp:231:21: error: expected ‘;’ before ‘in’
+   for (Collision& c in collisions)
+                     ^~
+src/physics/World.cpp:231:21: error: ‘in’ was not declared in this scope
+src/physics/World.cpp:231:21: note: suggested alternative: ‘yn’
+   for (Collision& c in collisions)
+                     ^~
+                     yn
+src/physics/World.cpp:231:24: error: expected ‘;’ before ‘collisions’
+   for (Collision& c in collisions)
+                        ^~~~~~~~~~
+src/physics/World.cpp: In member function ‘void physics::DynamicsWorld::ApplyGravity(f64)’:
+src/physics/World.cpp:253:20: error: expected ‘;’ before ‘_objects’
+   for (auto& objin _objects)
+                    ^~~~~~~~
+src/physics/World.cpp:253:20: error: could not convert ‘((physics::DynamicsWorld*)this)->physics::DynamicsWorld::<anonymous>.physics::CollisionWorld::_objects’ from ‘std::vector<physics::CollisionObject*>’ to ‘bool’
+src/physics/World.cpp:253:28: error: expected ‘;’ before ‘)’ token
+   for (auto& objin _objects)
+                            ^
+src/physics/World.cpp:255:9: error: ‘obj’ was not declared in this scope
+    if (!obj->IsDynamic()) continue;
+         ^~~
+src/physics/World.cpp:256:40: error: ‘obj’ was not declared in this scope
+    Rigidbody* rigidbody = (Rigidbody*) obj;
+                                        ^~~
+src/physics/World.cpp: In member function ‘void physics::DynamicsWorld::MoveObjects(f64)’:
+src/physics/World.cpp:264:20: error: expected ‘;’ before ‘_objects’
+   for (auto& objin _objects)
+                    ^~~~~~~~
+src/physics/World.cpp:264:20: error: could not convert ‘((physics::DynamicsWorld*)this)->physics::DynamicsWorld::<anonymous>.physics::CollisionWorld::_objects’ from ‘std::vector<physics::CollisionObject*>’ to ‘bool’
+src/physics/World.cpp:264:28: error: expected ‘;’ before ‘)’ token
+   for (auto& objin _objects)
+                            ^
+src/physics/World.cpp:266:9: error: ‘obj’ was not declared in this scope
+    if (!obj->IsDynamic()) continue;
+         ^~~
+src/physics/World.cpp:267:39: error: ‘obj’ was not declared in this scope
+    Rigidbody* rigidbody = (Rigidbody*)obj;
+                                       ^~~
+make: *** [checkSyntax] Error 1
