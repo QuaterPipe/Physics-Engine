@@ -81,173 +81,6 @@ namespace physics
 		return getCentroid(this->points);
 	}
 
-	std::vector<unsigned char> PolygonCollider::Serialize() const
-	{
-		std::vector<unsigned char> v;
-		if (BIG_ENDIAN)
-		{
-			reader c = (reader)&pos.x;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				v.push_back(c[i]);
-			}
-			c = (reader)&pos.y;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				v.push_back(c[i]);
-			}
-			f64 d = v.size();
-			c = (reader)&d;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				v.push_back(c[i]);
-			}
-			for (const geometry::Vector& vec in points)
-			{
-				c = (reader)&vec.x;
-				for (unsigned i = 0; i < sizeof(f64); i++)
-				{
-					v.push_back(c[i]);
-				}
-				c = (reader)&vec.y;
-				for (unsigned i = 0; i < sizeof(f64); i++)
-				{
-					v.push_back(c[i]);
-				}
-			}
-			v.push_back(0xff);
-			v.push_back(0xff);
-			v.push_back(0xff);
-		}
-		else
-		{
-			reader c = (reader)&pos.x;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				v.push_back(c[sizeof(f64) - 1 - i]);
-			}
-			c = (reader)&pos.y;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				v.push_back(c[sizeof(f64) - 1 - i]);
-			}
-			f64 d = v.size();
-			c = (reader)&d;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				v.push_back(c[sizeof(f64) - 1 - i]);
-			}
-			for (const geometry::Vector& vec in points)
-			{
-				c = (reader)&vec.x;
-				for (unsigned i = 0; i < sizeof(f64); i++)
-				{
-					v.push_back(c[sizeof(f64) - 1 - i]);
-				}
-				c = (reader)&vec.y;
-				for (unsigned i = 0; i < sizeof(f64); i++)
-				{
-					v.push_back(c[sizeof(f64) - 1 - i]);
-				}
-			}
-			v.push_back(0xff);
-			v.push_back(0xff);
-			v.push_back(0xff);
-		}
-		return v;
-	}
-
-	serialization::Serializable* PolygonCollider::Deserialize(std::vector<unsigned char> v) const
-	{
-		PolygonCollider* d = new PolygonCollider();
-		if (BIG_ENDIAN)
-		{
-			auto iter = v.begin();
-			writer c = (writer)&d->pos.x;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				c[i] = *iter;
-				iter++;
-			}
-			c = (writer)&d->pos.y;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				c[i] = *iter;
-				iter++;
-			}
-			f64 size = 0;
-			c = (writer)&size;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				c[i] = *iter;
-				iter++;
-			}
-			for (unsigned i = 0; i < size; i++)
-			{
-				geometry::Vector tmp;
-				c = (writer)&tmp.x;
-				for (unsigned j = 0; j < sizeof(f64); j++)
-				{
-					c[j] = *iter;
-					iter++;
-				}
-				c = (writer)&tmp.y;
-				for (unsigned j = 0; j < sizeof(f64); j++)
-				{
-					c[j] = *iter;
-					iter++;
-				}
-				d->points.push_back(tmp);
-			}
-		}
-		else
-		{
-			auto iter = v.begin();
-			writer c = (writer)&d->pos.x;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				c[sizeof(f64) - 1 - i] = *iter;
-				iter++;
-			}
-			c = (writer)&d->pos.y;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				c[sizeof(f64) - 1 - i] = *iter;
-				iter++;
-			}
-			f64 size = 0;
-			c = (writer)&size;
-			for (unsigned i = 0; i < sizeof(f64); i++)
-			{
-				c[sizeof(f64) - 1 - i] = *iter;
-				iter++;
-			}
-			for (unsigned i = 0; i < size; i++)
-			{
-				geometry::Vector tmp;
-				c = (writer)&tmp.x;
-				for (unsigned j = 0; j < sizeof(f64); j++)
-				{
-					c[sizeof(f64) - 1 - j] = *iter;
-					iter++;
-				}
-				c = (writer)&tmp.y;
-				for (unsigned j = 0; j < sizeof(f64); j++)
-				{
-					c[sizeof(f64) - 1 - j] = *iter;
-					iter++;
-				}
-				d->points.push_back(tmp);
-			}
-		}
-		return d;
-	}
-
-	const unsigned long PolygonCollider::TotalByteSize() const noexcept
-	{
-		return (sizeof(f64) * 2) + (points.size() * sizeof(f64)) + 4;
-	}
-
 	Collider* PolygonCollider::Clone() const
 	{
 		return new PolygonCollider(*this);
@@ -265,5 +98,69 @@ namespace physics
 		if (!points.size())
 			return geometry::Vector::Origin;
 		return *std::min(points.begin(), points.end()) + pos;
+	}
+
+	Serializable* BoxCollider::Deserialize(const std::vector<byte>& v,
+			const size_t& index, const size_t& length) const
+	{
+		BoxCollider* b = new BoxCollider();
+		auto iter = v.begin() + index;
+		auto end = v.begin() + index + length;
+		writer byteWriter = NULL;
+		// x position.
+		byteWriter = (writer)&b->pos.x;
+		Archive::WriteBytes(byteWriter, iter, sizeof(b->pos.x));
+		if (iter + sizeof(b->pos.x) > end)
+		{
+			delete b;
+			throw std::runtime_error("not enough bytes given for object.");
+		}
+		iter += sizeof(b->pos.x);
+		// y position.
+		byteWriter = (writer)&b->pos.y;
+		Archive::WriteBytes(byteWriter, iter, sizeof(b->pos.y));
+		if (iter + sizeof(b->pos.y) > end)
+		{
+			delete b;
+			throw std::runtime_error("not enough bytes given for object.");
+		}
+		iter += sizeof(b->pos.y);
+		// x dimension.
+		byteWriter = (writer)&b->dimensions.x;
+		Archive::WriteBytes(byteWriter, iter, sizeof(b->dimensions.x));
+		if (iter + sizeof(b->dimensions.x) > end)
+		{
+			delete b;
+			throw std::runtime_error("not enough bytes given for object.");
+		}
+		iter += sizeof(b->dimensions.y);
+		// y dimension.
+		byteWriter = (writer)&b->dimensions.y;
+		Archive::WriteBytes(byteWriter, iter, sizeof(b->dimensions.y));
+		return b;
+	}
+
+	unsigned char BoxCollider::GetByte(const size_t& index) const
+	{
+		return Serialize().at(index);
+	}
+
+	unsigned long BoxCollider::TotalByteSize() const noexcept
+	{
+		return sizeof(*this);
+	}
+
+	std::vector<unsigned char> BoxCollider::Serialize() const noexcept
+	{
+		std::vector<unsigned char> vec;
+		std::vector<unsigned char> bytes = Archive::ReadBytes((reader)&pos.x, sizeof(pos.x));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&pos.y, sizeof(pos.y));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&dimensions.x, sizeof(dimensions.x));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&dimensions.y, sizeof(dimensions.y));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		return vec;
 	}
 }

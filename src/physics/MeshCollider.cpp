@@ -2,6 +2,7 @@
 
 namespace physics
 {
+	using namespace serialization;
 	MeshCollider::MeshCollider() noexcept
 	{
 		classCode = 0x05;
@@ -16,7 +17,7 @@ namespace physics
 	MeshCollider::MeshCollider(const MeshCollider& c) noexcept
 	{
 		classCode = 0x05;
-		for (Collider* cldr in c.colliders)
+		for (Collider* cldr : c.colliders)
 		{
 			this->colliders.push_back(cldr->Clone());
 		}
@@ -55,7 +56,7 @@ namespace physics
 	geometry::Vector MeshCollider::GetCenterOfMass() const noexcept
 	{
 		std::vector<geometry::Vector> coms;
-		for (Collider* c in colliders)
+		for (Collider* c : colliders)
 		{
 			coms.push_back(c->GetCenterOfMass());
 		}
@@ -70,7 +71,7 @@ namespace physics
 	geometry::Vector MeshCollider::Max() const noexcept
 	{
 		std::vector<geometry::Vector> maxes;
-		for (auto& c in this->colliders)
+		for (auto& c : this->colliders)
 		{
 			maxes.push_back(c->Max());
 		}
@@ -80,10 +81,40 @@ namespace physics
 	geometry::Vector MeshCollider::Min() const noexcept
 	{
 		std::vector<geometry::Vector> mins;
-		for (auto& c in this->colliders)
+		for (auto& c : this->colliders)
 		{
 			mins.push_back(c->Min());
 		}
 		return *std::min(mins.begin(), mins.end());
 	}
+
+	/*Serializable* MeshCollider::Deserialize(const std::vector<byte>& v,
+			const size_t& index, const size_t& length) const
+	{
+		MeshCollider
+	}
+
+	unsigned char MeshCollider::GetByte(const size_t& index) const
+	{
+		return Serialize().at(index);
+	}
+
+	unsigned long MeshCollider::TotalByteSize() const noexcept
+	{
+		return sizeof(*this);
+	}
+
+	std::vector<unsigned char> MeshCollider::Serialize() const noexcept
+	{
+		std::vector<unsigned char> vec;
+		std::vector<unsigned char> bytes = Archive::ReadBytes((reader)&pos.x, sizeof(pos.x));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&pos.y, sizeof(pos.y));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&dimensions.x, sizeof(dimensions.x));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&dimensions.y, sizeof(dimensions.y));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		return vec;
+	}*/
 }

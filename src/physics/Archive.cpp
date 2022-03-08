@@ -111,6 +111,27 @@ namespace physics::serialization
 		return target;
 	}
 
+	std::vector<unsigned char> Archive::ReadBytesOfObject(const unsigned char* object,
+		const size_t& size, std::vector<size_t> memberIndexes)
+	{
+		std::vector<unsigned char> bytes;
+		if (!memberIndexes.size())
+			return ReadBytes(object, size);
+// wont matter.
+#if BIG_ENDIAN
+		return ReadBytes(object, size);
+// here's where its painful.
+#elif SMALL_ENDIAN
+		geometry::QuickSort(memberIndexes.begin(), 0, memberIndexes.size());
+		if (memberIndexes.at(0) == 0)
+			memberIndexes.erase(memberIndexes.begin());
+		if
+			
+#endif
+		return bytes;
+	}
+			
+
 	void Archive::WriteBytes(unsigned char* object, const std::vector<unsigned char>::const_iterator& bytes, const size_t& length)
 	{
 #if BIG_ENDIAN

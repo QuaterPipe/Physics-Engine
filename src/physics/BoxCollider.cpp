@@ -75,11 +75,36 @@ namespace physics
 		auto iter = v.begin() + index;
 		auto end = v.begin() + index + length;
 		writer byteWriter = NULL;
-		byteWriter = (writer)&b->pos;
-		Archive::WriteBytes(byteWriter, iter, sizeof(b->pos));
-		iter += sizeof(b->pos);
-		byteWriter = (writer)&b->dimensions;
-		Archive::WriteBytes(byteWriter, iter, sizeof(b->dimensions));
+		// x position.
+		byteWriter = (writer)&b->pos.x;
+		Archive::WriteBytes(byteWriter, iter, sizeof(b->pos.x));
+		if (iter + sizeof(b->pos.x) > end)
+		{
+			delete b;
+			throw std::runtime_error("not enough bytes given for object.");
+		}
+		iter += sizeof(b->pos.x);
+		// y position.
+		byteWriter = (writer)&b->pos.y;
+		Archive::WriteBytes(byteWriter, iter, sizeof(b->pos.y));
+		if (iter + sizeof(b->pos.y) > end)
+		{
+			delete b;
+			throw std::runtime_error("not enough bytes given for object.");
+		}
+		iter += sizeof(b->pos.y);
+		// x dimension.
+		byteWriter = (writer)&b->dimensions.x;
+		Archive::WriteBytes(byteWriter, iter, sizeof(b->dimensions.x));
+		if (iter + sizeof(b->dimensions.x) > end)
+		{
+			delete b;
+			throw std::runtime_error("not enough bytes given for object.");
+		}
+		iter += sizeof(b->dimensions.y);
+		// y dimension.
+		byteWriter = (writer)&b->dimensions.y;
+		Archive::WriteBytes(byteWriter, iter, sizeof(b->dimensions.y));
 		return b;
 	}
 
@@ -90,34 +115,20 @@ namespace physics
 
 	unsigned long BoxCollider::TotalByteSize() const noexcept
 	{
-		return Serialize().size();
+		return sizeof(*this);
 	}
 
 	std::vector<unsigned char> BoxCollider::Serialize() const noexcept
 	{
-		std::vector<unsigned char> bytes;
-		reader byteReader = NULL;
-#if BIG_ENDIAN
-		byteReader = (reader)&pos;
-		for (unsigned i = 0; i < sizeof(pos); i++)
-			bytes.push_back(byteReader[i]);
-		byteReader = (reader)&dimensions;
-		for (unsigned i = 0; i < sizeof(dimensions); i++)
-			bytes.push_back(byteReader[i]);
-#elif SMALL_ENDIAN
-		byteReader = (reader)&pos.x;
-		for (unsigned i = 0; i < sizeof(pos.x); i++)
-			bytes.push_back(byteReader[sizeof(pos.x) - 1 - i]);
-		byteReader = (reader)&pos.y;
-		for (unsigned i = 0; i < sizeof(pos.x); i++)
-			bytes.push_back(byteReader[sizeof(pos.y) - 1 - i]);
-		byteReader = (reader)&dimensions.x;
-		for (unsigned i = 0; i < sizeof(dimensions.x); i++)
-			bytes.push_back(byteReader[sizeof(dimensions.x) - 1 - i]);
-		byteReader = (reader)&dimensions.y;
-		for (unsigned i = 0; i < sizeof(dimensions.y); i++)
-			bytes.push_back(byteReader[sizeof(dimensions.y) - 1 - i]);
-#endif
-		return bytes;
+		std::vector<unsigned char> vec;
+		std::vector<unsigned char> bytes = Archive::ReadBytes((reader)&pos.x, sizeof(pos.x));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&pos.y, sizeof(pos.y));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&dimensions.x, sizeof(dimensions.x));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&dimensions.y, sizeof(dimensions.y));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		return vec;
 	}
 }

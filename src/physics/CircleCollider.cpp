@@ -49,51 +49,34 @@ namespace physics
 	{
 		CircleCollider* c = new CircleCollider();
 		auto iter = v.begin() + index;
-		const auto end = v.begin() + index + length;
+		auto end = v.begin() + index + length;
 		writer byteWriter = NULL;
-#if BIG_ENDIAN
-		byteWriter = (unsigned char*)&c->center;
-		for (int i = 0; i < sizeof(c->center); i++)
+		// x position.
+		byteWriter = (writer)&c->center.x;
+		Archive::WriteBytes(byteWriter, iter, sizeof(c->center.x));
+		if (iter + sizeof(c->center.x) > end)
 		{
-			byteWriter[i] = iter[i];
-			iter++;
-			if (iter > end)
-				throw std::runtime_error("Not enough bytes for serialization");
+			delete c;
+			throw std::runtime_error("not enough bytes given for object.");
 		}
-		byteWriter = (unsigned char*)&c->radius;
-		for (int i = 0; i < sizeof(c->radius); i++)
+		iter += sizeof(c->center.x);
+		// y position.
+		byteWriter = (writer)&c->center.y;
+		Archive::WriteBytes(byteWriter, iter, sizeof(c->center.y));
+		if (iter + sizeof(c->center.y) > end)
 		{
-			byteWriter[i] = iter[i];
-			iter++;
-			if (iter > end)
-				throw std::runtime_error("Not enough bytes for serialization");
+			delete c;
+			throw std::runtime_error("not enough bytes given for object.");
 		}
-#elif SMALL_ENDIAN
-		byteWriter = (unsigned char*)&c->center.x;
-		for (int i = 0; i < sizeof(c->center.x); i++)
+		iter += sizeof(c->center.y);
+		// radius.
+		byteWriter = (writer)&c->radius;
+		Archive::WriteBytes(byteWriter, iter, sizeof(c->radius));
+		if (iter + sizeof(c->radius) > end)
 		{
-			byteWriter[sizeof(c->center.x) - 1 - i] = iter[i];
-			iter++;
-			if (iter + sizeof(c->center.x) - 1 > end)
-				throw std::runtime_error("Not enough bytes for serialization");
+			delete c;
+			throw std::runtime_error("not enough bytes given for object.");
 		}
-		byteWriter = (unsigned char*)&c->center.y;
-		for (int i = 0; i < sizeof(c->center.y); i++)
-		{
-			byteWriter[sizeof(c->center.y) - 1 - i] = iter[i];
-			iter++;
-			if (iter + sizeof(c->center.y) - 1 > end)
-				throw std::runtime_error("Not enough bytes for serialization");
-		}
-		byteWriter = (unsigned char*)&c->radius;
-		for (int i = 0; i < sizeof(c->radius); i++)
-		{
-			byteWriter[sizeof(c->radius) - 1 - i] = iter[i];
-			iter++;
-			if (iter + sizeof(c->radius) - 1 > end)
-				throw std::runtime_error("Not enough bytes for serialization");
-		}
-#endif
 		return c;
 	}
 
@@ -104,34 +87,18 @@ namespace physics
 
 	unsigned long CircleCollider::TotalByteSize() const noexcept
 	{
-		return Serialize().size();
+		return sizeof(*this);
 	}
 
 	std::vector<unsigned char> CircleCollider::Serialize() const noexcept
 	{
-		std::vector<unsigned char> bytes;
-		reader byteReader = NULL;
-#if BIG_ENDIAN
-		byteReader = (reader)&center;
-		for (unsigned i = 0; i < sizeof(center); i++)
-			bytes.push_back(byteReader[i]);
-		byteReader = (reader)&radius;
-		for (unsigned i = 0; i < sizeof(radius); i++)
-			bytes.push_back(byteReader[i]);
-#elif SMALL_ENDIAN
-		byteReader = (reader)&center.x;
-		for (unsigned i = 0; i < sizeof(pos.x); i++)
-			bytes.push_back(byteReader[sizeof(pos.x) - 1 - i]);
-		byteReader = (reader)&pos.y;
-		for (unsigned i = 0; i < sizeof(pos.x); i++)
-			bytes.push_back(byteReader[sizeof(pos.y) - 1 - i]);
-		byteReader = (reader)&dimensions.x;
-		for (unsigned i = 0; i < sizeof(dimensions.x); i++)
-			bytes.push_back(byteReader[sizeof(dimensions.x) - 1 - i]);
-		byteReader = (reader)&dimensions.y;
-		for (unsigned i = 0; i < sizeof(dimensions.y); i++)
-			bytes.push_back(byteReader[sizeof(dimensions.y) - 1 - i]);
-#endif
-		return bytes;
+		std::vector<unsigned char> vec;
+		std::vector<unsigned char> bytes = Archive::ReadBytes((reader)&center.x, sizeof(center.x));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&center.y, sizeof(center.y));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		bytes = Archive::ReadBytes((reader)&radius, sizeof(radius));
+		vec.insert(vec.end(), bytes.begin(), bytes.end());
+		return vec;
 	}
 }
