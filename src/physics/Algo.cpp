@@ -16,7 +16,7 @@ namespace algo
 		geometry::Vector BCenter = tb.TransformVector(b->center);
 		f64 r = geometry::DistanceSquared(ta.TransformVector(ACenter), tb.TransformVector(BCenter));
 		// If the sum of their radii is greater than or equal to the distance between their centers
-		if (pow(a->radius + b->radius, 2) >= r)
+		if (SQRD(a->radius + b->radius) >= r)
 		{
 			geometry::Line l(ta.TransformVector(ACenter), tb.TransformVector(BCenter));
 			c.a = l.GetVectorAlongLine(a->radius);
@@ -105,7 +105,7 @@ namespace algo
 		if (geometry::DistanceSquared(closest, BCenter) > b->radius * b->radius)
 			return c;
 		auto VectorInCircle = [&] (const geometry::Vector& center, const f64& radius, const geometry::Vector point) {
-			f64 sqrDis = pow((center.x - point.x), 2) + pow((center.x - point.y), 2);
+			f64 sqrDis = SQRD(center.x - point.x) + SQRD(center.x - point.y);
 			return sqrDis <= radius * radius;
 		};
 		// if the polygon collider is inside the circle

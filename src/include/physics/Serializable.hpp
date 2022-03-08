@@ -3,7 +3,6 @@
 #include <fstream>
 #include <map>
 #include <stdint.h>
-#include <array>
 #include <typeinfo>
 #include <vector>
 namespace physics::serialization
@@ -14,8 +13,9 @@ namespace physics::serialization
 
 	struct DataPacket
 	{
-		std::array<unsigned char> bytes;
-		DataPacket(const std::array<unsigned char>& bytes) noexcept;
+		std::vector<unsigned char> bytes;
+		DataPacket(const size_t& size) noexcept;
+		DataPacket(const std::vector<unsigned char>& bytes) noexcept;
 		DataPacket operator+(const DataPacket& other) const noexcept;
 		void Reverse() noexcept;
 	}

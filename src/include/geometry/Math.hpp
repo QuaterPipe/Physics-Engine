@@ -16,11 +16,11 @@ typedef unsigned long ulong;
 typedef unsigned long long ulonglong;
 #define SQRD(X) \
 ( \
-	X * X\
+	(X) * (X)\
 )
 #define CUBD(X) \
 ( \
-	X * X * X \
+	(X) * (X) * (X) \
 )
 namespace geometry
 {

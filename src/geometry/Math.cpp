@@ -11,28 +11,25 @@ namespace geometry
 
 	f64 Distance(const Vector &a, const Vector &b) noexcept
 	{
-		f64 dis = (pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
-		if (dis < 0) {dis *= -1;}
+		f64 dis = SQRD(b.x - a.x) + SQRD(b.y - a.y);
 		return sqrt(dis);
 	}
 
 	f64 Distance(const Vector3& a, const Vector3& b) noexcept
 	{
-		f64 dis = (pow(b.x - a.x, 2) + pow(b.y - a.y, 2) + pow(b.z - a.z, 2));
-		if (dis < 0) {dis *= -1;}
+		f64 dis = (SQRD(b.x - a.x) + SQRD(b.y - a.y) + SQRD(b.z - a.z));
 		return sqrt(dis);
 	}
 
 	f64 DistanceSquared(const Vector& a, const Vector& b) noexcept
 	{
-		f64 dis = (pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
-		if (dis < 0) {dis *= -1;}
+		f64 dis = (SQRD(b.x - a.x) + SQRD(b.y - a.y));
 		return dis;
 	}
 
 	f64 DistanceSquared(const Vector3& a, const Vector3& b) noexcept
 	{
-		f64 dis = (pow(b.x - a.x, 2) + pow(b.y - a.y, 2) + pow(b.z - a.z, 2));
+		f64 dis = (SQRD(b.x - a.x) + SQRD(b.y - a.y) + SQRD(b.z - a.z));
 		if (dis < 0) {dis *= -1;}
 		return dis;
 	}

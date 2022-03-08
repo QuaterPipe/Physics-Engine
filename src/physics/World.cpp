@@ -9,7 +9,7 @@ namespace physics
 
 	void FrictionSolver::Solve(std::vector<Collision>& collisions, f64 dt) noexcept
 	{
-		for (Collision& cin collisions)
+		for (Collision& c: collisions)
 		{
 			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
 			std::cerr<<"DOING STUFFFFLESS GO\n";
@@ -25,13 +25,13 @@ namespace physics
 			j /= a->GetInvMass() + b->GetInvMass();
 			f64 jt = -rv.Dot(tangent);
 			jt /= (a->GetInvMass() + b->GetInvMass());
-			f64 mu = sqrt(pow(a->GetStaticFriction(), 2) + pow(b->GetStaticFriction(), 2));
+			f64 mu = sqrt(SQRD(a->GetStaticFriction()) + SQRD(b->GetStaticFriction()));
 			geometry::Vector frictionImpulse;
 			if (fabs(jt) < j * mu)
 				frictionImpulse = jt * tangent;
 			else
 			{
-				f64 dynFric = sqrt(pow(a->GetKineticFriction(), 2) + pow(b->GetKineticFriction(), 2));
+				f64 dynFric = sqrt(SQRD(a->GetKineticFriction()) + SQRD(b->GetKineticFriction()));
 				frictionImpulse = -j * tangent * dynFric;
 			}
 			a->ApplyForce(-b->GetInvMass() * frictionImpulse, c.points.b);

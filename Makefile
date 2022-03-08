@@ -8,11 +8,13 @@ checkSyntax:
 
 compileObjects:
 	g++ -c -Wall -std=c++17 src/physics/Algo.cpp -o bin/o/Algo.o
+	g++ -c -Wall -std=c++17 src/physics/Archive.cpp -o bin/o/Archive.o
 	g++ -c -Wall -std=c++17 src/physics/BoxCollider.cpp -o bin/o/BoxCollider.o
 	g++ -c -Wall -std=c++17 src/physics/CircleCollider.cpp -o bin/o/CircleCollider.o
 	g++ -c -Wall -std=c++17 src/physics/Collision.cpp -o bin/o/Collision.o
 	g++ -c -Wall -std=c++17 src/physics/Collider.cpp -o bin/o/Collider.o
 	g++ -c -Wall -std=c++17 src/physics/CollisionObject.cpp -o bin/o/CollisionObject.o
+	g++ -c -Wall -std=c++17 src/physics/DataPacket.cpp -o bin/o/DataPacket.o
 	g++ -c -Wall -std=c++17 src/physics/Display.cpp -o bin/o/Display.o
 	g++ -c -Wall -std=c++17 src/physics/Entity.cpp -o bin/o/Entity.o
 	g++ -c -Wall -std=c++17 src/physics/Hashable.cpp -o bin/o/Hashable.o
