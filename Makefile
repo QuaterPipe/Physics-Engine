@@ -37,6 +37,7 @@ compileObjects:
 
 debugCompileObjects:
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Algo.cpp -o bin/o/Algo.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Archive.cpp -o bin/o/Archive.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/BoxCollider.cpp -o bin/o/BoxCollider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/CircleCollider.cpp -o bin/o/CircleCollider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision.cpp -o bin/o/Collision.o

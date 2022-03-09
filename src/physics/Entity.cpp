@@ -3,7 +3,7 @@
 #include <cstring>
 namespace physics
 {
-
+	using namespace serialization;
 	Entity::Entity() noexcept
 	{
 		_name = "Entity";
@@ -125,5 +125,27 @@ namespace physics
 		_transform = _collider->GetTransform();
 		_sprite.setPosition(_transform.position.x, _transform.position.y);
 		_sprite.rotate(acos(_transform.rotation.a));
+	}
+
+	Serializable* Entity::Deserialize(const std::vector<byte>& v,
+			const size_t& index, const size_t& length) const
+	{
+		return NULL;
+	}
+
+	unsigned char Entity::GetByte(const size_t& index) const
+	{
+		return 0x01;
+	}
+
+	unsigned long Entity::TotalByteSize() const noexcept
+	{
+		return 0UL;
+	}
+
+	std::vector<unsigned char> Entity::Serialize() const noexcept
+	{
+		std::vector<unsigned char> vec;
+		return vec;
 	}
 }

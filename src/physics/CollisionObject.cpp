@@ -3,6 +3,8 @@
 #include <iostream>
 namespace physics
 {
+	using namespace serialization;
+
 	CollisionObject::CollisionObject() noexcept
 	{
 		_collider.reset(new BoxCollider());
@@ -179,90 +181,25 @@ namespace physics
 		_transform = t;
 	}
 
-	/*std::vector<unsigned char> CollisionObject::Serialize() const noexcept
+	Serializable* CollisionObject::Deserialize(const std::vector<byte>& v,
+			const size_t& index, const size_t& length) const
 	{
-		std::vector<unsigned char> v = _transform.Serialize();
-		std::vector<unsigned char> tmp = _lastTransform.Serialize();
-		v.insert(v.end(), tmp.begin(), tmp.end());
-		v.push_back(_collider->classCode);
-		tmp = _collider->Serialize();
-		v.insert(v.end(), tmp.begin(), tmp.end());
-		v.push_back((unsigned char)_isTrigger);
-		if (BIG_ENDIAN)
-		{
-			reader c = (reader)&_onCollision;
-			for (unsigned i = 0; i < sizeof(_onCollision); i++)
-			{
-				v.push_back(c[i]);
-			}
-		}
-		else
-		{
-			reader c = (reader)&_onCollision;
-			for (unsigned i = 0; i < sizeof(_onCollision); i++)
-			{
-				v.push_back(c[i]);
-			}
-		}
-		v.push_back(0xff);
-		v.push_back(0xff);
-		v.push_back(0xff);
-		return v;
-	}*/
-
-	/*serialization::Serializable* CollisionObject::Deserialize(std::vector<unsigned char> v) const
-	{
-		CollisionObject* c = new CollisionObject(*this);
-		auto iter = v.begin();
-		Transform* t = dynamic_cast<Transform*>(Transform().Deserialize(v));
-		c->SetTransform(*t);
-		Transform* lt = dynamic_cast<Transform*>(Transform().Deserialize(std::vector<unsigned char>(v.begin(), v.begin() + Transform().TotalByteSize())));
-		c->SetLastTransform(*lt);
-		f64 code = 0;
-		code = *iter;
-		iter++;
-		Collider* col = NULL;
-		for (auto& it in deserializerMaps)
-		{
-			if (it.first == code)
-			{
-				col = (Collider*)it.second->Deserialize(std::vector<unsigned char>(iter, v.end()));
-			}
-		}
-		if (!col)
-		{
-			throw std::runtime_error("Unkown class code found while parsing");
-		}
-		c->SetCollider(*col);
-		iter += col->TotalByteSize();
-		c->SetIsTrigger((bool) *iter);
-		iter++;
-		std::function<void(Collision& ,f64)> f;
-		if (BIG_ENDIAN)
-		{
-			writer c = (writer)&f;
-			for (unsigned i = 0; i < sizeof(f); i++)
-			{
-				c[i] = *iter;
-				iter++;
-			}
-		}
-		else
-		{
-			writer c = (writer)&f;
-			for (unsigned i = 0; i < sizeof(f); i++)
-			{
-				c[sizeof(f) - 1 - i] = *iter;
-				iter++;
-			}
-		}
-		c->SetOnCollisionFunction(f);
-		delete t;
-		delete lt;
-		return c;
+		return NULL;
 	}
-	const unsigned long CollisionObject::TotalByteSize() const noexcept
+
+	unsigned char CollisionObject::GetByte(const size_t& index) const
 	{
-		return _transform.TotalByteSize() * 2 + _collider->TotalByteSize() + sizeof(_onCollision) + 5;
-	}*/
+		return 0x01;
+	}
+
+	unsigned long CollisionObject::TotalByteSize() const noexcept
+	{
+		return 0UL;
+	}
+
+	std::vector<unsigned char> CollisionObject::Serialize() const noexcept
+	{
+		std::vector<unsigned char> vec;
+		return vec;
+	}
 }

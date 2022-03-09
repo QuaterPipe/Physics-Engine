@@ -4,6 +4,7 @@
 
 namespace physics
 {
+	struct Transform;
 	struct Transform : public serialization::Serializable, public Hashable
 	{
 		geometry::Vector position = geometry::Vector(0, 0);
@@ -11,6 +12,7 @@ namespace physics
 		geometry::Matrix2 scale = geometry::Matrix2();
 		geometry::Matrix2 rotation = geometry::Matrix2();
 		Transform() noexcept;
+		virtual ~Transform() noexcept;
 		bool operator==(const Transform& other) const noexcept;
 		bool operator!=(const Transform& other) const noexcept;
 		geometry::Matrix3 GetTransformationMatrix() const noexcept;

@@ -101,67 +101,25 @@ namespace physics
 		return *std::min(points.begin(), points.end()) + pos;
 	}
 
-	Serializable* BoxCollider::Deserialize(const std::vector<byte>& v,
+	Serializable* PolygonCollider::Deserialize(const std::vector<byte>& v,
 			const size_t& index, const size_t& length) const
 	{
-		BoxCollider* b = new BoxCollider();
-		auto iter = v.begin() + index;
-		auto end = v.begin() + index + length;
-		writer byteWriter = NULL;
-		// x position.
-		byteWriter = (writer)&b->pos.x;
-		Archive::WriteBytes(byteWriter, iter, sizeof(b->pos.x));
-		if (iter + sizeof(b->pos.x) > end)
-		{
-			delete b;
-			throw std::runtime_error("not enough bytes given for object.");
-		}
-		iter += sizeof(b->pos.x);
-		// y position.
-		byteWriter = (writer)&b->pos.y;
-		Archive::WriteBytes(byteWriter, iter, sizeof(b->pos.y));
-		if (iter + sizeof(b->pos.y) > end)
-		{
-			delete b;
-			throw std::runtime_error("not enough bytes given for object.");
-		}
-		iter += sizeof(b->pos.y);
-		// x dimension.
-		byteWriter = (writer)&b->dimensions.x;
-		Archive::WriteBytes(byteWriter, iter, sizeof(b->dimensions.x));
-		if (iter + sizeof(b->dimensions.x) > end)
-		{
-			delete b;
-			throw std::runtime_error("not enough bytes given for object.");
-		}
-		iter += sizeof(b->dimensions.y);
-		// y dimension.
-		byteWriter = (writer)&b->dimensions.y;
-		Archive::WriteBytes(byteWriter, iter, sizeof(b->dimensions.y));
-		return b;
+		return NULL;
 	}
 
-	unsigned char BoxCollider::GetByte(const size_t& index) const
+	unsigned char PolygonCollider::GetByte(const size_t& index) const
 	{
-		return Serialize().at(index);
+		return 0x01;
 	}
 
-	unsigned long BoxCollider::TotalByteSize() const noexcept
+	unsigned long PolygonCollider::TotalByteSize() const noexcept
 	{
-		return sizeof(*this);
+		return 0UL;
 	}
 
-	std::vector<unsigned char> BoxCollider::Serialize() const noexcept
+	std::vector<unsigned char> PolygonCollider::Serialize() const noexcept
 	{
 		std::vector<unsigned char> vec;
-		std::vector<unsigned char> bytes = Archive::ReadBytes((reader)&pos.x, sizeof(pos.x));
-		vec.insert(vec.end(), bytes.begin(), bytes.end());
-		bytes = Archive::ReadBytes((reader)&pos.y, sizeof(pos.y));
-		vec.insert(vec.end(), bytes.begin(), bytes.end());
-		bytes = Archive::ReadBytes((reader)&dimensions.x, sizeof(dimensions.x));
-		vec.insert(vec.end(), bytes.begin(), bytes.end());
-		bytes = Archive::ReadBytes((reader)&dimensions.y, sizeof(dimensions.y));
-		vec.insert(vec.end(), bytes.begin(), bytes.end());
 		return vec;
 	}
 }

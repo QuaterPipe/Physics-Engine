@@ -3,6 +3,8 @@
 
 namespace physics
 {
+	using namespace serialization;
+
 	const PhysicsMaterial PhysicsMaterial::Steel = PhysicsMaterial(0.74, 0.57, 0.63);
 	const PhysicsMaterial PhysicsMaterial::Glass = PhysicsMaterial(0.94, 0.40, 0.69);
 	const PhysicsMaterial PhysicsMaterial::Ice = PhysicsMaterial(0.10, 0.03, 0.63);
@@ -289,5 +291,27 @@ namespace physics
 	bool Rigidbody::UsesGravity() const noexcept
 	{
 		return _usesGravity;
+	}
+
+	Serializable* Rigidbody::Deserialize(const std::vector<byte>& v,
+			const size_t& index, const size_t& length) const
+	{
+		return NULL;
+	}
+
+	unsigned char Rigidbody::GetByte(const size_t& index) const
+	{
+		return 0x01;
+	}
+
+	unsigned long Rigidbody::TotalByteSize() const noexcept
+	{
+		return 0UL;
+	}
+
+	std::vector<unsigned char> Rigidbody::Serialize() const noexcept
+	{
+		std::vector<unsigned char> vec;
+		return vec;
 	}
 }
