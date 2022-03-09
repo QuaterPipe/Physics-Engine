@@ -176,6 +176,19 @@ namespace physics
 		return _velocity;
 	}
 
+	bool Rigidbody::IsKinematic() const noexcept
+	{
+		return _isKinematic;
+	}
+
+	void Rigidbody::Move(f64 offsetX, f64 offsetY) noexcept
+	{
+		if (_isKinematic)
+		{
+			_transform.position += geometry::Vector(offsetX, offsetY);
+		}
+	}
+
 	bool Rigidbody::NotEquals(const Hashable& other) const noexcept
 	{
 		Rigidbody r;
@@ -213,6 +226,11 @@ namespace physics
 	void Rigidbody::SetGravity(const geometry::Vector& grav) noexcept
 	{
 		_gravity = grav;
+	}
+
+	void Rigidbody::SetIsKinematic(bool isKinematic) noexcept
+	{
+		_isKinematic = isKinematic;
 	}
 
 	void Rigidbody::SetInertia(f64 inertia) noexcept

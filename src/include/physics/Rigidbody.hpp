@@ -32,6 +32,7 @@ namespace physics
 			f64 _angularVelocity = 0;
 			f64 _torque = 0;
 			bool _usesGravity = true;
+			bool _isKinematic = false;
 		public:
 			Rigidbody() noexcept;
 			Rigidbody(const Transform& t, Collider& c, bool isTrigger, f64 mass,
@@ -58,12 +59,16 @@ namespace physics
 			f64 GetRestitution() const noexcept;
 			f64 GetStaticFriction() const noexcept;
 			f64 GetTorque() const noexcept;
+			geometry::Vector GetVelocity() const noexcept;
+			bool IsKinematic() const noexcept;
+			void Move(f64 offsetX, f64 offsetY) noexcept;
 			virtual bool NotEquals(const Hashable& other) const noexcept override;
 			void SetAngularVelocity(f64 angularVelocity) noexcept;
 			void SetDrag(const geometry::Vector& drag) noexcept;
 			void SetForce(const geometry::Vector& force) noexcept;
 			void SetGravity(const geometry::Vector& grav) noexcept;
 			void SetInertia(f64 inertia) noexcept;
+			void SetIsKinematic(bool isKinematic) noexcept;
 			void SetKineticFriction(f64 kineticFriction) noexcept;
 			void SetMass(f64 mass) noexcept;
 			void SetPhysicsMaterial(const PhysicsMaterial& physicsMaterial) noexcept;
@@ -72,7 +77,6 @@ namespace physics
 			void SetTorque(f64 torque) noexcept;
 			void SetUsesGravity(bool usesGravity) noexcept;
 			void SetVelocity(const geometry::Vector& vel) noexcept;
-			geometry::Vector GetVelocity() const noexcept;
 			void Update(f64 dt) const noexcept;
 			bool UsesGravity() const noexcept;
 			virtual Serializable* Deserialize(const std::vector<byte>& v,
