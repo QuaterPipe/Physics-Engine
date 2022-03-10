@@ -33,7 +33,7 @@ namespace physics
 	{
 		virtual Collider* Clone() const = 0;
 		virtual ~Collider() noexcept;
-		virtual geometry::Vector GetCenterOfMass() const noexcept = 0;
+		virtual geometry::Vector GetCenter() const noexcept = 0;
 		virtual geometry::Vector Max() const noexcept = 0;
 		virtual geometry::Vector Min() const noexcept = 0;
 		virtual CollisionPoints TestCollision(

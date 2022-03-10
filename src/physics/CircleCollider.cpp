@@ -29,7 +29,7 @@ namespace physics
 		return new CircleCollider(*this);
 	}
 
-	geometry::Vector CircleCollider::GetCenterOfMass() const noexcept
+	geometry::Vector CircleCollider::GetCenter() const noexcept
 	{
 		return center;
 	}

@@ -33,8 +33,12 @@ namespace physics
 				f64 dynFric = sqrt(SQRD(a->GetKineticFriction()) + SQRD(b->GetKineticFriction()));
 				frictionImpulse = -j * tangent * dynFric;
 			}
+			std::cerr<<"doing stuff!!\n";
+			std::cerr<<a->GetVelocity();
+			std::cerr<<"adding: "<<-b->GetInvMass() * frictionImpulse<<"\n";
 			if (!a->IsKinematic())
 				a->ApplyForce(-b->GetInvMass() * frictionImpulse, c.points.b);
+			std::cerr<<a->GetVelocity();
 			if (!b->IsKinematic())
 				b->ApplyForce(-a->GetInvMass() * frictionImpulse, c.points.a);
 		}
@@ -48,6 +52,7 @@ namespace physics
 			Rigidbody* a = (Rigidbody*) c.a;
 			Rigidbody* b = (Rigidbody*) c.b;
 			f64 e = a->GetRestitution() > b->GetRestitution() ? a->GetRestitution(): b->GetRestitution();
+			std::cerr<<"doing stuff too!!\n";
 			if (!a->IsKinematic())
 				a->ApplyForce(e * -c.points.normal * c.points.depth * (b->GetMass() / (a->GetMass() + b->GetMass())), c.points.b);
 			if (!b->IsKinematic())

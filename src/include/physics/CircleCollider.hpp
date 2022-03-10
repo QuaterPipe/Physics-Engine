@@ -13,7 +13,7 @@ namespace physics
 		CircleCollider(const CircleCollider& c) noexcept;
 		~CircleCollider() noexcept;
 		Collider* Clone() const override;
-		virtual geometry::Vector GetCenterOfMass() const noexcept override;
+		virtual geometry::Vector GetCenter() const noexcept override;
 		geometry::Vector Max() const noexcept override;
 		geometry::Vector Min() const noexcept override;
 		virtual CollisionPoints TestCollision(

@@ -77,7 +77,7 @@ namespace physics
 			return geometry::Vector::Origin;
 	}
 
-	geometry::Vector PolygonCollider::GetCenterOfMass() const noexcept
+	geometry::Vector PolygonCollider::GetCenter() const noexcept
 	{
 		return getCentroid(this->points);
 	}

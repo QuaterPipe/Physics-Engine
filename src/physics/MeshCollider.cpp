@@ -53,12 +53,12 @@ namespace physics
 			return geometry::Vector::Origin;
 	}
 
-	geometry::Vector MeshCollider::GetCenterOfMass() const noexcept
+	geometry::Vector MeshCollider::GetCenter() const noexcept
 	{
 		std::vector<geometry::Vector> coms;
 		for (Collider* c : colliders)
 		{
-			coms.push_back(c->GetCenterOfMass());
+			coms.push_back(c->GetCenter());
 		}
 		return getCentroid(coms);
 	}

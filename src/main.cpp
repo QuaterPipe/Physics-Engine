@@ -38,6 +38,5 @@ int main()
 	{
 		Time::Tick();
 		s.Update(Time::deltaTime);
-		std::cerr<<"huh??"<<((Rigidbody&)s.GetEntity(1).GetCollisionObject()).GetInvMass()<<"\n";
 	}
 }

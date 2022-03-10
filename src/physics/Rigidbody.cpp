@@ -87,7 +87,7 @@ namespace physics
 	 	_velocity += force;
 		if (contactPoint != geometry::Vector::Infinity && force.GetMagnitudeQuick())
 		{
-			geometry::Vector rF = _collider->GetCenterOfMass() - contactPoint;
+			geometry::Vector rF = _collider->GetCenter() - contactPoint;
 			// τ = r*F*sinθ
 			_torque += rF.GetMagnitudeQuick() * force.GetMagnitudeQuick() * sin(rF.Angle(force));
 			_angularVelocity = _torque * _invInertia;

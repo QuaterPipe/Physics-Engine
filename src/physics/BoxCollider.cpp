@@ -39,7 +39,7 @@ namespace physics
 		return new BoxCollider(*this);
 	}
 
-	geometry::Vector BoxCollider::GetCenterOfMass() const noexcept
+	geometry::Vector BoxCollider::GetCenter() const noexcept
 	{
 		return geometry::Vector(x + width / 2, y + height / 2);
 	}
