@@ -12,7 +12,6 @@ namespace physics
 		for (Collision& c: collisions)
 		{
 			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
-			std::cerr<<"DOING STUFFFFLESS GO\n";
 			Rigidbody* a = (Rigidbody*) c.a;
 			Rigidbody* b = (Rigidbody*) c.b;
 			geometry::Vector rv = b->GetVelocity() - a->GetVelocity();
@@ -156,11 +155,6 @@ namespace physics
 				Transform trans = a->GetTransform();
 				geometry::Vector min = cldr.Min() + a->GetPosition();
 				geometry::Vector max = cldr.Max() + a->GetPosition();
-				//min = trans.TransformVector(min);
-				//max = trans.TransformVector(max);
-				std::cerr<<"m:: "<<min<<"\n";
-				std::cerr<<"maxin "<<max<<"\n";
-				std::cerr<<"transin "<<a->GetTransform()<<" A\n";
 				BoundingBoxA.x = min.x;
 				BoundingBoxA.y = min.y;
 				BoundingBoxA.width = max.x - min.x;
@@ -170,24 +164,17 @@ namespace physics
 				trans = b->GetTransform();
 				min = cldr.Min() + b->GetPosition();
 				max = cldr.Max() + b->GetPosition();
-				//min = trans.TransformVector(min);
-				//max = trans.TransformVector(max);
-				std::cerr<<"m:: "<<min<<"\n";
-				std::cerr<<"maxin "<<max<<"\n";
-				std::cerr<<"transin "<<b->GetTransform()<<" B\n";
 				BoundingBoxB.x = min.x;
 				BoundingBoxB.y = min.y;
 				BoundingBoxB.width = max.x - min.x;
 				BoundingBoxB.height = max.y - min.y;
 				if (SquareOverLaps(BoundingBoxA, BoundingBoxB))
 				{
-					std::cerr<<"Overlaps?\n";
 					CollisionPoints points = a->GetCollider().TestCollision(
 						a->GetTransform(), &b->GetCollider(), b->GetTransform()
 					);
 					if (points.hasCollision)
 					{
-						std::cerr<<"COLIOSIONSSS\n";
 						Collision c;
 						c.a = a;
 						c.b = b;
@@ -287,7 +274,6 @@ namespace physics
 			t.rotation.Set(acos(t.rotation.a) + rigidbody->GetAngularVelocity());
 			t.position.Set(newPosition.x, newPosition.y);
 			rigidbody->SetTransform(t);
-			rigidbody->SetForce(geometry::Vector(0, 0));
 			//rigidbody->Update(dt);
 		}
 	}

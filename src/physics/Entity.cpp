@@ -11,13 +11,13 @@ namespace physics
 		_transform = Transform();
 	}
 
-	Entity::Entity(const std::string& name, CollisionObject& c, const Transform& t, const sf::Sprite& s) noexcept
+	Entity::Entity(const std::string& name, CollisionObject& c, const sf::Sprite& s) noexcept
 	{
 		_name = name;
 		_collider.reset(c.Clone());
 		_sprite = s;
 		_sprite.setPosition(_transform.position.x, _transform.position.y);
-		_transform = t;
+		_transform = _collider->GetTransform();
 	}
 
 	Entity::Entity(const Entity& e) noexcept
@@ -31,7 +31,7 @@ namespace physics
 		_sprite.setPosition(_transform.position.x, _transform.position.y);
 	}
 
-	Entity::~Entity()
+	Entity::~Entity() noexcept
 	{
 	}
 
@@ -118,6 +118,7 @@ namespace physics
 		_transform = t;
 		_sprite.setPosition(t.position.x, t.position.y);
 		_sprite.setRotation(acos(_transform.rotation.a));
+		_collider->SetTransform(t);
 	}
 
 	void Entity::Update() noexcept

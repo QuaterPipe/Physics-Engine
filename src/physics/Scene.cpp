@@ -78,6 +78,11 @@ namespace physics
 		_entities.emplace_back(ptr);
 	}
 
+	Entity& Scene::GetEntity(const size_t& index) noexcept
+	{
+		return *_entities.at(index);
+	}
+
 	void Scene::RemoveEntity(Entity& e) noexcept
 	{
 		size_t ind;

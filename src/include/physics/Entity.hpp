@@ -17,7 +17,7 @@ namespace physics
 		public:
 			unsigned short ClassCode = 0x07;
 			Entity() noexcept;
-			Entity(const std::string& name, CollisionObject& c, const Transform& t, const sf::Sprite& s) noexcept;
+			Entity(const std::string& name, CollisionObject& c, const sf::Sprite& s) noexcept;
 			Entity(const Entity& e) noexcept;
 			virtual Entity& operator=(const Entity& other) noexcept;
 			virtual ~Entity() noexcept;

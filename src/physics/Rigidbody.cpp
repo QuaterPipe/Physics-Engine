@@ -1,5 +1,4 @@
 #include "../include/physics/Rigidbody.hpp"
-#include "../include/physics/OstreamOverloads.hpp"
 
 namespace physics
 {
@@ -42,7 +41,23 @@ namespace physics
 	{
 		_isDynamic = true;
 		_mass = r.GetMass();
+		if (_mass)
+			_invMass = 1 / _mass;
+		else
+			_invMass = 0;
+		
+		_inertia = r.GetInertia();
+		if (!_inertia)
+			_invInertia = 1 / _inertia;
+		else
+			_invInertia = 0;
+		_torque = r.GetTorque();
+		_angularVelocity = r.GetAngularVelocity();
 		_usesGravity = r.UsesGravity();
+		_isKinematic = r.IsKinematic();
+		_gravity = r.GetGravity();
+		_velocity = r.GetVelocity();
+		_drag = r.GetDrag();
 		_physicsMaterial.staticFriction = r.GetStaticFriction();
 		_physicsMaterial.kineticFriction = r.GetKineticFriction();
 		_physicsMaterial.restitution = r.GetRestitution();
@@ -120,7 +135,7 @@ namespace physics
 
 	geometry::Vector Rigidbody::GetForce() const noexcept
 	{
-		return _force;
+		return _mass * _velocity;
 	}
 
 	geometry::Vector Rigidbody::GetGravity() const noexcept
@@ -218,11 +233,6 @@ namespace physics
 	void Rigidbody::SetDrag(const geometry::Vector& drag) noexcept
 	{
 		_drag = drag;
-	}
-
-	void Rigidbody::SetForce(const geometry::Vector& force) noexcept
-	{
-		_force = force;
 	}
 
 	void Rigidbody::SetGravity(const geometry::Vector& grav) noexcept

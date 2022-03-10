@@ -21,21 +21,23 @@ int main()
 	rigid1.SetTransform(t);
 	rigid1.SetCollider(BoxCollider(Vector::Origin, Vector(50, 50)));
 	rigid1.SetMass(50);
-	Entity e1("Entity1", rigid1, t, box);
+	Entity e1("Entity1", rigid1, box);
 	Rigidbody rigid2;
 	box.scale(.4, .4);
 	box.setOrigin(10, 10);
-	t.position.Set(150, 75);
+	t.position.Set(200, 50);
+	rigid2.SetVelocity(Vector(-10, 0));
 	rigid2.SetUsesGravity(false);
 	rigid2.SetCollider(BoxCollider(Vector::Origin, Vector(20, 20)));
 	rigid2.SetTransform(t);
-	rigid2.SetMass(50);
-	Entity e2("Entity2", rigid2, t, box);
+	rigid2.SetMass(20);
+	Entity e2("Entity2", rigid2, box);
 	s.AddEntity(e1);
 	s.AddEntity(e2);
 	while (s.display->WindowIsOpen())
 	{
 		Time::Tick();
 		s.Update(Time::deltaTime);
+		std::cerr<<"huh??"<<((Rigidbody&)s.GetEntity(1).GetCollisionObject()).GetInvMass()<<"\n";
 	}
 }

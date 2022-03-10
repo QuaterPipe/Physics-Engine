@@ -21,7 +21,6 @@ namespace physics
 	{
 		protected:
 			geometry::Vector _gravity = geometry::Vector(0, -9.81);
-			geometry::Vector _force = geometry::Vector(1, 1);
 			geometry::Vector _velocity = geometry::Vector(0, 0);
 			geometry::Vector _drag = geometry::Vector(1e-3, 1e-3);
 			f64 _mass = 1;
@@ -65,7 +64,6 @@ namespace physics
 			virtual bool NotEquals(const Hashable& other) const noexcept override;
 			void SetAngularVelocity(f64 angularVelocity) noexcept;
 			void SetDrag(const geometry::Vector& drag) noexcept;
-			void SetForce(const geometry::Vector& force) noexcept;
 			void SetGravity(const geometry::Vector& grav) noexcept;
 			void SetInertia(f64 inertia) noexcept;
 			void SetIsKinematic(bool isKinematic) noexcept;
