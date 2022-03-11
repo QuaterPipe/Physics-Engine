@@ -6,9 +6,9 @@ namespace physics
 	struct PhysicsMaterial
 	{
 		public:
-			f64 staticFriction = 0;
-			f64 kineticFriction = 0;
-			f64 restitution = 0;
+			f64 staticFriction = 1;
+			f64 kineticFriction = 1;
+			f64 restitution = 1;
 			PhysicsMaterial() noexcept;
 			PhysicsMaterial(f64 staticFriction, f64 kineticFriction, f64 restitution) noexcept;
 			static const PhysicsMaterial Steel;

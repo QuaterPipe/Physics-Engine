@@ -7,59 +7,6 @@
 namespace physics
 {
 
-	void FrictionSolver::Solve(std::vector<Collision>& collisions, f64 dt) noexcept
-	{
-		for (Collision& c: collisions)
-		{
-			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
-			Rigidbody* a = (Rigidbody*) c.a;
-			Rigidbody* b = (Rigidbody*) c.b;
-			geometry::Vector rv = b->GetVelocity() - a->GetVelocity();
-			geometry::Vector tangent = rv - rv.Dot(c.points.normal) * c.points.normal;
-			tangent.Normalize();
-			f64 velAlongNormal = rv.Dot(c.points.normal);
-			if (velAlongNormal > 0) continue;
-			f64 e = std::min(a->GetRestitution(), b->GetRestitution());
-			f64 j = -(1 + e) * velAlongNormal;
-			j /= a->GetInvMass() + b->GetInvMass();
-			f64 jt = -rv.Dot(tangent);
-			jt /= (a->GetInvMass() + b->GetInvMass());
-			f64 mu = sqrt(SQRD(a->GetStaticFriction()) + SQRD(b->GetStaticFriction()));
-			geometry::Vector frictionImpulse;
-			if (fabs(jt) < j * mu)
-				frictionImpulse = jt * tangent;
-			else
-			{
-				f64 dynFric = sqrt(SQRD(a->GetKineticFriction()) + SQRD(b->GetKineticFriction()));
-				frictionImpulse = -j * tangent * dynFric;
-			}
-			std::cerr<<"doing stuff!!\n";
-			std::cerr<<a->GetVelocity();
-			std::cerr<<"adding: "<<-b->GetInvMass() * frictionImpulse<<"\n";
-			if (!a->IsKinematic())
-				a->ApplyForce(-b->GetInvMass() * frictionImpulse, c.points.b);
-			std::cerr<<a->GetVelocity();
-			if (!b->IsKinematic())
-				b->ApplyForce(-a->GetInvMass() * frictionImpulse, c.points.a);
-		}
-	}
-	//bouncing
-	void ImpulseSolver:: Solve(std::vector<Collision>& collisions, f64 dt) noexcept
-	{
-		for (Collision& c: collisions)
-		{
-			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
-			Rigidbody* a = (Rigidbody*) c.a;
-			Rigidbody* b = (Rigidbody*) c.b;
-			f64 e = a->GetRestitution() > b->GetRestitution() ? a->GetRestitution(): b->GetRestitution();
-			std::cerr<<"doing stuff too!!\n";
-			if (!a->IsKinematic())
-				a->ApplyForce(e * -c.points.normal * c.points.depth * (b->GetMass() / (a->GetMass() + b->GetMass())), c.points.b);
-			if (!b->IsKinematic())
-				b->ApplyForce(e * c.points.normal * c.points.depth * (a->GetMass() / (a->GetMass() + b->GetMass())), c.points.a);
-		}
-	}
-
 	void PositionalCorrectionSolver::Solve(std::vector<Collision>& collisions, f64 dt) noexcept
 	{
 		for (Collision& c: collisions)
@@ -292,8 +239,7 @@ namespace physics
 
 	DynamicsWorld::DynamicsWorld() noexcept
 	{
-		_solvers.push_back(new ImpulseSolver());
-		_solvers.push_back(new FrictionSolver());
+		_solvers.push_back(new PhysicsSolver());
 		//_solvers.push_back(new PositionalCorrectionSolver());
 	}
 }

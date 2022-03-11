@@ -48,6 +48,7 @@ debugCompileObjects:
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Hashable.cpp -o bin/o/Hashable.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/MeshCollider.cpp -o bin/o/MeshCollider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/PhysicsSolver.cpp -o bin/o/PhysicSolver9.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/PolygonCollider.cpp -o bin/o/PolygonCollider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Rigidbody.cpp -o bin/o/Rigidbody.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Scene.cpp -o bin/o/Scene.o

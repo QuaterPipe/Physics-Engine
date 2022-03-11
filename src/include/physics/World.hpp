@@ -10,13 +10,7 @@ namespace physics
 			virtual void Solve(std::vector<Collision>& collisions, f64 dt) noexcept = 0;
 	};
 
-	class FrictionSolver : public Solver
-	{
-		public:
-			void Solve(std::vector<Collision>& collisions, f64 dt) noexcept override;
-	};
-
-	class ImpulseSolver : public Solver
+	class PhysicsSolver : public Solver
 	{
 		public:
 			void Solve(std::vector<Collision>& collisions, f64 dt) noexcept override;

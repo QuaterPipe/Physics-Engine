@@ -13,9 +13,14 @@ namespace physics
 
 	struct CollisionPoints
 	{
+		// the deepest point into collider b that is a part of a.
 		geometry::Vector a;
+		// the deepest poin into collider a that is a part of b.
 		geometry::Vector b;
+		// it i sb - a(usually) is always pointint in the direction
+		// to push a out of b in the shortest distance.
 		geometry::Vector normal;
+		// The distance between the two deepest points.
 		f64 depth = 0;
 		bool hasCollision = false;
 		inline bool operator==(const CollisionPoints& other) const noexcept
