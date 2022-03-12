@@ -1,3 +1,4 @@
 bin/o/
-*.cpp
+test.cpp
 *.log
+test/

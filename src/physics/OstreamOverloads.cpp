@@ -15,7 +15,7 @@ namespace physics
 	std::ostream& operator<<(std::ostream& os, const Transform& t)
 	{
 		os << t.position;
-		os << t.rotation;
+		os << "\n" << t.rotation << "\n";
 		return os << t.scale;
 	}
 

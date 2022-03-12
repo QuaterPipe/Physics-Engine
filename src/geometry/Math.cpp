@@ -105,25 +105,42 @@ namespace geometry
 
 	Vector VectorOfIntersect(const Line& a, const Line& b, const bool& isInfLine) noexcept
 	{
-		auto det = [&](Vector Va, Vector Vb) -> f64
+		auto det = [](std::tuple<f64, f64> a, std::tuple<f64, f64> b) -> f64
 		{
-			return Va.x * Vb.y - Va.y * Vb.x;
+			return std::get<0>(a) * std::get<1>(b) - std::get<1>(a) * std::get<0>(b);
 		};
 
-		auto xdiff = Vector(a.a.x - a.b.x, b.a.x - b.b.x);
-		auto ydiff = Vector(a.a.y - a.b.y, b.a.y - b.b.y);
+		auto xdiff = std::tuple<f64, f64>(a.a().x - a.b().x, b.a().x - b.b().x);
+		auto ydiff = std::tuple<f64, f64>(a.a().y - a.b().y, b.a().y - b.b().y);
 		f64 div = det(xdiff, ydiff);
 		if (div == 0) {return Vector::Infinity;}
-		auto d = Vector(det(a.a, a.b), det(b.a, b.b));
+		auto d = std::tuple<f64, f64>(det(std::get<0>(a.ToTuple()), std::get<1>(a.ToTuple())), det(std::get<0>(b.ToTuple()), std::get<1>(b.ToTuple())));
 		f64 x = det(d, xdiff) / div;
 		f64 y = det(d, ydiff) / div;
 		Vector p = Vector(x, y);
 		if (isInfLine) {return p;}
-		if ((DistanceSquared(a.a(), p) + DistanceSquared(a.b(), p) == (a.length() * a.length()))
-			&& (DistanceSquared(b.a(), p) + DistanceSquared(b.b(), p) == (b.length() * b.length())))
+		if ((Distance(a.a(), p) + Distance(a.b(), p) == a.length()) && (Distance(b.a(), p) + Distance(b.b(), p) == b.length()))
 		{
 			return p;
 		}
 		return Vector::Infinity;
+		/*auto det = [&](Vector A, Vector B) -> f64 {
+			return A.x * B.y - A.y * B.x;
+		};
+		Vector xdiff = Vector(a.a.x - a.b.x, b.a.x - b.b.x);
+		Vector ydiff = Vector(a.a.y - a.b.y, b.a.y - b.b.y);
+		f64 div = det(xdiff, ydiff);
+		if (fabs(div) < 0.00001)
+			return Vector::Infinity;
+		Vector d = Vector(det(a.a, a.b), det(b.a, b.b));
+		f64 x = det(d, xdiff) / div;
+		f64 y = det(d, ydiff) / div;
+		Vector p = Vector(x, y);
+		if (isInfLine)
+			return p;
+		if ((DistanceSquared(a.a(), p) + DistanceSquared(a.b(), p) == SQRD(a.length())) && (DistanceSquared(b.a(), p) + DistanceSquared(b.b(), p) == SQRD(b.length())))
+		{
+			return p;
+		}*/
 	}
 }

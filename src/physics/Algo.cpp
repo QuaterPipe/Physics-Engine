@@ -209,59 +209,117 @@ namespace algo
 		}
 		for (const geometry::Vector& v: b->points)
 		{
-			BPoints.push_back(ta.TransformVector(v) + b->pos);
+			BPoints.push_back(tb.TransformVector(v) + b->pos);
 		}
-		//check every point : collider b if it intersects with a
-		std::vector<geometry::Vector> pointIntersectsB;
+		bool BPointsInA = false;
 		for (const geometry::Vector& p: BPoints)
 		{
 			if (PolygonColliderVectorIsColliding(a, ta, p))
 			{
-				pointIntersectsB.push_back(p);
+				BPointsInA = true;
 			}
 		}
-		if (!pointIntersectsB.size())
-			return c;
-		geometry::Vector closest = pointIntersectsB.at(0);
-		bool reached = false;
-		geometry::Vector centroidA = getCentroid(APoints);
-		for (const geometry::Vector& p: pointIntersectsB)
-		{
-			if (!reached)
-			{
-				reached = true; closest = p; continue;
-			}
-			if (geometry::DistanceSquared(p, centroidA) < geometry::DistanceSquared(closest, centroidA))
-				closest = p; 
-		}
-		c.b = closest;
-		std::vector<geometry::Vector> pointIntersectsA;
+		bool APointsInB = false;
 		for (const geometry::Vector& p: APoints)
 		{
 			if (PolygonColliderVectorIsColliding(b, tb, p))
 			{
-				pointIntersectsA.push_back(p );
+				APointsInB = true;
 			}
 		}
-		if (!pointIntersectsA.size())
+		auto intersections = GetIntersectionsBetweenTwoPolygons(a, ta, b, tb);
+		if (!intersections.size())
 			return c;
-		closest = geometry::Vector::Origin;
-		reached = false;
-		geometry::Vector centroidB = getCentroid(BPoints);
-		for (const geometry::Vector& p: pointIntersectsA)
+		if (BPointsInA)
 		{
-			if (!reached)
+			geometry::Vector closest;
+			f64 distance = 0;
+			bool reached = false;
+			geometry::Vector centroid = getCentroid(APoints);
+			for (geometry::Vector& v: BPoints)
 			{
-				reached = true; closest = p; continue;
+				if (!reached)
+				{
+					reached = true;
+					closest = v;
+					distance = geometry::DistanceSquared(centroid, v);
+				}
+				if (distance > geometry::DistanceSquared(centroid, v))
+				{
+					closest = v;
+					distance = geometry::DistanceSquared(centroid, closest);
+				}
 			}
-			if (geometry::DistanceSquared(p, centroidB) < geometry::DistanceSquared(closest, centroidB))
-			{
-				closest = p;
-			}
+			c.b = closest;
 		}
-		c.a = closest;
+		else
+		{
+			geometry::Vector closest;
+			f64 distance = 0;
+			bool reached = false;
+			geometry::Vector centroid = getCentroid(APoints);
+			for (geometry::Vector& v: intersections)
+			{
+				if (!reached)
+				{
+					reached = true;
+					closest = v;
+					distance = geometry::DistanceSquared(centroid, v);
+				}
+				if (distance > geometry::DistanceSquared(centroid, v))
+				{
+					closest = v;
+					distance = geometry::DistanceSquared(centroid, closest);
+				}
+			}
+			c.b = closest;
+		}
+		if (APointsInB)
+		{
+			geometry::Vector closest;
+			f64 distance = 0;
+			bool reached = false;
+			geometry::Vector centroid = getCentroid(BPoints);
+			for (geometry::Vector& v: APoints)
+			{
+				if (!reached)
+				{
+					reached = true;
+					closest = v;
+					distance = geometry::DistanceSquared(centroid, v);
+				}
+				if (distance > geometry::DistanceSquared(centroid, v))
+				{
+					closest = v;
+					distance = geometry::DistanceSquared(centroid, closest);
+				}
+			}
+			c.a = closest;
+		}
+		else
+		{
+			geometry::Vector closest;
+			f64 distance = 0;
+			bool reached = false;
+			geometry::Vector centroid = getCentroid(BPoints);
+			for (geometry::Vector& v: intersections)
+			{
+				if (!reached)
+				{
+					reached = true;
+					closest = v;
+					distance = geometry::DistanceSquared(centroid, v);
+				}
+				if (distance > geometry::DistanceSquared(centroid, v))
+				{
+					closest = v;
+					distance = geometry::DistanceSquared(centroid, closest);
+				}
+			}
+			c.a = closest;
+		}
 		c.depth = geometry::Distance(c.a, c.b);
-		c.normal = (c.b - c.a);
+		c.normal = c.b - c.a;
 		c.normal.Normalize();
 		c.hasCollision = true;
 		return c;
@@ -523,6 +581,8 @@ namespace algo
 			APoints.push_back(ta.TransformVector(v) + a->pos);
 		}
 		geometry::Vector max = (*max_element(APoints.begin(), APoints.end()));
+		if (b.x > max.x)
+			return false;
 		geometry::Line line(b, geometry::Vector(max.x + (1 * max.x > b.x ? 1 : -1), b.y));
 		std::vector<geometry::Vector> listOfIntersections = std::vector<geometry::Vector>();
 		for (size_t i = 0; i < APoints.size(); i++)
@@ -535,5 +595,28 @@ namespace algo
 			}
 		}
 		return listOfIntersections.size() % 2;
+	}
+
+	std::vector<geometry::Vector> GetIntersectionsBetweenTwoPolygons(
+		const PolygonCollider* a, const Transform& ta,
+		const PolygonCollider* b, const Transform& tb
+	)
+	{
+		std::vector<geometry::Vector> intersections;
+		for (size_t i = 0; i < a->points.size(); i++)
+		{
+			geometry::Line ALine(ta.TransformVector(a->points.at(i)),
+				ta.TransformVector(a->points.at((i + 1) % a->points.size())));
+			for (size_t j = 0; j < b->points.size(); j++)
+			{
+				geometry::Line BLine(tb.TransformVector(b->points.at(j)), 
+					tb.TransformVector(b->points.at((j + 1) % b->points.size())));
+				if (geometry::Intersecting(ALine, BLine))
+				{
+					intersections.push_back(geometry::VectorOfIntersect(ALine, BLine));
+				}
+			}
+		}
+		return intersections;
 	}
 }

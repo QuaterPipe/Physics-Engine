@@ -1,12 +1,24 @@
 all: compilePhysics link run
 debug: debugCompileObjects debugLink run
+test: compileTest runTest
 
 checkSyntax:
 	g++ -fsyntax-only -std=c++17 src/physics/*.cpp
 	g++ -fsyntax-only -std=c++17 src/geometry/*.cpp
 	g++ -fsyntax-only -std=c++17 src/main.cpp
 
+compileTest:
+	g++ -c -Wall -std=c++17 test/TestCollision.cpp -o test/TestCollision.o
+	ar rcs test/libtest.a test/*.o
+	ranlib test/libtest.a
+	rm test/*.o
+	g++ -g -rdynamic -lX11 -pthread -Wl,-rpath,test/bin -Wall -std=c++17 test/main.cpp -o test/bin/main test/libtest.a -L lib -lphysics -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network
+
+runTest:
+	./test/bin/main
+
 compileObjects:
+	rm lib/libphysics.a
 	g++ -c -Wall -std=c++17 src/physics/Algo.cpp -o bin/o/Algo.o
 	g++ -c -Wall -std=c++17 src/physics/Archive.cpp -o bin/o/Archive.o
 	g++ -c -Wall -std=c++17 src/physics/BoxCollider.cpp -o bin/o/BoxCollider.o
@@ -36,6 +48,7 @@ compileObjects:
 	rm bin/o/*.o
 
 debugCompileObjects:
+	rm lib/libphysics.a
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Algo.cpp -o bin/o/Algo.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Archive.cpp -o bin/o/Archive.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/BoxCollider.cpp -o bin/o/BoxCollider.o
@@ -48,7 +61,7 @@ debugCompileObjects:
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Hashable.cpp -o bin/o/Hashable.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/MeshCollider.cpp -o bin/o/MeshCollider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/PhysicsSolver.cpp -o bin/o/PhysicSolver9.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/PhysicsSolver.cpp -o bin/o/PhysicSolver.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/PolygonCollider.cpp -o bin/o/PolygonCollider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Rigidbody.cpp -o bin/o/Rigidbody.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Scene.cpp -o bin/o/Scene.o
