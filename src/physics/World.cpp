@@ -16,11 +16,11 @@ namespace physics
 			Rigidbody* b = (Rigidbody*) c.b;
 			double percentage = 0.2;
 			double slop = 0.01;
-			double correction = std::max(c.points.depth - slop, 0.0) / (a->GetInvMass() + b->GetInvMass()) * percentage;
+			geometry::Vector correction = std::max(c.points.depth - slop, 0.0) / (a->GetInvMass() + b->GetInvMass()) * percentage * c.points.normal;
 			geometry::Vector aPos = a->GetPosition();
 			geometry::Vector bPos = b->GetPosition();
-			aPos -= a->GetInvMass() * correction * dt;
-			bPos += b->GetInvMass() * correction * dt;
+			aPos -= a->GetInvMass() * correction;
+			bPos += b->GetInvMass() * correction;
 			if (!a->IsKinematic())
 				a->SetPosition(aPos);
 			if (!b->IsKinematic())

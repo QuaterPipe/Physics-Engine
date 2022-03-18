@@ -119,6 +119,8 @@ namespace physics
 		{
 			if (dt + _physicsUpdateCounter.total > 1000 / physicsUpdateFrequency)
 			{
+				//std::cout<<"Physics update: "<<_physicsUpdateCounter.total + dt<<"\n";
+				//std::cout<<"PhysicsUpdateFrequency: "<<1000 / physicsUpdateFrequency<<"\n";
 				_world.Update(_physicsUpdateCounter.total + dt);
 				_world.ResolveCollisions(_physicsUpdateCounter.total + dt);
 				_physicsUpdateCounter.total = 0;

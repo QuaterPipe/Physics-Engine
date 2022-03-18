@@ -1,4 +1,6 @@
 #include "../include/physics/Rigidbody.hpp"
+#include "../include/physics/OstreamOverloads.hpp"
+#include <iostream>
 
 namespace physics
 {
@@ -84,7 +86,9 @@ namespace physics
 
 	void Rigidbody::ApplyForce(const geometry::Vector& force, const geometry::Vector& contactPoint) noexcept
 	{
+		//std::cerr<<"this velocity: "<<_velocity<<", force: "<<force<<"\n";
 	 	_velocity += force;
+		//std::cerr<<"new velocity: "<<_velocity<<"\n";
 		if (contactPoint != geometry::Vector::Infinity && force.GetMagnitudeQuick())
 		{
 			geometry::Vector rF = _collider->GetCenter() - contactPoint;

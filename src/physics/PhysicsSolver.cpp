@@ -13,38 +13,28 @@ namespace physics
 			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
 			Rigidbody* a = (Rigidbody*) c.a;
 			Rigidbody* b = (Rigidbody*) c.b;
-			double velocityAlongNormal = (b->GetVelocity() - a->GetVelocity()).Dot(c.points.normal);
-			// impulse scalar
-			double ImpulseScalar = -(1 + std::min(a->GetRestitution(), b->GetRestitution())) *
-				velocityAlongNormal;
-			ImpulseScalar /= (a->GetInvMass() + b->GetInvMass());
-			// Vr = b vel - a vel
-			//tangent = Vr - (Vr dot Normal) * normal
-			geometry::Vector tangent = (b->GetVelocity() - a->GetVelocity()) 
-			- ((b->GetVelocity() - a->GetVelocity()).Dot(c.points.normal)) * c.points.normal;
-			tangent.Normalize();
-			// magnitude of friction
-			double magnitude = (b->GetVelocity() - a->GetVelocity()).Dot(tangent);
-			magnitude /= b->GetInvMass() + a->GetInvMass();
-			// static coefficient
-			double mu = sqrt(SQRD(a->GetStaticFriction()) + SQRD(b->GetStaticFriction()));
-			// using coloumbs law to clamp the friction
-			geometry::Vector frictionImpulse;
-			if (fabs(magnitude) < ImpulseScalar * mu)
-				frictionImpulse = magnitude * tangent;
-			else
-			{
-				double dynaFriction = sqrt(SQRD(a->GetKineticFriction()) + SQRD(b->GetKineticFriction()));
-				frictionImpulse = -ImpulseScalar * tangent * dynaFriction;
-			}
-			// applying impulse force
-			std::cerr<<-(a->GetInvMass() * frictionImpulse)<<"\n";
-			std::cerr<<c.points.a<<" "<<c.points.b<<"\n";
-			a->ApplyForce(-(a->GetInvMass() * c.points.normal * ImpulseScalar), c.points.a);
-			b->ApplyForce((b->GetInvMass() * c.points.normal * ImpulseScalar), c.points.b);
-			// applying friction force
-			a->ApplyForce(-(a->GetInvMass() * frictionImpulse), c.points.b); // using where b touched a for friction
-			b->ApplyForce((b->GetInvMass() * frictionImpulse), c.points.a); // using where a touched b for friction
+			// Calculate relative velocity in terms of the normal direction
+			geometry::Vector rv = b->GetVelocity() - a->GetVelocity();
+			float velocityAlongNormal = rv.Dot(c.points.normal);
+			// Do not resolve if velocities are separating
+			if(velocityAlongNormal > 0)
+				continue;
+			// Calculate restitution
+			float e = std::min(a->GetRestitution(), b->GetRestitution());
+			// Calculate impulse scalar
+			float j = -(1 + e) * velocityAlongNormal;
+			j /= 1 / a->GetMass() + 1 / b->GetMass();
+			geometry::Vector impulse = j * c.points.normal;
+			std::cerr<<velocityAlongNormal<<"\n";
+			std::cerr<<a->GetVelocity()<<"\n";
+			std::cerr<<b->GetVelocity()<<"\n";
+			std::cerr<<"rv: "<<rv<<"\n";
+			std::cerr<<"normal: "<<c.points.normal<<"\n";
+			std::cerr<<"a force: "<<b->GetMass() / (a->GetMass() + b->GetMass()) * -impulse<<"\n";
+			std::cerr<<"b force: "<<a->GetMass() / (a->GetMass() + b->GetMass()) * impulse<<"\n";
+			a->ApplyForce(b->GetMass() / (a->GetMass() + b->GetMass()) * -impulse, c.points.a);
+			b->ApplyForce(a->GetMass() / (a->GetMass() + b->GetMass()) * impulse, c.points.b);
+			
 		}
 	}
 }

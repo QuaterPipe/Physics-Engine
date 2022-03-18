@@ -1,6 +1,5 @@
 #include "../include/physics/Algo.hpp"
 #include "../include/physics/OstreamOverloads.hpp"
-#include <iostream>
 
 namespace algo
 {
@@ -457,7 +456,7 @@ namespace algo
 		}
 		c.b = closest;
 		c.a = geometry::Line(BCenter, closest).GetVectorAlongLine(b->radius);
-		c.normal = c.a - c.b;
+		c.normal = c.b - c.a;
 		c.normal.Normalize();
 		c.hasCollision = true;
 		c.depth = geometry::Distance(c.a, c.b);
@@ -484,9 +483,12 @@ namespace algo
 		geometry::Vector farthest;
 		geometry::Vector centroidA = getCentroid(APoints);
 		f64 distance = std::numeric_limits<f64>::min();
+		// if all of a's points are in b
 		bool allInPolygon = false;
+		//  checking if all of a's vectors are in b, while getting the farthest point from a's centroid
 		for (size_t i = 0; i < APoints.size(); i++)
 		{
+			// checking if current point is inside collider b
 			if (!PolygonColliderVectorIsColliding(b, tb, APoints[i]))
 				break;
 			if (geometry::DistanceSquared(APoints[i], centroidA) > distance)
@@ -497,6 +499,7 @@ namespace algo
 			if (i == APoints.size() - 1)
 				allInPolygon = true;
 		}
+		// so if a is inside b
 		if (allInPolygon)
 		{
 			geometry::Vector closest = geometry::Vector::Infinity;
@@ -505,7 +508,7 @@ namespace algo
 			{
 				geometry::Line l(BPoints[i], BPoints[(i + 1) % BPoints.size()]);
 				auto tmp = geometry::Vector::Projection(farthest, l);
-				if (geometry::DistanceSquared(tmp, farthest) < dis)
+				if (geometry::DistanceSquared(tmp, farthest) < dis && tmp != farthest)
 				{
 					closest = tmp;
 					dis = geometry::DistanceSquared(tmp, farthest);
@@ -546,7 +549,7 @@ namespace algo
 				{
 					geometry::Line l(APoints[i], APoints[(i + 1) % APoints.size()]);
 					auto tmp = geometry::Vector::Projection(farthest, l);
-					if (geometry::DistanceSquared(tmp, farthest) < dis)
+					if (geometry::DistanceSquared(tmp, farthest) < dis && farthest != tmp)
 					{
 						closest = tmp;
 						dis = geometry::DistanceSquared(tmp, farthest);
@@ -556,7 +559,7 @@ namespace algo
 				c.b = farthest;
 				c.a = closest;
 				// pushing collider a out of collider b
-				c.normal = c.b - c.a;
+				c.normal = c.a - c.b;
 				c.normal.Normalize();
 				c.hasCollision = true;
 				c.depth = geometry::Distance(c.b, c.a);
@@ -612,9 +615,7 @@ namespace algo
 				geometry::Line BLine(tb.TransformVector(b->points.at(j)), 
 					tb.TransformVector(b->points.at((j + 1) % b->points.size())));
 				if (geometry::Intersecting(ALine, BLine))
-				{
 					intersections.push_back(geometry::VectorOfIntersect(ALine, BLine));
-				}
 			}
 		}
 		return intersections;
