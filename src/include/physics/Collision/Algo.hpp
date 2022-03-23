@@ -1,53 +1,53 @@
 #include "Collision.hpp"
-using namespace physics;
-namespace algo
+namespace physics::algo
 {
-	CollisionPoints FindPolygonCircleCollisionPoints(
+	
+	CollisionPoints PolygonCircleCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
 
-	CollisionPoints FindPolygonBoxCollisionPoints(
+	CollisionPoints PolygonBoxCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb
 	);
 
-	CollisionPoints FindPolygonMeshCollisionPoints(
+	CollisionPoints PolygonMeshCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb
 	);
 
-	CollisionPoints FindCircleCircleCollisionPoints(
+	CollisionPoints CircleCircleCollision(
 		const CircleCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
 
-	CollisionPoints FindCircleBoxCollisionPoints(
+	CollisionPoints CircleBoxCollision(
 		const CircleCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb
 	);
 
-	CollisionPoints FindCircleMeshCollisionPoints(
+	CollisionPoints CircleMeshCollision(
 		const CircleCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb
 	);
 
-	CollisionPoints FindBoxMeshCollisionPoints(
+	CollisionPoints BoxMeshCollision(
 		const BoxCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb
 	);
 
-	CollisionPoints FindPolygonPolygonCollisionPoints(
+	CollisionPoints PolygonPolygonCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const PolygonCollider* b, const Transform& tb
 	);
 
-	CollisionPoints FindBoxBoxCollisionPoints(
+	CollisionPoints BoxBoxCollision(
 		const BoxCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb
 	);
 
-	CollisionPoints FindMeshMeshCollisionPoints(
+	CollisionPoints MeshMeshCollision(
 		const MeshCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb
 	);

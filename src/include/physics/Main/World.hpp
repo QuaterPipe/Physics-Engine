@@ -1,6 +1,6 @@
 #pragma once
-#include "Collision.hpp"
-#include "Rigidbody.hpp"
+#include "../Collision/Collision.hpp"
+#include "../Collision/Rigidbody.hpp"
 
 namespace physics
 {

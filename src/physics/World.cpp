@@ -1,12 +1,11 @@
-#include "../include/physics/World.hpp"
-#include "../include/physics/OstreamOverloads.hpp"
+#include "../include/physics/Main/World.hpp"
+#include "../include/physics/Tools/OstreamOverloads.hpp"
 #include <iostream>
 #define MAXXVEL 100000
 #define MAXYVEL 100000
 
 namespace physics
 {
-
 	void PositionalCorrectionSolver::Solve(std::vector<Collision>& collisions, f64 dt) noexcept
 	{
 		for (Collision& c: collisions)

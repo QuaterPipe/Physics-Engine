@@ -1,4 +1,4 @@
-#include "../include/physics/Time.hpp"
+#include "../include/physics/Main/Time.hpp"
 namespace physics
 {
 	void Time::Tick()
@@ -7,5 +7,25 @@ namespace physics
 		microDeltaTime = std::chrono::duration_cast<std::chrono::microseconds>(t - time).count();
 		deltaTime = microDeltaTime * 0.001;
 		time = clock::now();
+	}
+
+	void Timer::Start()
+	{
+		start = clock::now();
+		deltaTime = -1;
+		microDeltaTime = -1;
+	}
+
+	void Timer::Stop()
+	{
+		stop = clock::now();
+		microDeltaTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+		deltaTime = microDeltaTime * 0.001;
+	}
+
+	void Timer::Reset()
+	{
+		microDeltaTime = -1;
+		deltaTime = 1;
 	}
 }

@@ -1,4 +1,4 @@
-#include "include/physics/Scene.hpp"
+#include "include/physics/Main/Scene.hpp"
 #include "include/SFML/Main.hpp"
 #include "include/physics/Main.hpp"
 #include <iostream>
@@ -8,12 +8,17 @@ using namespace geometry;
 int main(int argc, char** args)
 {
 	std::cerr<<std::boolalpha;
-	Scene s(Vector(0, 0));
+	Scene s(Vector(0, 0), 30, 300, 300, "bruh");
 	sf::Sprite box;
 	sf::Texture square;
 	square.loadFromFile("bin/textures/Square.png");
 	box.setTexture(square);
 	box.setOrigin(25, 25);
+	auto d = s.GetDisplay()->GetWindow();
+	d->clear();
+	d->draw(box);
+	d->display();
+	/*while (true);
 	Rigidbody rigid1;
 	Transform t;
 	t.position.Set(50, 50);
@@ -42,7 +47,7 @@ int main(int argc, char** args)
 	Entity e2("Entity2", rigid2, box2);
 	s.AddEntity(e1);
 	s.AddEntity(e2);
-	/*BoxCollider b(Vector(0, 0), Vector(20, 20));
+	BoxCollider b(Vector(0, 0), Vector(20, 20));
 	Transform t;
 	t.position.Set(0, 0);
 	BoxCollider b1(Vector(0, 0), Vector(20, 20));
@@ -51,14 +56,19 @@ int main(int argc, char** args)
 	CollisionPoints tmp = b.TestCollision(t, &b1, t2);
 	std::cerr<<tmp.a<<" "<<tmp.b;
 	BoxCollider b2(Vector(0, 0), Vector(20, 20));
-	BoxCollider b3(Vector(0, 0), Vector(20, 20));*/
+	BoxCollider b3(Vector(0, 0), Vector(20, 20));
 	Line l(Vector(0, 0), Vector(20, 0));
 	Line l2(Vector(10, -10), Vector(10, 10));
 	std::cerr<<VectorOfIntersect(l, l2);
-	while (s.display->WindowIsOpen())
+	sf::Sprite spr = s.GetEntity(0).GetSprite();
+	std::cerr<<"BRHU: "<<spr.getPosition().x<<" "<<spr.getPosition().y<<"\n";
+	s.GetDisplay()->Draw(spr);
+	while (true);
+	while (s.GetDisplay()->WindowIsOpen())
 	{
 		Time::Tick();
 		//std::cout<<"Delta Time: "<<Time::deltaTime<<"\n";
 		s.Update(Time::deltaTime);
-	}
+		//std::this_thread::sleep_for(std::chrono::milliseconds(200));
+	}*/
 }

@@ -1,5 +1,5 @@
-#include "../include/physics/Rigidbody.hpp"
-#include "../include/physics/OstreamOverloads.hpp"
+#include "../include/physics/Collision/Rigidbody.hpp"
+#include "../include/physics/Tools/OstreamOverloads.hpp"
 #include <iostream>
 
 namespace physics

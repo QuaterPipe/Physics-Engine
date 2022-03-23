@@ -1,6 +1,6 @@
 #pragma once
-#include "../geometry/main.hpp"
-#include "Collision.hpp"
+#include "../../geometry/main.hpp"
+#include "../Collision/Collision.hpp"
 #include <ostream>
 #include <vector>
 #include <string>

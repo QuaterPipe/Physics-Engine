@@ -1,4 +1,4 @@
-#include "../include/physics/Display.hpp"
+#include "../include/physics/Main/Display.hpp"
 #include <iostream>
 
 namespace physics
@@ -26,7 +26,11 @@ namespace physics
 	void Display::Draw(const sf::Drawable& d) noexcept
 	{
 		if (_window.isOpen())
+		{
+			std::cerr<<"drawinggeaggeges!!!\n";
 			_window.draw(d);
+			_window.display();
+		}
 	}
 
 	unsigned int Display::GetHeight() const noexcept
@@ -86,8 +90,8 @@ namespace physics
 			}
 		}
 		_window.display();
-		if (shouldClear)
-			_window.clear();
+		/*if (shouldClear)
+			_window.clear();*/
 	}
 
 	bool Display::WindowIsOpen() const noexcept

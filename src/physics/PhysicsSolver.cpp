@@ -1,5 +1,5 @@
-#include "../include/physics/World.hpp"
-#include "../include/physics/OstreamOverloads.hpp"
+#include "../include/physics/Main/World.hpp"
+#include "../include/physics/Tools/OstreamOverloads.hpp"
 #include <iostream>
 
 namespace physics

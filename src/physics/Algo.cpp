@@ -1,9 +1,8 @@
-#include "../include/physics/Algo.hpp"
-#include "../include/physics/OstreamOverloads.hpp"
+#include "../include/physics/Collision/Algo.hpp"
 
-namespace algo
+namespace physics::algo
 {
-	CollisionPoints FindCircleCircleCollisionPoints(
+	CollisionPoints CircleCircleCollision(
 		const CircleCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	)
@@ -28,21 +27,21 @@ namespace algo
 		return c;
 	}
 
-	CollisionPoints FindCircleBoxCollisionPoints(
+	CollisionPoints CircleBoxCollision(
 		const CircleCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb
 	)
 	{
 		CollisionPoints c;
 		if (!a || !b ) {return c;}
-		//easier to find collision points as a PolygonCollider
+		//easier to  collision points as a PolygonCollider
 		PolygonCollider* bb = new PolygonCollider(b->pos, b->pos,
 			geometry::Vector(b->x + b->width, b->y), 
 			geometry::Vector(b->x + b->width, b->y + b->height), {geometry::Vector(b->x , b->y + b->height)});
-		return FindPolygonCircleCollisionPoints(bb, tb, a, ta);
+		return PolygonCircleCollision(bb, tb, a, ta);
 	}
 
-	CollisionPoints FindCircleMeshCollisionPoints(
+	CollisionPoints CircleMeshCollision(
 		const CircleCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb
 	)
@@ -58,7 +57,7 @@ namespace algo
 		return c;
 	}
 
-	CollisionPoints FindPolygonCircleCollisionPoints(
+	CollisionPoints PolygonCircleCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	)
@@ -188,7 +187,7 @@ namespace algo
 			return geometry::Vector::Origin;
 	}
 
-	CollisionPoints FindPolygonPolygonCollisionPoints(
+	CollisionPoints PolygonPolygonCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const PolygonCollider* b, const Transform& tb
 	)
@@ -324,7 +323,7 @@ namespace algo
 		return c;
 	}
 
-	CollisionPoints FindPolygonBoxCollisionPoints(
+	CollisionPoints PolygonBoxCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb)
 	{
@@ -333,10 +332,10 @@ namespace algo
 		PolygonCollider* bb = new PolygonCollider(b->pos, b->pos,
 			geometry::Vector(b->x + b->width, b->y), 
 			geometry::Vector(b->x + b->width, b->y + b->height), {geometry::Vector(b->x , b->y + b->height)});
-		return FindPolygonPolygonCollisionPoints(a, ta, bb, tb);
+		return PolygonPolygonCollision(a, ta, bb, tb);
 	}
 
-	CollisionPoints FindPolygonMeshCollisionPoints(
+	CollisionPoints PolygonMeshCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb
 	)
@@ -351,7 +350,7 @@ namespace algo
 		return c;
 	}
 
-	CollisionPoints FindBoxBoxCollisionPoints(
+	CollisionPoints BoxBoxCollision(
 		const BoxCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb
 	)
@@ -364,10 +363,10 @@ namespace algo
 		PolygonCollider* aa = new PolygonCollider(a->pos, a->pos,
 			geometry::Vector(a->x + a->width, a->y), 
 			geometry::Vector(a->x + a->width, a->y + a->height), {geometry::Vector(a->x , a->y + a->height)});
-		return FindPolygonPolygonCollisionPoints(aa, ta, bb, tb);
+		return PolygonPolygonCollision(aa, ta, bb, tb);
 	}
 
-	CollisionPoints FindBoxMeshCollisionPoints(
+	CollisionPoints BoxMeshCollision(
 		const BoxCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb
 	)
@@ -382,7 +381,7 @@ namespace algo
 		return c;
 	}
 
-	CollisionPoints FindMeshMeshCollisionPoints(
+	CollisionPoints MeshMeshCollision(
 		const MeshCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb
 	)

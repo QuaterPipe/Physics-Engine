@@ -1,7 +1,6 @@
 #pragma once
 #include "Entity.hpp"
-#include "../SFML/Window.hpp"
-#include "../SFML/Graphics.hpp"
+#include "../../SFML/Window.hpp"
 
 namespace physics
 {

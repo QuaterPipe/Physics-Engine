@@ -12,4 +12,18 @@ namespace physics
 			static inline double microDeltaTime = -1;
 			static void Tick();
 	};
+
+	class Timer
+	{
+		private:
+			typedef std::chrono::high_resolution_clock clock;
+		public:
+			std::chrono::time_point<clock> start;
+			std::chrono::time_point<clock> stop;
+			double deltaTime = -1;
+			double microDeltaTime = -1;
+			void Start();
+			void Stop();
+			void Reset();
+	};
 }

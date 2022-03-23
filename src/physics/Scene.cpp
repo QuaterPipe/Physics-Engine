@@ -1,4 +1,5 @@
-#include "../include/physics/Scene.hpp"
+#include "../include/physics/Main/Scene.hpp"
+#include "../include/physics/Main/Time.hpp"
 #include <iostream>
 
 namespace physics
@@ -32,7 +33,7 @@ namespace physics
 			CollisionObject& object = ptr->GetCollisionObject();
 			Transform last = object.GetLastTransform();
 			Transform current = object.GetTransform();
-			t.position = lerp(geometry::Vector(last.position), geometry::Vector(current.position), _accumulator / _s->physicsUpdateFrequency);
+			t.position = lerp(geometry::Vector(last.position), geometry::Vector(current.position), _accumulator / _s->_physicsUpdateFrequency);
 			object.SetTransform(t);
 		}
 		_accumulator += dt;
@@ -43,25 +44,29 @@ namespace physics
 		_accumulator = 0;
 	}
 
-	Scene::Scene(const geometry::Vector& gravity) noexcept
+	Scene::Scene(const geometry::Vector& gravity, unsigned short physicsUpdateHz, unsigned windowWidth, unsigned windowHeight, std::string windowTitle) noexcept
+	: _physicsUpdateFrequency(physicsUpdateHz), _smoother(Smoother(*this)), _gravity(gravity), _display(new Display(windowWidth, windowHeight, windowTitle))
 	{
-		_smoother = Smoother(*this);
-		_gravity = gravity;
-		std::string name = "display";
-		display = new Display(300, 300, name);
-		sf::View v = display->GetWindow()->getDefaultView();
-		v.setSize(300, -300);
-		display->SetView(v);
+		_ended.store(false, std::memory_order_relaxed);
+		_entities.store(new std::vector<std::unique_ptr<Entity>>(), std::memory_order_relaxed);
+		sf::View v = _display->GetWindow()->getDefaultView();
+		// sfml displays y coordinates from top to bottom, so inverting the y value in view fixes this, displaying y coordinates from bottom to top.
+		v.setSize(windowWidth, -windowHeight);
+		_display->SetView(v);
+		_physicsThread = std::thread(&Scene::_PhysicsLoop, this);
+		StartPhysics();
 	}
 
 	Scene::~Scene()
 	{
-		delete display;
+		_ended.store(true, std::memory_order_relaxed);
+		_physicsThread.join();
+		delete _display;
 	}
 
 	const std::vector<std::unique_ptr<Entity>>& Scene::GetEntities() const noexcept
 	{
-		return _entities;
+		return *_entities.load(std::memory_order_relaxed);
 	}
 
 	void Scene::AddEntity(Entity& e) noexcept
@@ -75,73 +80,100 @@ namespace physics
 		{
 			_world.AddObject(&ptr->GetCollisionObject());
 		}
-		_entities.emplace_back(ptr);
+		(*_entities.load(std::memory_order_relaxed)).emplace_back(ptr);
+	}
+
+	Display* Scene::GetDisplay() const noexcept
+	{
+		return _display;
 	}
 
 	Entity& Scene::GetEntity(const size_t& index) noexcept
 	{
-		return *_entities.at(index);
+		return *((*_entities.load(std::memory_order_relaxed)).at(index));
+	}
+
+	unsigned short Scene::GetPhysicsUpdateFrequency() const noexcept
+	{
+		return _physicsUpdateFrequency;
+	}
+
+	void Scene::_PhysicsLoop() noexcept
+	{
+		Timer timer;
+		while (!_ended.load(std::memory_order_relaxed))
+		{
+			unsigned short hz = _physicsUpdateFrequency.load(std::memory_order_relaxed);
+			while (!_physicsIsActive.load(std::memory_order_relaxed))
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(1 / hz * 1000));
+			}
+			timer.Start();
+			_world.Update(hz);
+			_world.ResolveCollisions(hz);
+			for (auto& ptr: *_entities.load(std::memory_order_relaxed))
+			{
+				ptr->FixedUpdate();
+				ptr->Update();
+			}
+			timer.Stop();
+			if (timer.deltaTime > (1 / hz * 1000)) // calculations took too long
+				continue;
+			else
+			{
+				double d = (1 / hz * 1000) - timer.deltaTime;
+				std::this_thread::sleep_for(std::chrono::milliseconds((int)d));
+			}
+			timer.Reset();
+		}
 	}
 
 	void Scene::RemoveEntity(Entity& e) noexcept
 	{
 		size_t ind;
-		for (auto& ptr: _entities)
+		for (auto& ptr: *_entities.load(std::memory_order_relaxed))
 		{
 			if (*ptr == e)
 			{
 				_world.RemoveObject(&ptr->GetCollisionObject());
-				_entities.erase(_entities.begin() + ind);
+				(*_entities.load(std::memory_order_relaxed)).erase((*_entities.load(std::memory_order_relaxed)).begin() + ind);
 				return;
 			}
 			ind++;
 		}
 	}
 
+	void Scene::SetGravity(const geometry::Vector& g) noexcept
+	{
+		_gravity = g;
+	}
+
+	void Scene::SetPhysicsUpdateFrequency(const unsigned short& ms) noexcept
+	{
+		_physicsUpdateFrequency = ms;
+	}
+
+	void Scene::StartPhysics() noexcept
+	{
+		_physicsIsActive.store(true, std::memory_order_relaxed);
+	}
+
+	void Scene::StopPhysics() noexcept
+	{
+		_physicsIsActive.store(false, std::memory_order_relaxed);
+	}
+
 	void Scene::Update(f64 dt) noexcept
 	{
-		// getting the frames per second
-		if (dt + _fpsCounter.total > 1000)
-		{
-			if (_fpsCounter.loopsPerSecond.size() > 60)
-				_fpsCounter.loopsPerSecond.clear();
-			_fpsCounter.loopsPerSecond.push_back((f64)_fpsCounter.loops);
-			_fpsCounter.total = dt;
-			_fpsCounter.loops = 0;
-		}
-		else
-		{
-			_fpsCounter.total += dt;
-			_fpsCounter.loops++;
-		}
-		// updating physics
-		if (physicsUpdateFrequency)
-		{
-			if (dt + _physicsUpdateCounter.total > 1000 / physicsUpdateFrequency)
-			{
-				//std::cout<<"Physics update: "<<_physicsUpdateCounter.total + dt<<"\n";
-				//std::cout<<"PhysicsUpdateFrequency: "<<1000 / physicsUpdateFrequency<<"\n";
-				_world.Update(_physicsUpdateCounter.total + dt);
-				_world.ResolveCollisions(_physicsUpdateCounter.total + dt);
-				_physicsUpdateCounter.total = 0;
-				for (auto& ptr: _entities)
-				{
-					ptr->FixedUpdate();
-					ptr->Update();
-				}
-			}
-			else
-			{
-				_physicsUpdateCounter.total += dt;
-			}
-		}
 		//drawing all entities
-		if (display)
+		std::cerr<<"Updating!!! "<<(bool)_display<<"\n";
+		if (_display)
 		{
-			display->Update();
-			for (auto& ptr: _entities)
+			_display->Update();
+			for (auto& ptr: *_entities.load(std::memory_order_relaxed))
 			{
-				display->Draw(ptr->GetSprite());
+				std::cerr<<"drawing!!\n";
+				_display->Draw(ptr->GetSprite());
 				ptr->Update();
 			}
 		}

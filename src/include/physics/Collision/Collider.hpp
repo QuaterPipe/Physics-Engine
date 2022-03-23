@@ -1,7 +1,8 @@
 #pragma once
-#include "../geometry/main.hpp"
+#include "../../geometry/main.hpp"
 #include "Serializable.hpp"
 #include "Transform.hpp"
+
 namespace physics
 {
 	struct BoxCollider;

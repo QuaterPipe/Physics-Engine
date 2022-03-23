@@ -1,5 +1,5 @@
-#include "../geometry/main.hpp"
-#include "Hashable.hpp"
+#include "../../geometry/main.hpp"
+#include "../Main/Hashable.hpp"
 #include "Serializable.hpp"
 
 namespace physics

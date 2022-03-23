@@ -1,4 +1,4 @@
-#include "../include/physics/Hashable.hpp"
+#include "../include/physics/Main/Hashable.hpp"
 
 namespace physics
 {

@@ -1,5 +1,5 @@
-#include "../include/physics/Collision.hpp"
-#include "../include/physics/CollisionObject.hpp"
+#include "../include/physics/Collision/Collision.hpp"
+#include "../include/physics/Collision/CollisionObject.hpp"
 #include <iostream>
 namespace physics
 {
