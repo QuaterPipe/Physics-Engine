@@ -150,3 +150,6 @@ namespace geometry
 			static const Vector3 kHat;
 	};
 }
+geometry::Vector cos(const geometry::Vector& v);
+geometry::Vector sin(const geometry::Vector& v);
+geometry::Vector tan(const geometry::Vector& v);

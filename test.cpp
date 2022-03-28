@@ -1,8 +1,23 @@
-#define in :
+#include "src/include/physics/Tools/Notify.hpp"
+#include <iostream>
+using namespace physics;
+
+struct name
+{
+	std::string first;
+	std::string last;
+};
+class bruh: public Notifiable
+{
+	public:
+		name x;
+		Property<name> xRef;
+		bruh() : xRef(*this){
+		}
+};
 
 int main()
 {
-	int c[4] = {1, 2, 3, 4};
-	for (auto i in c)
-		i++;
+	bruh b;
+	std::string n = b.operator ->first;
 }

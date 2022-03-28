@@ -1,4 +1,4 @@
-#include "include/physics/Main/Scene.hpp"
+#include "include/physics/Engine/Scene.hpp"
 #include "include/SFML/Main.hpp"
 #include "include/physics/Main.hpp"
 #include <iostream>
@@ -14,16 +14,11 @@ int main(int argc, char** args)
 	square.loadFromFile("bin/textures/Square.png");
 	box.setTexture(square);
 	box.setOrigin(25, 25);
-	auto d = s.GetDisplay()->GetWindow();
-	d->clear();
-	d->draw(box);
-	d->display();
-	/*while (true);
 	Rigidbody rigid1;
 	Transform t;
-	t.position.Set(50, 50);
-	rigid1.SetUsesGravity(false);
-	rigid1.SetTransform(t);
+	t.position.Set(150, 50);
+	rigid1.usesGravity = false;
+	rigid1.transform = t;
 	rigid1.SetCollider(BoxCollider(Vector(0, 0), Vector(50, 50)));
 	//rigid1.SetAngularVelocity(1);
 	rigid1.SetMass(5);
@@ -36,39 +31,21 @@ int main(int argc, char** args)
 	box2.setTexture(square2);
 	box2.setTextureRect(sf::IntRect(0, 0, 20, 20));
 	//box.setOrigin(10, 10);
-	t.position.Set(200, 50);
-	rigid2.SetVelocity(Vector(-50, 0));
-	rigid2.SetUsesGravity(false);
+	t.position.Set(300, 50);
+	rigid2.velocity = Vector(-0.0005, 0);
+	rigid2.usesGravity = false;
 	rigid2.SetCollider(BoxCollider(Vector(0, 0), Vector(20, 20)));
-	rigid2.SetTransform(t);
-	rigid2.SetMass(50);
-	std::cerr<<rigid1.GetRestitution()<<" "<<rigid1.GetStaticFriction()<<" "<<rigid1.GetKineticFriction()<<"\n";
-	std::cerr<<rigid2.GetRestitution()<<" "<<rigid2.GetStaticFriction()<<" "<<rigid2.GetKineticFriction()<<"\n";
+	rigid2.transform = t;
+	rigid2.SetMass(1);
 	Entity e2("Entity2", rigid2, box2);
 	s.AddEntity(e1);
 	s.AddEntity(e2);
-	BoxCollider b(Vector(0, 0), Vector(20, 20));
-	Transform t;
-	t.position.Set(0, 0);
-	BoxCollider b1(Vector(0, 0), Vector(20, 20));
-	Transform t2;
-	t2.position.Set(10, 10);
-	CollisionPoints tmp = b.TestCollision(t, &b1, t2);
-	std::cerr<<tmp.a<<" "<<tmp.b;
-	BoxCollider b2(Vector(0, 0), Vector(20, 20));
-	BoxCollider b3(Vector(0, 0), Vector(20, 20));
-	Line l(Vector(0, 0), Vector(20, 0));
-	Line l2(Vector(10, -10), Vector(10, 10));
-	std::cerr<<VectorOfIntersect(l, l2);
-	sf::Sprite spr = s.GetEntity(0).GetSprite();
-	std::cerr<<"BRHU: "<<spr.getPosition().x<<" "<<spr.getPosition().y<<"\n";
-	s.GetDisplay()->Draw(spr);
-	while (true);
+	s.SetPhysicsUpdateFrequency(5);
 	while (s.GetDisplay()->WindowIsOpen())
 	{
 		Time::Tick();
 		//std::cout<<"Delta Time: "<<Time::deltaTime<<"\n";
 		s.Update(Time::deltaTime);
 		//std::this_thread::sleep_for(std::chrono::milliseconds(200));
-	}*/
+	}
 }

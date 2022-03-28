@@ -3,7 +3,9 @@ debug: debugCompileObjects debugLink run
 test: compileTest runTest
 
 checkSyntax:
-	g++ -fsyntax-only -std=c++17 src/physics/*.cpp
+	g++ -fsyntax-only -std=c++17 src/physics/Collision/*.cpp
+	g++ -fsyntax-only -std=c++17 src/physics/Engine/*.cpp
+	g++ -fsyntax-only -std=c++17 src/physics/Tools/*.cpp
 	g++ -fsyntax-only -std=c++17 src/geometry/*.cpp
 	g++ -fsyntax-only -std=c++17 src/main.cpp
 
@@ -18,25 +20,26 @@ runTest:
 	./test/bin/main
 
 compileObjects:
-	g++ -c -Wall -std=c++17 src/physics/Algo.cpp -o bin/o/Algo.o
-	g++ -c -Wall -std=c++17 src/physics/Archive.cpp -o bin/o/Archive.o
-	g++ -c -Wall -std=c++17 src/physics/BoxCollider.cpp -o bin/o/BoxCollider.o
-	g++ -c -Wall -std=c++17 src/physics/CircleCollider.cpp -o bin/o/CircleCollider.o
-	g++ -c -Wall -std=c++17 src/physics/Collision.cpp -o bin/o/Collision.o
-	g++ -c -Wall -std=c++17 src/physics/Collider.cpp -o bin/o/Collider.o
-	g++ -c -Wall -std=c++17 src/physics/CollisionObject.cpp -o bin/o/CollisionObject.o
-	g++ -c -Wall -std=c++17 src/physics/DataPacket.cpp -o bin/o/DataPacket.o
-	g++ -c -Wall -std=c++17 src/physics/Display.cpp -o bin/o/Display.o
-	g++ -c -Wall -std=c++17 src/physics/Entity.cpp -o bin/o/Entity.o
-	g++ -c -Wall -std=c++17 src/physics/Hashable.cpp -o bin/o/Hashable.o
-	g++ -c -Wall -std=c++17 src/physics/MeshCollider.cpp -o bin/o/MeshCollider.o
-	g++ -c -Wall -std=c++17 src/physics/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o
-	g++ -c -Wall -std=c++17 src/physics/PolygonCollider.cpp -o bin/o/PolygonCollider.o
-	g++ -c -Wall -std=c++17 src/physics/Rigidbody.cpp -o bin/o/Rigidbody.o
-	g++ -c -Wall -std=c++17 src/physics/Scene.cpp -o bin/o/Scene.o
-	g++ -c -Wall -std=c++17 src/physics/Time.cpp -o bin/o/Time.o
-	g++ -c -Wall -std=c++17 src/physics/Transform.cpp -o bin/o/Transform.o
-	g++ -c -Wall -std=c++17 src/physics/World.cpp -o bin/o/World.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/Algo.cpp -o bin/o/Algo.o
+	g++ -c -Wall -std=c++17 src/physics/Tools/Archive.cpp -o bin/o/Archive.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/BoxCollider.cpp -o bin/o/BoxCollider.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/CircleCollider.cpp -o bin/o/CircleCollider.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/Collision.cpp -o bin/o/Collision.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/Collider.cpp -o bin/o/Collider.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/CollisionObject.cpp -o bin/o/CollisionObject.o
+	g++ -c -Wall -std=c++17 src/physics/Tools/DataPacket.cpp -o bin/o/DataPacket.o
+	g++ -c -Wall -std=c++17 src/physics/Engine/Display.cpp -o bin/o/Display.o
+	g++ -c -Wall -std=c++17 src/physics/Engine/Entity.cpp -o bin/o/Entity.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/Hashable.cpp -o bin/o/Hashable.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/MeshCollider.cpp -o bin/o/MeshCollider.o
+	g++ -c -Wall -std=c++17 src/physics/Tools/Notify.cpp -o bin/o/Notify.o
+	g++ -c -Wall -std=c++17 src/physics/Tools/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/PolygonCollider.cpp -o bin/o/PolygonCollider.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/Rigidbody.cpp -o bin/o/Rigidbody.o
+	g++ -c -Wall -std=c++17 src/physics/Engine/Scene.cpp -o bin/o/Scene.o
+	g++ -c -Wall -std=c++17 src/physics/Engine/Time.cpp -o bin/o/Time.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/Transform.cpp -o bin/o/Transform.o
+	g++ -c -Wall -std=c++17 src/physics/Engine/World.cpp -o bin/o/World.o
 	g++ -c -Wall -std=c++17 src/geometry/Curve.cpp -o bin/o/Curve.o
 	g++ -c -Wall -std=c++17 src/geometry/Line.cpp -o bin/o/Line.o
 	g++ -c -Wall -std=c++17 src/geometry/Math.cpp -o bin/o/Math.o
@@ -47,25 +50,26 @@ compileObjects:
 	rm bin/o/*.o
 
 debugCompileObjects:
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Algo.cpp -o bin/o/Algo.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Archive.cpp -o bin/o/Archive.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/BoxCollider.cpp -o bin/o/BoxCollider.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/CircleCollider.cpp -o bin/o/CircleCollider.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision.cpp -o bin/o/Collision.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collider.cpp -o bin/o/Collider.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/CollisionObject.cpp -o bin/o/CollisionObject.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Display.cpp -o bin/o/Display.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Entity.cpp -o bin/o/Entity.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Hashable.cpp -o bin/o/Hashable.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/MeshCollider.cpp -o bin/o/MeshCollider.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/PhysicsSolver.cpp -o bin/o/PhysicSolver.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/PolygonCollider.cpp -o bin/o/PolygonCollider.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Rigidbody.cpp -o bin/o/Rigidbody.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Scene.cpp -o bin/o/Scene.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Time.cpp -o bin/o/Time.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Transform.cpp -o bin/o/Transform.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/World.cpp -o bin/o/World.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Algo.cpp -o bin/o/Algo.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Tools/Archive.cpp -o bin/o/Archive.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/BoxCollider.cpp -o bin/o/BoxCollider.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/CircleCollider.cpp -o bin/o/CircleCollider.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Collision.cpp -o bin/o/Collision.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Collider.cpp -o bin/o/Collider.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/CollisionObject.cpp -o bin/o/CollisionObject.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Display.cpp -o bin/o/Display.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Entity.cpp -o bin/o/Entity.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Hashable.cpp -o bin/o/Hashable.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/MeshCollider.cpp -o bin/o/MeshCollider.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Tools/Notify.cpp -o bin/o/Notify.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Tools/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/PhysicsSolver.cpp -o bin/o/PhysicSolver.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/PolygonCollider.cpp -o bin/o/PolygonCollider.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Rigidbody.cpp -o bin/o/Rigidbody.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Scene.cpp -o bin/o/Scene.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Time.cpp -o bin/o/Time.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Transform.cpp -o bin/o/Transform.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/World.cpp -o bin/o/World.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/geometry/Curve.cpp -o bin/o/Curve.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/geometry/Line.cpp -o bin/o/Line.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/geometry/Math.cpp -o bin/o/Math.o
