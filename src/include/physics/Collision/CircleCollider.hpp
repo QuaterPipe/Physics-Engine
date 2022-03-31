@@ -36,6 +36,10 @@ namespace physics
 			const Transform& transform,
 			const MeshCollider* collider,
 			const Transform& colliderTransform) const noexcept override;
+		virtual CollisionPoints TestCollision(
+			const Transform& transform,
+			const PointCollider* collider,
+			const Transform& colliderTransform) const noexcept override;
 		virtual Serializable* Deserialize(const std::vector<byte>& v,
 			const size_t& index, const size_t& length) const override;
 		virtual byte GetByte(const size_t& index) const override;

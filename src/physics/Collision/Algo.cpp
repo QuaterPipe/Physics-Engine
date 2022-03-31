@@ -2,6 +2,113 @@
 
 namespace physics::algo
 {
+
+	CollisionPoints PointCircleCollision(
+		const PointCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	)
+	{
+		CollisionPoints c;
+		c.hasCollision = false;
+		if (!a || !b) {return c;}
+		const geometry::Vector BCenter = tb.TransformVector(b->center);
+		const geometry::Vector APos = ta.TransformVector(a->position);
+		if (geometry::DistanceSquared(BCenter, APos) <= SQRD(b->radius))
+		{
+			c.a = APos;
+			geometry::Vector tmp = (APos - BCenter).Normalized();
+			c.b = tmp * b->radius + BCenter;
+			c.depth = geometry::Distance(c.a, c.b);
+			c.normal = (c.b - c.a).Normalized();
+			c.hasCollision = true;
+		}
+		return c;
+	}
+
+	CollisionPoints PointPolygonCollision(
+		const PointCollider* a, const Transform& ta,
+		const PolygonCollider* b, const Transform& tb
+	)
+	{
+		CollisionPoints c;
+		c.hasCollision = false;
+		if (!a || !b) return c;
+		geometry::Vector APos = ta.TransformVector(a->position);
+		if (!PolygonColliderVectorIsColliding(b, tb, APos))
+			return c;
+		std::vector<geometry::Vector> BPoints;
+		for (const geometry::Vector& v: b->points)
+		{
+			BPoints.push_back(tb.TransformVector(v + b->pos));
+		}
+		c.a = APos;
+		geometry::Vector closest = geometry::Vector::Infinity;
+		for (size_t i = 0; i < BPoints.size(); i++)
+		{
+			geometry::Line l(BPoints[i], BPoints[(i + 1) % BPoints.size()]);
+			geometry::Vector p = geometry::Vector::Projection(APos, l);
+			if (geometry::DistanceSquared(closest, APos) > geometry::DistanceSquared(p, APos))
+			{
+				if (l.VectorIsOnLine(p))
+					closest = p;
+			}
+		}
+		c.b = closest;
+		c.depth = geometry::Distance(c.a, c.b);
+		c.normal = (c.b - c.a).Normalized();
+		c.hasCollision = true;
+		return c;
+	}
+
+	CollisionPoints PointBoxCollision(
+		const PointCollider* a, const Transform& ta,
+		const BoxCollider* b, const Transform& tb
+	)
+	{
+		CollisionPoints c;
+		c.hasCollision = false;
+		if (!a || !b) return c;
+		PolygonCollider* bb = new PolygonCollider(b->pos, b->pos,
+			geometry::Vector(b->x + b->width, b->y), 
+			geometry::Vector(b->x + b->width, b->y + b->height), {geometry::Vector(b->x , b->y + b->height)});
+		return PointPolygonCollision(a, ta, bb, tb);
+	}
+
+	CollisionPoints PointMeshCollision(
+		const PointCollider* a, const Transform& ta,
+		const MeshCollider* b, const Transform& tb
+	)
+	{
+		CollisionPoints c;
+		c.hasCollision = false;
+		if (!a || !b) {return c;}
+		for (const Collider* ptr: b->colliders)
+		{
+			c = ptr->TestCollision(tb, a, ta);
+			if (c.hasCollision) {return c;}
+		}
+		return c;
+	}
+
+	CollisionPoints PointPointCollision(
+		const PointCollider* a, const Transform& ta,
+		const PointCollider* b, const Transform& tb
+	)
+	{
+		CollisionPoints c;
+		c.hasCollision = false;
+		if (!a || !b) {return c;}
+		if (geometry::DistanceSquared(ta.TransformVector(a->position), tb.TransformVector(b->position)) < SQRD(0.000001))
+		{
+			c.a = a->position;
+			c.b = b->position;
+			c.depth = geometry::Distance(c.a, c.b);
+			c.normal = (c.b - c.a).Normalized();
+			c.hasCollision = true;
+		}
+		return c;
+	}
+
 	CollisionPoints CircleCircleCollision(
 		const CircleCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb

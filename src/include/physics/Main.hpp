@@ -5,6 +5,7 @@
 #include "Tools/OstreamOverloads.hpp"
 #include "Collision/Rigidbody.hpp"
 #include "Engine/Scene.hpp"
+#include "Collision/Softbody.hpp"
 #include "Collision/Serializable.hpp"
 #include "Engine/Time.hpp"
 #define PHYSICS_MAIN

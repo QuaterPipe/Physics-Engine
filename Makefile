@@ -1,4 +1,4 @@
-all: compilePhysics link run
+all: compileObjects link run
 debug: debugCompileObjects debugLink run
 test: compileTest runTest
 
@@ -34,9 +34,11 @@ compileObjects:
 	g++ -c -Wall -std=c++17 src/physics/Collision/MeshCollider.cpp -o bin/o/MeshCollider.o
 	g++ -c -Wall -std=c++17 src/physics/Tools/Notify.cpp -o bin/o/Notify.o
 	g++ -c -Wall -std=c++17 src/physics/Tools/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/PointCollider.cpp -o bin/o/PointCollider.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/PolygonCollider.cpp -o bin/o/PolygonCollider.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/Rigidbody.cpp -o bin/o/Rigidbody.o
 	g++ -c -Wall -std=c++17 src/physics/Engine/Scene.cpp -o bin/o/Scene.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/Softbody.cpp -o bin/o/Softbody.o
 	g++ -c -Wall -std=c++17 src/physics/Engine/Time.cpp -o bin/o/Time.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/Transform.cpp -o bin/o/Transform.o
 	g++ -c -Wall -std=c++17 src/physics/Engine/World.cpp -o bin/o/World.o
@@ -64,9 +66,11 @@ debugCompileObjects:
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Tools/Notify.cpp -o bin/o/Notify.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Tools/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/PhysicsSolver.cpp -o bin/o/PhysicSolver.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/PointCollider.cpp -o bin/o/PointCollider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/PolygonCollider.cpp -o bin/o/PolygonCollider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Rigidbody.cpp -o bin/o/Rigidbody.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Scene.cpp -o bin/o/Scene.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Softbody.cpp -o bin/o/Softbody.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Time.cpp -o bin/o/Time.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Transform.cpp -o bin/o/Transform.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/World.cpp -o bin/o/World.o

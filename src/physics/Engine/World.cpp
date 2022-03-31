@@ -27,42 +27,6 @@ namespace physics
 		}
 	}
 
-	template <typename T>
-	T getMin(std::vector<T>& v)	
-	{
-		bool reachedVal = false;
-		T minVal;
-		for (T item: v)
-		{
-			if (!reachedVal)
-			{
-				minVal = item; reachedVal = true; continue;
-			}
-			if (minVal > item)
-				minVal = item;
-		}
-		return minVal;
-	}
-
-	template <typename T>
-	T getMax(std::vector<T>& v)	
-	{
-		bool reachedVal = false;
-		T maxVal;
-		for (T item: v)
-		{
-			if (!reachedVal)
-			{
-				maxVal = item;
-				reachedVal = true;
-				continue;
-			}
-			if (maxVal < item)
-				maxVal = item;
-		}
-		return maxVal;
-	}
-
 	struct Square
 	{
 		f64 x = 0;
@@ -194,15 +158,29 @@ namespace physics
 		_objects.push_back(r);
 	}
 
+	void DynamicsWorld::AddSoftbody(Softbody* sb) noexcept
+	{
+		if (!sb) return;
+		_objects.push_back(sb);
+	}
+
 	void DynamicsWorld::ApplyGravity(f64 dt) noexcept
 	{
 		for (auto& obj: _objects)
 		{
 			if (!obj->IsDynamic()) continue;
-			Rigidbody* rigidbody = (Rigidbody*) obj;
-			if (!rigidbody->usesGravity) continue;
-			if (rigidbody->isKinematic) continue;
-			rigidbody->ApplyForce(rigidbody->gravity);
+			Rigidbody* rigidbody = dynamic_cast<Rigidbody*>(obj);
+			if (rigidbody)
+			{
+				if (!rigidbody->usesGravity) continue;
+				if (rigidbody->isKinematic) continue;
+				rigidbody->ApplyForce(rigidbody->gravity);
+			}
+			Softbody* softbody = dynamic_cast<Softbody*>(obj);
+			if (softbody && softbody->usesGravity)
+			{
+				softbody->ApplyForce(_gravity);
+			}
 		}
 	}
 
@@ -211,36 +189,67 @@ namespace physics
 		for (auto& obj: _objects)
 		{
 			if (!obj->IsDynamic()) continue;
-			Rigidbody* rigidbody = (Rigidbody*)obj;
-			if (rigidbody->isKinematic) continue;
-			geometry::Vector newPosition;
-			if (rigidbody->velocity.x > MAXXVEL)
+			Rigidbody* rigidbody = dynamic_cast<Rigidbody*>(obj);
+			if (rigidbody)
 			{
-				rigidbody->velocity.Set(MAXXVEL, rigidbody->velocity.y);
+				if (rigidbody->isKinematic) continue;
+				geometry::Vector newPosition;
+				if (rigidbody->velocity.x > MAXXVEL)
+				{
+					rigidbody->velocity.Set(MAXXVEL, rigidbody->velocity.y);
+				}
+				if (rigidbody->velocity.y > MAXYVEL)
+				{
+					rigidbody->velocity.Set(rigidbody->velocity.x, MAXYVEL);
+				}
+				newPosition = rigidbody->velocity * rigidbody->GetInvMass() + rigidbody->position;
+				Transform t = rigidbody->transform;
+				t.rotation.Set(acos(t.rotation.a) + rigidbody->angularVelocity);
+				t.position.Set(newPosition.x, newPosition.y);
+				rigidbody->transform = t;
+				rigidbody->Update(dt);
 			}
-			if (rigidbody->velocity.y > MAXYVEL)
+			Softbody* softbody = dynamic_cast<Softbody*>(obj);
+			if (softbody)
 			{
-				rigidbody->velocity.Set(rigidbody->velocity.x, MAXYVEL);
+				for (std::vector<MassPoint> mVec: softbody->points)
+				{
+					for (MassPoint m: mVec)
+					{
+						m.velocity = m.force / m.mass;
+						m.position += m.velocity;
+						m.force.Set(0, 0);
+					}
+				}
+				softbody->UpdateCollider();
 			}
-			newPosition = rigidbody->velocity * rigidbody->GetInvMass() + rigidbody->position;
-			Transform t = rigidbody->transform;
-			t.rotation.Set(acos(t.rotation.a) + rigidbody->angularVelocity);
-			t.position.Set(newPosition.x, newPosition.y);
-			rigidbody->transform = t;
-			rigidbody->Update(dt);
 		}
 	}
 
 	void DynamicsWorld::Update(f64 dt) noexcept
 	{
 		ApplyGravity(dt);
+		UpdateSoftbodies(dt);
 		ResolveCollisions(dt);
 		MoveObjects(dt);
+	}
+
+	void DynamicsWorld::UpdateSoftbodies(f64 dt) noexcept
+	{
+		for (auto& obj: _objects)
+		{
+			if (!obj->IsDynamic()) continue;
+			Softbody* softbody = dynamic_cast<Softbody*>(obj);
+			if (softbody)
+			{
+				softbody->ApplySpringForces();
+			}
+		}
 	}
 
 	DynamicsWorld::DynamicsWorld() noexcept
 	{
 		_solvers.push_back(new PhysicsSolver());
-		//_solvers.push_back(new PositionalCorrectionSolver());
+		_solvers.push_back(new PositionalCorrectionSolver());
 	}
 }

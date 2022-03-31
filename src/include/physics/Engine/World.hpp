@@ -1,6 +1,7 @@
 #pragma once
 #include "../Collision/Collision.hpp"
 #include "../Collision/Rigidbody.hpp"
+#include "../Collision/Softbody.hpp"
 
 namespace physics
 {
@@ -48,8 +49,10 @@ namespace physics
 		public:
 			DynamicsWorld() noexcept;
 			void AddRigidbody(Rigidbody* rb) noexcept;
+			void AddSoftbody(Softbody *sb) noexcept;
 			void ApplyGravity(f64 dt) noexcept;
 			void MoveObjects(f64 dt) noexcept;
 			void Update(f64 dt) noexcept;
+			void UpdateSoftbodies(f64 dt) noexcept;
 	};
 }

@@ -1,7 +1,31 @@
 #include "Collision.hpp"
 namespace physics::algo
 {
-	
+	CollisionPoints PointPointCollision(
+		const PointCollider* a, const Transform& ta,
+		const PointCollider* b, const Transform& tb
+	);
+
+	CollisionPoints PointPolygonCollision(
+		const PointCollider* a, const Transform& ta,
+		const PolygonCollider* b, const Transform& tb
+	);
+
+	CollisionPoints PointCircleCollision(
+		const PointCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	);
+
+	CollisionPoints PointBoxCollision(
+		const PointCollider* a, const Transform& ta,
+		const BoxCollider* b, const Transform& tb
+	);
+
+	CollisionPoints PointMeshCollision(
+		const PointCollider* a, const Transform& ta,
+		const MeshCollider* b, const Transform& tb
+	);
+
 	CollisionPoints PolygonCircleCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
@@ -16,6 +40,7 @@ namespace physics::algo
 		const PolygonCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb
 	);
+
 
 	CollisionPoints CircleCircleCollision(
 		const CircleCollider* a, const Transform& ta,

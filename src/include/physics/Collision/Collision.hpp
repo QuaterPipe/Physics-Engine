@@ -4,6 +4,7 @@
 #include <functional>
 #include "BoxCollider.hpp"
 #include "CircleCollider.hpp"
+#include "PointCollider.hpp"
 #include "PolygonCollider.hpp"
 #include "MeshCollider.hpp"
 #include "Serializable.hpp"

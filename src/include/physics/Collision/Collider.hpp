@@ -8,6 +8,7 @@ namespace physics
 	struct BoxCollider;
 	struct Collider;
 	struct CircleCollider;
+	struct PointCollider;
 	struct PolygonCollider;
 	struct MeshCollider;
 	struct CollisionPoints;
@@ -61,6 +62,10 @@ namespace physics
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
 			const MeshCollider* collider,
+			const Transform& colliderTransform) const noexcept = 0;
+		virtual CollisionPoints TestCollision(
+			const Transform& transform,
+			const PointCollider* collider,
 			const Transform& colliderTransform) const noexcept = 0;
 	};
 }
