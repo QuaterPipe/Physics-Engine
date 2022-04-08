@@ -35,11 +35,11 @@ namespace physics
 			virtual CollisionObject* Clone() const noexcept;
 			virtual CollisionObject& operator=(const CollisionObject& other) noexcept;
 			virtual bool Equals(const Hashable& other) const noexcept override;
-			bool IsDynamic() const noexcept;
-			Collider& GetCollider() const noexcept;
+			virtual bool IsDynamic() const noexcept;
+			virtual Collider& GetCollider() const noexcept;
 			virtual int GetHash() const noexcept;
-			bool NotEquals(const Hashable& other) const noexcept override;
-			void SetCollider(const Collider& c) noexcept;
+			virtual bool NotEquals(const Hashable& other) const noexcept override;
+			virtual void SetCollider(const Collider& c) noexcept;
 			virtual Serializable* Deserialize(const std::vector<byte>& v,
 				const size_t& index, const size_t& length) const override;
 			virtual byte GetByte(const size_t& index) const override;

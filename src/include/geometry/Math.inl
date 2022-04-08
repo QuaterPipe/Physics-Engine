@@ -1,5 +1,5 @@
 template <typename T>
-void Sort(T* array, size_t low, size_t high, std::function<int(T&, T&)>& comparer)
+void Sort(T* array, size_t low, size_t high, std::function<int(T&, T&)>& comparer) noexcept
 {
 	if (!array)
 		return;
@@ -28,4 +28,17 @@ void Sort(T* array, size_t low, size_t high, std::function<int(T&, T&)>& compare
 		QuickSort(array, low, pivot - 1, comparer);
 		QuickSort(array, pivot + 1, high, comparer);
 	}
+}
+
+template <typename Numeric>
+Numeric Average(const Numeric* start, const Numeric* end) noexcept
+{
+	Numeric size();
+	Numeric total();
+	for (unsigned i = 0; start + i != end; i++)
+	{
+		size++;
+		total += start[i];
+	}
+	return total / size;
 }

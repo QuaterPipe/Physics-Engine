@@ -1,23 +1,20 @@
-#include "src/include/physics/Tools/Notify.hpp"
-#include <iostream>
-using namespace physics;
+"src/include/geometry/main.hpp"
+using namespace geometry;
+struct MassPoint
+{
+	geometry::Vector position;
+	geometry::Vector velocity;
+	geometry::Vector force;
+	f64 mass = 0;
+	MassPoint() {};
+	MassPoint(geometry::Vector position, geometry::Vector velocity, geometry::Vector force, f64 mass) noexcept;
+};
 
-struct name
-{
-	std::string first;
-	std::string last;
-};
-class bruh: public Notifiable
-{
-	public:
-		name x;
-		Property<name> xRef;
-		bruh() : xRef(*this){
-		}
-};
 
 int main()
 {
-	bruh b;
-	std::string n = b.operator ->first;
+	std::vector<MassPoint> m;
+	for (int i = 0; i < 60; i++)
+		m.push_back(MassPoint());
+	return 0;
 }

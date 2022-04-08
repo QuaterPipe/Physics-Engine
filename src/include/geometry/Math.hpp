@@ -28,6 +28,8 @@ namespace geometry
 	// and -1 if a is less than b.
 	template <typename T>
 	int Compare(T& a, T& b);
+	/// \brief returns the calculated centroid of the given points.
+	Vector Centroid(const Vector* start, const Vector* end) noexcept;
 	// \brief Converts radians to degrees.
 	f64 Degrees(const f64& radians) noexcept;
 	// \brief Gets the distance between two Vectors.
@@ -57,13 +59,16 @@ namespace geometry
 	// \brief Checks if two lines are intersecting are not.
 	bool Intersecting(const Line& a, const Line& b, const bool& isInfLine = false) noexcept;
 	// \brief Returns the point of Intersect between two lines if they are intersecting.
-	Vector VectorOfIntersect(const Line& a, const Line& b, const bool& isInfLine = false) noexcept;
+	Vector PointOfIntersect(const Line& a, const Line& b, const bool& isInfLine = false) noexcept;
 	//\brief
 	// Quicksort algorithm that sorts using function to compare a to b.
 	// The functions's first parameter is a, and it's second, b.
 	// The function given must return negative numbers if a is less than b. 0 if they are equal,
 	// and positive values a is greater than b. ex. returns: -1, 0, 1.
 	template <typename T>
-	void Sort(T* array, size_t low, size_t high, std::function<int(T&, T&)>& comparer = Compare);
+	void Sort(T* array, size_t low, size_t high, std::function<int(T&, T&)>& comparer = Compare) noexcept;
+	/// \brief Returns the average of the given types.
+	template <typename Numeric>
+	Numeric Average(const Numeric* start, const Numeric* end) noexcept;
 #include "Math.inl"
 }

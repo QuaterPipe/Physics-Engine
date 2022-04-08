@@ -49,7 +49,7 @@ namespace physics
 
 	PolygonCollider::~PolygonCollider() noexcept {}
 
-	geometry::Vector getCentroid(std::vector<geometry::Vector> points)
+	geometry::Vector GetCentroid(std::vector<geometry::Vector> points)
 	{
 		if (points.size())
 		{
@@ -79,7 +79,7 @@ namespace physics
 
 	geometry::Vector PolygonCollider::GetCenter() const noexcept
 	{
-		return getCentroid(this->points);
+		return GetCentroid(this->points);
 	}
 
 	Collider* PolygonCollider::Clone() const

@@ -19,7 +19,10 @@ namespace physics
 		classCode = 0x05;
 		for (Collider* cldr : c.colliders)
 		{
-			this->colliders.push_back(cldr->Clone());
+			if (cldr)
+			{
+				this->colliders.push_back((*cldr).Clone());
+			}
 		}
 	}
 
@@ -88,10 +91,10 @@ namespace physics
 		return *std::min(mins.begin(), mins.end());
 	}
 
-	/*Serializable* MeshCollider::Deserialize(const std::vector<byte>& v,
+	Serializable* MeshCollider::Deserialize(const std::vector<byte>& v,
 			const size_t& index, const size_t& length) const
 	{
-		MeshCollider
+		return NULL;
 	}
 
 	unsigned char MeshCollider::GetByte(const size_t& index) const
@@ -107,14 +110,6 @@ namespace physics
 	std::vector<unsigned char> MeshCollider::Serialize() const noexcept
 	{
 		std::vector<unsigned char> vec;
-		std::vector<unsigned char> bytes = Archive::ReadBytes((reader)&pos.x, sizeof(pos.x));
-		vec.insert(vec.end(), bytes.begin(), bytes.end());
-		bytes = Archive::ReadBytes((reader)&pos.y, sizeof(pos.y));
-		vec.insert(vec.end(), bytes.begin(), bytes.end());
-		bytes = Archive::ReadBytes((reader)&dimensions.x, sizeof(dimensions.x));
-		vec.insert(vec.end(), bytes.begin(), bytes.end());
-		bytes = Archive::ReadBytes((reader)&dimensions.y, sizeof(dimensions.y));
-		vec.insert(vec.end(), bytes.begin(), bytes.end());
 		return vec;
-	}*/
+	}
 }

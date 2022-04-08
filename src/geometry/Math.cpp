@@ -100,10 +100,10 @@ namespace geometry
 
 	bool Intersecting(const Line& a, const Line& b, const bool& isInfLine) noexcept
 	{
-		return VectorOfIntersect(a, b, isInfLine) != Vector::Infinity;
+		return PointOfIntersect(a, b, isInfLine) != Vector::Infinity;
 	}
 
-	Vector VectorOfIntersect(const Line& a, const Line& b, const bool& isInfLine) noexcept
+	Vector PointOfIntersect(const Line& a, const Line& b, const bool& isInfLine) noexcept
 	{
 		auto det = [](std::tuple<f64, f64> a, std::tuple<f64, f64> b) -> f64
 		{

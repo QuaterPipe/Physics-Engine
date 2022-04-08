@@ -699,8 +699,8 @@ namespace physics::algo
 			geometry::Line l(APoints[i], APoints[(i + 1) % APoints.size()]);
 			if (geometry::Intersecting(l, line))
 			{
-				if (!listOfIntersections.size() || !std::count(listOfIntersections.begin(), listOfIntersections.end(), (geometry::VectorOfIntersect(l, line))))
-					listOfIntersections.push_back(geometry::VectorOfIntersect(l, line));
+				if (!listOfIntersections.size() || !std::count(listOfIntersections.begin(), listOfIntersections.end(), (geometry::PointOfIntersect(l, line))))
+					listOfIntersections.push_back(geometry::PointOfIntersect(l, line));
 			}
 		}
 		return listOfIntersections.size() % 2;
@@ -721,7 +721,7 @@ namespace physics::algo
 				geometry::Line BLine(tb.TransformVector(b->points.at(j)), 
 					tb.TransformVector(b->points.at((j + 1) % b->points.size())));
 				if (geometry::Intersecting(ALine, BLine))
-					intersections.push_back(geometry::VectorOfIntersect(ALine, BLine));
+					intersections.push_back(geometry::PointOfIntersect(ALine, BLine));
 			}
 		}
 		return intersections;
