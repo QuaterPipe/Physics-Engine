@@ -27,6 +27,7 @@ compileObjects:
 	g++ -c -Wall -std=c++17 src/physics/Collision/Collision.cpp -o bin/o/Collision.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/Collider.cpp -o bin/o/Collider.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/CollisionObject.cpp -o bin/o/CollisionObject.o
+	g++ -c -Wall -std=c++17 src/physics/Collision/Dynamicbody.cpp -o bin/o/Dynamicbody.o
 	g++ -c -Wall -std=c++17 src/physics/Tools/DataPacket.cpp -o bin/o/DataPacket.o
 	g++ -c -Wall -std=c++17 src/physics/Engine/Display.cpp -o bin/o/Display.o
 	g++ -c -Wall -std=c++17 src/physics/Engine/Entity.cpp -o bin/o/Entity.o
@@ -60,6 +61,7 @@ debugCompileObjects:
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Collider.cpp -o bin/o/Collider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/CollisionObject.cpp -o bin/o/CollisionObject.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Display.cpp -o bin/o/Display.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Dynamicbody.cpp -o bin/o/Dynamicbody.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Entity.cpp -o bin/o/Entity.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Hashable.cpp -o bin/o/Hashable.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/MeshCollider.cpp -o bin/o/MeshCollider.o

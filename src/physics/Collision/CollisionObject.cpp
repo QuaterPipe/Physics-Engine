@@ -11,26 +11,23 @@ namespace physics
 		collider.reset(new BoxCollider());
 	}
 
-	CollisionObject::CollisionObject(const Transform& t, const Collider& c, bool isTrigger) noexcept
-	: Hashable(), transform(t), isTrigger(isTrigger)
+	CollisionObject::CollisionObject(const Collider& c, const Transform& t, const bool& isTrigger) noexcept
+	: Hashable(), transform(t), isTrigger(isTrigger), collider(c.Clone())
 	{
 		classCode = 0x05;
-		collider.reset(c.Clone());
 	}
 
 	CollisionObject::CollisionObject(const CollisionObject& c) noexcept
-	: Hashable(), transform(c.transform), isTrigger(c.isTrigger), onCollision(c.onCollision)
+	: Hashable(), transform(c.transform), isTrigger(c.isTrigger), onCollision(c.onCollision), 
+	collider(c.GetCollider().Clone())
 	{
-		transform = c.transform;
 		classCode = 0x05;
-		collider.reset(c.GetCollider().Clone());
 	}
 
 	CollisionObject::CollisionObject(CollisionObject && c) noexcept
-	: Hashable(), transform(c.transform), isTrigger(c.isTrigger), onCollision(c.onCollision)
+	: Hashable(), transform(c.transform), isTrigger(c.isTrigger), onCollision(c.onCollision),
+	collider(c.collider.release())
 	{
-		transform = c.transform;
-		collider.reset(c.collider.release());
 	}
 
 	CollisionObject& CollisionObject::operator=(const CollisionObject& other) noexcept
@@ -117,6 +114,7 @@ namespace physics
 
 	void CollisionObject::SetCollider(const Collider& c) noexcept
 	{
+		delete collider.release();
 		collider.reset(c.Clone());
 	}
 

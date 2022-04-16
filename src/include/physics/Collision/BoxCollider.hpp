@@ -14,6 +14,7 @@ namespace physics
 		double& width = dimensions.x;
 		double& height = dimensions.y;
 		BoxCollider() noexcept;
+		BoxCollider(const f64& width, const f64& height) noexcept;
 		BoxCollider(const geometry::Vector& pos, const geometry::Vector& dimensions) noexcept;
 		BoxCollider(const BoxCollider& b) noexcept;
 		~BoxCollider() noexcept;

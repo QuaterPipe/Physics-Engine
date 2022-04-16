@@ -102,7 +102,6 @@ namespace physics::algo
 		const PolygonCollider* b, const Transform& tb
 	);
 
-	// too long of a name?
 	std::vector<geometry::Vector> GetIntersectionsBetweenTwoPolygons(
 		const PolygonCollider* a, const Transform& ta,
 		const PolygonCollider* b, const Transform& tb

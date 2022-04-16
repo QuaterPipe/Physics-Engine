@@ -26,33 +26,34 @@ namespace physics
 	{
 	}
 
-	MassPoint::MassPoint(geometry::Vector position, geometry::Vector velocity, geometry::Vector force, f64 mass) noexcept
-	: position(position), velocity(velocity), force(force), mass(mass)
+	MassPoint::MassPoint(geometry::Vector position, geometry::Vector velocity, geometry::Vector force, f64 mass, f64 radius) noexcept
+	: position(position), velocity(velocity), force(force), mass(mass), radius(radius)
 	{
 	}
 
 	bool MassPoint::operator==(const MassPoint& other) const noexcept
 	{
 		return position == other.position && velocity == other.velocity &&
-			force == other.force && mass == other.mass;
+			force == other.force && mass == other.mass && radius == other.radius;
 	}
 	
 	bool MassPoint::operator!=(const MassPoint& other) const noexcept
 	{
 		return position != other.position || velocity != other.velocity ||
-			force != other.force || mass != other.mass;
+			force != other.force || mass != other.mass || radius != other.radius;
 	}
 	
 
 	Softbody::Softbody() noexcept
-	: CollisionObject(), width(0), height(0)
+	: Dynamicbody(), width(0), height(0), radiusPerPoint(1)
 	{
 	}
 
 	Softbody::Softbody(const Softbody& s) noexcept
-	: CollisionObject((const CollisionObject&) s),
-	width(s.width), height(s.height)
+	: Dynamicbody((const Dynamicbody&) s),
+	width(s.width), height(s.height), radiusPerPoint(s.radiusPerPoint)
 	{
+		_isDynamic = true;
 		for (auto vec: s.points)
 		{
 			points.push_back(vec);
@@ -61,46 +62,44 @@ namespace physics
 		{
 			for (int j = 0; j < width; j++)
 			{
-				Spring s;
-				s.stiffness = 0.5;
-				s.restingLength = 1;
-				s.dampingFactor = 0.5;
-					s.a = &points.at(i).at(j);
+				Spring spr = s.springs.size() ? s.springs[0] : Spring();
+				spr.a = &points.at(i).at(j);
 				if (i)
 				{
-					s.b = &points.at(i - 1).at(j);
-					springs.push_back(s);
+					spr.b = &points.at(i - 1).at(j);
+					springs.push_back(spr);
 				}
 				if (j != width - 1)
 				{
-					s.b = &points.at(i).at(j + 1);
-					springs.push_back(s);
+					spr.b = &points.at(i).at(j + 1);
+					springs.push_back(spr);
 				}
-				s.restingLength = sqrt(2);
+				spr.restingLength = (sqrt(2) * spr.restingLength);
 				if (i + 1 < height && j + 1 < width)
 				{
-					s.b = &points.at(i + 1).at(j + 1);
-					springs.push_back(s);
+					spr.b = &points.at(i + 1).at(j + 1);
+					springs.push_back(spr);
 				}
 				if (i - 1 >= 0 && j + 1 < width)
 				{
-					s.b = &points.at(i - 1).at(j + 1);
-					springs.push_back(s);
+					spr.b = &points.at(i - 1).at(j + 1);
+					springs.push_back(spr);
 				}
 			}
 		}
 	}
 
 	Softbody::Softbody(Softbody && s) noexcept
-	: CollisionObject((CollisionObject &&) s), points(s.points), springs(s.springs),
-	width(s.width), height(s.height)
+	: Dynamicbody((Dynamicbody &&) s), points(s.points), springs(s.springs),
+	width(s.width), height(s.height), radiusPerPoint(s.radiusPerPoint)
 	{
 	}
 
-	Softbody::Softbody(const Transform& t,unsigned width, unsigned height, const Spring& spring) noexcept
-	: CollisionObject(t, BoxCollider(), false), width(width), height(height)
+	Softbody::Softbody(const Transform& t, unsigned width, unsigned height, const Spring& spring, const f64& spacing,
+		const f64& radiusPerPoint, const f64& massPerPoint) noexcept
+	: Dynamicbody(BoxCollider(), t, false), width(width), height(height), radiusPerPoint(radiusPerPoint)
 	{
-		geometry::Vector vec(0, height);
+		geometry::Vector vec(0, height * spacing);
 		for (unsigned i = 0; i < height; i++)
 		{
 			std::vector<MassPoint> arr;
@@ -108,13 +107,14 @@ namespace physics
 			{
 				MassPoint m;
 				m.position = vec;
-				m.mass = 1;
+				m.mass = massPerPoint;
+				m.radius = radiusPerPoint;
 				arr.push_back(m);
-				vec.x += 1;
+				vec.x += spacing;
 			}
 			points.push_back(arr);
 			vec.x = 0;
-			vec.y -= 1;
+			vec.y -= spacing;
 		}
 		for (int i = 0; i < height; i++)
 		{
@@ -122,7 +122,7 @@ namespace physics
 			{
 				Spring s;
 				s.stiffness = spring.stiffness;
-				s.restingLength = spring.restingLength;
+				s.restingLength = spacing;
 				s.dampingFactor = spring.dampingFactor;
 				s.a = &points.at(i).at(j);
 				if (i)
@@ -135,7 +135,7 @@ namespace physics
 					s.b = &points.at(i).at(j + 1);
 					springs.push_back(s);
 				}
-				s.restingLength = sqrt(2);
+				s.restingLength = (sqrt(2) * spacing);
 				if (i + 1 < height && j + 1 < width)
 				{
 					s.b = &points.at(i + 1).at(j + 1);
@@ -170,7 +170,8 @@ namespace physics
 
 	Softbody& Softbody::operator=(const Softbody& s) noexcept
 	{
-		CollisionObject::operator=((const CollisionObject&)s);
+		Dynamicbody::operator=((const Dynamicbody&) s);
+		radiusPerPoint = s.radiusPerPoint;
 		points = s.points;
 		for (int i = 0; i < height; i++)
 		{
@@ -188,7 +189,7 @@ namespace physics
 					spr.b = &points.at(i).at(j + 1);
 					springs.push_back(spr);
 				}
-				spr.restingLength = sqrt(2);
+				spr.restingLength = (sqrt(2) * spr.restingLength);
 				if (i + 1 < height && j + 1 < width)
 				{
 					spr.b = &points.at(i + 1).at(j + 1);
@@ -202,11 +203,13 @@ namespace physics
 			}
 		}
 		UpdateCollider();
+		return *this;
 	}
 
 	Softbody& Softbody::operator=(Softbody && s) noexcept
 	{
-		CollisionObject::operator=((CollisionObject &&)s);
+		Dynamicbody::operator=((Dynamicbody &&)s);
+		radiusPerPoint = s.radiusPerPoint;
 		points = s.points;
 		for (int i = 0; i < height; i++)
 		{
@@ -224,7 +227,7 @@ namespace physics
 					spr.b = &points.at(i).at(j + 1);
 					springs.push_back(spr);
 				}
-				spr.restingLength = sqrt(2);
+				spr.restingLength = (sqrt(2) * spr.restingLength);
 				if (i + 1 < height && j + 1 < width)
 				{
 					spr.b = &points.at(i + 1).at(j + 1);
@@ -238,11 +241,12 @@ namespace physics
 			}
 		}
 		UpdateCollider();
+		return *this;
 	}
 
-	void Softbody::ApplyForce(const geometry::Vector& force, const geometry::Vector& point) noexcept
+	void Softbody::ApplyForce(const geometry::Vector& force, const geometry::Vector& contactPoint) noexcept
 	{
-		if (point == geometry::Vector::Infinity)
+		if (contactPoint == geometry::Vector::Infinity)
 		{
 			for (auto& vec: points)
 			{
@@ -256,7 +260,7 @@ namespace physics
 			{
 				for (MassPoint& m: vec)
 				{
-					if (m.position == point)
+					if (geometry::DistanceSquared(m.position, contactPoint) <= SQRD(0.000001))
 					{
 						m.force += force;
 						break;
@@ -273,6 +277,14 @@ namespace physics
 			s.a->force += s.ForceExerting() * (s.b->position - s.a->position).Normalized();
 			s.b->force += s.ForceExerting() * (s.a->position - s.b->position).Normalized();	
 		}
+	}
+
+	void Softbody::ApplyImpulse(const geometry::Vector& impulse, const geometry::Vector& contactVec) noexcept
+	{
+	}
+
+	void Softbody::ApplyAngularForce(f64 angularVelocity) noexcept
+	{
 	}
 
 	CollisionObject* Softbody::Clone() const noexcept
@@ -297,16 +309,17 @@ namespace physics
 
 	void Softbody::FixCollapsing() noexcept
 	{
-		/*for (Spring& s: springs)
+		for (Spring& s: springs)
 		{
-			f64 length = geometry::Distance(s.a->position, s.b->position);
-			if (!length)
+			f64 dis = geometry::Distance(s.a->position, s.b->position);
+			if (!dis)
 				continue;
-			if (length < 1)
+			if (dis < s.a->radius + s.b->radius)
 			{
-				
+				s.a->position += (s.b->position - s.a->position).Normalized() * ((s.a->radius + s.b->radius) - dis);
+				s.a->velocity.Reflect((s.b->position - s.a->position).Normalized());
 			}
-		}*/
+		}
 	}
 
 	bool Softbody::NotEquals(const Hashable& other) const noexcept
@@ -327,9 +340,10 @@ namespace physics
 	void Softbody::UpdateCollider() noexcept
 	{
 		MeshCollider m;
-		for (int i = 0; i < height - 1; i++)
+		_colliders.clear();
+		for (unsigned i = 0; i < height - 1; i++)
 		{
-			for (int j = 0; j < width - 1; j++)
+			for (unsigned j = 0; j < width - 1; j++)
 			{
 				geometry::Vector a = points[i][j].position;
 				geometry::Vector b = points[i][j + 1].position;

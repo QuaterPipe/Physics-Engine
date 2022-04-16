@@ -28,7 +28,7 @@ namespace physics
 			geometry::Matrix2& scale = transform.scale;
 			geometry::Matrix2& rotation = transform.rotation;
 			CollisionObject() noexcept;
-			CollisionObject(const Transform& t, const Collider& c, bool isTrigger) noexcept;
+			CollisionObject(const Collider& c, const Transform& t = Transform(), const bool& isTrigger = false) noexcept;
 			CollisionObject(const CollisionObject& c) noexcept;
 			CollisionObject(CollisionObject && c) noexcept;
 			virtual ~CollisionObject() noexcept;

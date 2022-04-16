@@ -11,15 +11,18 @@ namespace geometry
 	const Vector Vector::jHat = Vector(0, 1);
 
 	Vector::Vector() noexcept
+	: x(0), y(0)
 	{
-		x = 0;
-		y = 0;
 	}
 
 	Vector::Vector(const f64& x, const f64& y) noexcept
+	: x(x), y(y)
 	{
-		this->x = x;
-		this->y = y;
+	}
+
+	Vector Vector::Abs() const noexcept
+	{
+		return Vector(fabs(x), fabs(y));
 	}
 
 	f64 Vector::Angle(const Vector& other) const noexcept
@@ -291,6 +294,16 @@ namespace geometry
 			return 1;
 		}
 		return 0;
+	}
+
+	Vector Vector::Reflection(const Vector& normal) const noexcept
+	{
+		return *this - 2 * Dot(normal) * normal;
+	}
+
+	void Vector::Reflect(const Vector& normal) noexcept
+	{
+		*this = Reflection(normal);
 	}
 
 	void Vector::Rotate(const Vector& p, const f64& angle) noexcept

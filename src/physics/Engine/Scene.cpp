@@ -11,7 +11,6 @@ namespace physics
 		_ended.store(false, std::memory_order_relaxed);
 		_entities.store(new std::vector<std::unique_ptr<Entity>>(), std::memory_order_relaxed);
 		// sfml displays y coordinates from top to bottom, so inverting the y value in view fixes this, displaying y coordinates from bottom to top.
-		std::cerr<<windowWidth<<" "<<windowHeight<<"fasdfasdfsd\n";
 		sf::View v = _display->GetWindow()->getView();
 		v.setSize(windowWidth, -((signed int)windowHeight));
 		_display->SetView(v);
@@ -33,10 +32,13 @@ namespace physics
 
 	void Scene::AddEntity(Entity& e) noexcept
 	{
-		Entity* ptr = e.Clone();
+		Entity* ptr = &e;
 		if (ptr->GetCollisionObject().IsDynamic())
 		{
-			_world.AddRigidbody(dynamic_cast<Rigidbody*>(&ptr->GetCollisionObject()));
+			if (dynamic_cast<Rigidbody*>(&ptr->GetCollisionObject()))
+				_world.AddRigidbody(dynamic_cast<Rigidbody*>(&ptr->GetCollisionObject()));
+			else if (dynamic_cast<Softbody*>(&ptr->GetCollisionObject()))
+				_world.AddSoftbody(dynamic_cast<Softbody*>(&ptr->GetCollisionObject()));
 		}
 		else
 		{
@@ -128,13 +130,12 @@ namespace physics
 	void Scene::Update(f64 dt) noexcept
 	{
 		//drawing all entities
-		std::cerr<<"Updating!!! "<<(bool)_display<<"\n";
 		if (_display)
 		{
 			_display->Update();
 			for (auto& ptr: *_entities.load(std::memory_order_relaxed))
 			{
-				std::cerr<<"spr: "<<ptr->sprite.getPosition().x<<" "<<ptr->sprite.getPosition().y<<"\n";
+				if (!ptr->willDraw) continue;
 				_display->Draw(ptr->sprite);
 				ptr->Update();
 			}

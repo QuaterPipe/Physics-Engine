@@ -10,9 +10,11 @@ namespace physics
 	{
 		for (Collision& c: collisions)
 		{
+			std::cerr<<"\n\n\n\n AHHHHHHHHHHHHHHHHH\n\n";
 			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
-			Rigidbody* a = (Rigidbody*) c.a;
-			Rigidbody* b = (Rigidbody*) c.b;
+			Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
+			Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
+			if (!a || !b) continue;
 			// Calculate relative velocity in terms of the normal direction
 			geometry::Vector rv = b->velocity - a->velocity;
 			float velocityAlongNormal = rv.Dot(c.points.normal);
@@ -25,15 +27,10 @@ namespace physics
 			float j = -(1 + e) * velocityAlongNormal;
 			j /= 1 / a->GetMass() + 1 / b->GetMass();
 			geometry::Vector impulse = j * c.points.normal;
-			std::cerr<<velocityAlongNormal<<"\n";
-			std::cerr<<a->velocity<<"\n";
-			std::cerr<<b->velocity<<"\n";
-			std::cerr<<"rv: "<<rv<<"\n";
-			std::cerr<<"normal: "<<c.points.normal<<"\n";
-			std::cerr<<"a force: "<<b->GetMass() / (a->GetMass() + b->GetMass()) * -impulse<<"\n";
-			std::cerr<<"b force: "<<a->GetMass() / (a->GetMass() + b->GetMass()) * impulse<<"\n";
-			a->ApplyForce(b->GetMass() / (a->GetMass() + b->GetMass()) * -impulse, c.points.a);
-			b->ApplyForce(a->GetMass() / (a->GetMass() + b->GetMass()) * impulse, c.points.b);
+			if (!a->isStatic)
+				a->ApplyForce(b->GetMass() / (a->GetMass() + b->GetMass()) * -impulse, c.points.a);
+			if (!b->isStatic)
+				b->ApplyForce(a->GetMass() / (a->GetMass() + b->GetMass()) * impulse, c.points.b);
 		}
 	}
 }

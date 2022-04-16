@@ -4,10 +4,14 @@ namespace physics
 {
 	using namespace serialization;
 	CircleCollider::CircleCollider(geometry::Vector center, double radius) noexcept
+	: center(center), radius(fabs(radius))
 	{
 		classCode = 0x03;
-		this->center = center;
-		this->radius = fabs(radius);
+	}
+
+	CircleCollider::CircleCollider(const f64& radius) noexcept
+	: center(), radius(fabs(radius))
+	{
 	}
 
 	CircleCollider::CircleCollider() noexcept
@@ -16,10 +20,9 @@ namespace physics
 	}
 
 	CircleCollider::CircleCollider(const CircleCollider& c) noexcept
+	: center(c.center), radius(fabs(c.radius))
 	{
 		classCode = 0x03;
-		this->radius = c.radius;
-		this->center = c.center;
 	}
 
 	CircleCollider::~CircleCollider() noexcept {}

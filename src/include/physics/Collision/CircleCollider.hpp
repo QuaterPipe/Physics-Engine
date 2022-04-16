@@ -9,6 +9,7 @@ namespace physics
 		geometry::Vector center = geometry::Vector();
 		f64 radius = 0;
 		CircleCollider() noexcept;
+		CircleCollider(const f64& radius) noexcept;
 		CircleCollider(geometry::Vector center, f64 radius) noexcept;
 		CircleCollider(const CircleCollider& c) noexcept;
 		~CircleCollider() noexcept;

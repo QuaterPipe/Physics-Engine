@@ -18,6 +18,8 @@ namespace geometry
 			f64 y;
 			Vector() noexcept;
 			Vector(const f64& x, const f64& y) noexcept;
+			// \brief returns the positive x & y values of *this vector
+			Vector Abs() const noexcept;
 			// \brief Gets that angle between 'this' vector and the 'other' Vector.
 			f64 Angle(const Vector& other) const noexcept;
 			// \brief Returns the cross product between 'this' and the other Vector.
@@ -48,6 +50,10 @@ namespace geometry
 			static Vector Projection(const Vector& vector, const Line& target) noexcept;
 			// \brief Return the quadrant of the given Vector relative to this Vector.
 			int Quadrant(const Vector& p) const noexcept;
+			// \brief Returns a vector reflected off of the given normal given
+			Vector Reflection(const Vector& normal) const noexcept;	
+			// \brief Reflects this Vector across the given normal
+			void Reflect(const Vector& normal) noexcept;
 			// \brief Rotates this Vector around the given point.
 			void Rotate(const Vector& p, const f64& angle) noexcept;
 			// \brief Set's the Vector's x & y coordinates.

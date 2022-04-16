@@ -4,32 +4,26 @@ namespace physics
 {
 	using namespace serialization;
 	BoxCollider::BoxCollider() noexcept
+	: pos(0, 0), dimensions(1, 1)
 	{
 		classCode = 0x02;
-		pos = geometry::Vector(0, 0);
-		dimensions = geometry::Vector(1, 1);
+	}
+
+	BoxCollider::BoxCollider(const f64& width, const f64& height) noexcept
+	: dimensions(width, height), pos(0, 0)
+	{
 	}
 
 	BoxCollider::BoxCollider(const geometry::Vector& pos, const geometry::Vector& dimensions) noexcept
+	: pos(pos), dimensions(dimensions.Abs())
 	{
 		classCode = 0x02;
-		this->pos = pos;
-		this->dimensions = dimensions;
-		if (this->dimensions.x < 0) {this->dimensions.x = fabs(this->dimensions.x);}
-		if (this->dimensions.y < 0) {this->dimensions.y = fabs(this->dimensions.y);}
 	}
 
 	BoxCollider::BoxCollider(const BoxCollider& b) noexcept
+	: pos(b.pos), dimensions(b.dimensions.Abs())
 	{
 		classCode = 0x02;
-		this->pos = geometry::Vector(b.pos);
-		this->dimensions = geometry::Vector(b.dimensions);
-		if (this->dimensions.x < 0) {this->dimensions.x = fabs(this->dimensions.x);}
-		if (this->dimensions.y < 0) {this->dimensions.y = fabs(this->dimensions.y);}
-		this->x = pos.x;
-		this->y = pos.y;
-		this->width = dimensions.x;
-		this->height = dimensions.y;
 	}
 
 	BoxCollider::~BoxCollider() noexcept {}

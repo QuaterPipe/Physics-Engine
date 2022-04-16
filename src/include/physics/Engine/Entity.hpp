@@ -1,7 +1,7 @@
 #pragma once
 #include "../../SFML/Graphics.hpp"
 #include "../Collision/Collision.hpp"
-#include "../Collision/CollisionObject.hpp"
+#include "../Collision/Rigidbody.hpp"
 #include <memory>
 
 namespace physics
@@ -15,8 +15,9 @@ namespace physics
 			sf::Sprite sprite;
 			Transform transform;
 			unsigned short ClassCode = 0x07;
+			bool willDraw = true;
 			Entity() noexcept;
-			Entity(const std::string& name, CollisionObject& c, const sf::Sprite& s) noexcept;
+			Entity(const std::string& name, const CollisionObject& c = Rigidbody(), const sf::Sprite& s = sf::Sprite()) noexcept;
 			Entity(const Entity& e) noexcept;
 			virtual Entity& operator=(const Entity& other) noexcept;
 			virtual ~Entity() noexcept;

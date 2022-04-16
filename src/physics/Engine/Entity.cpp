@@ -11,7 +11,7 @@ namespace physics
 		transform = Transform();
 	}
 
-	Entity::Entity(const std::string& name, CollisionObject& c, const sf::Sprite& s) noexcept
+	Entity::Entity(const std::string& name, const CollisionObject& c, const sf::Sprite& s) noexcept
 	: name(name), sprite(s), transform(c.transform)
 	{
 		collider.reset(c.Clone());

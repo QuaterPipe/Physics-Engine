@@ -20,9 +20,9 @@ namespace physics
 			geometry::Vector bPos = b->position;
 			aPos -= a->GetInvMass() * correction;
 			bPos += b->GetInvMass() * correction;
-			if (!a->isKinematic)
+			if (!a->isKinematic && !a->isStatic)
 				a->position = aPos;
-			if (!b->isKinematic)
+			if (!b->isKinematic && !a->isStatic)
 				b->position = bPos;
 		}
 	}
@@ -173,13 +173,14 @@ namespace physics
 			if (rigidbody)
 			{
 				if (!rigidbody->usesGravity) continue;
-				if (rigidbody->isKinematic) continue;
+				if (rigidbody->isKinematic || rigidbody->isStatic) continue;
 				rigidbody->ApplyForce(rigidbody->gravity);
+				continue;
 			}
 			Softbody* softbody = dynamic_cast<Softbody*>(obj);
 			if (softbody && softbody->usesGravity)
 			{
-				softbody->ApplyForce(_gravity);
+				softbody->ApplyForce(softbody->gravity);
 			}
 		}
 	}
@@ -192,7 +193,7 @@ namespace physics
 			Rigidbody* rigidbody = dynamic_cast<Rigidbody*>(obj);
 			if (rigidbody)
 			{
-				if (rigidbody->isKinematic) continue;
+				if (rigidbody->isKinematic || rigidbody->isStatic) continue;
 				geometry::Vector newPosition;
 				if (rigidbody->velocity.x > MAXXVEL)
 				{
@@ -208,15 +209,16 @@ namespace physics
 				t.position.Set(newPosition.x, newPosition.y);
 				rigidbody->transform = t;
 				rigidbody->Update(dt);
+				continue;
 			}
 			Softbody* softbody = dynamic_cast<Softbody*>(obj);
 			if (softbody)
 			{
-				for (std::vector<MassPoint> mVec: softbody->points)
+				for (std::vector<MassPoint>& mVec: softbody->points)
 				{
-					for (MassPoint m: mVec)
+					for (MassPoint& m: mVec)
 					{
-						m.velocity = m.force / m.mass;
+						m.velocity += m.force * (!m.mass ? 0 : 1 / m.mass);
 						m.position += m.velocity;
 						m.force.Set(0, 0);
 					}
@@ -240,10 +242,8 @@ namespace physics
 		{
 			if (!obj->IsDynamic()) continue;
 			Softbody* softbody = dynamic_cast<Softbody*>(obj);
-			if (softbody)
-			{
-				softbody->ApplySpringForces();
-			}
+			/*if (softbody)
+				softbody->ApplySpringForces();*/
 		}
 	}
 
