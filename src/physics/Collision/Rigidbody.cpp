@@ -43,22 +43,23 @@ namespace physics
 		angularVelocity += angularVelocity;
 	}
 
-	void Rigidbody::ApplyForce(const geometry::Vector& force, const geometry::Vector& contactPoint) noexcept
+	void Rigidbody::ApplyForce(const geometry::Vector& Force, const geometry::Vector& contactPoint) noexcept
 	{
-	 	velocity += force;
-		if (contactPoint != geometry::Vector::Infinity && force.GetMagnitudeQuick())
+	 	this->force += Force;
+		SetInertia(_mass);
+		if (contactPoint != geometry::Vector::Infinity && Force.GetMagnitudeQuick() * _invMass)
 		{
 			geometry::Vector rF = collider->GetCenter() - contactPoint;
 			// τ = r*F*sin(θ)
 			SetInertia(_mass);
-			torque = rF.GetMagnitudeQuick() * force.GetMagnitudeQuick() * sin(rF.Angle(force));
+			torque = rF.GetMagnitudeQuick() * Force.GetMagnitudeQuick() * _invMass * sin(rF.Angle(Force));
 			angularVelocity += torque * _invInertia;
 		}
 	}
 
 	void Rigidbody::ApplyImpulse(const geometry::Vector& impulse, const geometry::Vector& contactVec) noexcept
 	{
-		velocity += _invMass * impulse;
+		force += _invMass * impulse;
 	}
 
 	CollisionObject* Rigidbody::Clone() const noexcept
@@ -104,12 +105,14 @@ namespace physics
 		}
 		return (_mass != r.GetMass()) || (usesGravity != r.usesGravity) ||
 			(physicsMaterial != r.physicsMaterial) || (gravity != r.gravity) ||
-			(velocity != r.velocity) || (drag != r.drag) ||
-			CollisionObject::NotEquals((const CollisionObject&) r);
+			(velocity != r.velocity) || (drag != r.drag) || CollisionObject::NotEquals((const CollisionObject&) r);
 	}
 
-	void Rigidbody::Update(f64 dt) const noexcept
+	void Rigidbody::Update(f64 dt) noexcept
 	{
+		velocity += (force * _invMass) * dt;
+		position += velocity * dt;
+		force.Set(0, 0);
 	}
 
 	Serializable* Rigidbody::Deserialize(const std::vector<byte>& v,

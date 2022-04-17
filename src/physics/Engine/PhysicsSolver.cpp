@@ -10,14 +10,15 @@ namespace physics
 	{
 		for (Collision& c: collisions)
 		{
-			std::cerr<<"\n\n\n\n AHHHHHHHHHHHHHHHHH\n\n";
 			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
 			Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
 			Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
 			if (!a || !b) continue;
 			// Calculate relative velocity in terms of the normal direction
 			geometry::Vector rv = b->velocity - a->velocity;
-			float velocityAlongNormal = rv.Dot(c.points.normal);
+			geometry::Vector tangent = rv - rv.Dot(c.points.normal) * c.points.normal;
+			tangent.Normalize();
+			f64 velocityAlongNormal = rv.Dot(c.points.normal);
 			// Do not resolve if velocities are separating
 			if(velocityAlongNormal > 0)
 				continue;
@@ -25,12 +26,31 @@ namespace physics
 			float e = std::min(a->restitution, b->restitution);
 			// Calculate impulse scalar
 			float j = -(1 + e) * velocityAlongNormal;
-			j /= 1 / a->GetMass() + 1 / b->GetMass();
+			j /= a->GetInvMass() + b->GetInvMass();
+			j /= a->GetInvMass() + b->GetInvMass();
+			f64 jt = -rv.Dot(tangent);
+			jt /= (a->GetInvMass() + b->GetInvMass());
+			f64 mu = sqrt(SQRD(a->staticFriction) + SQRD(b->staticFriction));
+			geometry::Vector frictionImpulse;
+			if (fabs(jt) < j * mu)
+				frictionImpulse = jt * tangent;
+			else
+			{
+				f64 dynFric = sqrt(SQRD(a->kineticFriction) + SQRD(b->kineticFriction));
+				frictionImpulse = -j * tangent * dynFric;
+			}
 			geometry::Vector impulse = j * c.points.normal;
+			//ratio
 			if (!a->isStatic)
-				a->ApplyForce(b->GetMass() / (a->GetMass() + b->GetMass()) * -impulse, c.points.a);
+			{
+				a->ApplyForce(-impulse * a->GetInvMass() * (a->GetMass() / (a->GetMass() + b->GetMass())));
+				a->ApplyForce(-frictionImpulse * a->GetInvMass());
+			}
 			if (!b->isStatic)
-				b->ApplyForce(a->GetMass() / (a->GetMass() + b->GetMass()) * impulse, c.points.b);
+			{
+				b->ApplyForce(impulse * b->GetInvMass() * (b->GetMass() / (a->GetMass() + b->GetMass())));
+				b->ApplyForce(frictionImpulse * b->GetInvMass());
+			}
 		}
 	}
 }

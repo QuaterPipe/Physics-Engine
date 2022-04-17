@@ -244,14 +244,14 @@ namespace physics
 		return *this;
 	}
 
-	void Softbody::ApplyForce(const geometry::Vector& force, const geometry::Vector& contactPoint) noexcept
+	void Softbody::ApplyForce(const geometry::Vector& Force, const geometry::Vector& contactPoint) noexcept
 	{
 		if (contactPoint == geometry::Vector::Infinity)
 		{
 			for (auto& vec: points)
 			{
 				for (MassPoint& v: vec)
-					v.force += force;
+					v.force += Force / v.mass;
 			}
 		}
 		else
@@ -262,7 +262,7 @@ namespace physics
 				{
 					if (geometry::DistanceSquared(m.position, contactPoint) <= SQRD(0.000001))
 					{
-						m.force += force;
+						m.force += Force / m.mass;
 						break;
 					}
 				}
@@ -337,6 +337,20 @@ namespace physics
 			(s.height != this->height) || (s.usesGravity != this->usesGravity);
 	}
 
+	void Softbody::Update(f64 dt) noexcept
+	{
+		for (std::vector<MassPoint>& mVec: points)
+		{
+			for (MassPoint& m: mVec)
+			{
+				m.velocity += m.force * (!m.mass ? 0 : 1 / m.mass) * dt;
+				m.position += m.velocity * dt;
+				m.force.Set(0, 0);
+			}
+		}
+		UpdateCollider();
+	}
+
 	void Softbody::UpdateCollider() noexcept
 	{
 		MeshCollider m;
@@ -349,7 +363,7 @@ namespace physics
 				geometry::Vector b = points[i][j + 1].position;
 				geometry::Vector c = points[i + 1][j + 1].position;
 				geometry::Vector d = points[i + 1][j].position;
-				PolygonCollider p(a, b, c, {d});
+				PolygonCollider p(geometry::Vector(0, 0), a, b, c, {d});
 				_colliders.push_back(p);
 			}
 		}

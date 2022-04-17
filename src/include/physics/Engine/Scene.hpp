@@ -33,6 +33,7 @@ namespace physics
 			std::atomic_bool _physicsIsActive;
 			std::atomic_bool _ended;
 			void _PhysicsLoop() noexcept;
+			bool _started;
 			std::thread _physicsThread;
 		public:
 			Scene(const geometry::Vector& gravity, unsigned short physicsUpdateHz, unsigned windowWidth, unsigned windowHeight, std::string windowTitle="") noexcept;

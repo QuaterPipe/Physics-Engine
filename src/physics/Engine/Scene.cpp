@@ -14,11 +14,12 @@ namespace physics
 		sf::View v = _display->GetWindow()->getView();
 		v.setSize(windowWidth, -((signed int)windowHeight));
 		_display->SetView(v);
+		_physicsIsActive.store(false);
 		_physicsThread = std::thread(&Scene::_PhysicsLoop, this);
-		StartPhysics();
+		_started = false;
 	}
 
-	Scene::~Scene()
+	Scene::~Scene() noexcept
 	{
 		_ended.store(true, std::memory_order_relaxed);
 		_physicsThread.join();
@@ -65,26 +66,28 @@ namespace physics
 	void Scene::_PhysicsLoop() noexcept
 	{
 		Timer timer;
+		unsigned short hz = _physicsUpdateFrequency.load(std::memory_order_relaxed);
 		while (!_ended.load(std::memory_order_relaxed))
 		{
-			unsigned short hz = _physicsUpdateFrequency.load(std::memory_order_relaxed);
 			while (!_physicsIsActive.load(std::memory_order_relaxed))
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds(1 / hz * 1000));
 			}
 			timer.Start();
-			_world.Update(hz);
-			_world.ResolveCollisions(hz);
+			_world.Update(1.f / (double)hz * 1000.f);
+			_world.ResolveCollisions(1.f / (double)hz * 1000.f);
 			for (auto& ptr: *_entities.load(std::memory_order_relaxed))
 			{
 				ptr->FixedUpdate();
 				ptr->Update();
 			}
+			hz = _physicsUpdateFrequency.load(std::memory_order_relaxed);
 			timer.Stop();
-			if (timer.deltaTime > (1 / hz * 1000)) // calculations took too long
+			if (timer.deltaTime >= (1 / hz * 1000)) // calculations took too long
 				continue;
 			else
 			{
+				std::cerr<<(1 / hz * 1000)<<"\n";
 				double d = (1 / hz * 1000) - timer.deltaTime;
 				std::this_thread::sleep_for(std::chrono::milliseconds((int)d));
 			}
@@ -129,6 +132,11 @@ namespace physics
 
 	void Scene::Update(f64 dt) noexcept
 	{
+		if (!_started)
+		{
+			_started = true;
+			StartPhysics();
+		}
 		//drawing all entities
 		if (_display)
 		{

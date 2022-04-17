@@ -46,13 +46,14 @@ namespace physics
 			virtual Softbody& operator=(const Softbody& s) noexcept;
 			virtual Softbody& operator=(Softbody && s) noexcept;
 			virtual void ApplyAngularForce(f64 angularVelocity) noexcept override;
-			virtual void ApplyForce(const geometry::Vector& force, const geometry::Vector& contactPoint = geometry::Vector::Infinity) noexcept override;
+			virtual void ApplyForce(const geometry::Vector& Force, const geometry::Vector& contactPoint = geometry::Vector::Infinity) noexcept override;
 			virtual void ApplyImpulse(const geometry::Vector& impulse, const geometry::Vector& contactVec) noexcept override;
 			virtual void ApplySpringForces() noexcept;
 			virtual CollisionObject* Clone() const noexcept override;
 			virtual bool Equals(const Hashable& other) const noexcept override;
 			virtual void FixCollapsing() noexcept;
 			virtual bool NotEquals(const Hashable& other) const noexcept override;
+			virtual void Update(f64 dt) noexcept;
 			virtual void UpdateCollider() noexcept;
 	};
 }

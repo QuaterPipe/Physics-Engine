@@ -41,7 +41,7 @@ namespace physics
 	Dynamicbody::Dynamicbody(const Dynamicbody& d) noexcept
 	: CollisionObject((const CollisionObject&)d), _mass(d.GetMass()), _inertia(d.GetInertia()),physicsMaterial(d.physicsMaterial),
 		usesGravity(d.usesGravity), gravity(d.gravity), velocity(d.velocity), drag(d.drag),
-		angularVelocity(d.angularVelocity), isStatic(d.isStatic)
+		force(d.force), angularVelocity(d.angularVelocity), angularForce(d.angularForce), isStatic(d.isStatic)
 	{
 		_isDynamic = true;
 		_invMass = _mass ? 1 / _mass : 0;
@@ -50,7 +50,7 @@ namespace physics
 	Dynamicbody::Dynamicbody(Dynamicbody && d) noexcept
 	: CollisionObject((CollisionObject &&)d), _mass(d.GetMass()), _inertia(d.GetInertia()), physicsMaterial(d.physicsMaterial),
 		usesGravity(d.usesGravity), gravity(d.gravity), velocity(d.velocity), drag(d.drag),
-		angularVelocity(d.angularVelocity), isStatic(d.isStatic)
+		force(d.force), angularVelocity(d.angularVelocity), angularForce(d.angularForce), isStatic(d.isStatic)
 	{
 		_isDynamic = true;
 		_invMass = _mass ? 1 / _mass : 0;
@@ -68,7 +68,9 @@ namespace physics
 		velocity = d.velocity;
 		drag = d.drag;
 		angularVelocity = d.angularVelocity;
+		angularForce = d.angularForce;
 		isStatic = d.isStatic;
+		force = d.force;
 		return *this;
 	}
 
@@ -102,5 +104,9 @@ namespace physics
 	{
 		_mass = mass;
 		_invMass = mass ? 1 / mass : 0;
+	}
+
+	void Dynamicbody::Update(f64 dt) noexcept
+	{
 	}
 }

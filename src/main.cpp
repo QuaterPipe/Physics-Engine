@@ -9,82 +9,63 @@ using namespace physics;
 using namespace geometry;
 int main(int argc, char** args)
 {
-	/*sf::Font futura;
-	futura.loadFromFile("./bin/assets/Futura.tff");
-	sf::Text fps;
-	fps.setFont(futura);
-	fps.setPosition(370, 50);
-	fps.setCharacterSize(10);
-	double force = 1;
-	double mass = 1;
-	double radius = 1;
-	Spring sample;
-	sample.dampingFactor = 0.1;
-	sample.restingLength = 1;
-	sample.stiffness = 0.2;
+	f64 mass = 10000000000;
 	if (argc - 1)
 	{
-		sample.restingLength = std::stod(args[1]);
-		if (0 < argc - 2)
-			sample.stiffness = std::stod(args[2]);
-		if (0 < argc - 3)
-			sample.dampingFactor = std::stod(args[3]);
-		if (0 < argc - 4)
-			force = std::stod(args[4]);
-		if (0 < argc - 5)
-			radius = std::stod(args[5]);
-		if (0 < argc - 6)
-			mass = std::stod(args[6]);
+		mass = std::stod(args[1]);
 	}
-	Softbody soft(Transform(), 10, 10, sample, sample.restingLength, radius, mass);
-	soft.ApplyForce(Vector(1, 0) * force, Vector(5, 5));
-	sf::RenderWindow window(sf::VideoMode(300, 300), "main");
-	while (window.isOpen())
-	{
-		Time::Tick();
-		//std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		sf::Event event;
-		window.clear();
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-			{
-				window.close();
-			}
-		}
-		
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-		{
-			soft.ApplyForce(Vector(1, 0) * force, Vector(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) / 7);
-		}
-		soft.ApplySpringForces();
-		//soft.FixCollapsing();
-		for (std::vector<MassPoint>& mVec: soft.points)
-		{
-			for (MassPoint& m: mVec)
-			{
-				m.velocity += m.force / m.mass;
-				m.position += m.velocity;
-				m.force.Set(0, 0);
-			}
-		}
-		soft.UpdateCollider();
-		window.clear();
-		for (Spring spr: soft.springs)
-		{
-			sf::Vertex line[2] =
-			{
-			    sf::Vertex(sf::Vector2f(40 + (spr.a->position.x * 12), 40 + (spr.a->position.y * 12))),
-			    sf::Vertex(sf::Vector2f(40 + (spr.b->position.x * 12), 40 + (spr.b->position.y * 12)))
-			};
-			window.draw(line, 2, sf::Lines);
-		}
-		fps.setString(std::to_string(Time::deltaTime) + "fps");
-		window.draw(fps);
-		window.display();
-	}*/
-	
+	sf::Texture colours[5];
+	colours[0].loadFromFile("bin/textures/red_square.png");
+	colours[1].loadFromFile("bin/textures/cyan_square.png");
+	colours[2].loadFromFile("bin/textures/green_square.png");
+	colours[3].loadFromFile("bin/textures/magenta_square.png");
+	colours[4].loadFromFile("bin/textures/lime_square.png");
 	Scene scene(Vector(0, 0), 60, 300, 300, "Scene");
 	sf::RenderWindow* display = scene.GetDisplay()->GetWindow();
+	sf::Sprite boxes[5] = {
+		sf::Sprite(colours[0]),
+		sf::Sprite(colours[1]),
+		sf::Sprite(colours[2]),
+		sf::Sprite(colours[3]),
+		sf::Sprite(colours[4])
+	};
+	/*boxes[0].setOrigin(25, 25);
+	boxes[1].setOrigin(25, 25);
+	boxes[2].setOrigin(25, 25);
+	boxes[3].setOrigin(25, 25);
+	boxes[4].setOrigin(25, 25);*/
+	boxes[4].setScale(6, 1);
+	Entity entities[5] = {
+		Entity("Red", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[0]),
+		Entity("Blue", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[1]),
+		Entity("Green", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[2]),
+		Entity("Magenta", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[3]),
+		Entity("Lime", Rigidbody(BoxCollider(300, 50)), boxes[4])
+	};
+	entities[0].GetCollisionObject().position.Set(20, 300);
+	entities[1].GetCollisionObject().position.Set(90, 250);
+	entities[2].GetCollisionObject().position.Set(120, 490);
+	entities[3].GetCollisionObject().position.Set(200, 300);
+	entities[4].GetCollisionObject().position.Set(0, 0);
+	dynamic_cast<Dynamicbody&>(entities[0].GetCollisionObject()).SetMass(mass);
+	dynamic_cast<Dynamicbody&>(entities[1].GetCollisionObject()).SetMass(mass);
+	dynamic_cast<Dynamicbody&>(entities[2].GetCollisionObject()).SetMass(mass);
+	dynamic_cast<Dynamicbody&>(entities[3].GetCollisionObject()).SetMass(mass);
+	dynamic_cast<Dynamicbody&>(entities[4].GetCollisionObject()).SetMass(mass);
+	dynamic_cast<Dynamicbody&>(entities[4].GetCollisionObject()).isStatic = true;
+	dynamic_cast<Dynamicbody&>(entities[0].GetCollisionObject()).restitution = 0;
+	dynamic_cast<Dynamicbody&>(entities[1].GetCollisionObject()).restitution = 0;
+	dynamic_cast<Dynamicbody&>(entities[2].GetCollisionObject()).restitution = 0;
+	dynamic_cast<Dynamicbody&>(entities[3].GetCollisionObject()).restitution = 0;
+	scene.AddEntity(entities[0]);
+	scene.AddEntity(entities[1]);
+	scene.AddEntity(entities[2]);
+	scene.AddEntity(entities[3]);
+	scene.AddEntity(entities[4]);
+	while (display->isOpen())
+	{
+		Time::Tick();
+		scene.Update(Time::deltaTime);
+	}
 	return 0;
 }
