@@ -1,7 +1,7 @@
 #include "../include/geometry/Math.hpp"
 
 
-namespace geometry
+namespace geo
 {
 
 	f64 Degrees(const f64& radians) noexcept
@@ -142,5 +142,36 @@ namespace geometry
 		{
 			return p;
 		}*/
+	}
+
+	Vector Centroid(const Vector* start, const Vector* end) noexcept
+	{
+		
+		Vector first = *start;
+		Vector last = *end;
+		std::vector<Vector> points;
+		points.insert(points.end(), start, end);
+		if (points.size())
+		{
+			if (first.x != last.x || first.y != last.y)
+			{
+				points.push_back(first);
+			}
+			f64 twiceArea = 0, x = 0, y = 0, f = 0;
+			Vector p1, p2;
+			// absolutely no clue what this does, it just works lol
+			for (size_t i = 0, j = points.size() - 1; i < points.size(); j=i++)
+			{
+				p1 = points[i]; p2 = points[j];
+				f = (p1.y - first.y) * (p2.x - first.x) - (p2.y - first.y) * (p1.x - first.x);
+				twiceArea += f;
+				x += (p1.x + p2.x - 2 * first.x) * f;
+				y += (p1.y + p2.y - 2 * first.y) * f;
+			}
+			f = twiceArea * 3;
+			return Vector(x / f + first.x, y / f + first.y);
+		}
+		else
+			return Vector::Origin;
 	}
 }

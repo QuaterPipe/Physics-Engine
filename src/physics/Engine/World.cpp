@@ -15,9 +15,9 @@ namespace physics
 			Rigidbody* b = (Rigidbody*) c.b;
 			double percentage = 0.2;
 			double slop = 0.01;
-			geometry::Vector correction = std::max(c.points.depth - slop, 0.0) / (a->GetInvMass() + b->GetInvMass()) * percentage * c.points.normal;
-			geometry::Vector aPos = a->position;
-			geometry::Vector bPos = b->position;
+			geo::Vector correction = std::max(c.points.depth - slop, 0.0) / (a->GetInvMass() + b->GetInvMass()) * percentage * c.points.normal;
+			geo::Vector aPos = a->position;
+			geo::Vector bPos = b->position;
 			aPos -= a->GetInvMass() * correction;
 			bPos += b->GetInvMass() * correction;
 			if (!a->isKinematic && !a->isStatic)
@@ -70,8 +70,8 @@ namespace physics
 				// a collider to bounding box
 				Collider& cldr = a->GetCollider();
 				Transform trans = a->transform;
-				geometry::Vector min = cldr.Min() + a->position;
-				geometry::Vector max = cldr.Max() + a->position;
+				geo::Vector min = cldr.Min() + a->position;
+				geo::Vector max = cldr.Max() + a->position;
 				BoundingBoxA.x = min.x;
 				BoundingBoxA.y = min.y;
 				BoundingBoxA.width = max.x - min.x;
@@ -150,7 +150,7 @@ namespace physics
 
 	void DynamicsWorld::AddRigidbody(Rigidbody* r) noexcept
 	{
-		if (!r) {return;}
+		if (!r) return;
 		if (r->usesGravity)
 			r->gravity = _gravity;
 		else
@@ -191,13 +191,12 @@ namespace physics
 		{
 			if (!obj->IsDynamic()) continue;
 			Rigidbody* rigidbody = dynamic_cast<Rigidbody*>(obj);
-			if (rigidbody && !rigidbody->isKinematic && !rigidbody->isStatic)
+			if (rigidbody)
 			{
 				rigidbody->Update(dt);
-				continue;
 			}
 			Softbody* softbody = dynamic_cast<Softbody*>(obj);
-			if (softbody && !softbody->isStatic)
+			if (softbody)
 			{
 				softbody->Update(dt);
 			}

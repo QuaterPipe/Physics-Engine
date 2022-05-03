@@ -2,12 +2,12 @@
 
 namespace physics
 {
-	std::ostream& operator<<(std::ostream& os, const geometry::Vector& v)
+	std::ostream& operator<<(std::ostream& os, const geo::Vector& v)
 	{
 		return os << v.ToString();
 	}
 
-	std::ostream& operator<<(std::ostream& os, const geometry::Line& l)
+	std::ostream& operator<<(std::ostream& os, const geo::Line& l)
 	{
 		return os << l.ToString();
 	}
@@ -19,7 +19,7 @@ namespace physics
 		return os << t.scale;
 	}
 
-	std::ostream& operator<<(std::ostream& os, const geometry::Matrix2& m)
+	std::ostream& operator<<(std::ostream& os, const geo::Matrix2& m)
 	{
 		return os << "|" << m.a << " " << m.b << "|\n|" << m.c << " " << m.d << "|";
 	}

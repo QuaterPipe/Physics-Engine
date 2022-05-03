@@ -8,7 +8,7 @@ typedef unsigned int uint;
 typedef unsigned long ulong;
 typedef unsigned long long ulonglong;
 
-namespace geometry
+namespace geo
 {
 
 	// \brief A Line class containing two Vectors.

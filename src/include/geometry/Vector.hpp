@@ -8,7 +8,7 @@ typedef unsigned char uchar;
 typedef unsigned int uint;
 typedef unsigned long ulong;
 typedef unsigned long long ulonglong;
-namespace geometry
+namespace geo
 {
 	class Line;
 	struct Vector
@@ -156,6 +156,6 @@ namespace geometry
 			static const Vector3 kHat;
 	};
 }
-geometry::Vector cos(const geometry::Vector& v);
-geometry::Vector sin(const geometry::Vector& v);
-geometry::Vector tan(const geometry::Vector& v);
+geo::Vector cos(const geo::Vector& v);
+geo::Vector sin(const geo::Vector& v);
+geo::Vector tan(const geo::Vector& v);

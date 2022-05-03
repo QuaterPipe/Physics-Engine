@@ -30,7 +30,7 @@ namespace physics
 	}
 
 	Dynamicbody::Dynamicbody(const Collider& c, const Transform& t, const bool& isTrigger, const PhysicsMaterial& p,
-				const f64& mass, bool usesGravity, const geometry::Vector& drag) noexcept
+				const f64& mass, bool usesGravity, const geo::Vector& drag) noexcept
 	: CollisionObject(c, t, isTrigger), physicsMaterial(p), _mass(mass), usesGravity(usesGravity), drag(drag)
 	{
 		_isDynamic = true;
@@ -74,6 +74,15 @@ namespace physics
 		return *this;
 	}
 
+	bool Dynamicbody::Equals(const Dynamicbody& other) const noexcept
+	{
+		return CollisionObject::Equals(other) && _mass == other.GetMass() &&
+			_inertia == other.GetInertia() && physicsMaterial == other.physicsMaterial &&
+			usesGravity == other.usesGravity && gravity == other.gravity && velocity == other.velocity &&
+			drag == other.drag && angularVelocity == other.angularVelocity && angularForce == other.angularForce &&
+			isStatic == other.isStatic && force == other.force;
+	}
+
 	f64 Dynamicbody::GetInertia() const noexcept
 	{
 		return _inertia;
@@ -92,6 +101,15 @@ namespace physics
 	f64 Dynamicbody::GetMass() const noexcept
 	{
 		return _mass;
+	}
+
+	bool Dynamicbody::NotEquals(const Dynamicbody& other) const noexcept
+	{
+		return CollisionObject::NotEquals((CollisionObject&)other) || _mass != other.GetMass() ||
+			_inertia != other.GetInertia() || physicsMaterial != other.physicsMaterial ||
+			usesGravity != other.usesGravity || gravity != other.gravity || velocity != other.velocity ||
+			drag != other.drag || angularVelocity != other.angularVelocity || angularForce != other.angularForce ||
+			isStatic != other.isStatic || force != other.force;
 	}
 
 	void Dynamicbody::SetInertia(const f64& inertia) noexcept

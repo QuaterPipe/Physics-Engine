@@ -5,7 +5,7 @@
 namespace physics
 {
 
-	Scene::Scene(const geometry::Vector& gravity, unsigned short physicsUpdateHz, unsigned windowWidth, unsigned windowHeight, std::string windowTitle) noexcept
+	Scene::Scene(const geo::Vector& gravity, unsigned short physicsUpdateHz, unsigned windowWidth, unsigned windowHeight, std::string windowTitle) noexcept
 	: _physicsUpdateFrequency(physicsUpdateHz), _gravity(gravity), _display(new Display(windowWidth, windowHeight, windowTitle))
 	{
 		_ended.store(false, std::memory_order_relaxed);
@@ -67,29 +67,30 @@ namespace physics
 	{
 		Timer timer;
 		unsigned short hz = _physicsUpdateFrequency.load(std::memory_order_relaxed);
-		while (!_ended.load(std::memory_order_relaxed))
+		while (true)
 		{
-			while (!_physicsIsActive.load(std::memory_order_relaxed))
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(1 / hz * 1000));
-			}
 			timer.Start();
-			_world.Update(1.f / (double)hz * 1000.f);
-			_world.ResolveCollisions(1.f / (double)hz * 1000.f);
+			_world.Update(1.f / (double)hz);
+			_world.ResolveCollisions(1.f / (double)hz);
 			for (auto& ptr: *_entities.load(std::memory_order_relaxed))
 			{
 				ptr->FixedUpdate();
 				ptr->Update();
 			}
 			hz = _physicsUpdateFrequency.load(std::memory_order_relaxed);
+			if (_ended.load(std::memory_order_relaxed))
+				break;
+			while (!_physicsIsActive.load(std::memory_order_relaxed))
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(1 / hz * 1000));
+			}
 			timer.Stop();
-			if (timer.deltaTime >= (1 / hz * 1000)) // calculations took too long
+			if (timer.deltaTime >= (1.f / (double)hz * 1000.f)) // calculations took too long
 				continue;
 			else
 			{
-				std::cerr<<(1 / hz * 1000)<<"\n";
-				double d = (1 / hz * 1000) - timer.deltaTime;
-				std::this_thread::sleep_for(std::chrono::milliseconds((int)d));
+				double d = (1.f / (double)hz * 1000.f) - timer.deltaTime;
+				std::this_thread::sleep_for(std::chrono::microseconds((int)(d * 1000)));
 			}
 			timer.Reset();
 		}
@@ -110,7 +111,7 @@ namespace physics
 		}
 	}
 
-	void Scene::SetGravity(const geometry::Vector& g) noexcept
+	void Scene::SetGravity(const geo::Vector& g) noexcept
 	{
 		_gravity = g;
 	}

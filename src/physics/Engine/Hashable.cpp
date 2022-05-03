@@ -8,8 +8,8 @@ namespace physics
 	{
 		std::vector<unsigned char>reader = GetBytes();
 		int h = 0;
-		for (unsigned i = 0; i < sizeof(this);i++)
-			h = h * 31 + static_cast<int>(reader[i]);
+		for (unsigned char c: reader)
+			h = h * 31 + static_cast<int>(c);
 		return h;
 	}
 

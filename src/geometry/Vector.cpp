@@ -2,7 +2,7 @@
 #include "../include/geometry/Line.hpp"
 #include "../include/geometry/Vector.hpp"
 
-namespace geometry
+namespace geo
 {
 
 	const Vector Vector::Origin = Vector(0, 0);
@@ -336,7 +336,6 @@ namespace geometry
 	{
 		return std::tuple<f64, f64>(this->x, this->y);
 	}
-
 
 	const Vector3 Vector3::Origin = Vector3(0, 0, 0);
 	const Vector3 Vector3::Infinity = Vector3(std::numeric_limits<f64>::infinity(), std::numeric_limits<f64>::infinity(), std::numeric_limits<f64>::infinity());

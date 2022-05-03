@@ -14,7 +14,7 @@ namespace physics
 	{
 	}
 
-	BoxCollider::BoxCollider(const geometry::Vector& pos, const geometry::Vector& dimensions) noexcept
+	BoxCollider::BoxCollider(const geo::Vector& pos, const geo::Vector& dimensions) noexcept
 	: pos(pos), dimensions(dimensions.Abs())
 	{
 		classCode = 0x02;
@@ -33,17 +33,17 @@ namespace physics
 		return new BoxCollider(*this);
 	}
 
-	geometry::Vector BoxCollider::GetCenter() const noexcept
+	geo::Vector BoxCollider::GetCenter() const noexcept
 	{
-		return geometry::Vector(x + width / 2, y + height / 2);
+		return geo::Vector(x + width / 2, y + height / 2);
 	}
 
 	BoxCollider& BoxCollider::operator=(const BoxCollider& b)
 	{
 		if (*this != b)
 		{
-			pos = geometry::Vector(b.pos);
-			dimensions = geometry::Vector(b.dimensions);
+			pos = geo::Vector(b.pos);
+			dimensions = geo::Vector(b.dimensions);
 			x = pos.x;
 			y = pos.y;
 			width = dimensions.x;
@@ -52,14 +52,24 @@ namespace physics
 		return *this;
 	}
 
-	geometry::Vector BoxCollider::Max() const noexcept
+	geo::Vector BoxCollider::Max() const noexcept
 	{
 		return pos + dimensions;
 	}
 
-	geometry::Vector BoxCollider::Min() const noexcept
+	geo::Vector BoxCollider::Min() const noexcept
 	{
 		return pos;
+	}
+
+	std::vector<geo::Vector> BoxCollider::GetPoints(const Transform& t) const noexcept
+	{
+		std::vector<geo::Vector> v;
+		v.push_back(t.TransformVector(pos));
+		v.push_back(t.TransformVector(geo::Vector(x + width, y)));
+		v.push_back(t.TransformVector(pos + dimensions));
+		v.push_back(t.TransformVector(geo::Vector(x, y + height)));
+		return v;
 	}
 
 	Serializable* BoxCollider::Deserialize(const std::vector<byte>& v,

@@ -32,7 +32,7 @@ namespace physics
 
 	CollisionObject& CollisionObject::operator=(const CollisionObject& other) noexcept
 	{
-		if (NotEquals(dynamic_cast<const Hashable&>(other)))
+		if (NotEquals(other))
 		{
 			transform = other.transform;
 			collider.reset(other.GetCollider().Clone());
@@ -51,23 +51,13 @@ namespace physics
 	{
 	}
 
-	bool CollisionObject::Equals(const Hashable& other) const noexcept
+	bool CollisionObject::Equals(const CollisionObject& other) const noexcept
 	{
-		CollisionObject c;
-		try
-		{
-			c = dynamic_cast<const CollisionObject&>(other);
-		}
-		catch(const std::bad_cast& e)
-		{
-			return false;
-		}
-		
 		if (collider.get())
 		{
-			return transform.Equals(c.transform) && collider->Equals(c.GetCollider()) && (isTrigger == c.isTrigger);
+			return transform.Equals(other.transform) && collider->Equals(other.GetCollider()) && (isTrigger == other.isTrigger);
 		}
-		return transform.Equals(c.transform) && isTrigger == c.isTrigger;
+		return transform.Equals(other.transform) && isTrigger == other.isTrigger;
 	}
 
 	bool CollisionObject::IsDynamic() const noexcept
@@ -92,24 +82,14 @@ namespace physics
 		return h;
 	}
 
-	bool CollisionObject::NotEquals(const Hashable& other) const noexcept
+	bool CollisionObject::NotEquals(const CollisionObject& other) const noexcept
 	{
-		CollisionObject c;
-		try
-		{
-			c = dynamic_cast<const CollisionObject&>(other);
-		}
-		catch(const std::bad_cast& e)
-		{
-			return true;
-		}
-		// so no segfault happens
 		if (collider.get())
 		{
-			return transform.NotEquals(c.transform) ||
-				collider->NotEquals(c.GetCollider()) || isTrigger != c.isTrigger;
+			return transform.NotEquals(other.transform) ||
+				collider->NotEquals(other.GetCollider()) || isTrigger != other.isTrigger;
 		}
-		return transform.NotEquals(c.transform) || isTrigger != c.isTrigger;
+		return transform.NotEquals(other.transform) || isTrigger != other.isTrigger;
 	}
 
 	void CollisionObject::SetCollider(const Collider& c) noexcept

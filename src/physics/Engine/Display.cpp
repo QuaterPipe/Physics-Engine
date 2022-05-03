@@ -20,7 +20,10 @@ namespace physics
 	void Display::Draw(const Entity& e) noexcept
 	{
 		if (_window.isOpen())
+		{
+			std::cout<<e.sprite.getPosition().x<<" "<<e.sprite.getPosition().y<<"\n";
 			_window.draw(e.sprite);
+		}
 	}
 
 	void Display::Draw(const sf::Drawable& d) noexcept

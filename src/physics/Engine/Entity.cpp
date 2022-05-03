@@ -15,6 +15,8 @@ namespace physics
 	: name(name), sprite(s), transform(c.transform)
 	{
 		collider.reset(c.Clone());
+		if (s.getTexture())
+			sprite.setTexture(*s.getTexture());
 		sprite.setPosition(transform.position.x, transform.position.y);
 	}
 
@@ -48,21 +50,12 @@ namespace physics
 		return new Entity(*this);
 	}
 
-	bool Entity::Equals(const Hashable& other) const noexcept
+	bool Entity::Equals(const Entity& other) const noexcept
 	{
-		Entity e(*this);
-		try
-		{
-			e = dynamic_cast<const Entity&>(other);
-		}
-		catch(const std::bad_cast& e)
-		{
-			return false;
-		}
 		if (collider)
-			return (name == e.name) && collider->Equals(e.GetCollisionObject()) &&transform.Equals(e.transform);
+			return (name == other.name) && collider->Equals(other.GetCollisionObject()) && transform.Equals(other.transform);
 		else
-			return (name == e.name) && transform.Equals(e.transform);	
+			return (name == other.name) && transform.Equals(other.transform);	
 	}
 
 	CollisionObject& Entity::GetCollisionObject() const noexcept
@@ -74,7 +67,7 @@ namespace physics
 	{
 	}
 
-	bool Entity::NotEquals(const Hashable& other) const noexcept
+	bool Entity::NotEquals(const Entity& other) const noexcept
 	{
 		return !Equals(other);
 	}
@@ -88,7 +81,7 @@ namespace physics
 	{
 		transform = collider->transform;
 		sprite.setPosition(transform.position.x, transform.position.y);
-		sprite.rotate(acos(transform.rotation.a));
+		//sprite.setRotation(geo::Degrees(acos(transform.rotation.a)));
 	}
 
 	Serializable* Entity::Deserialize(const std::vector<byte>& v,

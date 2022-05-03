@@ -14,10 +14,11 @@ namespace physics
 			Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
 			Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
 			if (!a || !b) continue;
+
+			// Impulses
 			// Calculate relative velocity in terms of the normal direction
-			geometry::Vector rv = b->velocity - a->velocity;
-			geometry::Vector tangent = rv - rv.Dot(c.points.normal) * c.points.normal;
-			tangent.Normalize();
+			geo::Vector rv = b->velocity - a->velocity;
+			geo::Vector tangent = rv - rv.Dot(c.points.normal) * c.points.normal;
 			f64 velocityAlongNormal = rv.Dot(c.points.normal);
 			// Do not resolve if velocities are separating
 			if(velocityAlongNormal > 0)
@@ -25,13 +26,29 @@ namespace physics
 			// Calculate restitution
 			float e = std::min(a->restitution, b->restitution);
 			// Calculate impulse scalar
-			float j = -(1 + e) * velocityAlongNormal;
+			f64 j = -(1 + e) * velocityAlongNormal;
+			geo::Vector rA = c.points.b - (a->GetCollider().GetCenter() + a->position);
+			geo::Vector rB = c.points.a - (b->GetCollider().GetCenter() + b->position);
+			geo::Vector imp =  (-(1 + e) * (rv * c.points.normal)) /
+				(a->GetInvMass() + b->GetInvMass() + (SQRD(rA.Cross(tangent)) * a->GetInvInertia())
+				+ (SQRD(rB.Cross(tangent)) * b->GetInvInertia()));
+			std::cout<<imp<<"\n";
+			std::cout<<"a vel: "<<a->velocity<<" b vel: "<<b->velocity<<"\n";
 			j /= a->GetInvMass() + b->GetInvMass();
-			j /= a->GetInvMass() + b->GetInvMass();
+			if (std::isnan(j) || j == std::numeric_limits<f64>::infinity())
+				j = 0;
+			if (!a->isStatic)
+				a->ApplyImpulse(-imp, c.points.a);
+			if (!b->isStatic)
+				b->ApplyImpulse(imp, c.points.b);
+			//applying friction
+			rv = b->velocity - a->velocity;
+			tangent = rv - rv.Dot(c.points.normal) * c.points.normal;
+			tangent.Normalize();
 			f64 jt = -rv.Dot(tangent);
-			jt /= (a->GetInvMass() + b->GetInvMass());
+			jt /= a->GetInvMass() + b->GetInvMass();
 			f64 mu = sqrt(SQRD(a->staticFriction) + SQRD(b->staticFriction));
-			geometry::Vector frictionImpulse;
+			geo::Vector frictionImpulse;
 			if (fabs(jt) < j * mu)
 				frictionImpulse = jt * tangent;
 			else
@@ -39,18 +56,10 @@ namespace physics
 				f64 dynFric = sqrt(SQRD(a->kineticFriction) + SQRD(b->kineticFriction));
 				frictionImpulse = -j * tangent * dynFric;
 			}
-			geometry::Vector impulse = j * c.points.normal;
-			//ratio
-			if (!a->isStatic)
-			{
-				a->ApplyForce(-impulse * a->GetInvMass() * (a->GetMass() / (a->GetMass() + b->GetMass())));
-				a->ApplyForce(-frictionImpulse * a->GetInvMass());
-			}
+			/*if (!a->isStatic)
+				a->ApplyForce(-frictionImpulse * dt, c.points.a);
 			if (!b->isStatic)
-			{
-				b->ApplyForce(impulse * b->GetInvMass() * (b->GetMass() / (a->GetMass() + b->GetMass())));
-				b->ApplyForce(frictionImpulse * b->GetInvMass());
-			}
+				b->ApplyForce(frictionImpulse * dt, c.points.b);*/
 		}
 	}
 }

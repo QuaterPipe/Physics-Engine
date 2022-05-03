@@ -12,7 +12,7 @@ namespace physics
 	}
 
 	Rigidbody::Rigidbody(const Collider& c, const Transform& t, const bool& isTrigger, const PhysicsMaterial& p,
-		const f64& mass, bool usesGravity, const geometry::Vector& drag) noexcept
+		const f64& mass, bool usesGravity, const geo::Vector& drag) noexcept
 	: Dynamicbody(c, t, isTrigger, p, mass, usesGravity, drag)
 	{
 	}
@@ -43,23 +43,32 @@ namespace physics
 		angularVelocity += angularVelocity;
 	}
 
-	void Rigidbody::ApplyForce(const geometry::Vector& Force, const geometry::Vector& contactPoint) noexcept
+	void Rigidbody::ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint) noexcept
 	{
-	 	this->force += Force;
-		SetInertia(_mass);
-		if (contactPoint != geometry::Vector::Infinity && Force.GetMagnitudeQuick() * _invMass)
+		if (!isStatic && !isKinematic)
 		{
-			geometry::Vector rF = collider->GetCenter() - contactPoint;
-			// τ = r*F*sin(θ)
-			SetInertia(_mass);
-			torque = rF.GetMagnitudeQuick() * Force.GetMagnitudeQuick() * _invMass * sin(rF.Angle(Force));
-			angularVelocity += torque * _invInertia;
+		 	this->force += Force;
+			if (contactPoint != geo::Vector::Infinity && Force.GetMagnitudeQuick())
+			{
+				geo::Vector rF = (collider->GetCenter() + centerOfRotation) - contactPoint;
+				torque = (collider->GetCenter() + centerOfRotation).Cross(Force);
+				angularForce += torque;
+			}
 		}
 	}
 
-	void Rigidbody::ApplyImpulse(const geometry::Vector& impulse, const geometry::Vector& contactVec) noexcept
+	void Rigidbody::ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec) noexcept
 	{
-		force += _invMass * impulse;
+		if (!isStatic && !isKinematic)
+		{
+			velocity += _invMass * impulse;
+			if (contactVec != geo::Vector::Infinity && impulse.GetMagnitudeQuick())
+			{
+				geo::Vector rF = (collider->GetCenter() + centerOfRotation) - contactVec;
+				torque = (collider->GetCenter() + centerOfRotation).Cross(impulse);
+				angularVelocity += torque * _invInertia;
+			}
+		}
 	}
 
 	CollisionObject* Rigidbody::Clone() const noexcept
@@ -67,52 +76,35 @@ namespace physics
 		return (CollisionObject*)new Rigidbody(*this);
 	}
 
-	bool Rigidbody::Equals(const Hashable& other) const noexcept
+	bool Rigidbody::Equals(const Rigidbody& other) const noexcept
 	{
-		Rigidbody r;
-		try
-		{
-			r = dynamic_cast<const Rigidbody&>(other);
-		}
-		catch(const std::bad_cast& e)
-		{
-			return false;
-		}
-		return (_mass == r.GetMass()) && (usesGravity == r.usesGravity) &&
-			physicsMaterial == r.physicsMaterial && (gravity == r.gravity) &&
-			(velocity == r.velocity) && (drag == r.drag) &&
-			CollisionObject::Equals((const CollisionObject&) r);
+		return Dynamicbody::Equals(other) && isKinematic == other.isKinematic;
 	}
 
 	void Rigidbody::Move(f64 offsetX, f64 offsetY) noexcept
 	{
 		if (isKinematic)
 		{
-			transform.position += geometry::Vector(offsetX, offsetY);
+			transform.position += geo::Vector(offsetX, offsetY);
 		}
 	}
 
-	bool Rigidbody::NotEquals(const Hashable& other) const noexcept
+	bool Rigidbody::NotEquals(const Rigidbody& other) const noexcept
 	{
-		Rigidbody r;
-		try
-		{
-			r = dynamic_cast<const Rigidbody&>(other);
-		}
-		catch(const std::bad_cast& e)
-		{
-			return true;
-		}
-		return (_mass != r.GetMass()) || (usesGravity != r.usesGravity) ||
-			(physicsMaterial != r.physicsMaterial) || (gravity != r.gravity) ||
-			(velocity != r.velocity) || (drag != r.drag) || CollisionObject::NotEquals((const CollisionObject&) r);
+		return Dynamicbody::NotEquals(other) || isKinematic != other.isKinematic;
 	}
 
 	void Rigidbody::Update(f64 dt) noexcept
 	{
-		velocity += (force * _invMass) * dt;
-		position += velocity * dt;
-		force.Set(0, 0);
+		if (!isKinematic && !isStatic)
+		{
+			velocity += (force * _invMass) * dt;
+			position += velocity * dt;
+			angularVelocity += (angularForce * _invInertia) * dt;
+			rotation = rotation * geo::Matrix2(angularVelocity * dt);
+			angularForce = 0;
+			force.Set(0, 0);
+		}
 	}
 
 	Serializable* Rigidbody::Deserialize(const std::vector<byte>& v,

@@ -63,7 +63,7 @@ debugCompileObjects:
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Display.cpp -o bin/o/Display.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Dynamicbody.cpp -o bin/o/Dynamicbody.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Entity.cpp -o bin/o/Entity.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Hashable.cpp -o bin/o/Hashable.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Hashable.cpp -o bin/o/Hashable.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/MeshCollider.cpp -o bin/o/MeshCollider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Tools/Notify.cpp -o bin/o/Notify.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Tools/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o

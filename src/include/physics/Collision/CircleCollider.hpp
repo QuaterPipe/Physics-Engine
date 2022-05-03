@@ -6,17 +6,18 @@ namespace physics
 	//0x03
 	struct CircleCollider : public Collider
 	{
-		geometry::Vector center = geometry::Vector();
+		geo::Vector center = geo::Vector();
 		f64 radius = 0;
 		CircleCollider() noexcept;
 		CircleCollider(const f64& radius) noexcept;
-		CircleCollider(geometry::Vector center, f64 radius) noexcept;
+		CircleCollider(geo::Vector center, f64 radius) noexcept;
 		CircleCollider(const CircleCollider& c) noexcept;
 		~CircleCollider() noexcept;
 		Collider* Clone() const override;
-		virtual geometry::Vector GetCenter() const noexcept override;
-		geometry::Vector Max() const noexcept override;
-		geometry::Vector Min() const noexcept override;
+		virtual geo::Vector GetCenter() const noexcept override;
+		geo::Vector Max() const noexcept override;
+		geo::Vector Min() const noexcept override;
+		virtual std::vector<geo::Vector> GetPoints(const Transform& t = Transform()) const noexcept override;
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
 			const Collider* collider,

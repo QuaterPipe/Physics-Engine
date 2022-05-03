@@ -7,17 +7,18 @@ namespace physics
 	//0x04
 	struct PolygonCollider : public Collider
 	{
-		geometry::Vector pos;
-		std::vector<geometry::Vector> points;
+		geo::Vector pos;
+		std::vector<geo::Vector> points;
 		PolygonCollider();
 		PolygonCollider(const PolygonCollider& d) noexcept;
-		PolygonCollider(const geometry::Vector& pos, double distanceBetweenPoints=1, unsigned long count=3) noexcept;
-		PolygonCollider(const geometry::Vector& pos, const geometry::Vector& a, const geometry::Vector& b, const geometry::Vector& c, std::initializer_list<geometry::Vector> extra={}) noexcept;
+		PolygonCollider(const geo::Vector& pos, double distanceBetweenPoints=1, unsigned long count=3) noexcept;
+		PolygonCollider(const geo::Vector& pos, const geo::Vector& a, const geo::Vector& b, const geo::Vector& c, std::initializer_list<geo::Vector> extra={}) noexcept;
 		~PolygonCollider() noexcept;
 		Collider* Clone() const override;
-		virtual geometry::Vector GetCenter() const noexcept override;
-		geometry::Vector Max() const noexcept override;
-		geometry::Vector Min() const noexcept override;
+		virtual geo::Vector GetCenter() const noexcept;
+		geo::Vector Max() const noexcept override;
+		geo::Vector Min() const noexcept override;
+		virtual std::vector<geo::Vector> GetPoints(const Transform& t = Transform()) const noexcept override;
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
 			const Collider* collider,

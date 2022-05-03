@@ -7,22 +7,24 @@ namespace physics
 	//0x02
 	struct BoxCollider : public Collider
 	{
-		geometry::Vector pos;
-		geometry::Vector dimensions;
+		geo::Vector pos;
+		geo::Vector dimensions;
 		double& x = pos.x;
 		double& y = pos.y;
 		double& width = dimensions.x;
 		double& height = dimensions.y;
 		BoxCollider() noexcept;
 		BoxCollider(const f64& width, const f64& height) noexcept;
-		BoxCollider(const geometry::Vector& pos, const geometry::Vector& dimensions) noexcept;
+		BoxCollider(const geo::Vector& pos, const geo::Vector& dimensions) noexcept;
 		BoxCollider(const BoxCollider& b) noexcept;
 		~BoxCollider() noexcept;
 		BoxCollider& operator=(const BoxCollider& b);
 		Collider* Clone() const noexcept override;
-		virtual geometry::Vector GetCenter() const noexcept override;
-		geometry::Vector Max() const noexcept override;
-		geometry::Vector Min() const noexcept override;
+		virtual geo::Vector GetCenter() const noexcept override;
+		virtual std::vector<geo::Vector> GetPoints(const Transform& t = Transform()) const noexcept override;
+		geo::Vector Max() const noexcept override;
+		geo::Vector Min() const noexcept override;
+		sf::RectangleShape ToShape() const noexcept;
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
 			const Collider* collider,

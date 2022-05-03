@@ -27,7 +27,7 @@ namespace physics
 			DynamicsWorld _world;
 			std::atomic<std::vector<std::unique_ptr<Entity>>*> _entities;
 			std::vector<sf::Texture> _textures;
-			geometry::Vector _gravity = geometry::Vector(0, -9.81);
+			geo::Vector _gravity = geo::Vector(0, -9.81);
 			Display* _display = NULL;
 			std::atomic_ushort _physicsUpdateFrequency;
 			std::atomic_bool _physicsIsActive;
@@ -36,7 +36,7 @@ namespace physics
 			bool _started;
 			std::thread _physicsThread;
 		public:
-			Scene(const geometry::Vector& gravity, unsigned short physicsUpdateHz, unsigned windowWidth, unsigned windowHeight, std::string windowTitle="") noexcept;
+			Scene(const geo::Vector& gravity, unsigned short physicsUpdateHz, unsigned windowWidth, unsigned windowHeight, std::string windowTitle="") noexcept;
 			virtual ~Scene() noexcept;
 			void AddEntity(Entity& e) noexcept;
 			void AddTexture(sf::Texture t) noexcept;
@@ -49,7 +49,7 @@ namespace physics
 			void RemoveEntity(Entity& e) noexcept;
 			void StartPhysics() noexcept;
 			void StopPhysics() noexcept;
-			void SetGravity(const geometry::Vector& g) noexcept;
+			void SetGravity(const geo::Vector& g) noexcept;
 			void SetPhysicsUpdateFrequency(const unsigned short& ms) noexcept;
 			void Update(f64 dt) noexcept;
 	};

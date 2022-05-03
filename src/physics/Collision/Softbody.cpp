@@ -5,7 +5,7 @@ namespace physics
 {
 	f64 Spring::ForceExerting() const noexcept
 	{
-		f64 Fs = (geometry::Distance(a->position, b->position) - restingLength) * stiffness;
+		f64 Fs = (geo::Distance(a->position, b->position) - restingLength) * stiffness;
 		f64 Fd = (b->position - a->position).Normalized().Dot(b->velocity - a->velocity) * dampingFactor;
 		return Fs + Fd;
 	}
@@ -26,7 +26,7 @@ namespace physics
 	{
 	}
 
-	MassPoint::MassPoint(geometry::Vector position, geometry::Vector velocity, geometry::Vector force, f64 mass, f64 radius) noexcept
+	MassPoint::MassPoint(geo::Vector position, geo::Vector velocity, geo::Vector force, f64 mass, f64 radius) noexcept
 	: position(position), velocity(velocity), force(force), mass(mass), radius(radius)
 	{
 	}
@@ -99,7 +99,7 @@ namespace physics
 		const f64& radiusPerPoint, const f64& massPerPoint) noexcept
 	: Dynamicbody(BoxCollider(), t, false), width(width), height(height), radiusPerPoint(radiusPerPoint)
 	{
-		geometry::Vector vec(0, height * spacing);
+		geo::Vector vec(0, height * spacing);
 		for (unsigned i = 0; i < height; i++)
 		{
 			std::vector<MassPoint> arr;
@@ -153,10 +153,10 @@ namespace physics
 		{
 			for (int j = 0; j < width - 1; j++)
 			{
-				geometry::Vector a = points[i][j].position;
-				geometry::Vector b = points[i][j + 1].position;
-				geometry::Vector c = points[i + 1][j + 1].position;
-				geometry::Vector d = points[i + 1][j].position;
+				geo::Vector a = points[i][j].position;
+				geo::Vector b = points[i][j + 1].position;
+				geo::Vector c = points[i + 1][j + 1].position;
+				geo::Vector d = points[i + 1][j].position;
 				PolygonCollider p(a, b, c, {d});
 				_colliders.push_back(p);
 			}
@@ -244,9 +244,9 @@ namespace physics
 		return *this;
 	}
 
-	void Softbody::ApplyForce(const geometry::Vector& Force, const geometry::Vector& contactPoint) noexcept
+	void Softbody::ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint) noexcept
 	{
-		if (contactPoint == geometry::Vector::Infinity)
+		if (contactPoint == geo::Vector::Infinity)
 		{
 			for (auto& vec: points)
 			{
@@ -260,7 +260,7 @@ namespace physics
 			{
 				for (MassPoint& m: vec)
 				{
-					if (geometry::DistanceSquared(m.position, contactPoint) <= SQRD(0.000001))
+					if (geo::DistanceSquared(m.position, contactPoint) <= SQRD(0.000001))
 					{
 						m.force += Force / m.mass;
 						break;
@@ -279,7 +279,7 @@ namespace physics
 		}
 	}
 
-	void Softbody::ApplyImpulse(const geometry::Vector& impulse, const geometry::Vector& contactVec) noexcept
+	void Softbody::ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec) noexcept
 	{
 	}
 
@@ -292,26 +292,18 @@ namespace physics
 		return (CollisionObject*)new Softbody(*this);
 	}
 
-	bool Softbody::Equals(const Hashable& other) const noexcept
+	bool Softbody::Equals(const Softbody& other) const noexcept
 	{
-		Softbody s;
-		try
-		{
-			s = dynamic_cast<const Softbody&>(other);
-		}
-		catch(const std::bad_alloc& e)
-		{
-			return false;
-		}
-		return( s.points == this->points) && (s.springs == this->springs) && (s.width == this->width) &&
-			(s.height == this->height) && (s.usesGravity == this->usesGravity);
+		return Dynamicbody::Equals(other) && (other.points == this->points) && 
+			(other.springs == this->springs) && (other.width == this->width) &&
+			(other.height == this->height) && (other.usesGravity == this->usesGravity);
 	}
 
 	void Softbody::FixCollapsing() noexcept
 	{
 		for (Spring& s: springs)
 		{
-			f64 dis = geometry::Distance(s.a->position, s.b->position);
+			f64 dis = geo::Distance(s.a->position, s.b->position);
 			if (!dis)
 				continue;
 			if (dis < s.a->radius + s.b->radius)
@@ -322,33 +314,28 @@ namespace physics
 		}
 	}
 
-	bool Softbody::NotEquals(const Hashable& other) const noexcept
+	bool Softbody::NotEquals(const Softbody& other) const noexcept
 	{
-		Softbody s;
-		try
-		{
-			s = dynamic_cast<const Softbody&>(other);
-		}
-		catch(const std::bad_alloc& e)
-		{
-			return true;
-		}
-		return(s.points != this->points) || (s.springs != this->springs) || (s.width != this->width) ||
-			(s.height != this->height) || (s.usesGravity != this->usesGravity);
+		return Dynamicbody::NotEquals(other) || (other.points != this->points) || 
+			(other.springs != this->springs) || (other.width != this->width) ||
+			(other.height != this->height) || (other.usesGravity != this->usesGravity);
 	}
 
 	void Softbody::Update(f64 dt) noexcept
 	{
-		for (std::vector<MassPoint>& mVec: points)
+		if (!isStatic)
 		{
-			for (MassPoint& m: mVec)
+			for (std::vector<MassPoint>& mVec: points)
 			{
-				m.velocity += m.force * (!m.mass ? 0 : 1 / m.mass) * dt;
-				m.position += m.velocity * dt;
-				m.force.Set(0, 0);
+				for (MassPoint& m: mVec)
+				{
+					m.velocity += m.force * (!m.mass ? 0 : 1 / m.mass) * dt;
+					m.position += m.velocity * dt;
+					m.force.Set(0, 0);
+				}
 			}
+			UpdateCollider();
 		}
-		UpdateCollider();
 	}
 
 	void Softbody::UpdateCollider() noexcept
@@ -359,11 +346,11 @@ namespace physics
 		{
 			for (unsigned j = 0; j < width - 1; j++)
 			{
-				geometry::Vector a = points[i][j].position;
-				geometry::Vector b = points[i][j + 1].position;
-				geometry::Vector c = points[i + 1][j + 1].position;
-				geometry::Vector d = points[i + 1][j].position;
-				PolygonCollider p(geometry::Vector(0, 0), a, b, c, {d});
+				geo::Vector a = points[i][j].position;
+				geo::Vector b = points[i][j + 1].position;
+				geo::Vector c = points[i + 1][j + 1].position;
+				geo::Vector d = points[i + 1][j].position;
+				PolygonCollider p(geo::Vector(0, 0), a, b, c, {d});
 				_colliders.push_back(p);
 			}
 		}

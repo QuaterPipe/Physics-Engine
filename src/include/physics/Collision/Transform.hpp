@@ -7,16 +7,16 @@ namespace physics
 	struct Transform;
 	struct Transform : public serialization::Serializable, public Hashable
 	{
-		geometry::Vector position = geometry::Vector(0, 0);
-		geometry::Vector centerOfRotation = geometry::Vector(0, 0);
-		geometry::Matrix2 scale = geometry::Matrix2();
-		geometry::Matrix2 rotation = geometry::Matrix2();
+		geo::Vector position = geo::Vector(0, 0);
+		geo::Vector centerOfRotation = geo::Vector(0, 0);
+		geo::Matrix2 scale = geo::Matrix2();
+		geo::Matrix2 rotation = geo::Matrix2();
 		Transform() noexcept;
 		virtual ~Transform() noexcept;
 		bool operator==(const Transform& other) const noexcept;
 		bool operator!=(const Transform& other) const noexcept;
-		geometry::Matrix3 GetTransformationMatrix() const noexcept;
-		geometry::Vector TransformVector(const geometry::Vector& v) const noexcept;
+		geo::Matrix3 GetTransformationMatrix() const noexcept;
+		geo::Vector TransformVector(const geo::Vector& v) const noexcept;
 		virtual Serializable* Deserialize(const std::vector<byte>& v,
 			const size_t& index, const size_t& length) const override;
 		virtual byte GetByte(const size_t& index) const override;

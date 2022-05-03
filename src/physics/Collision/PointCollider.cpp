@@ -14,7 +14,7 @@ namespace physics
 		
 	}
 
-	PointCollider::PointCollider(const geometry::Vector& pos)
+	PointCollider::PointCollider(const geo::Vector& pos)
 	: Collider(), position(pos)
 	{
 	}
@@ -33,6 +33,13 @@ namespace physics
 	unsigned char PointCollider::GetByte(const size_t& index) const
 	{
 		return Serialize().at(index);
+	}
+
+	std::vector<geo::Vector> PointCollider::GetPoints(const Transform& t) const noexcept
+	{
+		std::vector<geo::Vector> v;
+		v.push_back(t.TransformVector(position));
+		return v;
 	}
 
 	unsigned long PointCollider::TotalByteSize() const noexcept

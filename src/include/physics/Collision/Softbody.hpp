@@ -5,13 +5,13 @@ namespace physics
 {
 	struct MassPoint
 	{
-		geometry::Vector position;
-		geometry::Vector velocity;
-		geometry::Vector force;
+		geo::Vector position;
+		geo::Vector velocity;
+		geo::Vector force;
 		f64 radius;
 		f64 mass = 1;
 		MassPoint();
-		MassPoint(geometry::Vector position, geometry::Vector velocity, geometry::Vector force, f64 mass, f64 radius = 1) noexcept;
+		MassPoint(geo::Vector position, geo::Vector velocity, geo::Vector force, f64 mass, f64 radius = 1) noexcept;
 		bool operator==(const MassPoint& other) const noexcept;
 		bool operator!=(const MassPoint& other) const noexcept;
 	};
@@ -46,13 +46,13 @@ namespace physics
 			virtual Softbody& operator=(const Softbody& s) noexcept;
 			virtual Softbody& operator=(Softbody && s) noexcept;
 			virtual void ApplyAngularForce(f64 angularVelocity) noexcept override;
-			virtual void ApplyForce(const geometry::Vector& Force, const geometry::Vector& contactPoint = geometry::Vector::Infinity) noexcept override;
-			virtual void ApplyImpulse(const geometry::Vector& impulse, const geometry::Vector& contactVec) noexcept override;
+			virtual void ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint = geo::Vector::Infinity) noexcept override;
+			virtual void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec) noexcept override;
 			virtual void ApplySpringForces() noexcept;
 			virtual CollisionObject* Clone() const noexcept override;
-			virtual bool Equals(const Hashable& other) const noexcept override;
+			virtual bool Equals(const Softbody& other) const noexcept;
 			virtual void FixCollapsing() noexcept;
-			virtual bool NotEquals(const Hashable& other) const noexcept override;
+			virtual bool NotEquals(const Softbody& other) const noexcept;
 			virtual void Update(f64 dt) noexcept;
 			virtual void UpdateCollider() noexcept;
 	};

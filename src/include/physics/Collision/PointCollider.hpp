@@ -4,11 +4,12 @@ namespace physics
 {
 	struct PointCollider : public Collider
 	{
-		geometry::Vector position;
+		geo::Vector position;
 		PointCollider();
 		PointCollider(const f64& x, const f64& y);
-		PointCollider(const geometry::Vector& pos);
+		PointCollider(const geo::Vector& pos);
 		PointCollider(const PointCollider& p);
+		virtual std::vector<geo::Vector> GetPoints(const Transform& t = Transform()) const noexcept override;
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
 			const Collider* collider,

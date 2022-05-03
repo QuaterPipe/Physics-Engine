@@ -6,10 +6,10 @@ namespace physics
 	Transform::Transform() noexcept
 	: Hashable(), Serializable()
 	{
-		position = geometry::Vector(0, 0);
-		centerOfRotation = geometry::Vector(0, 0);
-		scale = geometry::Matrix2();
-		rotation = geometry::Matrix2();
+		position = geo::Vector(0, 0);
+		centerOfRotation = geo::Vector(0, 0);
+		scale = geo::Matrix2();
+		rotation = geo::Matrix2();
 	}
 
 	Transform::~Transform() noexcept
@@ -27,19 +27,19 @@ namespace physics
 		return !(position == other.position && scale == other.scale && rotation == other.rotation);
 	}
 
-	geometry::Matrix3 Transform::GetTransformationMatrix() const noexcept
+	geo::Matrix3 Transform::GetTransformationMatrix() const noexcept
 	{
-		geometry::Matrix3 result(rotation * scale);
+		geo::Matrix3 result(rotation * scale);
 		result.c = position.x;
 		result.f = position.y;
 		return result;
 	}
 
-	geometry::Vector Transform::TransformVector(const geometry::Vector& v) const noexcept
+	geo::Vector Transform::TransformVector(const geo::Vector& v) const noexcept
 	{
-		geometry::Vector3 tmp(v.x, v.y, 1);
+		geo::Vector3 tmp(v.x, v.y, 1);
 		tmp = GetTransformationMatrix() * tmp;
-		return geometry::Vector(tmp.x, tmp.y);
+		return geo::Vector(tmp.x, tmp.y);
 	}
 
 	Serializable* Transform::Deserialize(const std::vector<byte>& v,

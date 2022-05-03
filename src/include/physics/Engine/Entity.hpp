@@ -22,9 +22,9 @@ namespace physics
 			virtual Entity& operator=(const Entity& other) noexcept;
 			virtual ~Entity() noexcept;
 			virtual Entity* Clone() const noexcept;
-			virtual bool Equals(const Hashable& other) const noexcept override;
+			virtual bool Equals(const Entity& other) const noexcept;
 			virtual CollisionObject& GetCollisionObject() const noexcept;
-			virtual bool NotEquals(const Hashable& other) const noexcept override;
+			virtual bool NotEquals(const Entity& other) const noexcept;
 			virtual void SetCollisionObject(CollisionObject& c) noexcept;
 			virtual void Update() noexcept;
 			virtual void FixedUpdate() noexcept;

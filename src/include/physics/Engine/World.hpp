@@ -31,7 +31,7 @@ namespace physics
 			std::vector<CollisionObject*> _objects;
 			std::vector<Solver*> _solvers;
 			std::function<void(Collision&, f64)> _onCollision;
-			geometry::Vector _gravity = geometry::Vector(0, -9.81);
+			geo::Vector _gravity = geo::Vector(0, -9.81);
 		public:
 			void AddObject(CollisionObject* o) noexcept;
 			void AddSolver(Solver* s) noexcept;
@@ -45,7 +45,7 @@ namespace physics
 	class DynamicsWorld : public CollisionWorld
 	{
 		private:
-			geometry::Vector _gravity = geometry::Vector(0, -9.81);
+			geo::Vector _gravity = geo::Vector(0, -9.81);
 		public:
 			DynamicsWorld() noexcept;
 			void AddRigidbody(Rigidbody* rb) noexcept;

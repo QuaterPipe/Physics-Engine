@@ -12,9 +12,10 @@ namespace physics
 		MeshCollider(const MeshCollider& m) noexcept;
 		~MeshCollider() noexcept;
 		Collider* Clone() const override;
-		virtual geometry::Vector GetCenter() const noexcept override;
-		geometry::Vector Max() const noexcept override;
-		geometry::Vector Min() const noexcept override;
+		virtual geo::Vector GetCenter() const noexcept override;
+		geo::Vector Max() const noexcept override;
+		geo::Vector Min() const noexcept override;
+		virtual std::vector<geo::Vector> GetPoints(const Transform& t = Transform()) const noexcept override;
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
 			const Collider* collider,

@@ -7,7 +7,7 @@
 #include "Curve.hpp"
 #include "Vector.hpp"
 #include "Line.hpp"
-typedef geometry::Vector Vector2;
+typedef geo::Vector Vector2;
 typedef double f64;
 typedef float f32;
 typedef unsigned char uchar;
@@ -22,7 +22,7 @@ typedef unsigned long long ulonglong;
 ( \
 	(X) * (X) * (X) \
 )
-namespace geometry
+namespace geo
 {
 	// \brief Compares two inputs, 1 if a is greater than b, 0 if they are equal,
 	// and -1 if a is less than b.

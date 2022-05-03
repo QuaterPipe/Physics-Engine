@@ -1,6 +1,6 @@
 #pragma once
 #include "Math.hpp"
-namespace geometry
+namespace geo
 {
 	// \brief a 2x2 Matrix class
 	struct Matrix2

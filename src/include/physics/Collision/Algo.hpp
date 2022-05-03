@@ -1,4 +1,4 @@
-	#include "Collision.hpp"
+#include "Collision.hpp"
 namespace physics::algo
 {
 	CollisionPoints PointPointCollision(
@@ -79,11 +79,11 @@ namespace physics::algo
 
 	bool PolygonColliderVectorIsColliding(
 		const PolygonCollider* a, const Transform& ta,
-		const geometry::Vector& b
+		const geo::Vector& b
 	);
 
 	bool LinePassesThroughCircle(
-		const geometry::Line& a, const CircleCollider* b,
+		const geo::Line& a, const CircleCollider* b,
 		const Transform& tb
 	);
 
@@ -102,7 +102,7 @@ namespace physics::algo
 		const PolygonCollider* b, const Transform& tb
 	);
 
-	std::vector<geometry::Vector> GetIntersectionsBetweenTwoPolygons(
+	std::vector<geo::Vector> GetIntersectionsBetweenTwoPolygons(
 		const PolygonCollider* a, const Transform& ta,
 		const PolygonCollider* b, const Transform& tb
 	);

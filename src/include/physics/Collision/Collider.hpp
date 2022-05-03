@@ -1,5 +1,6 @@
 #pragma once
 #include "../../geometry/main.hpp"
+#include "../../SFML/Graphics.hpp"
 #include "Serializable.hpp"
 #include "Transform.hpp"
 
@@ -16,12 +17,12 @@ namespace physics
 	struct CollisionPoints
 	{
 		// the deepest point into collider b that is a part of a.
-		geometry::Vector a;
+		geo::Vector a;
 		// the deepest poin into collider a that is a part of b.
-		geometry::Vector b;
+		geo::Vector b;
 		// it i sb - a(usually) is always pointint in the direction
 		// to push a out of b in the shortest distance.
-		geometry::Vector normal;
+		geo::Vector normal;
 		// The distance between the two deepest points.
 		f64 depth = 0;
 		bool hasCollision = false;
@@ -40,9 +41,10 @@ namespace physics
 	{
 		virtual Collider* Clone() const = 0;
 		virtual ~Collider() noexcept;
-		virtual geometry::Vector GetCenter() const noexcept = 0;
-		virtual geometry::Vector Max() const noexcept = 0;
-		virtual geometry::Vector Min() const noexcept = 0;
+		virtual geo::Vector GetCenter() const noexcept = 0;
+		virtual std::vector<geo::Vector> GetPoints(const Transform& t = Transform()) const noexcept = 0;
+		virtual geo::Vector Max() const noexcept = 0;
+		virtual geo::Vector Min() const noexcept = 0;
 		virtual CollisionPoints TestCollision(
 			const Transform& transform,
 			const Collider* collider,

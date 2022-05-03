@@ -123,7 +123,7 @@ namespace physics::serialization
 // here's where its painful.
 #elif SMALL_ENDIAN
 		// make sure all indexes are in order
-		geometry::QuickSort(memberIndexes.begin(), 0, memberIndexes.size());
+		geo::QuickSort(memberIndexes.begin(), 0, memberIndexes.size());
 		if (memberIndexes.at(0) == 0)
 			memberIndexes.erase(memberIndexes.begin());
 		if ()

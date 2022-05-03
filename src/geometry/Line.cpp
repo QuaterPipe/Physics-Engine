@@ -1,7 +1,7 @@
 #include "../include/geometry/Math.hpp"
 #include "../include/geometry/Line.hpp"
 
-namespace geometry
+namespace geo
 {
 	Line::Line() noexcept
 	{

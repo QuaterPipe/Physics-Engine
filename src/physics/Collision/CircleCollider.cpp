@@ -3,7 +3,7 @@
 namespace physics
 {
 	using namespace serialization;
-	CircleCollider::CircleCollider(geometry::Vector center, double radius) noexcept
+	CircleCollider::CircleCollider(geo::Vector center, double radius) noexcept
 	: center(center), radius(fabs(radius))
 	{
 		classCode = 0x03;
@@ -32,17 +32,17 @@ namespace physics
 		return new CircleCollider(*this);
 	}
 
-	geometry::Vector CircleCollider::GetCenter() const noexcept
+	geo::Vector CircleCollider::GetCenter() const noexcept
 	{
 		return center;
 	}
 
-	geometry::Vector CircleCollider::Max() const noexcept
+	geo::Vector CircleCollider::Max() const noexcept
 	{
 		return center + radius;
 	}
 
-	geometry::Vector CircleCollider::Min() const noexcept
+	geo::Vector CircleCollider::Min() const noexcept
 	{
 		return center - radius;
 	}
@@ -83,6 +83,14 @@ namespace physics
 		return c;
 	}
 
+	std::vector<geo::Vector> CircleCollider::GetPoints(const Transform& t) const noexcept
+	{
+		std::vector<geo::Vector> v;
+		v.push_back(t.TransformVector(center));
+		return v;
+	}
+	
+	
 	unsigned char CircleCollider::GetByte(const size_t& index) const
 	{
 		return Serialize().at(index);

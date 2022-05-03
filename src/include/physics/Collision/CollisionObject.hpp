@@ -24,10 +24,10 @@ namespace physics
 			std::function<void(Collision&, f64)> onCollision;
 			std::unique_ptr<Collider> collider;
 			Transform transform;
-			geometry::Vector& position = transform.position;
-			geometry::Vector& centerOfRotation = transform.centerOfRotation;
-			geometry::Matrix2& scale = transform.scale;
-			geometry::Matrix2& rotation = transform.rotation;
+			geo::Vector& position = transform.position;
+			geo::Vector& centerOfRotation = transform.centerOfRotation;
+			geo::Matrix2& scale = transform.scale;
+			geo::Matrix2& rotation = transform.rotation;
 			CollisionObject() noexcept;
 			CollisionObject(const Collider& c, const Transform& t = Transform(), const bool& isTrigger = false) noexcept;
 			CollisionObject(const CollisionObject& c) noexcept;
@@ -35,11 +35,11 @@ namespace physics
 			virtual ~CollisionObject() noexcept;
 			virtual CollisionObject* Clone() const noexcept;
 			virtual CollisionObject& operator=(const CollisionObject& other) noexcept;
-			virtual bool Equals(const Hashable& other) const noexcept override;
+			virtual bool Equals(const CollisionObject& other) const noexcept;
 			virtual bool IsDynamic() const noexcept;
 			virtual Collider& GetCollider() const noexcept;
 			virtual int GetHash() const noexcept;
-			virtual bool NotEquals(const Hashable& other) const noexcept override;
+			virtual bool NotEquals(const CollisionObject& other) const noexcept;
 			virtual void SetCollider(const Collider& c) noexcept;
 			virtual Serializable* Deserialize(const std::vector<byte>& v,
 				const size_t& index, const size_t& length) const override;

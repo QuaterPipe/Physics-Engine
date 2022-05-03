@@ -1,6 +1,6 @@
 #include "../include/geometry/Matrix.hpp"
 
-namespace geometry
+namespace geo
 {
 	Matrix2::Matrix2() noexcept
 	{

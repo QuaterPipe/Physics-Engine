@@ -9,7 +9,7 @@ namespace physics
 		classCode = 0x04;
 	}
 
-	PolygonCollider::PolygonCollider(const geometry::Vector& pos,
+	PolygonCollider::PolygonCollider(const geo::Vector& pos,
 		f64 distanceBetweenPoints, ulong count	
 	) noexcept
 	{
@@ -18,11 +18,11 @@ namespace physics
 		if (count < 3)
 			return;
 		f64 angle = 0;
-		geometry::Vector current(0, 0);
+		geo::Vector current(0, 0);
 		for (ulong i = 0; i < count; i++)
 		{
 			points.push_back(current);
-			current = geometry::GetVectorOnCircle(current, distanceBetweenPoints, angle);
+			current = geo::GetVectorOnCircle(current, distanceBetweenPoints, angle);
 			angle += (count - 2) * M_PI;
 			angle = fmod(angle, M_PI * 2);
 		}
@@ -33,11 +33,11 @@ namespace physics
 		classCode = 0x04;
 	}
 
-	PolygonCollider::PolygonCollider(const geometry::Vector& pos,
-		const geometry::Vector& a,
-		const geometry::Vector& b,
-		const geometry::Vector& c,
-		std::initializer_list<geometry::Vector> extra) noexcept
+	PolygonCollider::PolygonCollider(const geo::Vector& pos,
+		const geo::Vector& a,
+		const geo::Vector& b,
+		const geo::Vector& c,
+		std::initializer_list<geo::Vector> extra) noexcept
 	{
 		classCode = 0x04;
 		this->pos = pos;
@@ -49,18 +49,18 @@ namespace physics
 
 	PolygonCollider::~PolygonCollider() noexcept {}
 
-	geometry::Vector GetCentroid(std::vector<geometry::Vector> points)
+	geo::Vector GetCentroid(std::vector<geo::Vector> points)
 	{
 		if (points.size())
 		{
-			geometry::Vector first = points.at(0);
-			geometry::Vector last = points.at(points.size() - 1);
+			geo::Vector first = points.at(0);
+			geo::Vector last = points.at(points.size() - 1);
 			if (first.x != last.x || first.y != last.y)
 			{
 				points.push_back(first);
 			}
 			f64 twiceArea = 0, x = 0, y = 0, f = 0;
-			geometry::Vector p1, p2;
+			geo::Vector p1, p2;
 			// absolutely no clue what this does, it just works lol
 			for (size_t i = 0, j = points.size() - 1; i < points.size(); j=i++)
 			{
@@ -71,15 +71,23 @@ namespace physics
 				y += (p1.y + p2.y - 2 * first.y) * f;
 			}
 			f = twiceArea * 3;
-			return geometry::Vector(x / f + first.x, y / f + first.y);
+			return geo::Vector(x / f + first.x, y / f + first.y);
 		}
 		else
-			return geometry::Vector::Origin;
+			return geo::Vector::Origin;
 	}
 
-	geometry::Vector PolygonCollider::GetCenter() const noexcept
+	geo::Vector PolygonCollider::GetCenter() const noexcept
 	{
 		return GetCentroid(this->points);
+	}
+
+	std::vector<geo::Vector> PolygonCollider::GetPoints(const Transform& t) const noexcept
+	{
+		std::vector<geo::Vector> v;
+		for (geo::Vector vec: points)
+			v.push_back(t.TransformVector(vec));
+		return v;
 	}
 
 	Collider* PolygonCollider::Clone() const
@@ -87,17 +95,17 @@ namespace physics
 		return new PolygonCollider(*this);
 	}
 
-	geometry::Vector PolygonCollider::Max() const noexcept
+	geo::Vector PolygonCollider::Max() const noexcept
 	{
 		if (!points.size())
-			return geometry::Vector::Origin;
+			return geo::Vector::Origin;
 		return *std::max(points.begin(), points.end()) + pos;
 	}
 
-	geometry::Vector PolygonCollider::Min() const noexcept
+	geo::Vector PolygonCollider::Min() const noexcept
 	{
 		if (!points.size())
-			return geometry::Vector::Origin;
+			return geo::Vector::Origin;
 		return *std::min(points.begin(), points.end()) + pos;
 	}
 
