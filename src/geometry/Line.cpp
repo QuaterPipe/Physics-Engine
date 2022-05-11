@@ -1,5 +1,6 @@
 #include "../include/geometry/Math.hpp"
 #include "../include/geometry/Line.hpp"
+#include <iostream>
 
 namespace geo
 {
@@ -92,6 +93,6 @@ namespace geo
 
 	bool Line::VectorIsOnLine(const Vector& v) const noexcept
 	{
-		return DistanceSquared(a, v) + DistanceSquared(b, v) == length() * length();
+		return Distance(a, v) + Distance(v, b) == Distance(a, b);
 	}
 }

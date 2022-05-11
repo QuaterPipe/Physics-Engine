@@ -36,7 +36,7 @@ namespace physics::algo
 		c.hasCollision = false;
 		if (!a || !b) return c;
 		geo::Vector APos = ta.TransformVector(a->position);
-		if (!PolygonColliderVectorIsColliding(b, tb, APos))
+		if (!PolygonAndVectorAreColliding(b, tb, APos))
 			return c;
 		std::vector<geo::Vector> BPoints;
 		for (const geo::Vector& v: b->points)
@@ -126,8 +126,8 @@ namespace physics::algo
 		if (SQRD(a->radius + b->radius) >= r)
 		{
 			geo::Line l(ACenter, BCenter);
-			c.a = l.GetVectorAlongLine(a->radius);
-			c.b = l.GetVectorAlongLine(b->radius, false);
+			c.b= l.GetVectorAlongLine(a->radius);
+			c.a = l.GetVectorAlongLine(b->radius, false);
 			c.depth = geo::Distance(c.a, c.b);
 			c.normal = c.b - c.a;
 			c.normal.Normalize();
@@ -175,87 +175,42 @@ namespace physics::algo
 		c.hasCollision = false;
 		if (!a || !b) {return c;}
 		if (a->points.size() < 3) {return c;}
-		c = CircleInsidePolygon(a, ta, b, tb);
-		if (c.hasCollision)
-			return c;
-		std::vector<geo::Vector> APoints;
-		for (const geo::Vector& v: a->points)
-			APoints.push_back(ta.TransformVector(v + a->pos));
-		
 		const geo::Vector BCenter = tb.TransformVector(b->center);
-		std::vector<geo::Line> lines;
-		for (unsigned i = 0; i < APoints.size(); i++)
-			lines.push_back(geo::Line(APoints[i], APoints[(i + 1) % APoints.size()]));
-		
-		geo::Vector closest = geo::Vector::Infinity;
-		geo::Line closestLine;
-		f64 dis = std::numeric_limits<f64>::max();
-		// project the circle's center onto every line : the PolygonCollider
-		for (const geo::Line& l: lines)
+		size_t pointInCircleCount = 0;
+		size_t lineInCircleCount = 0;
+		for (size_t i = 0; i < a->points.size(); i++)
 		{
-			geo::Vector proj = geo::Vector::Projection(BCenter, l);
-			if (geo::DistanceSquared(proj, BCenter) < dis && l.VectorIsOnLine(proj))
-			{  
-				closest = proj;
-				dis = geo::DistanceSquared(proj, BCenter);
-				closestLine = l;
+			const geo::Line side(ta.TransformVector(a->points[i]), ta.TransformVector(a->points[(i + 1) % a->points.size()]));
+			if (LinePassesThroughCircle(side, b, tb) && side.VectorIsOnLine(geo::Vector::Projection(BCenter, side)))
+			{
+				lineInCircleCount++;
+			}
+			if (VectorInCircle(ta.TransformVector(a->points[i]), b, tb))
+			{
+				pointInCircleCount++;
 			}
 		}
-		auto VectorInCircle = [&] (const geo::Vector& center, const f64& radius, const geo::Vector point) {
-			return geo::DistanceSquared(center, point) <= SQRD(radius);
-		};
-		// if the polygon collider is completely inside the circle
+		std::cout<<lineInCircleCount<<" "<<pointInCircleCount<<" "<<lineInCircleCount<<"\n";
+		if (pointInCircleCount == a->points.size())
 		{
-			geo::Vector farthest = geo::Vector::Infinity;
-			f64 maxDis = std::numeric_limits<f64>::min();
-			bool allInCircle = true;
-			for (geo::Vector& v: APoints)
-			{
-				if (!VectorInCircle(BCenter, b->radius, v))
-				{
-					allInCircle = false;
-					break;
-				}
-				f64 distance = geo::DistanceSquared(v, BCenter);
-				if (distance > maxDis)
-				{
-					farthest = v;
-					maxDis = distance;
-				}
-			}
-			if (allInCircle)
-			{
-				c.a = farthest;
-				geo::Line tmp(farthest, BCenter);
-				c.b = tmp.GetVectorAlongLine(b->radius, false);
-				// reversed norm vector to push PolygonCollider out of circle				
-				c.normal = c.a - c.b;
-				c.depth = geo::Distance(c.a, c.b);
-				c.normal.Normalize();
-				c.hasCollision = true;
-				return c;
-			}
+			return PolygonInsideCircle(a, ta, b, tb);
 		}
-		//if the circle's center is inside the PolygonCollider
-		if (PolygonColliderVectorIsColliding(a, ta, BCenter))
+		if (lineInCircleCount)
 		{
-			c.a = BCenter;
-			c.b = closest;
-			// reversed norm vector to push circle out of PolygonCollider
-			c.normal = c.a - c.b;
-			c.depth = geo::Distance(c.a, c.b);
-			c.normal.Normalize();
-			c.hasCollision = true;
+			return PolygonLineInCircle(a, ta, b, tb);
+		}
+		if (pointInCircleCount)
+		{
+			std::cout<<"doing vertex!\n";
+			return PolygonVertexInCircle(a, ta, b, tb);
+		}
+		c = CircleCenterInPolygon(a, ta, b, tb);
+		if (c.hasCollision)
+		{
 			return c;
 		}
-		// else 
-		c.a = closest;
-		geo::Line radius(closest, BCenter);
-		c.b = radius.GetVectorAlongLine(b->radius, false);
-		c.normal = c.b - c.a;
-		c.normal.Normalize();
-		c.hasCollision = true;
-		return c;
+		else
+			return CircleInsidePolygon(a, ta, b, tb);
 	}
 
 	CollisionPoints PolygonPolygonCollision(
@@ -281,13 +236,13 @@ namespace physics::algo
 		bool BPointsInA = false;
 		for (const geo::Vector& p: BPoints)
 		{
-			if (PolygonColliderVectorIsColliding(a, ta, p))
+			if (PolygonAndVectorAreColliding(a, ta, p))
 				BPointsInA = true;
 		}
 		bool APointsInB = false;
 		for (const geo::Vector& p: APoints)
 		{
-			if (PolygonColliderVectorIsColliding(b, tb, p))
+			if (PolygonAndVectorAreColliding(b, tb, p))
 				APointsInB = true;
 		}
 		auto intersections = GetIntersectionsBetweenTwoPolygons(a, ta, b, tb);
@@ -469,12 +424,13 @@ namespace physics::algo
 		const Transform& tb
 	)
 	{
-		if (geo::DistanceSquared(a.a, b->center + tb.position) <= b->radius * b->radius)
+		const geo::Vector BCenter = tb.TransformVector(b->center);
+		if (geo::DistanceSquared(a.a, BCenter) <= SQRD(b->radius))
 			return true;
-		else if (geo::DistanceSquared(a.b, b->center + tb.position) <= b->radius * b->radius)
+		else if (geo::DistanceSquared(a.b, BCenter) <= SQRD(b->radius))
 			return true;
-		geo::Vector v = geo::Vector::Projection(b->center + tb.position, a);
-		return geo::DistanceSquared(v, b->center + tb.position) <= b->radius * b->radius;
+		geo::Vector proj = geo::Vector::Projection(BCenter, a);
+		return (geo::DistanceSquared(proj, BCenter) <= SQRD(b->radius));
 	}
 
 	bool CircleInsideCircle(
@@ -496,56 +452,184 @@ namespace physics::algo
 		CollisionPoints c;
 		c.hasCollision = false;
 		if (!a || !b) return c;
-		if (a->points.size() < 3) return c;
-		std::vector<geo::Vector> APoints;
 		const geo::Vector BCenter = tb.TransformVector(b->center);
-		for (const geo::Vector& v: a->points)
+		geo::Vector closestPoint;
+		f64 minDis = std::numeric_limits<f64>::max();
+		for (size_t i = 0; i < a->points.size(); i++)
 		{
-			if (geo::DistanceSquared(ta.TransformVector(v + a->pos), BCenter) > SQRD(b->radius))
-				return c;
-			APoints.push_back(ta.TransformVector(v + a->pos));
-		}
-		geo::Vector closest = geo::Vector::Infinity;
-		f64 distance = std::numeric_limits<f64>::infinity();
-		for (size_t i = 0; i < APoints.size(); i++)
-		{
-			geo::Line l(APoints[i], APoints[(i + 1) % APoints.size()]);
-			geo::Vector proj = geo::Vector::Projection(BCenter, l);
-			if (!l.VectorIsOnLine(proj))
-				continue;
-			if (geo::DistanceSquared(proj, BCenter) > SQRD(b->radius))
-				return c;
-			if (geo::DistanceSquared(proj, BCenter) < distance)
+			const geo::Vector vA = ta.TransformVector(a->points[i]);
+			const geo::Vector vB = ta.TransformVector(a->points[(i + 1) % a->points.size()]);
+			const geo::Line side(vA, vB);
+			const geo::Vector proj = geo::Vector::Projection(BCenter, side);
+			if (geo::DistanceSquared(proj, BCenter) < minDis && side.VectorIsOnLine(proj))
 			{
-				closest = proj;
-				distance = geo::DistanceSquared(closest, BCenter);
+				closestPoint = proj;
+				minDis = geo::DistanceSquared(proj, BCenter);
+			}
+			if (geo::DistanceSquared(vA, BCenter) < minDis)
+			{
+				closestPoint = vA;
+				minDis = geo::DistanceSquared(vA, BCenter);
 			}
 		}
-		if (closest == geo::Vector::Infinity)
-		{
-			geo::Vector farthest = closest;
-			for (geo::Vector v: APoints) {
-				if (geo::DistanceSquared(v, BCenter) < geo::DistanceSquared(farthest, BCenter)) {
-					farthest = v;
-				}
-			}
-			c.b = farthest;
-			c.a = geo::Line(BCenter, farthest).GetVectorAlongLine(b->radius);
-			c.normal = c.b - c.a;
-			c.normal.Normalize();
-			c.hasCollision = true;
-			c.depth = geo::Distance(c.a, c.b);
-		}
-		if (geo::DistanceSquared(closest, BCenter) > SQRD(b->radius))
+		if (minDis == std::numeric_limits<f64>::max() || !PolygonAndVectorAreColliding(a, ta, BCenter))
 			return c;
-		c.b = closest;
-		c.a = geo::Line(BCenter, closest).GetVectorAlongLine(b->radius);
-		c.normal = c.b - c.a;
-		c.normal.Normalize();
-		c.hasCollision = true;
+		c.a = closestPoint;
+		c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
 		c.depth = geo::Distance(c.a, c.b);
+		c.normal = (c.a - c.b).Normalized();
+		c.hasCollision = true;
+		std::cout<<"dADDY\n";
 		return c;
 	}
+
+	CollisionPoints PolygonInsideCircle(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	)
+	{
+		CollisionPoints c;
+		if (!a || !b) return c;
+		const geo::Vector BCenter = tb.TransformVector(b->center);
+		std::vector<geo::Vector> APoints;
+		
+		geo::Vector farthestPoint;
+		f64 maxDis = std::numeric_limits<f64>::min();
+		// transforming the vertexes, and finding the farthest vertex from the circle's center
+		for (geo::Vector v: a->points)
+		{
+			geo::Vector tmp = ta.TransformVector(v);
+			if (!VectorInCircle(tmp, b, tb))
+				return c;
+			if (geo::DistanceSquared(tmp, BCenter) > maxDis)
+			{
+				farthestPoint = tmp;
+				maxDis = geo::DistanceSquared(tmp, BCenter);
+			}
+			APoints.push_back(tmp);
+		}
+
+		// projecting the circle's center onto each line, and finding the farthest projection
+		for (size_t i = 0; i < APoints.size(); i++)
+		{
+			geo::Line side(APoints[i], APoints[(i + 1) % APoints.size()]);
+			geo::Vector Proj = geo::Vector::Projection(BCenter, side);
+			if (side.VectorIsOnLine(Proj) && geo::DistanceSquared(BCenter, Proj) > maxDis)
+			{
+				farthestPoint = Proj;
+				maxDis = geo::DistanceSquared(BCenter, Proj);
+			}
+		}
+		c.a = farthestPoint;
+		c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
+		c.depth = geo::Distance(c.a, c.b);
+		c.hasCollision = true;
+		c.normal = (c.a - c.b).Normalized();
+		return c;
+	}
+
+	CollisionPoints CircleCenterInPolygon(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	)
+	{
+		CollisionPoints c;
+		if (!a || !b)
+			return c;
+		const geo::Vector BCenter = tb.TransformVector(b->center);
+		geo::Vector closestPoint;
+		f64 minDis = std::numeric_limits<f64>::max();
+		for (size_t i = 0; i < a->points.size(); i++)
+		{
+			geo::Vector v = ta.TransformVector(a->points[i]);
+			if (geo::DistanceSquared(v, BCenter) < minDis)
+			{
+				closestPoint = v;
+				minDis = geo::DistanceSquared(v, BCenter);
+			}
+		}
+		if (minDis > b->radius)
+			return c;
+		c.b = closestPoint;
+		c.a = geo::Line(BCenter, c.b).GetVectorAlongLine(minDis + b->radius);
+		c.normal = (c.b - c.a).Normalized();
+		c.depth = minDis + b->radius;
+		c.hasCollision = true;
+		return c;
+	}
+
+	CollisionPoints PolygonLineInCircle(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	)
+	{
+		CollisionPoints c;
+		if (!a || !b)
+			return c;
+		const geo::Vector BCenter = tb.TransformVector(b->center);
+		geo::Vector closestPoint;
+		f64 minDis = std::numeric_limits<f64>::max();
+		bool AllLinesInCircle = true;
+		for (size_t i = 0; i < a->points.size(); i++)
+		{
+			const geo::Vector vA = ta.TransformVector(a->points[i]);
+			const geo::Vector vB = ta.TransformVector(a->points[(i + 1) % a->points.size()]);
+			const geo::Line side(vA, vB);
+			const geo::Vector Proj = geo::Vector::Projection(BCenter, side);
+			std::cout << LinePassesThroughCircle(side, b, tb)<<"\n";
+			if (geo::Distance(BCenter, Proj) < minDis && LinePassesThroughCircle(side, b, tb) &&
+				side.VectorIsOnLine(Proj))
+			{
+				closestPoint = geo::Vector::Projection(BCenter, side);
+				minDis = geo::DistanceSquared(closestPoint, BCenter);
+			}
+			if (geo::DistanceSquared(vA, BCenter) < minDis)
+			{
+				closestPoint = vA;
+				minDis = geo::DistanceSquared(vA, BCenter);
+			}
+			else
+				AllLinesInCircle = false;
+		}
+		// there actually IS a collision here, but this function does not handle this type of collision
+		//if (AllLinesInCircle)
+		//	return c;
+		std::cout<<"BRUH\n";
+		c.a = closestPoint;
+		c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
+		c.depth = geo::Distance(c.a, c.b);
+		c.normal = (c.a - c.b).Normalized();
+		c.hasCollision = true;
+		return c;
+	}
+
+	CollisionPoints PolygonVertexInCircle(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	)
+	{
+		CollisionPoints c;
+		if (!a || !b)
+			return c;
+		const geo::Vector BCenter = tb.TransformVector(b->center);
+		geo::Vector Point;
+		for (geo::Vector v: a->points)
+		{
+			Point = ta.TransformVector(v);
+			if (VectorInCircle(Point, b, tb))
+			{
+				std::cout<<"found one!\n";
+				c.a = Point;
+				c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
+				c.depth = geo::Distance(c.a, c.b);
+				c.normal = (c.b - c.a).Normalized();
+				c.hasCollision = true;
+				return c;
+			}	
+		}
+		return c;
+	}
+
 
 	CollisionPoints PolygonInsidePolygon(
 		const PolygonCollider* a, const Transform& ta,
@@ -573,7 +657,7 @@ namespace physics::algo
 		for (size_t i = 0; i < APoints.size(); i++)
 		{
 			// checking if current point is inside collider b
-			if (!PolygonColliderVectorIsColliding(b, tb, APoints[i]))
+			if (!PolygonAndVectorAreColliding(b, tb, APoints[i]))
 				break;
 			if (geo::DistanceSquared(APoints[i], centroidA) > distance)
 			{
@@ -615,7 +699,7 @@ namespace physics::algo
 			geo::Vector centroidB = geo::Centroid(&*BPoints.begin(), &*BPoints.end());
 			for (size_t i = 0; i < BPoints.size(); i++)
 			{
-				if (!PolygonColliderVectorIsColliding(a, ta, BPoints[i]))
+				if (!PolygonAndVectorAreColliding(a, ta, BPoints[i]))
 					break;
 				if (geo::DistanceSquared(BPoints[i], centroidB) > distance)
 				{
@@ -653,7 +737,7 @@ namespace physics::algo
 		return CollisionPoints();
 	}
 
-	bool PolygonColliderVectorIsColliding(
+	bool PolygonAndVectorAreColliding(
 		const PolygonCollider* a, const Transform& ta,
 		const geo::Vector& b)
 	{
@@ -705,5 +789,30 @@ namespace physics::algo
 			}
 		}
 		return intersections;
+	}
+
+	bool VectorInCircle(const geo::Vector& a, const CircleCollider* b,
+	const Transform& tb)
+	{
+		return geo::DistanceSquared(a, tb.TransformVector(b->center)) <= SQRD(b->radius);
+	}
+
+	CollisionPoints LineInCircle(
+		const CircleCollider* a, const Transform& ta,
+		const geo::Line& b
+	)
+	{
+		CollisionPoints c;
+		c.hasCollision = VectorInCircle(b.a, a, ta) && VectorInCircle(b.b, a, ta);
+		if (c.hasCollision)
+		{
+			geo::Vector ACenter = ta.TransformVector(a->center);
+			geo::Vector proj = geo::Vector::Projection(ACenter, b);
+			c.a = proj;
+			c.b = ACenter;
+			c.normal = c.b - c.a;
+			c.depth = geo::Distance(c.a, c.b);
+		}
+		return c;
 	}
 }

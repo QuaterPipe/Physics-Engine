@@ -77,7 +77,7 @@ namespace physics::algo
 		const MeshCollider* b, const Transform& tb
 	);
 
-	bool PolygonColliderVectorIsColliding(
+	bool PolygonAndVectorAreColliding(
 		const PolygonCollider* a, const Transform& ta,
 		const geo::Vector& b
 	);
@@ -87,12 +87,41 @@ namespace physics::algo
 		const Transform& tb
 	);
 
+	CollisionPoints LineInCircle(
+		const CircleCollider* a, const Transform& ta,
+		const geo::Line& b
+	);
+
+	bool VectorInCircle(const geo::Vector& a, const CircleCollider* b,
+		const Transform& tb
+	);
+
 	bool CircleInsideCircle(
 		const CircleCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
 
 	CollisionPoints CircleInsidePolygon(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	);
+
+	CollisionPoints PolygonInsideCircle(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	);
+
+	CollisionPoints CircleCenterInPolygon(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	);
+
+	CollisionPoints PolygonLineInCircle(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	);
+
+	CollisionPoints PolygonVertexInCircle(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);

@@ -1,8 +1,10 @@
 #include "include/physics/Collision/Collision.hpp"
 #include "include/physics/Collision/Rigidbody.hpp"
+#include "include/physics/Tools/OstreamOverloads.hpp"
 #include "include/physics/Engine/Time.hpp"
 #include "include/SFML/Graphics.hpp"
 #include "include/SFML/Window.hpp"
+#include <iostream>
 using namespace physics;
 using namespace geo;
 
@@ -225,6 +227,7 @@ int main()
 								break;
 							}
 						}
+						Render();
 					}
 				}
 			}
