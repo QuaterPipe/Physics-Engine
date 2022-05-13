@@ -54,12 +54,12 @@ namespace geo
 	f64 GetAngle(const Vector& center, const Vector& Vector) noexcept;
 	// \brief Returns a Vector on a circle based on the angle given.
 	Vector GetVectorOnCircle(const Vector& center, const f64& radius, const f64& angle) noexcept;
-	// \brief Retursn the slope between two Vectors.
+	// \brief Returns the slope between two Vectors.
 	f64 GetSlope(const Vector& a, const Vector& b) noexcept;
 	// \brief Checks if two lines are intersecting are not.
 	bool Intersecting(const Line& a, const Line& b, const bool& isInfLine = false) noexcept;
 	// \brief Returns the point of Intersect between two lines if they are intersecting.
-	Vector PointOfIntersect(const Line& a, const Line& b, const bool& isInfLine = false) noexcept;
+	Vector PointOfIntersect(const Line& la, const Line& lb, const bool& isInfLine = false) noexcept;
 	//\brief
 	// Quicksort algorithm that sorts using function to compare a to b.
 	// The functions's first parameter is a, and it's second, b.

@@ -225,6 +225,6 @@ namespace physics
 	DynamicsWorld::DynamicsWorld() noexcept
 	{
 		_solvers.push_back(new PhysicsSolver());
-		_solvers.push_back(new PositionalCorrectionSolver());
+		//_solvers.push_back(new PositionalCorrectionSolver());
 	}
 }

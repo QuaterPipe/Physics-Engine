@@ -15,7 +15,7 @@ int main(int argc, char** args)
 		mass = std::stod(args[1]);
 	}
 	sf::Texture colours[5];
-	colours[0].loadFromFile("bin/textures/Circle.png");
+	colours[0].loadFromFile("bin/textures/red_square.png");
 	colours[1].loadFromFile("bin/textures/cyan_square.png");
 	colours[2].loadFromFile("bin/textures/green_square.png");
 	colours[3].loadFromFile("bin/textures/magenta_square.png");
@@ -34,8 +34,9 @@ int main(int argc, char** args)
 	boxes[2].setOrigin(25, 25);
 	boxes[3].setOrigin(25, 25);
 	boxes[4].setScale(3, 1);
+	boxes[4].setOrigin(75, 25);
 	Entity entities[5] = {
-		Entity("Red", Rigidbody(CircleCollider(Vector(0, 0), 50)), boxes[0]),
+		Entity("Red", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[0]),
 		Entity("Blue", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[1]),
 		Entity("Green", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[2]),
 		Entity("Magenta", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[3]),
@@ -47,19 +48,20 @@ int main(int argc, char** args)
 	entities[3].GetCollisionObject().position.Set(200, 300);
 	entities[4].GetCollisionObject().position.Set(0, 0);
 	dynamic_cast<Dynamicbody&>(entities[0].GetCollisionObject()).SetMass(mass);
-	dynamic_cast<Dynamicbody&>(entities[1].GetCollisionObject()).SetMass(mass);
-	dynamic_cast<Dynamicbody&>(entities[2].GetCollisionObject()).SetMass(mass);
-	dynamic_cast<Dynamicbody&>(entities[3].GetCollisionObject()).SetMass(mass);
+	dynamic_cast<Dynamicbody&>(entities[1].GetCollisionObject()).SetMass(mass * 1.5);
+	dynamic_cast<Dynamicbody&>(entities[2].GetCollisionObject()).SetMass(mass * 0.5);
+	dynamic_cast<Dynamicbody&>(entities[3].GetCollisionObject()).SetMass(mass * 3);
 	dynamic_cast<Dynamicbody&>(entities[0].GetCollisionObject()).SetInertia(mass);
 	dynamic_cast<Dynamicbody&>(entities[1].GetCollisionObject()).SetInertia(mass);
 	dynamic_cast<Dynamicbody&>(entities[2].GetCollisionObject()).SetInertia(mass);
 	dynamic_cast<Dynamicbody&>(entities[3].GetCollisionObject()).SetInertia(mass);
 	dynamic_cast<Dynamicbody&>(entities[4].GetCollisionObject()).SetMass(0);
 	dynamic_cast<Dynamicbody&>(entities[4].GetCollisionObject()).isStatic = true;
-	dynamic_cast<Dynamicbody&>(entities[0].GetCollisionObject()).restitution = 0;
-	dynamic_cast<Dynamicbody&>(entities[1].GetCollisionObject()).restitution = 0;
-	dynamic_cast<Dynamicbody&>(entities[2].GetCollisionObject()).restitution = 0;
-	dynamic_cast<Dynamicbody&>(entities[3].GetCollisionObject()).restitution = 0;
+	dynamic_cast<Dynamicbody&>(entities[0].GetCollisionObject()).restitution = 1;
+	dynamic_cast<Dynamicbody&>(entities[1].GetCollisionObject()).restitution = 1;
+	dynamic_cast<Dynamicbody&>(entities[2].GetCollisionObject()).restitution = 1;
+	dynamic_cast<Dynamicbody&>(entities[3].GetCollisionObject()).restitution = 1;
+	dynamic_cast<Dynamicbody&>(entities[4].GetCollisionObject()).restitution = 1;
 	scene.AddEntity(entities[0]);
 	scene.AddEntity(entities[1]);
 	scene.AddEntity(entities[2]);

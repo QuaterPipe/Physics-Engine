@@ -321,6 +321,11 @@ namespace physics
 			(other.height != this->height) || (other.usesGravity != this->usesGravity);
 	}
 
+	std::vector<unsigned char> Softbody::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
+	}
+
 	void Softbody::Update(f64 dt) noexcept
 	{
 		if (!isStatic)

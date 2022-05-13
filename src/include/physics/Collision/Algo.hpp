@@ -1,6 +1,21 @@
+#pragma once
 #include "Collision.hpp"
 namespace physics::algo
 {
+	struct LineCollision
+	{
+		geo::Line a;
+		geo::Line b;
+		geo::Vector poi;
+	};
+
+	struct PolygonCollision
+	{
+		std::vector<LineCollision> collisions;
+		size_t VertexesInACount = 0;
+		size_t VertexesInBCount = 0;
+	};
+
 	CollisionPoints PointPointCollision(
 		const PointCollider* a, const Transform& ta,
 		const PointCollider* b, const Transform& tb
@@ -77,17 +92,17 @@ namespace physics::algo
 		const MeshCollider* b, const Transform& tb
 	);
 
-	bool PolygonAndVectorAreColliding(
+	static bool VectorInPolygon(
 		const PolygonCollider* a, const Transform& ta,
 		const geo::Vector& b
 	);
 
-	bool LinePassesThroughCircle(
+	static bool LinePassesThroughCircle(
 		const geo::Line& a, const CircleCollider* b,
 		const Transform& tb
 	);
 
-	CollisionPoints LineInCircle(
+	static CollisionPoints LineInCircle(
 		const CircleCollider* a, const Transform& ta,
 		const geo::Line& b
 	);
@@ -96,43 +111,55 @@ namespace physics::algo
 		const Transform& tb
 	);
 
-	bool CircleInsideCircle(
+	static bool CircleInsideCircle(
 		const CircleCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
 
-	CollisionPoints CircleInsidePolygon(
+	static CollisionPoints CircleInsidePolygon(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
 
-	CollisionPoints PolygonInsideCircle(
+	static CollisionPoints PolygonInsideCircle(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
 
-	CollisionPoints CircleCenterInPolygon(
+	static CollisionPoints CircleCenterInPolygon(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
 
-	CollisionPoints PolygonLineInCircle(
+	static CollisionPoints PolygonLineInCircle(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
 
-	CollisionPoints PolygonVertexInCircle(
+	static CollisionPoints PolygonVertexInCircle(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
 
-	CollisionPoints PolygonInsidePolygon(
+	static CollisionPoints PolygonVertexInPolygon(
+		const PolygonCollider* a, const Transform& ta,
+		const PolygonCollider* b, const Transform* tb,
+		const PolygonCollision& collision
+	);
+
+	static CollisionPoints PolygonInsidePolygon(
 		const PolygonCollider* a, const Transform& ta,
 		const PolygonCollider* b, const Transform& tb
 	);
 
-	std::vector<geo::Vector> GetIntersectionsBetweenTwoPolygons(
+	static std::vector<geo::Vector> GetIntersectionsBetweenTwoPolygons(
 		const PolygonCollider* a, const Transform& ta,
 		const PolygonCollider* b, const Transform& tb
+	);
+
+	static void GenerateLineCollision(
+		const PolygonCollider* a, const Transform& ta,
+		const PolygonCollider* b, const Transform& tb,
+		PolygonCollision& collisions
 	);
 }

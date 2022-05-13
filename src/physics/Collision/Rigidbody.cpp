@@ -63,11 +63,7 @@ namespace physics
 		{
 			velocity += _invMass * impulse;
 			if (contactVec != geo::Vector::Infinity && impulse.GetMagnitudeQuick())
-			{
-				geo::Vector rF = (collider->GetCenter() + centerOfRotation) - contactVec;
-				torque = (collider->GetCenter() + centerOfRotation).Cross(impulse);
-				angularVelocity += torque * _invInertia;
-			}
+				angularVelocity += _invInertia * contactVec.Cross(impulse);
 		}
 	}
 
@@ -79,6 +75,11 @@ namespace physics
 	bool Rigidbody::Equals(const Rigidbody& other) const noexcept
 	{
 		return Dynamicbody::Equals(other) && isKinematic == other.isKinematic;
+	}
+
+	std::vector<unsigned char> Rigidbody::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
 	}
 
 	void Rigidbody::Move(f64 offsetX, f64 offsetY) noexcept

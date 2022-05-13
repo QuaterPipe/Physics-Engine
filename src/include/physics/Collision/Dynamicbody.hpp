@@ -25,6 +25,7 @@ namespace physics
 			f64 _invMass = 0.001;
 			f64 _inertia = 1000;
 			f64 _invInertia = 0.001;
+			virtual std::vector<unsigned char> GetBytes() const noexcept override;
 		public:
 			geo::Vector gravity = geo::Vector(0, -9.81);
 			geo::Vector velocity = geo::Vector(0, 0);
@@ -48,7 +49,7 @@ namespace physics
 			virtual Dynamicbody& operator=(const Dynamicbody& d) noexcept;
 			virtual void ApplyAngularForce(f64 angularVelocity) noexcept = 0;
 			virtual void ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint = geo::Vector::Infinity) noexcept = 0;
-			virtual void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec) noexcept = 0;
+			virtual void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec = geo::Vector::Infinity) noexcept = 0;
 			virtual bool Equals(const Dynamicbody& d) const noexcept;
 			virtual f64 GetInertia() const noexcept;
 			virtual f64 GetInvInertia() const noexcept;

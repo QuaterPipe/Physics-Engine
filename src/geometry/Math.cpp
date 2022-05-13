@@ -1,9 +1,7 @@
 #include "../include/geometry/Math.hpp"
 
-
 namespace geo
 {
-
 	f64 Degrees(const f64& radians) noexcept
 	{
 		return radians * (180 / M_PI);
@@ -103,45 +101,25 @@ namespace geo
 		return PointOfIntersect(a, b, isInfLine) != Vector::Infinity;
 	}
 
-	Vector PointOfIntersect(const Line& a, const Line& b, const bool& isInfLine) noexcept
+	Vector PointOfIntersect(const Line& la, const Line& lb, const bool& isInfLine) noexcept
 	{
-		auto det = [](std::tuple<f64, f64> a, std::tuple<f64, f64> b) -> f64
-		{
-			return std::get<0>(a) * std::get<1>(b) - std::get<1>(a) * std::get<0>(b);
-		};
-
-		auto xdiff = std::tuple<f64, f64>(a.a().x - a.b().x, b.a().x - b.b().x);
-		auto ydiff = std::tuple<f64, f64>(a.a().y - a.b().y, b.a().y - b.b().y);
-		f64 div = det(xdiff, ydiff);
-		if (div == 0) {return Vector::Infinity;}
-		auto d = std::tuple<f64, f64>(det(std::get<0>(a.ToTuple()), std::get<1>(a.ToTuple())), det(std::get<0>(b.ToTuple()), std::get<1>(b.ToTuple())));
-		f64 x = det(d, xdiff) / div;
-		f64 y = det(d, ydiff) / div;
-		Vector p = Vector(x, y);
-		if (isInfLine) {return p;}
-		if ((Distance(a.a(), p) + Distance(a.b(), p) == a.length()) && (Distance(b.a(), p) + Distance(b.b(), p) == b.length()))
-		{
-			return p;
-		}
-		return Vector::Infinity;
-		/*auto det = [&](Vector A, Vector B) -> f64 {
-			return A.x * B.y - A.y * B.x;
-		};
-		Vector xdiff = Vector(a.a.x - a.b.x, b.a.x - b.b.x);
-		Vector ydiff = Vector(a.a.y - a.b.y, b.a.y - b.b.y);
-		f64 div = det(xdiff, ydiff);
-		if (fabs(div) < 0.00001)
+		double a = la.b.y - la.a.y;
+		double b = la.a.x - la.b.x;
+		double c = a * (la.a.x) + b * (la.a.y);
+		double a1 = lb.b.y - lb.a.y;
+		double b1 = lb.a.x - lb.b.x;
+		double c1 = a1 * (lb.a.x)+ b1 * (lb.a.y);
+		double det = a * b1 - a1 * b;
+		if (det == 0) 
 			return Vector::Infinity;
-		Vector d = Vector(det(a.a, a.b), det(b.a, b.b));
-		f64 x = det(d, xdiff) / div;
-		f64 y = det(d, ydiff) / div;
-		Vector p = Vector(x, y);
-		if (isInfLine)
-			return p;
-		if ((DistanceSquared(a.a(), p) + DistanceSquared(a.b(), p) == SQRD(a.length())) && (DistanceSquared(b.a(), p) + DistanceSquared(b.b(), p) == SQRD(b.length())))
+		double x = (b1 * c - b * c1) / det;
+		double y = (a * c1 - a1 *c ) / det;
+		Vector v(x, y);
+		if (!isInfLine && (!la.VectorIsOnLine(v) || !lb.VectorIsOnLine(v)))
 		{
-			return p;
-		}*/
+			return Vector::Infinity;
+		}
+		return v;
 	}
 
 	Vector Centroid(const Vector* start, const Vector* end) noexcept

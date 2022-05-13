@@ -82,6 +82,26 @@ namespace physics
 		return (Collider*)new MeshCollider(*this);
 	}
 
+	bool MeshCollider::Equals(const MeshCollider& other) const noexcept
+	{
+		if (other.colliders.size() != colliders.size())
+			return false;
+		bool equals = true;
+		for (size_t i = 0; i < colliders.size(); i++)
+			equals = equals && colliders[i]->Equals(*other.colliders[i]);
+		return equals;
+	}
+
+	bool MeshCollider::NotEquals(const MeshCollider& other) const noexcept
+	{
+		return !operator==(other);
+	}
+
+	std::vector<unsigned char> MeshCollider::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
+	}
+
 	geo::Vector MeshCollider::Max() const noexcept
 	{
 		std::vector<geo::Vector> maxes;

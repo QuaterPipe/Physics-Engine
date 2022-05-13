@@ -30,6 +30,21 @@ namespace physics
 		return NULL;
 	}
 
+	bool PointCollider::Equals(const PointCollider& other) const noexcept
+	{
+		return position == other.position;
+	}
+
+	bool PointCollider::NotEquals(const PointCollider& other) const noexcept
+	{
+		return position != other.position;
+	}
+
+	std::vector<unsigned char> PointCollider::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
+	}
+
 	unsigned char PointCollider::GetByte(const size_t& index) const
 	{
 		return Serialize().at(index);

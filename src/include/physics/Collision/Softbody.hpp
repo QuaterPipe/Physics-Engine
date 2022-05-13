@@ -31,6 +31,7 @@ namespace physics
 	struct Softbody : public Dynamicbody
 	{
 		private:
+			virtual std::vector<unsigned char> GetBytes() const noexcept override;
 			std::vector<PolygonCollider> _colliders;
 		public:
 			std::vector<std::vector<MassPoint>> points;
@@ -47,7 +48,7 @@ namespace physics
 			virtual Softbody& operator=(Softbody && s) noexcept;
 			virtual void ApplyAngularForce(f64 angularVelocity) noexcept override;
 			virtual void ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint = geo::Vector::Infinity) noexcept override;
-			virtual void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec) noexcept override;
+			virtual void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec = geo::Vector::Infinity) noexcept override;
 			virtual void ApplySpringForces() noexcept;
 			virtual CollisionObject* Clone() const noexcept override;
 			virtual bool Equals(const Softbody& other) const noexcept;

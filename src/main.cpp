@@ -1,7 +1,8 @@
-#include "include/physics/Collision/Collision.hpp"
+  #include "include/physics/Collision/Collision.hpp"
 #include "include/physics/Collision/Rigidbody.hpp"
 #include "include/physics/Tools/OstreamOverloads.hpp"
 #include "include/physics/Engine/Time.hpp"
+#include "include/physics/Main.hpp"
 #include "include/SFML/Graphics.hpp"
 #include "include/SFML/Window.hpp"
 #include <iostream>
@@ -40,7 +41,8 @@ void CheckCollisions()
 	{
 		for (Rigidbody& b: objects)
 		{
-			if (a.Equals(b)) continue;
+			if (a.collider->Equals(*b.collider))
+				continue;
 			CollisionPoints points = a.GetCollider().TestCollision(
 				a.transform, &b.GetCollider(), b.transform
 			);
@@ -51,6 +53,7 @@ void CheckCollisions()
 				c.b = &b;
 				c.points = points;
 				collisions.push_back(c);
+				return;
 			}
 		}
 	}
@@ -67,8 +70,20 @@ void UpdateTypes()
 			objects[0].SetCollider(BoxCollider(70, 50));
 			break;
 		case Types::SmlSqr:
-			objects[0].SetCollider(BoxCollider(20, 20));
+		{
+			PolygonCollider p;
+			p.points.push_back(Vector(0, 0));
+			p.points.push_back(Vector(90, 0));
+			p.points.push_back(Vector(90, 40));
+			p.points.push_back(Vector(75, 90));
+			p.points.push_back(Vector(60, 40));
+			p.points.push_back(Vector(45, 160));
+			p.points.push_back(Vector(30, 40));
+			p.points.push_back(Vector(15, 90));
+			p.points.push_back(Vector(0, 40));
+			objects[0].SetCollider(p);
 			break;
+		}
 		case Types::BigCirc:
 			objects[0].SetCollider(CircleCollider(100));
 			break;
@@ -151,8 +166,8 @@ void Render()
 	for (Collision& c: collisions)
 	{
 		sf::Vertex line[2] = {
-			sf::Vertex(sf::Vector2f(c.points.a.x, c.points.a.y)),
-			sf::Vertex(sf::Vector2f(c.points.b.x, c.points.b.y))
+			sf::Vertex(sf::Vector2f(c.points.a.x, c.points.a.y), sf::Color::Green),
+			sf::Vertex(sf::Vector2f(c.points.b.x, c.points.b.y), sf::Color::Green)
 		};
 		sf::CircleShape a(7);
 		a.setPosition(c.points.a.x - 7, c.points.a.y - 7);
@@ -166,20 +181,22 @@ void Render()
 	}
 	window.display();
 }
-
+ 
 int main()
 {
 	f64 leftCoolDown = 0;
 	f64 rightCoolDown = 0;
 	Rigidbody r(BoxCollider(50, 50));
+	r.position.Set(100, 100);
 	Rigidbody r2(BoxCollider(50, 50));
 	objects.push_back(r);
 	objects.push_back(r2);
 	sf::View v = window.getDefaultView();
-	v.setSize(500, -500);
+	v.setSize(300, -300);
 	window.setView(v);
 	while (window.isOpen())
 	{
+		std::cout<<objects[1].position<<"\n";
 		sf::Event e;
 		Time::Tick();
 		while (window.pollEvent(e))

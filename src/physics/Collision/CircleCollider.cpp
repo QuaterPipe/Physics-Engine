@@ -36,7 +36,22 @@ namespace physics
 	{
 		return center;
 	}
+	
+	bool CircleCollider::Equals(const CircleCollider& other) const noexcept
+	{
+		return center == other.center && radius == other.radius;
+	}
 
+	bool CircleCollider::NotEquals(const CircleCollider& other) const noexcept
+	{
+		return center != other.center || radius != other.radius;
+	}
+
+	std::vector<unsigned char> CircleCollider::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
+	}
+	
 	geo::Vector CircleCollider::Max() const noexcept
 	{
 		return center + radius;

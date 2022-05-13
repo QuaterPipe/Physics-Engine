@@ -19,6 +19,7 @@ namespace physics
 	{
 		protected:
 			bool _isDynamic = false;
+			virtual std::vector<unsigned char> GetBytes() const noexcept override;
 		public:
 			bool isTrigger = false;
 			std::function<void(Collision&, f64)> onCollision;

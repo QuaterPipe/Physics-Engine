@@ -33,11 +33,6 @@ namespace physics
 		return new BoxCollider(*this);
 	}
 
-	geo::Vector BoxCollider::GetCenter() const noexcept
-	{
-		return geo::Vector(x + width / 2, y + height / 2);
-	}
-
 	BoxCollider& BoxCollider::operator=(const BoxCollider& b)
 	{
 		if (*this != b)
@@ -50,6 +45,26 @@ namespace physics
 			height = dimensions.y;
 		}
 		return *this;
+	}
+
+	bool BoxCollider::Equals(const BoxCollider& other) const noexcept
+	{
+		return pos == other.pos && dimensions == other.dimensions;
+	}
+
+	bool BoxCollider::NotEquals(const BoxCollider& other) const noexcept
+	{
+		return pos != other.pos || dimensions != other.dimensions;
+	}	
+	
+	geo::Vector BoxCollider::GetCenter() const noexcept
+	{
+		return pos + dimensions / 2;
+	}
+
+	std::vector<unsigned char> BoxCollider::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
 	}
 
 	geo::Vector BoxCollider::Max() const noexcept

@@ -83,6 +83,11 @@ namespace physics
 			isStatic == other.isStatic && force == other.force;
 	}
 
+	std::vector<unsigned char> Dynamicbody::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
+	}
+
 	f64 Dynamicbody::GetInertia() const noexcept
 	{
 		return _inertia;

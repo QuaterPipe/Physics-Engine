@@ -65,6 +65,11 @@ namespace physics
 		return _isDynamic;
 	}
 
+	std::vector<unsigned char> CollisionObject::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
+	}
+
 	Collider& CollisionObject::GetCollider() const noexcept
 	{
 		return *collider;

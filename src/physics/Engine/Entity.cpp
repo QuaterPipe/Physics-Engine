@@ -72,6 +72,11 @@ namespace physics
 		return !Equals(other);
 	}
 
+	std::vector<unsigned char> Entity::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
+	}
+
 	void Entity::SetCollisionObject(CollisionObject& c) noexcept
 	{
 		collider.reset(c.Clone());

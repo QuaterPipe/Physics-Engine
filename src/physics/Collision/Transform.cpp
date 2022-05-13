@@ -48,6 +48,11 @@ namespace physics
 		return NULL;
 	}
 
+	std::vector<unsigned char> Transform::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
+	}
+
 	unsigned char Transform::GetByte(const size_t& index) const
 	{
 		return 0x01;

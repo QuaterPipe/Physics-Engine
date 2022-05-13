@@ -4,7 +4,6 @@
 
 namespace physics::algo
 {
-
 	CollisionPoints PointCircleCollision(
 		const PointCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
@@ -36,7 +35,7 @@ namespace physics::algo
 		c.hasCollision = false;
 		if (!a || !b) return c;
 		geo::Vector APos = ta.TransformVector(a->position);
-		if (!PolygonAndVectorAreColliding(b, tb, APos))
+		if (!VectorInPolygon(b, tb, APos))
 			return c;
 		std::vector<geo::Vector> BPoints;
 		for (const geo::Vector& v: b->points)
@@ -190,25 +189,15 @@ namespace physics::algo
 				pointInCircleCount++;
 			}
 		}
-		std::cout<<lineInCircleCount<<" "<<pointInCircleCount<<" "<<lineInCircleCount<<"\n";
 		if (pointInCircleCount == a->points.size())
-		{
 			return PolygonInsideCircle(a, ta, b, tb);
-		}
 		if (lineInCircleCount)
-		{
 			return PolygonLineInCircle(a, ta, b, tb);
-		}
 		if (pointInCircleCount)
-		{
-			std::cout<<"doing vertex!\n";
 			return PolygonVertexInCircle(a, ta, b, tb);
-		}
 		c = CircleCenterInPolygon(a, ta, b, tb);
 		if (c.hasCollision)
-		{
 			return c;
-		}
 		else
 			return CircleInsidePolygon(a, ta, b, tb);
 	}
@@ -225,121 +214,70 @@ namespace physics::algo
 		c = PolygonInsidePolygon(a, ta, b, tb);
 		if (c.hasCollision)
 			return c;
-		std::vector<geo::Vector> APoints;
-		std::vector<geo::Vector> BPoints;
-		for (const geo::Vector& v: a->points)
-			APoints.push_back(ta.TransformVector(v + a->pos));
-		
-		for (const geo::Vector& v: b->points)
-			BPoints.push_back(tb.TransformVector(v + b->pos));
-		
-		bool BPointsInA = false;
-		for (const geo::Vector& p: BPoints)
+		PolygonCollision polyCol;
+		GenerateLineCollision(a, ta, b, tb, polyCol);
+		if (!polyCol.collisions.size())
 		{
-			if (PolygonAndVectorAreColliding(a, ta, p))
-				BPointsInA = true;
-		}
-		bool APointsInB = false;
-		for (const geo::Vector& p: APoints)
-		{
-			if (PolygonAndVectorAreColliding(b, tb, p))
-				APointsInB = true;
-		}
-		auto intersections = GetIntersectionsBetweenTwoPolygons(a, ta, b, tb);
-		if (!intersections.size())
 			return c;
-		if (BPointsInA)
+		}
+		if (polyCol.VertexesInACount)
 		{
-			geo::Vector closest;
-			f64 distance = 0;
-			bool reached = false;
-			geo::Vector centroid = geo::Centroid(&*APoints.begin(), &*APoints.end());
-			for (geo::Vector& v: BPoints)
+			geo::Vector deepest;
+			geo::Line deepestTo;
+			f64 maxDis = std::numeric_limits<f64>::min();
+			for (auto col: polyCol.collisions)
 			{
-				if (!reached)
+				geo::Vector proj = geo::Vector::Projection(col.b.a, col.a);
+				if (geo::DistanceSquared(col.b.a, proj) > maxDis && VectorInPolygon(a, ta, col.b.a))
 				{
-					reached = true;
-					closest = v;
-					distance = geo::DistanceSquared(centroid, v);
+					deepest = col.b.a;
+					deepestTo = col.a;
+					maxDis = geo::DistanceSquared(col.b.a, proj);
 				}
-				if (distance > geo::DistanceSquared(centroid, v))
+				proj = geo::Vector::Projection(col.b.b, col.a);
+				if (geo::DistanceSquared(col.b.b, proj) > maxDis && VectorInPolygon(a, ta, col.b.b))
 				{
-					closest = v;
-					distance = geo::DistanceSquared(centroid, closest);
+					deepest = col.b.b;
+					deepestTo = col.a;
+					maxDis = geo::DistanceSquared(col.b.b, proj);
 				}
 			}
-			c.b = closest;
+			c.a = deepest;
+			c.b = geo::Vector::Projection(deepest, deepestTo);
+			c.depth = sqrt(maxDis);
+			c.normal = (c.b - c.a).Normalized();
+			c.hasCollision = true;
+			return c;
 		}
-		else
+		if (polyCol.VertexesInBCount)
 		{
-			geo::Vector closest;
-			f64 distance = 0;
-			bool reached = false;
-			geo::Vector centroid = geo::Centroid(&*APoints.begin(), &*APoints.end());
-			for (geo::Vector& v: intersections)
+			geo::Vector deepest;
+			geo::Line deepestTo;
+			f64 maxDis = std::numeric_limits<f64>::min();
+			for (auto col: polyCol.collisions)
 			{
-				if (!reached)
+				geo::Vector proj = geo::Vector::Projection(col.a.a, col.b);
+				if (geo::DistanceSquared(col.a.a, proj) > maxDis && VectorInPolygon(b, tb, col.a.a))
 				{
-					reached = true;
-					closest = v;
-					distance = geo::DistanceSquared(centroid, v);
+					deepest = col.a.a;
+					deepestTo = col.b;
+					maxDis = geo::DistanceSquared(col.a.a, proj);
 				}
-				if (distance > geo::DistanceSquared(centroid, v))
+				proj = geo::Vector::Projection(col.a.b, col.b);
+				if (geo::DistanceSquared(col.a.b, proj) > maxDis && VectorInPolygon(b, tb, col.a.b))
 				{
-					closest = v;
-					distance = geo::DistanceSquared(centroid, closest);
+					deepest = col.a.b;
+					deepestTo = col.b;
+					maxDis = geo::DistanceSquared(col.a.b, proj);
 				}
 			}
-			c.b = closest;
+			c.b = deepest;
+			c.a = geo::Vector::Projection(deepest, deepestTo);
+			c.depth = sqrt(maxDis);
+			c.normal = (c.b - c.a).Normalized();
+			c.hasCollision = true;
+			return c;
 		}
-		if (APointsInB)
-		{
-			geo::Vector closest;
-			f64 distance = 0;
-			bool reached = false;
-			geo::Vector centroid = geo::Centroid(&*BPoints.begin(), &*BPoints.end());
-			for (geo::Vector& v: APoints)
-			{
-				if (!reached)
-				{
-					reached = true;
-					closest = v;
-					distance = geo::DistanceSquared(centroid, v);
-				}
-				if (distance > geo::DistanceSquared(centroid, v))
-				{
-					closest = v;
-					distance = geo::DistanceSquared(centroid, closest);
-				}
-			}
-			c.a = closest;
-		}
-		else
-		{
-			geo::Vector closest;
-			f64 distance = 0;
-			bool reached = false;
-			geo::Vector centroid = geo::Centroid(&*BPoints.begin(), &*BPoints.end());
-			for (geo::Vector& v: intersections)
-			{
-				if (!reached)
-				{
-					reached = true;
-					closest = v;
-					distance = geo::DistanceSquared(centroid, v);
-				}
-				if (distance > geo::DistanceSquared(centroid, v))
-				{
-					closest = v;
-					distance = geo::DistanceSquared(centroid, closest);
-				}
-			}
-			c.a = closest;
-		}
-		c.depth = geo::Distance(c.a, c.b);
-		c.normal = c.b - c.a;
-		c.normal.Normalize();
-		c.hasCollision = true;
 		return c;
 	}
 
@@ -472,14 +410,13 @@ namespace physics::algo
 				minDis = geo::DistanceSquared(vA, BCenter);
 			}
 		}
-		if (minDis == std::numeric_limits<f64>::max() || !PolygonAndVectorAreColliding(a, ta, BCenter))
+		if (minDis == std::numeric_limits<f64>::max() || !VectorInPolygon(a, ta, BCenter))
 			return c;
 		c.a = closestPoint;
 		c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
 		c.depth = geo::Distance(c.a, c.b);
 		c.normal = (c.a - c.b).Normalized();
 		c.hasCollision = true;
-		std::cout<<"dADDY\n";
 		return c;
 	}
 
@@ -576,7 +513,6 @@ namespace physics::algo
 			const geo::Vector vB = ta.TransformVector(a->points[(i + 1) % a->points.size()]);
 			const geo::Line side(vA, vB);
 			const geo::Vector Proj = geo::Vector::Projection(BCenter, side);
-			std::cout << LinePassesThroughCircle(side, b, tb)<<"\n";
 			if (geo::Distance(BCenter, Proj) < minDis && LinePassesThroughCircle(side, b, tb) &&
 				side.VectorIsOnLine(Proj))
 			{
@@ -594,7 +530,6 @@ namespace physics::algo
 		// there actually IS a collision here, but this function does not handle this type of collision
 		//if (AllLinesInCircle)
 		//	return c;
-		std::cout<<"BRUH\n";
 		c.a = closestPoint;
 		c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
 		c.depth = geo::Distance(c.a, c.b);
@@ -618,7 +553,6 @@ namespace physics::algo
 			Point = ta.TransformVector(v);
 			if (VectorInCircle(Point, b, tb))
 			{
-				std::cout<<"found one!\n";
 				c.a = Point;
 				c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
 				c.depth = geo::Distance(c.a, c.b);
@@ -628,6 +562,15 @@ namespace physics::algo
 			}	
 		}
 		return c;
+	}
+
+	CollisionPoints PolygonVertexInPolygon(
+		const PolygonCollider* a, const Transform& ta,
+		const PolygonCollider* b, const Transform* tb,
+		const PolygonCollision& collision
+	)
+	{
+		//if ()
 	}
 
 
@@ -657,7 +600,7 @@ namespace physics::algo
 		for (size_t i = 0; i < APoints.size(); i++)
 		{
 			// checking if current point is inside collider b
-			if (!PolygonAndVectorAreColliding(b, tb, APoints[i]))
+			if (!VectorInPolygon(b, tb, APoints[i]))
 				break;
 			if (geo::DistanceSquared(APoints[i], centroidA) > distance)
 			{
@@ -699,7 +642,7 @@ namespace physics::algo
 			geo::Vector centroidB = geo::Centroid(&*BPoints.begin(), &*BPoints.end());
 			for (size_t i = 0; i < BPoints.size(); i++)
 			{
-				if (!PolygonAndVectorAreColliding(a, ta, BPoints[i]))
+				if (!VectorInPolygon(a, ta, BPoints[i]))
 					break;
 				if (geo::DistanceSquared(BPoints[i], centroidB) > distance)
 				{
@@ -737,7 +680,7 @@ namespace physics::algo
 		return CollisionPoints();
 	}
 
-	bool PolygonAndVectorAreColliding(
+	bool VectorInPolygon(
 		const PolygonCollider* a, const Transform& ta,
 		const geo::Vector& b)
 	{
@@ -814,5 +757,48 @@ namespace physics::algo
 			c.depth = geo::Distance(c.a, c.b);
 		}
 		return c;
+	}
+
+	void GenerateLineCollision(
+		const PolygonCollider* a, const Transform& ta,
+		const PolygonCollider* b, const Transform& tb, 
+		PolygonCollision& p
+	)
+	{
+		if (!a || !b)
+			return;
+		if (a->points.size() < 3 || b->points.size() < 3)
+			return;
+		p.collisions.clear();
+		for (geo::Vector v: b->points)
+		{
+			if (VectorInPolygon(a, ta, v))
+				p.VertexesInACount++;
+		}
+		for (size_t i = 0; i < a->points.size(); i++)
+		{
+			const geo::Vector a1 = ta.TransformVector(a->points[i]);
+			const geo::Vector a2 = ta.TransformVector(a->points[(i + 1) % a->points.size()]);
+			const geo::Line sideA(a1, a2);
+			if (VectorInPolygon(b, tb, a1))
+				p.VertexesInBCount++;
+			for (size_t j = 0; j < b->points.size(); j++)
+			{
+				const geo::Vector b1 = tb.TransformVector(b->points[j]);
+				const geo::Vector b2 = tb.TransformVector(b->points[(j + 1) % b->points.size()]);
+				const geo::Line sideB(b1, b2);
+				geo::Vector inter = PointOfIntersect(sideA, sideB);
+				if (inter != geo::Vector::Infinity)
+				{
+					LineCollision l;
+					l.a = sideA;
+					l.b = sideB;
+					l.poi = inter;
+					std::cout<<"inter: "<<inter<<"\n";
+					p.collisions.push_back(l);
+				}
+			}
+		}
+		std::cout<<"size: "<<p.collisions.size()<<"\n";
 	}
 }

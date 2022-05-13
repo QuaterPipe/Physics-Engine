@@ -77,6 +77,11 @@ namespace physics
 			return geo::Vector::Origin;
 	}
 
+	std::vector<unsigned char> PolygonCollider::GetBytes() const noexcept
+	{
+		return ToBytes(this, sizeof(*this));
+	}
+
 	geo::Vector PolygonCollider::GetCenter() const noexcept
 	{
 		return GetCentroid(this->points);
@@ -93,6 +98,16 @@ namespace physics
 	Collider* PolygonCollider::Clone() const
 	{
 		return new PolygonCollider(*this);
+	}
+
+	bool PolygonCollider::Equals(const PolygonCollider& other) const noexcept
+	{
+		return points == other.points && pos == other.pos;
+	}
+
+	bool PolygonCollider::NotEquals(const PolygonCollider& other) const noexcept
+	{
+		return points != other.points || pos != other.pos;
 	}
 
 	geo::Vector PolygonCollider::Max() const noexcept

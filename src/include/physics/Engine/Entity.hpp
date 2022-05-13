@@ -9,6 +9,8 @@ namespace physics
 	//0x07
 	class Entity : public serialization::Serializable, public Hashable
 	{
+		protected:
+			virtual std::vector<unsigned char> GetBytes() const noexcept override;
 		public:
 			std::unique_ptr<CollisionObject> collider;
 			std::string name;
