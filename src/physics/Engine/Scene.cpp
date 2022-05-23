@@ -33,7 +33,7 @@ namespace physics
 
 	void Scene::AddEntity(Entity& e) noexcept
 	{
-		Entity* ptr = &e;
+		Entity* ptr = e.Clone();
 		if (ptr->GetCollisionObject().IsDynamic())
 		{
 			if (dynamic_cast<Rigidbody*>(&ptr->GetCollisionObject()))

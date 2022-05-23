@@ -52,16 +52,22 @@ namespace geo
 
 	f64 Vector::GetMagnitude() const noexcept
 	{
+		if (!fabs(x) && !fabs(y))
+			return 0;
 		return sqrt(x * x + y * y);
 	}
 
 	f64 Vector::GetMagnitudeSquared() const noexcept
 	{
+		if (!fabs(x) && !fabs(y))
+			return 0;
 		return x * x + y * y;
 	}
 
 	f64 Vector::GetMagnitudeQuick() const noexcept
 	{
+		if (!fabs(x) && !fabs(y))
+			return 0;
 		return FastSqrt(x * x + y * y);
 	}
 
@@ -364,16 +370,22 @@ namespace geo
 
 	f64 Vector3::GetMagnitude() const noexcept
 	{
+		if (!x && !y && !z)
+			return 0;
 		return sqrt(x * x + y * y + z * z);
 	}
 
 	f64 Vector3::GetMagnitudeSquared() const noexcept
 	{
+		if (!x && !y && !z)
+			return 0;
 		return x * x + y * y + z * z;
 	}
 
 	f64 Vector3::GetMagnitudeQuick() const noexcept
 	{
+		if (!x && !y && !z)
+			return 0;
 		return FastSqrt(x * x + y * y + z * z);
 	}
 

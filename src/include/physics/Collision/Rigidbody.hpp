@@ -17,7 +17,7 @@ namespace physics
 			Rigidbody(Rigidbody && r) noexcept;
 			virtual ~Rigidbody() noexcept;
 			Rigidbody& operator=(const Rigidbody& other) noexcept;
-			virtual void ApplyAngularForce(f64 angularVelocity) noexcept override;
+			virtual void ApplyAngularForce(f64 force) noexcept override;
 			virtual void ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint = geo::Vector::Infinity) noexcept override;
 			virtual void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec = geo::Vector::Infinity) noexcept override;
 			virtual CollisionObject* Clone() const noexcept override;

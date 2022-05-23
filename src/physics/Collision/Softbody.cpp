@@ -283,8 +283,9 @@ namespace physics
 	{
 	}
 
-	void Softbody::ApplyAngularForce(f64 angularVelocity) noexcept
+	void Softbody::ApplyAngularForce(f64 force) noexcept
 	{
+		angularVelocity += force;
 	}
 
 	CollisionObject* Softbody::Clone() const noexcept

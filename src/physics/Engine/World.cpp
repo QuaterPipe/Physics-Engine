@@ -18,8 +18,8 @@ namespace physics
 			geo::Vector correction = std::max(c.points.depth - slop, 0.0) / (a->GetInvMass() + b->GetInvMass()) * percentage * c.points.normal;
 			geo::Vector aPos = a->position;
 			geo::Vector bPos = b->position;
-			aPos -= a->GetInvMass() * correction;
-			bPos += b->GetInvMass() * correction;
+			aPos += a->GetInvMass() * correction;
+			bPos -= b->GetInvMass() * correction;
 			if (!a->isKinematic && !a->isStatic)
 				a->position = aPos;
 			if (!b->isKinematic && !a->isStatic)

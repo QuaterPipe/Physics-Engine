@@ -15,8 +15,6 @@ namespace physics
 	: name(name), sprite(s), transform(c.transform)
 	{
 		collider.reset(c.Clone());
-		if (s.getTexture())
-			sprite.setTexture(*s.getTexture());
 		sprite.setPosition(transform.position.x, transform.position.y);
 	}
 
@@ -24,8 +22,6 @@ namespace physics
 	: name(e.name), sprite(e.sprite), transform(e.transform)
 	{
 		collider.reset(e.GetCollisionObject().Clone());
-		if (e.sprite.getTexture())
-			sprite.setTexture(*e.sprite.getTexture());
 		sprite.setPosition(transform.position.x, transform.position.y);
 	}
 
@@ -38,8 +34,6 @@ namespace physics
 		name = other.name;
 		collider.reset(other.GetCollisionObject().Clone());
 		sprite = other.sprite;
-		if (other.sprite.getTexture())
-			sprite.setTexture(*other.sprite.getTexture());
 		transform = other.transform;
 		sprite.setPosition(transform.position.x, transform.position.y);
 		return *this;
@@ -86,7 +80,8 @@ namespace physics
 	{
 		transform = collider->transform;
 		sprite.setPosition(transform.position.x, transform.position.y);
-		//sprite.setRotation(geo::Degrees(acos(transform.rotation.a)));
+		if (!sprite.getRotation())
+			sprite.setRotation(geo::Degrees(acos(transform.rotation.a)));
 	}
 
 	Serializable* Entity::Deserialize(const std::vector<byte>& v,

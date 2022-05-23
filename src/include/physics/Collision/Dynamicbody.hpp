@@ -47,7 +47,7 @@ namespace physics
 			Dynamicbody(const Dynamicbody& d) noexcept;
 			Dynamicbody(Dynamicbody && d) noexcept;
 			virtual Dynamicbody& operator=(const Dynamicbody& d) noexcept;
-			virtual void ApplyAngularForce(f64 angularVelocity) noexcept = 0;
+			virtual void ApplyAngularForce(f64 force) noexcept = 0;
 			virtual void ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint = geo::Vector::Infinity) noexcept = 0;
 			virtual void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec = geo::Vector::Infinity) noexcept = 0;
 			virtual bool Equals(const Dynamicbody& d) const noexcept;

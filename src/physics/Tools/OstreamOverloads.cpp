@@ -31,6 +31,6 @@ namespace physics
 
 	std::ostream& operator<<(std::ostream& os, const CollisionPoints& c)
 	{
-		return os << std::boolalpha << c.hasCollision << " " << c.a << ", " << c.b << " " << c.normal << " depthin " << c.depth;
+		return os << "hasCollision: " << std::boolalpha << c.hasCollision << " c.a: " << c.a << ", c.b: " << c.b << " normal: " << c.normal << " depth: " << c.depth;
 	}
 }

@@ -38,9 +38,9 @@ namespace physics
 		return *this;
 	}
 
-	void Rigidbody::ApplyAngularForce(f64 angularVelocity) noexcept
+	void Rigidbody::ApplyAngularForce(f64 force) noexcept
 	{
-		angularVelocity += angularVelocity;
+		angularVelocity += force;
 	}
 
 	void Rigidbody::ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint) noexcept
@@ -85,9 +85,7 @@ namespace physics
 	void Rigidbody::Move(f64 offsetX, f64 offsetY) noexcept
 	{
 		if (isKinematic)
-		{
 			transform.position += geo::Vector(offsetX, offsetY);
-		}
 	}
 
 	bool Rigidbody::NotEquals(const Rigidbody& other) const noexcept
@@ -101,7 +99,8 @@ namespace physics
 		{
 			velocity += (force * _invMass) * dt;
 			position += velocity * dt;
-			angularVelocity += (angularForce * _invInertia) * dt;
+			if (angularForce)
+				angularVelocity += (angularForce * _invInertia) * dt;
 			rotation = rotation * geo::Matrix2(angularVelocity * dt);
 			angularForce = 0;
 			force.Set(0, 0);

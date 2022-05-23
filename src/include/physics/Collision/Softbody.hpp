@@ -46,7 +46,7 @@ namespace physics
 			Softbody(Softbody && s) noexcept;
 			virtual Softbody& operator=(const Softbody& s) noexcept;
 			virtual Softbody& operator=(Softbody && s) noexcept;
-			virtual void ApplyAngularForce(f64 angularVelocity) noexcept override;
+			virtual void ApplyAngularForce(f64 force) noexcept override;
 			virtual void ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint = geo::Vector::Infinity) noexcept override;
 			virtual void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec = geo::Vector::Infinity) noexcept override;
 			virtual void ApplySpringForces() noexcept;
