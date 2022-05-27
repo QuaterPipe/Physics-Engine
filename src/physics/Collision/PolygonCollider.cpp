@@ -49,6 +49,26 @@ namespace physics
 
 	PolygonCollider::~PolygonCollider() noexcept {}
 
+	BoxCollider PolygonCollider::BoundingBox(const Transform& t) const noexcept
+	{
+		f64 minx = std::numeric_limits<f64>::max();
+		f64 miny = std::numeric_limits<f64>::max();
+		f64 maxx = std::numeric_limits<f64>::min();
+		f64 maxy = std::numeric_limits<f64>::min();
+		for (geo::Vector p: points)
+		{
+			geo::Vector tp = t.TransformVector(p);
+			minx = tp.x < minx ? tp.x : minx;
+			miny = tp.y < miny ? tp.y : miny;
+			maxx = tp.x > maxx ? tp.x : maxx;
+			maxy = tp.y > maxy ? tp.y : maxy;
+		}
+		BoxCollider result;
+		result.pos.Set(minx, miny);
+		result.dimensions.Set(maxx - minx, maxy - miny);
+		return result;
+	}
+
 	geo::Vector GetCentroid(std::vector<geo::Vector> points)
 	{
 		if (points.size())

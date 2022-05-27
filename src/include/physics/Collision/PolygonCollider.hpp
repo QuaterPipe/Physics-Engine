@@ -1,5 +1,5 @@
 #pragma once
-#include "Collider.hpp"
+#include "BoxCollider.hpp"
 
 namespace physics
 {
@@ -17,6 +17,7 @@ namespace physics
 			PolygonCollider(const geo::Vector& pos, double distanceBetweenPoints=1, unsigned long count=3) noexcept;
 			PolygonCollider(const geo::Vector& pos, const geo::Vector& a, const geo::Vector& b, const geo::Vector& c, std::initializer_list<geo::Vector> extra={}) noexcept;
 			~PolygonCollider() noexcept;
+			virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept override;
 			Collider* Clone() const override;
 			virtual geo::Vector GetCenter() const noexcept override;
 			virtual bool Equals(const PolygonCollider& other) const noexcept;

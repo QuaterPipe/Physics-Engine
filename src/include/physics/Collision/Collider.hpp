@@ -41,6 +41,7 @@ namespace physics
 	{
 		virtual Collider* Clone() const = 0;
 		virtual ~Collider() noexcept;
+		virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept = 0;
 		virtual geo::Vector GetCenter() const noexcept = 0;
 		virtual std::vector<geo::Vector> GetPoints(const Transform& t = Transform()) const noexcept = 0;
 		virtual geo::Vector Max() const noexcept = 0;

@@ -6,7 +6,7 @@ namespace physics
 {
 
 	Scene::Scene(const geo::Vector& gravity, unsigned short physicsUpdateHz, unsigned windowWidth, unsigned windowHeight, std::string windowTitle) noexcept
-	: _physicsUpdateFrequency(physicsUpdateHz), _gravity(gravity), _display(new Display(windowWidth, windowHeight, windowTitle))
+	: _gravity(gravity), _display(new Display(windowWidth, windowHeight, windowTitle)), _physicsUpdateFrequency(physicsUpdateHz)
 	{
 		_ended.store(false, std::memory_order_relaxed);
 		_entities.store(new std::vector<std::unique_ptr<Entity>>(), std::memory_order_relaxed);

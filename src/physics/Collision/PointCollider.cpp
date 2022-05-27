@@ -24,6 +24,14 @@ namespace physics
 	{
 	}
 
+	BoxCollider PointCollider::BoundingBox(const Transform& t) const noexcept
+	{
+		BoxCollider b;
+		b.pos = t.TransformVector(position);
+		b.dimensions.Set(1, 1);
+		return b;
+	}
+
 	Serializable* PointCollider::Deserialize(const std::vector<byte>& v,
 			const size_t& index, const size_t& length) const
 	{

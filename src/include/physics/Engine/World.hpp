@@ -1,7 +1,7 @@
 #pragma once
 #include "../Collision/Collision.hpp"
-#include "../Collision/Rigidbody.hpp"
-#include "../Collision/Softbody.hpp"
+#include "../Dynamics/Rigidbody.hpp"
+#include "../Dynamics/Softbody.hpp"
 
 namespace physics
 {
@@ -12,12 +12,6 @@ namespace physics
 	};
 
 	class PhysicsSolver : public Solver
-	{
-		public:
-			void Solve(std::vector<Collision>& collisions, f64 dt) noexcept override;
-	};
-
-	class PositionalCorrectionSolver : public Solver
 	{
 		public:
 			void Solve(std::vector<Collision>& collisions, f64 dt) noexcept override;

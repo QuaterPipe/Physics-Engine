@@ -1,5 +1,5 @@
 #pragma once
-#include "Collider.hpp"
+#include "BoxCollider.hpp"
 namespace physics
 {
 	struct PointCollider : public Collider
@@ -12,6 +12,8 @@ namespace physics
 			PointCollider(const f64& x, const f64& y);
 			PointCollider(const geo::Vector& pos);
 			PointCollider(const PointCollider& p);
+			virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept override;
+			Collider* Clone() const override;
 			virtual bool Equals(const PointCollider& other) const noexcept;
 			virtual bool NotEquals(const PointCollider& other) const noexcept;
 			virtual std::vector<geo::Vector> GetPoints(const Transform& t = Transform()) const noexcept override;

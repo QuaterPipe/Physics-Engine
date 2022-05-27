@@ -6,46 +6,6 @@
 
 namespace physics
 {
-	void PositionalCorrectionSolver::Solve(std::vector<Collision>& collisions, f64 dt) noexcept
-	{
-		for (Collision& c: collisions)
-		{
-			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
-			Rigidbody* a = (Rigidbody*) c.a;
-			Rigidbody* b = (Rigidbody*) c.b;
-			double percentage = 0.2;
-			double slop = 0.01;
-			geo::Vector correction = std::max(c.points.depth - slop, 0.0) / (a->GetInvMass() + b->GetInvMass()) * percentage * c.points.normal;
-			geo::Vector aPos = a->position;
-			geo::Vector bPos = b->position;
-			aPos += a->GetInvMass() * correction;
-			bPos -= b->GetInvMass() * correction;
-			if (!a->isKinematic && !a->isStatic)
-				a->position = aPos;
-			if (!b->isKinematic && !a->isStatic)
-				b->position = bPos;
-		}
-	}
-
-	struct Square
-	{
-		f64 x = 0;
-		f64 y = 0;
-		f64 width = 0;
-		f64 height = 0;
-	};
-
-	bool SquareOverLaps(const Square& a, const Square& b)
-	{
-		auto numInRange = [&] (double value, double minVal, double maxVal){
-			return (value >= minVal) && (value <= maxVal);
-		};
-		bool xOverlaps = numInRange(a.x, b.x, b.x + b.width) ||
-			numInRange(b.x, a.x, a.x + a.width);
-		bool yOverlaps = numInRange(a.y, b.y, b.y + b.height) ||
-			numInRange(b.y, a.y, a.y + a.height);
-		return xOverlaps && yOverlaps;
-	}
 
 	void CollisionWorld::AddObject(CollisionObject* o) noexcept
 	{
@@ -65,27 +25,7 @@ namespace physics
 			for (auto& b: _objects)
 			{
 				if (a == b) break;
-				Square BoundingBoxA;
-				Square BoundingBoxB;
-				// a collider to bounding box
-				Collider& cldr = a->GetCollider();
-				Transform trans = a->transform;
-				geo::Vector min = cldr.Min() + a->position;
-				geo::Vector max = cldr.Max() + a->position;
-				BoundingBoxA.x = min.x;
-				BoundingBoxA.y = min.y;
-				BoundingBoxA.width = max.x - min.x;
-				BoundingBoxA.height = max.y - min.y;
-				// b collider to bounding box
-				cldr = b->GetCollider();
-				trans = b->transform;
-				min = cldr.Min() + b->position;
-				max = cldr.Max() + b->position;
-				BoundingBoxB.x = min.x;
-				BoundingBoxB.y = min.y;
-				BoundingBoxB.width = max.x - min.x;
-				BoundingBoxB.height = max.y - min.y;
-				if (SquareOverLaps(BoundingBoxA, BoundingBoxB))
+				if (a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform)))
 				{
 					CollisionPoints points = a->GetCollider().TestCollision(
 						a->transform, &b->GetCollider(), b->transform
@@ -102,9 +42,7 @@ namespace physics
 			}
 		}
 		for (auto solver: _solvers)
-		{
 			solver->Solve(collisions, dt);
-		}
 	}
 
 	void CollisionWorld::RemoveObject(CollisionObject* o) noexcept

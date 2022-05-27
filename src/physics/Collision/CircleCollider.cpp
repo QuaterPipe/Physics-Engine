@@ -27,6 +27,12 @@ namespace physics
 
 	CircleCollider::~CircleCollider() noexcept {}
 
+	BoxCollider CircleCollider::BoundingBox(const Transform& t) const noexcept
+	{
+		geo::Vector c = t.TransformVector(center);
+		return BoxCollider(c - radius, geo::Vector(radius * 2, radius * 2));
+	}
+
 	Collider* CircleCollider::Clone() const
 	{
 		return new CircleCollider(*this);

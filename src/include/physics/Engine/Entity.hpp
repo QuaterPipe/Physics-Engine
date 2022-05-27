@@ -1,7 +1,7 @@
 #pragma once
 #include "../../SFML/Graphics.hpp"
 #include "../Collision/Collision.hpp"
-#include "../Collision/Rigidbody.hpp"
+#include "../Dynamics/Rigidbody.hpp"
 #include <memory>
 
 namespace physics

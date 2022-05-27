@@ -10,7 +10,7 @@ namespace physics
 	}
 
 	BoxCollider::BoxCollider(const f64& width, const f64& height) noexcept
-	: dimensions(width, height), pos(0, 0)
+	: pos(0, 0), dimensions(width, height)
 	{
 	}
 
@@ -26,7 +26,15 @@ namespace physics
 		classCode = 0x02;
 	}
 
-	BoxCollider::~BoxCollider() noexcept {}
+	BoxCollider::~BoxCollider() noexcept
+	{
+	}
+
+	BoxCollider BoxCollider::BoundingBox(const Transform& t) const noexcept
+	{
+		PolygonCollider p(geo::Vector(0, 0), pos, geo::Vector(x + width, y), pos + dimensions, {geo::Vector(x, y + height)});
+		return p.BoundingBox(t);
+	}
 
 	Collider* BoxCollider::Clone() const noexcept
 	{
@@ -75,6 +83,18 @@ namespace physics
 	geo::Vector BoxCollider::Min() const noexcept
 	{
 		return pos;
+	}
+
+	bool BoxCollider::Overlaps(const BoxCollider& b) const noexcept
+	{
+		auto numInRange = [&] (double value, double minVal, double maxVal){
+			return (value >= minVal) && (value <= maxVal);
+		};
+		bool xOverlaps = numInRange(x, b.x, b.x + b.width) ||
+			numInRange(b.x, x, x + width);
+		bool yOverlaps = numInRange(y, b.y, b.y + b.height) ||
+			numInRange(b.y, y, y + height);
+		return xOverlaps && yOverlaps;
 	}
 
 	std::vector<geo::Vector> BoxCollider::GetPoints(const Transform& t) const noexcept

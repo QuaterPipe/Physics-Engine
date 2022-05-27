@@ -22,6 +22,7 @@ namespace physics
 			virtual std::vector<unsigned char> GetBytes() const noexcept override;
 		public:
 			bool isTrigger = false;
+			bool isActive = true;
 			std::function<void(Collision&, f64)> onCollision;
 			std::unique_ptr<Collider> collider;
 			Transform transform;

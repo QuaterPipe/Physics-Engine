@@ -17,6 +17,7 @@ namespace geo
 		Matrix2(const Vector& iHat, const Vector& jHat) noexcept;
 		Vector AxisX() const noexcept;
 		Vector AxisY() const noexcept;
+		f64 Angle() const noexcept;
 		// \brief Returns the determinant of the matrix.
 		f64 Determinant() const noexcept;
 		// \brief Sets the matrix to rotational value.
@@ -30,6 +31,7 @@ namespace geo
 		bool operator!=(const Matrix2& other) const noexcept;
 		Vector operator*(const Vector& v) const noexcept;
 		Matrix2 operator*(const Matrix2& m) const noexcept;
+		void operator*=(const Matrix2& m) noexcept;
 	};
 
 	// | a b c |

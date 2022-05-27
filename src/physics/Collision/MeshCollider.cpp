@@ -26,7 +26,36 @@ namespace physics
 		}
 	}
 
-	MeshCollider::~MeshCollider() noexcept {}
+	MeshCollider::~MeshCollider() noexcept
+	{
+	}
+
+	BoxCollider MeshCollider::BoundingBox(const Transform& t) const noexcept
+	{
+		BoxCollider smallest;
+		BoxCollider largest;
+		bool reachedSmallest;
+		bool reachedLargest;
+		for (Collider* c: colliders)
+		{
+			if (!reachedSmallest && !reachedLargest)
+			{
+				smallest = c->BoundingBox(t);
+				reachedSmallest = true;
+				largest = c->BoundingBox(t);
+				reachedLargest = true;
+			}
+			if (smallest.pos > c->BoundingBox(t).pos)
+				smallest = c->BoundingBox(t);
+			if (largest.pos < c->BoundingBox(t).pos)
+				largest = c->BoundingBox(t);
+		}
+		BoxCollider result;
+		result.pos = smallest.pos;
+		result.x = largest.x - smallest.x + largest.width;
+		result.y = largest.y - smallest.y + largest.height;
+		return result;
+	}
 
 	geo::Vector getCentroid(std::vector<geo::Vector> points)
 	{

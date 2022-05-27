@@ -1,5 +1,5 @@
 #include "../../include/physics/Engine/Entity.hpp"
-#include "../../include/physics/Collision/Rigidbody.hpp"
+#include "../../include/physics/Dynamics/Rigidbody.hpp"
 #include <cstring>
 namespace physics
 {

@@ -26,4 +26,27 @@ namespace physics
 			virtual unsigned long TotalByteSize() const noexcept override;
 			virtual std::vector<byte> Serialize() const noexcept override;
 	};
+
+	namespace rk4
+	{
+		struct State
+		{
+			geo::Vector pos;
+			geo::Vector vel;
+			geo::Matrix2 orient;
+			f64 angVel;
+		};
+
+		struct Derivative
+		{
+			geo::Vector dpos;
+			geo::Vector dvel;
+			geo::Matrix2 dorient;
+			f64 dangVel;
+		};
+
+		geo::Vector Acceleration(const State& state, const f64& t);
+		Derivative Evaluate(const State& initial, const f64& t, const f64& dt, const Derivative& d);
+		State Integrate(const State& state, f64 t, f64 dt);
+	}
 }

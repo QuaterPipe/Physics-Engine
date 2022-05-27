@@ -1,5 +1,5 @@
 	#pragma once
-#include "Collider.hpp"
+#include "BoxCollider.hpp"
 
 namespace physics
 {
@@ -14,6 +14,7 @@ namespace physics
 			MeshCollider(const std::vector<Collider*>& colliders) noexcept;
 			MeshCollider(const MeshCollider& m) noexcept;
 			~MeshCollider() noexcept;
+			virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept override;
 			Collider* Clone() const override;
 			virtual geo::Vector GetCenter() const noexcept override;
 			virtual bool Equals(const MeshCollider& other) const noexcept;

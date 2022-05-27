@@ -3,11 +3,12 @@ debug: debugCompileObjects debugLink run
 test: compileTest runTest
 
 checkSyntax:
-	g++ -fsyntax-only -std=c++17 src/physics/Collision/*.cpp
-	g++ -fsyntax-only -std=c++17 src/physics/Engine/*.cpp
-	g++ -fsyntax-only -std=c++17 src/physics/Tools/*.cpp
-	g++ -fsyntax-only -std=c++17 src/geometry/*.cpp
-	g++ -fsyntax-only -std=c++17 src/main.cpp
+	g++ -Wall -fsyntax-only -std=c++17 src/physics/Collision/*.cpp
+	g++ -Wall -fsyntax-only -std=c++17 src/physics/Dynamics/*.cpp
+	g++ -Wall -fsyntax-only -std=c++17 src/physics/Engine/*.cpp
+	g++ -Wall -fsyntax-only -std=c++17 src/physics/Tools/*.cpp
+	g++ -Wall -fsyntax-only -std=c++17 src/geometry/*.cpp
+	g++ -Wall -fsyntax-only -std=c++17 src/main.cpp
 
 compileTest:
 	g++ -c -Wall -std=c++17 test/TestCollision.cpp -o test/TestCollision.o
@@ -27,7 +28,7 @@ compileObjects:
 	g++ -c -Wall -std=c++17 src/physics/Collision/Collision.cpp -o bin/o/Collision.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/Collider.cpp -o bin/o/Collider.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/CollisionObject.cpp -o bin/o/CollisionObject.o
-	g++ -c -Wall -std=c++17 src/physics/Collision/Dynamicbody.cpp -o bin/o/Dynamicbody.o
+	g++ -c -Wall -std=c++17 src/physics/Dynamics/Dynamicbody.cpp -o bin/o/Dynamicbody.o
 	g++ -c -Wall -std=c++17 src/physics/Tools/DataPacket.cpp -o bin/o/DataPacket.o
 	g++ -c -Wall -std=c++17 src/physics/Engine/Display.cpp -o bin/o/Display.o
 	g++ -c -Wall -std=c++17 src/physics/Engine/Entity.cpp -o bin/o/Entity.o
@@ -37,9 +38,9 @@ compileObjects:
 	g++ -c -Wall -std=c++17 src/physics/Tools/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/PointCollider.cpp -o bin/o/PointCollider.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/PolygonCollider.cpp -o bin/o/PolygonCollider.o
-	g++ -c -Wall -std=c++17 src/physics/Collision/Rigidbody.cpp -o bin/o/Rigidbody.o
+	g++ -c -Wall -std=c++17 src/physics/Dynamics/Rigidbody.cpp -o bin/o/Rigidbody.o
 	g++ -c -Wall -std=c++17 src/physics/Engine/Scene.cpp -o bin/o/Scene.o
-	g++ -c -Wall -std=c++17 src/physics/Collision/Softbody.cpp -o bin/o/Softbody.o
+	g++ -c -Wall -std=c++17 src/physics/Dynamics/Softbody.cpp -o bin/o/Softbody.o
 	g++ -c -Wall -std=c++17 src/physics/Engine/Time.cpp -o bin/o/Time.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/Transform.cpp -o bin/o/Transform.o
 	g++ -c -Wall -std=c++17 src/physics/Engine/World.cpp -o bin/o/World.o
@@ -61,7 +62,7 @@ debugCompileObjects:
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Collider.cpp -o bin/o/Collider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/CollisionObject.cpp -o bin/o/CollisionObject.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Display.cpp -o bin/o/Display.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Dynamicbody.cpp -o bin/o/Dynamicbody.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Dynamics/Dynamicbody.cpp -o bin/o/Dynamicbody.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Entity.cpp -o bin/o/Entity.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Hashable.cpp -o bin/o/Hashable.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/MeshCollider.cpp -o bin/o/MeshCollider.o
@@ -70,9 +71,9 @@ debugCompileObjects:
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/PhysicsSolver.cpp -o bin/o/PhysicSolver.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/PointCollider.cpp -o bin/o/PointCollider.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/PolygonCollider.cpp -o bin/o/PolygonCollider.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Rigidbody.cpp -o bin/o/Rigidbody.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Dynamics/Rigidbody.cpp -o bin/o/Rigidbody.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Scene.cpp -o bin/o/Scene.o
-	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Softbody.cpp -o bin/o/Softbody.o
+	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Dynamics/Softbody.cpp -o bin/o/Softbody.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/Time.cpp -o bin/o/Time.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Collision/Transform.cpp -o bin/o/Transform.o
 	g++ -g -rdynamic -c -Wall -std=c++17 src/physics/Engine/World.cpp -o bin/o/World.o

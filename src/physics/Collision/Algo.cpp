@@ -238,7 +238,7 @@ namespace physics::algo
 			orthogonals.emplace_back(-v.y, v.x);
 		}
 		std::vector<geo::Vector> pushVectors;
-		for (int i = 0; i < orthogonals.size(); i++)
+		for (size_t i = 0; i < orthogonals.size(); i++)
 		{
  			CollisionPoints tmp = SeparatingAxisCheck(a, ta, b, tb, orthogonals[i]);
 			if (tmp.hasCollision)
@@ -499,7 +499,6 @@ namespace physics::algo
 		const geo::Vector BCenter = tb.TransformVector(b->center);
 		geo::Vector closestPoint;
 		f64 minDis = MAX;
-		bool AllLinesInCircle = true;
 		for (size_t i = 0; i < a->points.size(); i++)
 		{
 			const geo::Vector vA = ta.TransformVector(a->points[i]);
@@ -517,8 +516,6 @@ namespace physics::algo
 				closestPoint = vA;
 				minDis = geo::DistanceSquared(vA, BCenter);
 			}
-			else
-				AllLinesInCircle = false;
 		}
 		// there actually IS a collision here, but this function does not handle this type of collision
 		//if (AllLinesInCircle)

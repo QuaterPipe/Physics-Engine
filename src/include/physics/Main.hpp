@@ -3,9 +3,9 @@
 #include "Engine/Display.hpp"
 #include "Engine/Entity.hpp"
 #include "Tools/OstreamOverloads.hpp"
-#include "Collision/Rigidbody.hpp"
+#include "Dynamics/Rigidbody.hpp"
 #include "Engine/Scene.hpp"
-#include "Collision/Softbody.hpp"
+#include "Dynamics/Softbody.hpp"
 #include "Collision/Serializable.hpp"
 #include "Engine/Time.hpp"
 #define PHYSICS_MAIN
