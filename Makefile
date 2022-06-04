@@ -34,7 +34,6 @@ compileObjects:
 	g++ -c -Wall -std=c++17 src/physics/Engine/Entity.cpp -o bin/o/Entity.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/Hashable.cpp -o bin/o/Hashable.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/MeshCollider.cpp -o bin/o/MeshCollider.o
-	g++ -c -Wall -std=c++17 src/physics/Tools/Notify.cpp -o bin/o/Notify.o
 	g++ -c -Wall -std=c++17 src/physics/Tools/OstreamOverloads.cpp -o bin/o/OstreamOverloads.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/PointCollider.cpp -o bin/o/PointCollider.o
 	g++ -c -Wall -std=c++17 src/physics/Collision/PolygonCollider.cpp -o bin/o/PolygonCollider.o

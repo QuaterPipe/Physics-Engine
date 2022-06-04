@@ -106,7 +106,7 @@ namespace physics
 		return v;
 	}
 
-	Collider* MeshCollider::Clone() const
+	Collider* MeshCollider::Clone() const noexcept
 	{
 		return (Collider*)new MeshCollider(*this);
 	}

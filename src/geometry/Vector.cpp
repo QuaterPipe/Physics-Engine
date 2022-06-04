@@ -79,7 +79,7 @@ namespace geo
 	void Vector::Normalize() noexcept
 	{
 		f64 mag = GetMagnitude();
-		if (mag > 0.00001)
+		if (mag > EPSILON)
 			*this = *this / mag;
 		else
 			*this = Vector(0, 0);
@@ -397,7 +397,7 @@ namespace geo
 	void Vector3::Normalize() noexcept
 	{
 		f64 mag = GetMagnitude();
-		if (mag > 0.00001)
+		if (mag > EPSILON)
 			*this = *this / mag;
 		else
 			*this = Vector3(0, 0, 0);
@@ -615,4 +615,24 @@ namespace geo
 		y = newY;
 		z = newZ;
 	}
+}
+
+geo::Vector sin(const geo::Vector& v)
+{
+	return geo::Vector(sin(v.x), sin(v.y));
+}
+
+geo::Vector cos(const geo::Vector& v)
+{
+	return geo::Vector(cos(v.x), cos(v.y));
+}
+
+geo::Vector tan(const geo::Vector& v)
+{
+	return geo::Vector(tan(v.x), tan(v.y));
+}
+
+geo::Vector abs(const geo::Vector& v)
+{
+	return geo::Vector(fabs(v.x), fabs(v.y));
 }

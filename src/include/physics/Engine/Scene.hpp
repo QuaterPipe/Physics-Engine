@@ -4,8 +4,10 @@
 #include <fstream>
 #include <thread>
 #include <mutex>
+#include <queue>
 #include "../Collision/Collision.hpp"
 #include "Entity.hpp"
+#include "../Events/EventListener.hpp"
 #include "Display.hpp"
 #include "World.hpp"
 
@@ -29,6 +31,7 @@ namespace physics
 			std::vector<sf::Texture> _textures;
 			geo::Vector _gravity = geo::Vector(0, -9.81);
 			Display* _display = NULL;
+			event::EventListener _listener;
 			std::atomic_ushort _physicsUpdateFrequency;
 			std::atomic_bool _physicsIsActive;
 			std::atomic_bool _ended;
@@ -36,6 +39,7 @@ namespace physics
 			bool _started;
 			std::thread _physicsThread;
 		public:
+			std::queue<event::Event*> eventQueue;
 			Scene(const geo::Vector& gravity, unsigned short physicsUpdateHz, unsigned windowWidth, unsigned windowHeight, std::string windowTitle="") noexcept;
 			virtual ~Scene() noexcept;
 			void AddEntity(Entity& e) noexcept;

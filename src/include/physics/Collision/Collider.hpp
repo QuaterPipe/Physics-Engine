@@ -1,7 +1,8 @@
 #pragma once
 #include "../../geometry/main.hpp"
 #include "../../SFML/Graphics.hpp"
-#include "Serializable.hpp"
+#include "../Base/Serializable.hpp"
+#include "../Base/Component.hpp"
 #include "Transform.hpp"
 
 namespace physics
@@ -39,7 +40,7 @@ namespace physics
 
 	struct Collider : public serialization::Serializable, public Hashable
 	{
-		virtual Collider* Clone() const = 0;
+		virtual Collider* Clone() const noexcept;
 		virtual ~Collider() noexcept;
 		virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept = 0;
 		virtual geo::Vector GetCenter() const noexcept = 0;

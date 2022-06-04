@@ -17,12 +17,12 @@ namespace physics
 			Rigidbody(Rigidbody && r) noexcept;
 			virtual ~Rigidbody() noexcept;
 			Rigidbody& operator=(const Rigidbody& other) noexcept;
-			virtual void ApplyAngularForce(f64 force) noexcept override;
-			virtual void ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint = geo::Vector::Infinity) noexcept override;
-			virtual void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec = geo::Vector::Infinity) noexcept override;
+			void ApplyAngularForce(f64 force) noexcept override;
+			void ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint = geo::Vector::Infinity) noexcept override;
+			void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec = geo::Vector::Infinity) noexcept override;
 			virtual CollisionObject* Clone() const noexcept override;
 			virtual bool Equals(const Rigidbody& other) const noexcept;
-			virtual void Move(f64 offsetX, f64 offsetY) noexcept;
+			void Move(f64 offsetX, f64 offsetY) noexcept;
 			virtual bool NotEquals(const Rigidbody& other) const noexcept;
 			virtual Serializable* Deserialize(const std::vector<byte>& v,
 			const size_t& index, const size_t& length) const override;

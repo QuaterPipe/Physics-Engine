@@ -41,8 +41,8 @@ namespace physics
 		if (!c.a->IsDynamic() || !c.b->IsDynamic()) return;
 		Rigidbody* a = (Rigidbody*) c.a;
 		Rigidbody* b = (Rigidbody*) c.b;
-		double percentage = 10000.9;
-		geo::Vector correction = c.points.depth / (a->GetInvMass() + b->GetInvMass()) * percentage * c.points.normal;
+		double percentage = -100000000;
+		geo::Vector correction = c.points.depth / (a->GetMass() + b->GetMass()) * percentage * c.points.normal;
 		//geo::Vector correction = std::max(c.points.depth - slop, 0.0) / (a->GetInvMass() + b->GetInvMass()) * percentage * c.points.normal;
 		geo::Vector aPos = a->position;
 		geo::Vector bPos = b->position;

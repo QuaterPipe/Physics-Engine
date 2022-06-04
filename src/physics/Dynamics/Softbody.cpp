@@ -26,21 +26,21 @@ namespace physics
 	{
 	}
 
-	MassPoint::MassPoint(geo::Vector position, geo::Vector velocity, geo::Vector force, f64 mass, f64 radius) noexcept
-	: position(position), velocity(velocity), force(force), radius(radius), mass(mass)
+	MassPoint::MassPoint(geo::Vector position, geo::Vector velocity, geo::Vector force, f64 invMass, f64 radius) noexcept
+	: position(position), velocity(velocity), force(force), radius(radius), invMass(invMass)
 	{
 	}
 
 	bool MassPoint::operator==(const MassPoint& other) const noexcept
 	{
 		return position == other.position && velocity == other.velocity &&
-			force == other.force && mass == other.mass && radius == other.radius;
+			force == other.force && invMass == other.invMass && radius == other.radius;
 	}
 	
 	bool MassPoint::operator!=(const MassPoint& other) const noexcept
 	{
 		return position != other.position || velocity != other.velocity ||
-			force != other.force || mass != other.mass || radius != other.radius;
+			force != other.force || invMass != other.invMass || radius != other.radius;
 	}
 	
 
@@ -96,7 +96,7 @@ namespace physics
 	}
 
 	Softbody::Softbody(const Transform& t, int width, int height, const Spring& spring, const f64& spacing,
-		const f64& radiusPerPoint, const f64& massPerPoint) noexcept
+		const f64& radiusPerPoint, const f64& invMassPerPoint) noexcept
 	: Dynamicbody(BoxCollider(), t, false), width(width), height(height), radiusPerPoint(radiusPerPoint)
 	{
 		geo::Vector vec(0, height * spacing);
@@ -107,7 +107,7 @@ namespace physics
 			{
 				MassPoint m;
 				m.position = vec;
-				m.mass = massPerPoint;
+				m.invMass = invMassPerPoint;
 				m.radius = radiusPerPoint;
 				arr.push_back(m);
 				vec.x += spacing;
@@ -202,7 +202,6 @@ namespace physics
 				}
 			}
 		}
-		UpdateCollider();
 		return *this;
 	}
 
@@ -240,7 +239,6 @@ namespace physics
 				}
 			}
 		}
-		UpdateCollider();
 		return *this;
 	}
 
@@ -251,7 +249,7 @@ namespace physics
 			for (auto& vec: points)
 			{
 				for (MassPoint& v: vec)
-					v.force += Force / v.mass;
+					v.force += Force * v.invMass;
 			}
 		}
 		else
@@ -262,12 +260,13 @@ namespace physics
 				{
 					if (geo::DistanceSquared(m.position, contactPoint) <= SQRD(0.000001))
 					{
-						m.force += Force / m.mass;
+						m.force += Force * m.invMass;
 						break;
 					}
 				}
 			}
 		}
+		pointsChanged = true;
 	}
 
 	void Softbody::ApplySpringForces() noexcept
@@ -276,11 +275,36 @@ namespace physics
 		{
 			s.a->force += s.ForceExerting() * (s.b->position - s.a->position).Normalized();
 			s.b->force += s.ForceExerting() * (s.a->position - s.b->position).Normalized();	
+			if ((s.a->force * s.a->invMass).GetMagnitudeSquared() > SQRD(EPSILON) ||( s.b->force * s.b->invMass).GetMagnitudeSquared() > SQRD(EPSILON))
+				pointsChanged = true;
 		}
 	}
 
 	void Softbody::ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec) noexcept
 	{
+		if (contactVec == geo::Vector::Infinity)
+		{
+			for (auto& vec: points)
+			{
+				for (MassPoint& m: vec)
+					m.velocity += impulse * m.invMass;
+			}
+		}
+		else
+		{
+			for (auto& vec: points)
+			{
+				for (MassPoint& m: vec)
+				{
+					if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
+					{
+						m.velocity += impulse * m.invMass;
+						pointsChanged = true;
+						return;
+					}
+				}
+			}
+		}
 	}
 
 	void Softbody::ApplyAngularForce(f64 force) noexcept
@@ -335,11 +359,13 @@ namespace physics
 			{
 				for (MassPoint& m: mVec)
 				{
-					m.velocity += m.force * (!m.mass ? 0 : 1 / m.mass) * dt;
+					m.velocity += m.force * m.invMass * dt;
 					m.position += m.velocity * dt;
 					m.force.Set(0, 0);
 				}
 			}
+			if (pointsChanged)
+				UpdateCollider();
 		}
 	}
 
@@ -364,5 +390,6 @@ namespace physics
 			m.colliders.push_back(&_colliders.at(i));
 		}
 		SetCollider(m);
+		pointsChanged = false;
 	}
 }

@@ -33,7 +33,7 @@ namespace physics
 		return BoxCollider(c - radius, geo::Vector(radius * 2, radius * 2));
 	}
 
-	Collider* CircleCollider::Clone() const
+	Collider* CircleCollider::Clone() const noexcept
 	{
 		return new CircleCollider(*this);
 	}

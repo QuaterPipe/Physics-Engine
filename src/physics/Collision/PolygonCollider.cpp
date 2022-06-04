@@ -115,7 +115,7 @@ namespace physics
 		return v;
 	}
 
-	Collider* PolygonCollider::Clone() const
+	Collider* PolygonCollider::Clone() const noexcept
 	{
 		return new PolygonCollider(*this);
 	}

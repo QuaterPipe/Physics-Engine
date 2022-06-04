@@ -53,13 +53,51 @@ namespace physics
 			virtual void ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint = geo::Vector::Infinity) noexcept = 0;
 			virtual void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec = geo::Vector::Infinity) noexcept = 0;
 			virtual bool Equals(const Dynamicbody& d) const noexcept;
-			virtual f64 GetInertia() const noexcept;
-			virtual f64 GetInvInertia() const noexcept;
-			virtual f64 GetMass() const noexcept;
-			virtual f64 GetInvMass() const noexcept;
+			f64 GetInertia() const noexcept;
+			f64 GetInvInertia() const noexcept;
+			f64 GetMass() const noexcept;
+			f64 GetInvMass() const noexcept;
 			virtual bool NotEquals(const Dynamicbody& d) const noexcept;
-			virtual void SetInertia(const f64& inertia) noexcept;
-			virtual void SetMass(const f64& mass) noexcept;
+			void SetInertia(const f64& inertia) noexcept;
+			void SetMass(const f64& mass) noexcept;
 			virtual void Update(f64 dt) noexcept;
+	};
+	struct Joint
+	{
+		public:
+			Dynamicbody* a = NULL;
+			Dynamicbody* b = NULL;
+			geo::Vector aContact;
+			geo::Vector bContact;
+			geo::Vector maxForce = geo::Vector::Infinity;
+			bool aAndBCollide = false;
+			virtual void Update(f64 dt) noexcept = 0;
+	};
+
+	struct DistanceJoint : public Joint
+	{
+		public:
+			f64 length;
+			DistanceJoint(Dynamicbody* a, Dynamicbody* b, f64 length) noexcept;
+			virtual void Update(f64 dt) noexcept override;
+	};
+
+	struct SpringJoint : public DistanceJoint
+	{
+		public:
+			f64 stiffness = 2;
+			f64 dampingFactor = 0.04;
+			SpringJoint(Dynamicbody* a, Dynamicbody* b, f64 length, f64 stiffness = 2, f64 dampingFactor = 0.2) noexcept;
+			f64 ForceExerting() const noexcept;
+			virtual void Update(f64 dt) noexcept override;		
+	};
+
+	struct HingeJoint : public Joint
+	{
+		public:
+			bool locked;
+			f64 angularFriction;
+			HingeJoint(Dynamicbody* a, Dynamicbody* b, f64 angularFriction) noexcept;
+			virtual void Update(f64 dt) noexcept override;
 	};
 }

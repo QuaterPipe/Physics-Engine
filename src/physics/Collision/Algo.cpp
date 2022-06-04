@@ -101,7 +101,7 @@ namespace physics::algo
 		CollisionPoints c;
 		c.hasCollision = false;
 		if (!a || !b) {return c;}
-		if (geo::DistanceSquared(ta.TransformVector(a->position), tb.TransformVector(b->position)) < SQRD(0.000001))
+		if (geo::DistanceSquared(ta.TransformVector(a->position), tb.TransformVector(b->position)) < SQRD(EPSILON))
 		{
 			c.a = a->position;
 			c.b = b->position;
@@ -250,7 +250,7 @@ namespace physics::algo
 		f64 minDis = MAX;
 		for (geo::Vector& v: pushVectors)
 		{
-			if (minDis > v.GetMagnitudeSquared() && (v.GetMagnitude() > 0.0000001))
+			if (minDis > v.GetMagnitudeSquared() && (v.GetMagnitude() > EPSILON))
 			{
 				minPush = v;
 				minDis = v.GetMagnitudeSquared();

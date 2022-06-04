@@ -15,7 +15,7 @@ namespace physics
 	};
 
 	//0x06
-	struct CollisionObject : public serialization::Serializable, public Hashable
+	struct CollisionObject : public serialization::Serializable, public Hashable, public Component
 	{
 		protected:
 			bool _isDynamic = false;
@@ -35,14 +35,14 @@ namespace physics
 			CollisionObject(const CollisionObject& c) noexcept;
 			CollisionObject(CollisionObject && c) noexcept;
 			virtual ~CollisionObject() noexcept;
-			virtual CollisionObject* Clone() const noexcept;
+			virtual CollisionObject* Clone() const noexcept override;
 			virtual CollisionObject& operator=(const CollisionObject& other) noexcept;
 			virtual bool Equals(const CollisionObject& other) const noexcept;
 			virtual bool IsDynamic() const noexcept;
-			virtual Collider& GetCollider() const noexcept;
-			virtual int GetHash() const noexcept;
+			Collider& GetCollider() const noexcept;
+			int GetHash() const noexcept;
 			virtual bool NotEquals(const CollisionObject& other) const noexcept;
-			virtual void SetCollider(const Collider& c) noexcept;
+			void SetCollider(const Collider& c) noexcept;
 			virtual Serializable* Deserialize(const std::vector<byte>& v,
 				const size_t& index, const size_t& length) const override;
 			virtual byte GetByte(const size_t& index) const override;

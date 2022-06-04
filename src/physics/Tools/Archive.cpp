@@ -1,4 +1,4 @@
-#include "../../include/physics/Collision/Serializable.hpp"
+#include "../../include/physics/Base/Serializable.hpp"
 #define in :
 
 namespace physics::serialization

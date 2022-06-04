@@ -17,7 +17,7 @@ namespace physics
 			CircleCollider(const CircleCollider& c) noexcept;
 			~CircleCollider() noexcept;
 			virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept override;
-			Collider* Clone() const override;
+			Collider* Clone() const noexcept override;
 			virtual geo::Vector GetCenter() const noexcept override;
 			virtual bool Equals(const CircleCollider& other) const noexcept;
 			virtual bool NotEquals(const CircleCollider& other) const noexcept;

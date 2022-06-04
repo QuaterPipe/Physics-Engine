@@ -22,6 +22,9 @@ typedef unsigned long long ulonglong;
 ( \
 	(X) * (X) * (X) \
 )
+#define EPSILON 0.0000001
+#define V_EPSILON geo::Vector(0.0000001, 0.0000001)
+#define BIT(x) (1 << x)
 namespace geo
 {
 	// \brief Compares two inputs, 1 if a is greater than b, 0 if they are equal,

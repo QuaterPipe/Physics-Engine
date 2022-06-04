@@ -9,64 +9,18 @@ using namespace physics;
 using namespace geo;
 int main(int argc, char** args)
 {
-	f64 mass = 0.2;
-	if (argc - 1)
-		mass = std::stod(args[1]);
-	sf::Texture colours[5];
-	colours[0].loadFromFile("bin/textures/red_square.png");
-	colours[1].loadFromFile("bin/textures/cyan_square.png");
-	colours[2].loadFromFile("bin/textures/green_square.png");
-	colours[3].loadFromFile("bin/textures/magenta_square.png");
-	colours[4].loadFromFile("bin/textures/lime_square.png");
+	sf::Texture sprites[5];
+	sprites[0].loadFromFile("bin/textures/small_square.png");
+	sprites[0].loadFromFile("bin/textures/medium_square.png");
+	sprites[0].loadFromFile("bin/textures/big_square.png");
+	sprites[0].loadFromFile("bin/textures/triangle.png");
+	sprites[0].loadFromFile("bin/textures/circle.png");
 	Scene scene(Vector(0, 0), 200, 300, 300, "Scene");
-	sf::RenderWindow* display = scene.GetDisplay()->GetWindow();
-	sf::Sprite boxes[5] = {
-		sf::Sprite(colours[0]),
-		sf::Sprite(colours[1]),
-		sf::Sprite(colours[2]),
-		sf::Sprite(colours[3]),
-		sf::Sprite(colours[4])
-	};
-	boxes[0].setOrigin(25, 25);
-	boxes[1].setOrigin(25, 25);
-	boxes[2].setOrigin(25, 25);
-	boxes[3].setOrigin(25, 25);
-	boxes[4].setScale(6, 0.5);
-	Entity entities[5] = {
-		Entity("Red", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[0]),
-		Entity("Blue", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[1]),
-		Entity("Green", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[2]),
-		Entity("Magenta", Rigidbody(BoxCollider(Vector(0, 0), Vector(50, 50))), boxes[3]),
-		Entity("Lime", Rigidbody(BoxCollider(300, 50)), boxes[4])
-	};
-	entities[0].GetCollisionObject().position.Set(120, 490);
-	entities[1].GetCollisionObject().position.Set(90, 250);
-	entities[2].GetCollisionObject().position.Set(200, 300);
-	entities[3].GetCollisionObject().position.Set(200, 300);
-	entities[3].GetCollisionObject().rotation = geo::Matrix2(M_PI);
-	entities[4].GetCollisionObject().position.Set(0, 0);
-	dynamic_cast<Dynamicbody&>(entities[0].GetCollisionObject()).SetMass(mass);
-	dynamic_cast<Dynamicbody&>(entities[1].GetCollisionObject()).SetMass(mass * 1.5);
-	dynamic_cast<Dynamicbody&>(entities[2].GetCollisionObject()).SetMass(mass * 0.5);
-	dynamic_cast<Dynamicbody&>(entities[3].GetCollisionObject()).SetMass(mass * 1.5);
-	dynamic_cast<Dynamicbody&>(entities[4].GetCollisionObject()).SetMass(0);
-	dynamic_cast<Dynamicbody&>(entities[4].GetCollisionObject()).isStatic = true;
-	dynamic_cast<Dynamicbody&>(entities[0].GetCollisionObject()).restitution = 0;
-	dynamic_cast<Dynamicbody&>(entities[1].GetCollisionObject()).restitution = 0;
-	dynamic_cast<Dynamicbody&>(entities[2].GetCollisionObject()).restitution = 0;
-	dynamic_cast<Dynamicbody&>(entities[3].GetCollisionObject()).restitution = 0;
-	dynamic_cast<Dynamicbody&>(entities[4].GetCollisionObject()).restitution = 0;
-	scene.AddEntity(entities[0]);
-	scene.AddEntity(entities[1]);
-	scene.AddEntity(entities[2]);
-	scene.AddEntity(entities[3]);
-	scene.AddEntity(entities[4]);
-	Entity& e3Ref = scene.GetEntity(2);
-	while (display->isOpen())
+	sf::RenderWindow* window = scene.GetDisplay()->GetWindow();
+	while (window->isOpen())
 	{
 		Time::Tick();
 		scene.Update(Time::deltaTime);
-		((Dynamicbody&)e3Ref.GetCollisionObject()).ApplyAngularForce(0.001);
+		//if (sf::Mouse::)
 	}
-	return 0;
 }

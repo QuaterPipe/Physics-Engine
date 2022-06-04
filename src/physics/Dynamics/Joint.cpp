@@ -1,4 +1,4 @@
-#include "../../include/physics/Dynamics/Joint.hpp"
+#include "../../include/physics/Dynamics/Dynamicbody.hpp"
 
 namespace physics
 {
@@ -17,5 +17,43 @@ namespace physics
 			a->position += dis * (a->GetMass() / (a->GetMass() + b->GetMass())) * (b->position - a->position).Normalized();
 			b->position += dis * (b->GetMass() / (a->GetMass() + b->GetMass())) * (a->position - b->position).Normalized();
 		}
+		a->ApplyForce(b->GetMass() * b->velocity);
+		b->ApplyForce(a->GetMass() * a->velocity);
+	}
+
+	SpringJoint::SpringJoint(Dynamicbody* a, Dynamicbody* b, f64 length, f64 stiffness, f64 dampingFactor) noexcept
+	: DistanceJoint(a, b, length), stiffness(stiffness), dampingFactor(dampingFactor)
+	{
+	}
+
+	f64 SpringJoint::ForceExerting() const noexcept
+	{
+		f64 Fs = (geo::Distance(a->position, b->position) - length) * stiffness;
+		f64 Fd = (b->position - a->position).Normalized().Dot(b->velocity - a->velocity) * dampingFactor;
+		return Fs + Fd;
+	}
+
+	void SpringJoint::Update(f64 dt) noexcept
+	{
+		a->ApplyForce(ForceExerting() * (b->position - a->position).Normalized());
+		b->ApplyForce(ForceExerting() * (a->position - b->position).Normalized());
+	}
+
+	HingeJoint::HingeJoint(Dynamicbody* a, Dynamicbody* b, f64 angularFriction) noexcept
+	: angularFriction(angularFriction)
+	{
+		this->a = a;
+		this->b = b;
+	}
+
+	void HingeJoint::Update(f64 dt) noexcept
+	{
+		aContact = bContact;
+		if (a->centerOfRotation != aContact)
+			a->centerOfRotation = aContact;
+		if (b->centerOfRotation != aContact)
+			b->centerOfRotation = aContact;
+		a->angularVelocity *= (1 - angularFriction);
+		b->angularVelocity *= (1 - angularFriction);
 	}
 }

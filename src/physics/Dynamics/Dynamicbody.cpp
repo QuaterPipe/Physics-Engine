@@ -130,5 +130,7 @@ namespace physics
 
 	void Dynamicbody::Update(f64 dt) noexcept
 	{
+		for (Joint* j: joints)
+			j->Update(dt);
 	}
 }

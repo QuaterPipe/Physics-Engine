@@ -1,6 +1,7 @@
 #include "../../include/physics/Engine/Scene.hpp"
 #include "../../include/physics/Engine/Time.hpp"
 #include <iostream>
+//#include <cstdlib>
 
 namespace physics
 {
@@ -17,6 +18,10 @@ namespace physics
 		_physicsIsActive.store(false);
 		_physicsThread = std::thread(&Scene::_PhysicsLoop, this);
 		_started = false;
+		auto func = [&](const event::Event& e) {
+			this->eventQueue.push(e.Copy());
+		};
+		_listener.AddFunc(func);
 	}
 
 	Scene::~Scene() noexcept
@@ -141,7 +146,7 @@ namespace physics
 		//drawing all entities
 		if (_display)
 		{
-			_display->Update();
+			_display->Update(_listener);
 			for (auto& ptr: *_entities.load(std::memory_order_relaxed))
 			{
 				if (!ptr->willDraw) continue;

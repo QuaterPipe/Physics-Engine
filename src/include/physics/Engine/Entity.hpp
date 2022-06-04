@@ -1,13 +1,15 @@
 #pragma once
 #include "../../SFML/Graphics.hpp"
 #include "../Collision/Collision.hpp"
+#include "../Events/Events.hpp"
 #include "../Dynamics/Rigidbody.hpp"
+#include "../Base/Component.hpp"
 #include <memory>
 
 namespace physics
 {
 	//0x07
-	class Entity : public serialization::Serializable, public Hashable
+	class Entity : public serialization::Serializable, public Hashable, public event::EventListener
 	{
 		protected:
 			virtual std::vector<unsigned char> GetBytes() const noexcept override;
@@ -27,9 +29,9 @@ namespace physics
 			virtual bool Equals(const Entity& other) const noexcept;
 			virtual CollisionObject& GetCollisionObject() const noexcept;
 			virtual bool NotEquals(const Entity& other) const noexcept;
-			virtual void SetCollisionObject(CollisionObject& c) noexcept;
-			virtual void Update() noexcept;
-			virtual void FixedUpdate() noexcept;
+			void SetCollisionObject(CollisionObject& c) noexcept;
+			void Update() noexcept;
+			void FixedUpdate() noexcept;
 			virtual Serializable* Deserialize(const std::vector<byte>& v,
 			const size_t& index, const size_t& length) const override;
 			virtual byte GetByte(const size_t& index) const override;

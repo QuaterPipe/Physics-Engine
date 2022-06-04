@@ -159,3 +159,4 @@ namespace geo
 geo::Vector cos(const geo::Vector& v);
 geo::Vector sin(const geo::Vector& v);
 geo::Vector tan(const geo::Vector& v);
+geo::Vector abs(const geo::Vector& v);

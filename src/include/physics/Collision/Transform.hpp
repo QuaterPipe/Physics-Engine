@@ -1,6 +1,7 @@
 #include "../../geometry/main.hpp"
-#include "../Engine/Hashable.hpp"
-#include "Serializable.hpp"
+#include "../Base/Hashable.hpp"
+#include "../Base/Serializable.hpp"
+#include "../Base/Component.hpp"
 
 namespace physics
 {
