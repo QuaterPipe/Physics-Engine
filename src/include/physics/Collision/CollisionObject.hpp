@@ -15,7 +15,7 @@ namespace physics
 	};
 
 	//0x06
-	struct CollisionObject : public serialization::Serializable, public Hashable, public Component
+	struct CollisionObject : public serialization::Serializable, public Component
 	{
 		protected:
 			bool _isDynamic = false;

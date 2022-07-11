@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <functional>
 #include <tuple>
 #include <vector>
@@ -10,10 +11,15 @@
 typedef geo::Vector Vector2;
 typedef double f64;
 typedef float f32;
-typedef unsigned char uchar;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef unsigned long long ulonglong;
+using u8 = u_int8_t;
+using u16 = u_int16_t;
+using u32 = u_int32_t;
+using u64 = u_int64_t;
+using i8 = int8_t;
+using i16 = int16_t;
+using i32 = int32_t;
+using i64 = int64_t;
+
 #define SQRD(X) \
 ( \
 	(X) * (X)\
@@ -25,6 +31,7 @@ typedef unsigned long long ulonglong;
 #define EPSILON 0.0000001
 #define V_EPSILON geo::Vector(0.0000001, 0.0000001)
 #define BIT(x) (1 << x)
+
 namespace geo
 {
 	// \brief Compares two inputs, 1 if a is greater than b, 0 if they are equal,

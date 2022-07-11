@@ -1,7 +1,6 @@
 #include "../../include/physics/Engine/Scene.hpp"
 #include "../../include/physics/Engine/Time.hpp"
 #include <iostream>
-//#include <cstdlib>
 
 namespace physics
 {
@@ -39,16 +38,18 @@ namespace physics
 	void Scene::AddEntity(Entity& e) noexcept
 	{
 		Entity* ptr = e.Clone();
-		if (ptr->GetCollisionObject().IsDynamic())
+		if (!ptr->Has<CollisionObject>())
+			return;
+		if (ptr->Get<CollisionObject>()->IsDynamic())
 		{
-			if (dynamic_cast<Rigidbody*>(&ptr->GetCollisionObject()))
-				_world.AddRigidbody(dynamic_cast<Rigidbody*>(&ptr->GetCollisionObject()));
-			else if (dynamic_cast<Softbody*>(&ptr->GetCollisionObject()))
-				_world.AddSoftbody(dynamic_cast<Softbody*>(&ptr->GetCollisionObject()));
+			if (dynamic_cast<Rigidbody*>(ptr->Get<CollisionObject>()))
+				_world.AddRigidbody(dynamic_cast<Rigidbody*>(ptr->Get<CollisionObject>()));
+			else if (dynamic_cast<Softbody*>(ptr->Get<CollisionObject>()))
+				_world.AddSoftbody(dynamic_cast<Softbody*>(ptr->Get<CollisionObject>()));
 		}
 		else
 		{
-			_world.AddObject(&ptr->GetCollisionObject());
+			_world.AddObject(ptr->Get<CollisionObject>());
 		}
 		(*_entities.load(std::memory_order_relaxed)).emplace_back(ptr);
 	}
@@ -108,7 +109,7 @@ namespace physics
 		{
 			if (*ptr == e)
 			{
-				_world.RemoveObject(&ptr->GetCollisionObject());
+				_world.RemoveObject(ptr->Get<CollisionObject>());
 				(*_entities.load(std::memory_order_relaxed)).erase((*_entities.load(std::memory_order_relaxed)).begin() + ind);
 				return;
 			}

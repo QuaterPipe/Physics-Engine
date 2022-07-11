@@ -4,7 +4,7 @@ namespace physics
 {
 	using namespace serialization;
 	Transform::Transform() noexcept
-	: Serializable(), Hashable()
+	: Serializable(), Component()
 	{
 		position = geo::Vector(0, 0);
 		centerOfRotation = geo::Vector(0, 0);

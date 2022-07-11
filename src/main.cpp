@@ -21,6 +21,5 @@ int main(int argc, char** args)
 	{
 		Time::Tick();
 		scene.Update(Time::deltaTime);
-		//if (sf::Mouse::)
 	}
 }

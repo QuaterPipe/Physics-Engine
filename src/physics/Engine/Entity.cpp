@@ -1,6 +1,7 @@
 #include "../../include/physics/Engine/Entity.hpp"
 #include "../../include/physics/Dynamics/Rigidbody.hpp"
 #include <cstring>
+#include <type_traits>
 namespace physics
 {
 	using namespace serialization;
@@ -27,15 +28,17 @@ namespace physics
 
 	Entity::~Entity() noexcept
 	{
+		for (Component* c: components)
+			delete c;
 	}
 
 	Entity& Entity::operator=(const Entity& other) noexcept
 	{
 		name = other.name;
-		collider.reset(other.GetCollisionObject().Clone());
-		sprite = other.sprite;
-		transform = other.transform;
-		sprite.setPosition(transform.position.x, transform.position.y);
+		for (Component* c: components)
+			delete c;
+		for (Component* c: other.components)
+			components.push_back(c.Clone());
 		return *this;
 	}
 
@@ -50,6 +53,23 @@ namespace physics
 			return (name == other.name) && collider->Equals(other.GetCollisionObject()) && transform.Equals(other.transform);
 		else
 			return (name == other.name) && transform.Equals(other.transform);	
+	}
+
+	void Entity::AddComponent(Component* component) noexcept
+	{
+		if (HasComponent(component))
+			return;
+		components.push_back(component);
+	}
+
+	template <typename T>
+	Component& Entity::GetComponent() const noexcept
+	{
+		for (Component* comp: components)
+		{
+			if (typeid(*comp) == typeid(T))
+				return *comp;
+		}
 	}
 
 	CollisionObject& Entity::GetCollisionObject() const noexcept

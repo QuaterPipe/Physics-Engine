@@ -6,26 +6,25 @@ namespace physics
 	using namespace serialization;
 
 	CollisionObject::CollisionObject() noexcept
-	: Hashable()
 	{
 		collider.reset(new BoxCollider());
 	}
 
 	CollisionObject::CollisionObject(const Collider& c, const Transform& t, const bool& isTrigger) noexcept
-	: Hashable(), isTrigger(isTrigger), collider(c.Clone()), transform(t)
+	: isTrigger(isTrigger), collider(c.Clone()), transform(t)
 	{
 		classCode = 0x05;
 	}
 
 	CollisionObject::CollisionObject(const CollisionObject& c) noexcept
-	: Hashable(), isTrigger(c.isTrigger), onCollision(c.onCollision), 
+	: isTrigger(c.isTrigger), onCollision(c.onCollision), 
 	collider(c.GetCollider().Clone()), transform(c.transform)
 	{
 		classCode = 0x05;
 	}
 
 	CollisionObject::CollisionObject(CollisionObject && c) noexcept
-	: Hashable(), isTrigger(c.isTrigger), onCollision(c.onCollision),
+	: isTrigger(c.isTrigger), onCollision(c.onCollision),
 	collider(c.collider.release()), transform(c.transform)
 	{
 	}

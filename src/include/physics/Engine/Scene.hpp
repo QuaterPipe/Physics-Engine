@@ -28,7 +28,6 @@ namespace physics
 			Counter _physicsUpdateCounter;
 			DynamicsWorld _world;
 			std::atomic<std::vector<std::unique_ptr<Entity>>*> _entities;
-			std::vector<sf::Texture> _textures;
 			geo::Vector _gravity = geo::Vector(0, -9.81);
 			Display* _display = NULL;
 			event::EventListener _listener;
@@ -39,6 +38,7 @@ namespace physics
 			bool _started;
 			std::thread _physicsThread;
 		public:
+			std::vector<std::function<void(const event::Event&)>> eventCallbacks;
 			std::queue<event::Event*> eventQueue;
 			Scene(const geo::Vector& gravity, unsigned short physicsUpdateHz, unsigned windowWidth, unsigned windowHeight, std::string windowTitle="") noexcept;
 			virtual ~Scene() noexcept;

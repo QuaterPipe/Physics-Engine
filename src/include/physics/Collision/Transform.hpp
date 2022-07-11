@@ -6,7 +6,7 @@
 namespace physics
 {
 	struct Transform;
-	struct Transform : public serialization::Serializable, public Hashable
+	struct Transform : public serialization::Serializable, public Component
 	{
 		protected:
 			virtual std::vector<unsigned char> GetBytes() const noexcept override;
