@@ -2,11 +2,11 @@
 #include "Math.hpp"
 namespace geo
 {
-	// \brief a 2x2 Matrix class
+	/// \brief A 2x2 Matrix struct
 	struct Matrix2
 	{
-		Vector iHat;
-		Vector jHat;
+		Vector2 iHat;
+		Vector2 jHat;
 		f64& a = iHat.x;
 		f64& c = iHat.y;
 		f64& b = jHat.x;
@@ -14,29 +14,29 @@ namespace geo
 		Matrix2() noexcept;
 		Matrix2(const f64& radians) noexcept;
 		Matrix2(const f64& a, const f64& b, const f64& c, const f64& d) noexcept;
-		Matrix2(const Vector& iHat, const Vector& jHat) noexcept;
-		Vector AxisX() const noexcept;
-		Vector AxisY() const noexcept;
+		Matrix2(const Vector2& iHat, const Vector2& jHat) noexcept;
+		Vector2 AxisX() const noexcept;
+		Vector2 AxisY() const noexcept;
 		f64 Angle() const noexcept;
-		// \brief Returns the determinant of the matrix.
+		/// \brief Returns the determinant of the matrix.
 		f64 Determinant() const noexcept;
-		// \brief Sets the matrix to rotational value.
+		/// \brief Sets the matrix to rotational value.
 		void Set(const f64& radians) noexcept;
-		// \brief Sets the matrix to given values.
+		/// \brief Sets the matrix to given values.
 		void Set(const f64& a, const f64& b, const f64& c, const f64& d) noexcept;
-		// \brief Flips the matrix over it's diagonal.
+		/// \brief Flips the matrix over it's diagonal.
 		Matrix2 Transpose() const noexcept;
 		Matrix2& operator=(const Matrix2& other) noexcept;
 		bool operator==(const Matrix2& other) const noexcept;
 		bool operator!=(const Matrix2& other) const noexcept;
-		Vector operator*(const Vector& v) const noexcept;
+		Vector2 operator*(const Vector2& v) const noexcept;
 		Matrix2 operator*(const Matrix2& m) const noexcept;
 		void operator*=(const Matrix2& m) noexcept;
 	};
 
-	// | a b c |
-	// | d e f |
-	// | g h i |
+	/// | a b c |
+	/// | d e f |
+	/// | g h i |
 	struct Matrix3
 	{
 		Vector3 iHat; //a, d, g
@@ -61,4 +61,62 @@ namespace geo
 		Vector3 operator*(const Vector3& v) const noexcept;
 		Matrix3 operator*(const Matrix3& other) const noexcept;
 	};
+
+	/*template <u32 N>
+	struct Matrix
+	{
+		std::array<std::array<f64, N>, N> array;
+		Matrix() noexcept
+		{
+		}
+		Matrix(const Matrix<N>& mat) noexcept
+		: array(mat.array)
+		{
+		}
+		template <u32 Index>
+		Vector<N> Axis() const
+		{
+			assert(Index < N && "Index out of range.");
+			Vector<N> x;
+			x.Set(array[Index]);
+			return x;
+		}
+		std::array<f64, N>& operator[](size_t index) const
+		{
+			assert(index < N && "Index out of range.");
+			return array[index];
+		}
+		bool operator==(const Matrix<N>& other) const noexcept
+		{
+			return array == other.array;
+		}
+		bool operator!=(const Matrix<N>& other) const noexcept
+		{
+			return array != other.array;
+		}
+		Vector<N> operator*(const Vector<N>& v) const noexcept
+		{
+			Vector<N> a;
+			for (u32 i = 0; i < N; i++)
+			{
+				Vector<N> x;
+				x.set(array[i]);
+				a[i] = (x * v).Sum();
+			}
+			return a;
+		}
+		Matrix<N> operator*(const Matrix<N>& other) const noexcept
+		{
+			Matrix<N> x;
+			for (u32 i = 0; i < N; i++)
+			{
+				for (u32 j = 0; j < N; j++)
+				{
+					for (u32 k = 0; k < N; k++)
+						x[i][j] += array[i][k] * other.array[k][j];
+				}
+			}
+			return x;
+		}
+	};*/
 }

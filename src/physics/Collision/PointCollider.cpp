@@ -2,7 +2,6 @@
 
 namespace physics
 {
-	using namespace serialization;
 	PointCollider::PointCollider()
 	: Collider()
 	{
@@ -14,7 +13,7 @@ namespace physics
 		
 	}
 
-	PointCollider::PointCollider(const geo::Vector& pos)
+	PointCollider::PointCollider(const geo::Vector2& pos)
 	: Collider(), position(pos)
 	{
 	}
@@ -22,6 +21,21 @@ namespace physics
 	PointCollider::PointCollider(const PointCollider& p)
 	: Collider(), position(p.position)
 	{
+	}
+
+
+	bool PointCollider::operator==(const Collider& c) const noexcept
+	{
+		if (typeid(c).name() != typeid(*this).name())
+			return false;
+		return position == dynamic_cast<const PointCollider&>(c).position;
+	}
+
+	bool PointCollider::operator!=(const Collider& c) const noexcept
+	{
+		if (typeid(c).name() != typeid(*this).name())
+			return true;
+		return position != dynamic_cast<const PointCollider&>(c).position;
 	}
 
 	BoxCollider PointCollider::BoundingBox(const Transform& t) const noexcept
@@ -32,47 +46,11 @@ namespace physics
 		return b;
 	}
 
-	Serializable* PointCollider::Deserialize(const std::vector<byte>& v,
-			const size_t& index, const size_t& length) const
+	std::vector<geo::Vector2> PointCollider::GetPoints(const Transform& t) const noexcept
 	{
-		return NULL;
-	}
-
-	bool PointCollider::Equals(const PointCollider& other) const noexcept
-	{
-		return position == other.position;
-	}
-
-	bool PointCollider::NotEquals(const PointCollider& other) const noexcept
-	{
-		return position != other.position;
-	}
-
-	std::vector<unsigned char> PointCollider::GetBytes() const noexcept
-	{
-		return ToBytes(this, sizeof(*this));
-	}
-
-	unsigned char PointCollider::GetByte(const size_t& index) const
-	{
-		return Serialize().at(index);
-	}
-
-	std::vector<geo::Vector> PointCollider::GetPoints(const Transform& t) const noexcept
-	{
-		std::vector<geo::Vector> v;
+		std::vector<geo::Vector2> v;
 		v.push_back(t.TransformVector(position));
 		return v;
 	}
 
-	unsigned long PointCollider::TotalByteSize() const noexcept
-	{
-		return sizeof(*this);
-	}
-
-	std::vector<unsigned char> PointCollider::Serialize() const noexcept
-	{
-		std::vector<unsigned char> vec;
-		return vec;
-	}
 }

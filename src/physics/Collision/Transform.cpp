@@ -2,20 +2,40 @@
 
 namespace physics
 {
-	using namespace serialization;
 	Transform::Transform() noexcept
-	: Serializable(), Component()
+	: position(0, 0), centerOfRotation(0, 0)
 	{
-		position = geo::Vector(0, 0);
-		centerOfRotation = geo::Vector(0, 0);
-		scale = geo::Matrix2();
-		rotation = geo::Matrix2();
 	}
+
+	Transform::Transform(const Transform& transform) noexcept
+	: position(transform.position), centerOfRotation(transform.centerOfRotation),
+	scale(transform.scale), rotation(transform.rotation)
+	{
+	}
+
 
 	Transform::~Transform() noexcept
 	{
-		
 	}
+
+	Transform& Transform::operator=(const Transform& transform) noexcept
+	{
+		position = transform.position;
+		centerOfRotation = transform.centerOfRotation;
+		scale = transform.scale;
+		rotation = transform.rotation;
+		return *this;
+	}
+
+	Transform& Transform::operator=(Transform&& transform) noexcept
+	{
+		position = transform.position;
+		centerOfRotation = transform.centerOfRotation;
+		scale = transform.scale;
+		rotation = transform.rotation;
+		return *this;
+	}
+
 
 	bool Transform::operator==(const Transform& other) const noexcept
 	{
@@ -35,43 +55,17 @@ namespace physics
 		return result;
 	}
 
-	geo::Vector Transform::TransformVector(const geo::Vector& v) const noexcept
+	geo::Vector2 Transform::TransformVector(const geo::Vector2& v) const noexcept
 	{
 		geo::Vector3 tmp(v.x, v.y, 1);
 		tmp = GetTransformationMatrix() * tmp;
-		return geo::Vector(tmp.x, tmp.y);
+		return geo::Vector2(tmp.x, tmp.y);
 	}
 
-	Serializable* Transform::Deserialize(const std::vector<byte>& v,
-			const size_t& index, const size_t& length) const
-	{
-		return NULL;
-	}
-
-	std::vector<unsigned char> Transform::GetBytes() const noexcept
-	{
-		return ToBytes(this, sizeof(*this));
-	}
-
-	unsigned char Transform::GetByte(const size_t& index) const
-	{
-		return 0x01;
-	}
-
-	unsigned long Transform::TotalByteSize() const noexcept
-	{
-		return 0UL;
-	}
-
-	std::vector<unsigned char> Transform::Serialize() const noexcept
-	{
-		std::vector<unsigned char> vec;
-		return vec;
-	}
 	// rk4 integration from: https://scicomp.stackexchange.com/questions/19020/applying-the-runge-kutta-method-to-second-order-odes
 	namespace rk4
 	{
-		geo::Vector Acceleration(const State& state, const f64& t)
+		geo::Vector2 Acceleration(const State& state, const f64& t)
 		{
 			const f64 k = 15, b = 0.1;
 			return -k * state.pos - b * state.vel;
@@ -100,10 +94,10 @@ namespace physics
 	        b = Evaluate( state, t, dt*0.5f, a );
 	        c = Evaluate( state, t, dt*0.5f, b );
 	        d = Evaluate( state, t, dt, c );
-	        geo::Vector dxdt = 1.0f / 6.0f * 
+	        geo::Vector2 dxdt = 1.0f / 6.0f * 
 	            ( a.dpos + 2.0f * ( b.dpos + c.dpos ) + d.dpos );
 	        
-	        geo::Vector dvdt = 1.0f / 6.0f * 
+	        geo::Vector2 dvdt = 1.0f / 6.0f * 
 	            ( a.dvel + 2.0f * ( b.dvel + c.dvel ) + d.dvel );
 			State result;
 	        result.pos = state.pos + dxdt * dt;

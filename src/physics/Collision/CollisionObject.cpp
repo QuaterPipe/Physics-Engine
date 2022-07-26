@@ -3,8 +3,6 @@
 #include <iostream>
 namespace physics
 {
-	using namespace serialization;
-
 	CollisionObject::CollisionObject() noexcept
 	{
 		collider.reset(new BoxCollider());
@@ -13,14 +11,12 @@ namespace physics
 	CollisionObject::CollisionObject(const Collider& c, const Transform& t, const bool& isTrigger) noexcept
 	: isTrigger(isTrigger), collider(c.Clone()), transform(t)
 	{
-		classCode = 0x05;
 	}
 
 	CollisionObject::CollisionObject(const CollisionObject& c) noexcept
 	: isTrigger(c.isTrigger), onCollision(c.onCollision), 
 	collider(c.GetCollider().Clone()), transform(c.transform)
 	{
-		classCode = 0x05;
 	}
 
 	CollisionObject::CollisionObject(CollisionObject && c) noexcept
@@ -29,9 +25,28 @@ namespace physics
 	{
 	}
 
+	bool CollisionObject::operator!=(const CollisionObject& other) const noexcept
+	{
+		if (collider.get())
+		{
+			return transform != (other.transform) ||
+				(*collider)==(other.GetCollider()) || isTrigger != other.isTrigger;
+		}
+		return transform != (other.transform) || isTrigger != other.isTrigger;
+	}
+
+	bool CollisionObject::operator==(const CollisionObject& other) const noexcept
+	{
+		if (collider.get())
+		{
+			return transform == (other.transform) && (*collider)==(other.GetCollider()) && (isTrigger == other.isTrigger);
+		}
+		return transform == (other.transform) && isTrigger == other.isTrigger;
+	}
+
 	CollisionObject& CollisionObject::operator=(const CollisionObject& other) noexcept
 	{
-		if (NotEquals(other))
+		if ((*this)!=(other))
 		{
 			transform = other.transform;
 			collider.reset(other.GetCollider().Clone());
@@ -50,23 +65,9 @@ namespace physics
 	{
 	}
 
-	bool CollisionObject::Equals(const CollisionObject& other) const noexcept
-	{
-		if (collider.get())
-		{
-			return transform.Equals(other.transform) && collider->Equals(other.GetCollider()) && (isTrigger == other.isTrigger);
-		}
-		return transform.Equals(other.transform) && isTrigger == other.isTrigger;
-	}
-
 	bool CollisionObject::IsDynamic() const noexcept
 	{
 		return _isDynamic;
-	}
-
-	std::vector<unsigned char> CollisionObject::GetBytes() const noexcept
-	{
-		return ToBytes(this, sizeof(*this));
 	}
 
 	Collider& CollisionObject::GetCollider() const noexcept
@@ -86,41 +87,9 @@ namespace physics
 		return h;
 	}
 
-	bool CollisionObject::NotEquals(const CollisionObject& other) const noexcept
-	{
-		if (collider.get())
-		{
-			return transform.NotEquals(other.transform) ||
-				collider->NotEquals(other.GetCollider()) || isTrigger != other.isTrigger;
-		}
-		return transform.NotEquals(other.transform) || isTrigger != other.isTrigger;
-	}
-
 	void CollisionObject::SetCollider(const Collider& c) noexcept
 	{
 		delete collider.release();
 		collider.reset(c.Clone());
-	}
-
-	Serializable* CollisionObject::Deserialize(const std::vector<byte>& v,
-			const size_t& index, const size_t& length) const
-	{
-		return NULL;
-	}
-
-	unsigned char CollisionObject::GetByte(const size_t& index) const
-	{
-		return 0x01;
-	}
-
-	unsigned long CollisionObject::TotalByteSize() const noexcept
-	{
-		return 0UL;
-	}
-
-	std::vector<unsigned char> CollisionObject::Serialize() const noexcept
-	{
-		std::vector<unsigned char> vec;
-		return vec;
 	}
 }

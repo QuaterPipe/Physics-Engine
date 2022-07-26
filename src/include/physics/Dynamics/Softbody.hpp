@@ -5,13 +5,13 @@ namespace physics
 {
 	struct MassPoint
 	{
-		geo::Vector position;
-		geo::Vector velocity;
-		geo::Vector force;
+		geo::Vector2 position;
+		geo::Vector2 velocity;
+		geo::Vector2 force;
 		f64 radius;
 		f64 invMass = 1;
 		MassPoint();
-		MassPoint(geo::Vector position, geo::Vector velocity, geo::Vector force, f64 invMass, f64 radius = 1) noexcept;
+		MassPoint(geo::Vector2 position, geo::Vector2 velocity, geo::Vector2 force, f64 invMass, f64 radius = 1) noexcept;
 		bool operator==(const MassPoint& other) const noexcept;
 		bool operator!=(const MassPoint& other) const noexcept;
 	};
@@ -30,8 +30,7 @@ namespace physics
 
 	struct Softbody : public Dynamicbody
 	{
-		private:
-			virtual std::vector<unsigned char> GetBytes() const noexcept override;
+		protected:
 			std::vector<PolygonCollider> _colliders;
 			bool pointsChanged = false;
 		public:
@@ -47,14 +46,15 @@ namespace physics
 			Softbody(Softbody && s) noexcept;
 			virtual Softbody& operator=(const Softbody& s) noexcept;
 			virtual Softbody& operator=(Softbody && s) noexcept;
-			void ApplyAngularForce(f64 force) noexcept override;
-			void ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint = geo::Vector::Infinity) noexcept override;
-			void ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec = geo::Vector::Infinity) noexcept override;
-			void ApplySpringForces() noexcept;
+			virtual bool operator==(const CollisionObject& c) const noexcept override;
+			virtual bool operator!=(const CollisionObject& c) const noexcept override;
+			void ApplyAngularForce(f64 dt, f64 force) noexcept override;
+			void ApplyAngularImpulse(f64 dt, f64 force) noexcept override;
+			void ApplyForce(f64 dt, const geo::Vector2& Force, const geo::Vector2& contactPoint = geo::Vector2::Infinity) noexcept override;
+			void ApplyImpulse(f64 dt, const geo::Vector2& impulse, const geo::Vector2& contactVec = geo::Vector2::Infinity) noexcept override;
+			void ApplySpringForces(f64 dt) noexcept;
 			virtual CollisionObject* Clone() const noexcept override;
-			virtual bool Equals(const Softbody& other) const noexcept;
 			void FixCollapsing() noexcept;
-			virtual bool NotEquals(const Softbody& other) const noexcept;
 			virtual void Update(f64 dt) noexcept override;
 			void UpdateCollider() noexcept;
 	};

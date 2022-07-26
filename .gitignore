@@ -2,3 +2,4 @@ bin/o/
 test.cpp
 *.log
 test/
+*.txt

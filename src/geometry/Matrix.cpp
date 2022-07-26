@@ -33,14 +33,14 @@ namespace geo
 		return *this;
 	}
 
-	Vector Matrix2::AxisX() const noexcept
+	Vector2 Matrix2::AxisX() const noexcept
 	{
-		return Vector(a, c);
+		return Vector2(a, c);
 	}
 
-	Vector Matrix2::AxisY() const noexcept
+	Vector2 Matrix2::AxisY() const noexcept
 	{
-		return Vector(b, d);
+		return Vector2(b, d);
 	}
 
 	f64 Matrix2::Determinant() const noexcept
@@ -53,18 +53,18 @@ namespace geo
 		return Matrix2(a, c, b, d);
 	}
 
-	Vector Matrix2::operator*(const Vector& v) const noexcept
+	Vector2 Matrix2::operator*(const Vector2& v) const noexcept
 	{
-		return Vector(a * v.x + b * v.y, c * v.x + d * v.y);
+		return Vector2(a * v.x + b * v.y, c * v.x + d * v.y);
 	}
 
 	Matrix2 Matrix2::operator*(const Matrix2& other) const noexcept
 	{
 		Matrix2 newMatrix;
-		Vector I = other.a * iHat;
-		Vector II = other.c * jHat;
-		Vector III = other.b * iHat;
-		Vector IV = other.d * jHat;
+		Vector2 I = other.a * iHat;
+		Vector2 II = other.c * jHat;
+		Vector2 III = other.b * iHat;
+		Vector2 IV = other.d * jHat;
 		newMatrix.iHat = (I + II);
 		newMatrix.jHat = (III + IV);
 		return newMatrix;

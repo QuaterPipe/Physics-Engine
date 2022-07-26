@@ -33,8 +33,8 @@ void Sort(T* array, size_t low, size_t high, std::function<int(T&, T&)>& compare
 template <typename Numeric>
 Numeric Average(const Numeric* start, const Numeric* end) noexcept
 {
-	Numeric size();
-	Numeric total();
+	Numeric size;
+	Numeric total;
 	for (unsigned i = 0; start + i != end; i++)
 	{
 		size++;

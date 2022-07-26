@@ -1,15 +1,13 @@
 #include "../../include/physics/Collision/Collision.hpp"
 namespace physics
 {
-	using namespace serialization;
 	PolygonCollider::PolygonCollider(const PolygonCollider& d) noexcept
 	{
 		this->pos = d.pos;
 		this->points = d.points;
-		classCode = 0x04;
 	}
 
-	PolygonCollider::PolygonCollider(const geo::Vector& pos,
+	PolygonCollider::PolygonCollider(const geo::Vector2& pos,
 		f64 distanceBetweenPoints, ulong count	
 	) noexcept
 	{
@@ -18,7 +16,7 @@ namespace physics
 		if (count < 3)
 			return;
 		f64 angle = 0;
-		geo::Vector current(0, 0);
+		geo::Vector2 current(0, 0);
 		for (ulong i = 0; i < count; i++)
 		{
 			points.push_back(current);
@@ -30,16 +28,14 @@ namespace physics
 
 	PolygonCollider::PolygonCollider()
 	{
-		classCode = 0x04;
 	}
 
-	PolygonCollider::PolygonCollider(const geo::Vector& pos,
-		const geo::Vector& a,
-		const geo::Vector& b,
-		const geo::Vector& c,
-		std::initializer_list<geo::Vector> extra) noexcept
+	PolygonCollider::PolygonCollider(const geo::Vector2& pos,
+		const geo::Vector2& a,
+		const geo::Vector2& b,
+		const geo::Vector2& c,
+		std::initializer_list<geo::Vector2> extra) noexcept
 	{
-		classCode = 0x04;
 		this->pos = pos;
 		points = {extra};
 		points.insert(points.begin(), c);
@@ -49,15 +45,29 @@ namespace physics
 
 	PolygonCollider::~PolygonCollider() noexcept {}
 
+	bool PolygonCollider::operator==(const Collider& c) const noexcept
+	{
+		if (typeid(c).name() != typeid(*this).name())
+			return false;
+		return pos == dynamic_cast<const PolygonCollider&>(c).pos && points == dynamic_cast<const PolygonCollider&>(c).points;
+	}
+
+	bool PolygonCollider::operator!=(const Collider& c) const noexcept
+	{
+		if (typeid(c).name() != typeid(*this).name())
+			return true;
+		return pos != dynamic_cast<const PolygonCollider&>(c).pos || points != dynamic_cast<const PolygonCollider&>(c).points;
+	}
+
 	BoxCollider PolygonCollider::BoundingBox(const Transform& t) const noexcept
 	{
 		f64 minx = std::numeric_limits<f64>::max();
 		f64 miny = std::numeric_limits<f64>::max();
 		f64 maxx = std::numeric_limits<f64>::min();
 		f64 maxy = std::numeric_limits<f64>::min();
-		for (geo::Vector p: points)
+		for (geo::Vector2 p: points)
 		{
-			geo::Vector tp = t.TransformVector(p);
+			geo::Vector2 tp = t.TransformVector(p);
 			minx = tp.x < minx ? tp.x : minx;
 			miny = tp.y < miny ? tp.y : miny;
 			maxx = tp.x > maxx ? tp.x : maxx;
@@ -69,18 +79,18 @@ namespace physics
 		return result;
 	}
 
-	geo::Vector GetCentroid(std::vector<geo::Vector> points)
+	geo::Vector2 GetCentroid(std::vector<geo::Vector2> points)
 	{
 		if (points.size())
 		{
-			geo::Vector first = points.at(0);
-			geo::Vector last = points.at(points.size() - 1);
+			geo::Vector2 first = points.at(0);
+			geo::Vector2 last = points.at(points.size() - 1);
 			if (first.x != last.x || first.y != last.y)
 			{
 				points.push_back(first);
 			}
 			f64 twiceArea = 0, x = 0, y = 0, f = 0;
-			geo::Vector p1, p2;
+			geo::Vector2 p1, p2;
 			// absolutely no clue what this does, it just works lol
 			for (size_t i = 0, j = points.size() - 1; i < points.size(); j=i++)
 			{
@@ -91,26 +101,21 @@ namespace physics
 				y += (p1.y + p2.y - 2 * first.y) * f;
 			}
 			f = twiceArea * 3;
-			return geo::Vector(x / f + first.x, y / f + first.y);
+			return geo::Vector2(x / f + first.x, y / f + first.y);
 		}
 		else
-			return geo::Vector::Origin;
+			return geo::Vector2::Origin;
 	}
 
-	std::vector<unsigned char> PolygonCollider::GetBytes() const noexcept
-	{
-		return ToBytes(this, sizeof(*this));
-	}
-
-	geo::Vector PolygonCollider::GetCenter() const noexcept
+	geo::Vector2 PolygonCollider::GetCenter() const noexcept
 	{
 		return GetCentroid(this->points);
 	}
 
-	std::vector<geo::Vector> PolygonCollider::GetPoints(const Transform& t) const noexcept
+	std::vector<geo::Vector2> PolygonCollider::GetPoints(const Transform& t) const noexcept
 	{
-		std::vector<geo::Vector> v;
-		for (geo::Vector vec: points)
+		std::vector<geo::Vector2> v;
+		for (geo::Vector2 vec: points)
 			v.push_back(t.TransformVector(vec));
 		return v;
 	}
@@ -119,50 +124,18 @@ namespace physics
 	{
 		return new PolygonCollider(*this);
 	}
-
-	bool PolygonCollider::Equals(const PolygonCollider& other) const noexcept
-	{
-		return points == other.points && pos == other.pos;
-	}
-
-	bool PolygonCollider::NotEquals(const PolygonCollider& other) const noexcept
-	{
-		return points != other.points || pos != other.pos;
-	}
-
-	geo::Vector PolygonCollider::Max() const noexcept
+	
+	geo::Vector2 PolygonCollider::Max() const noexcept
 	{
 		if (!points.size())
-			return geo::Vector::Origin;
+			return geo::Vector2::Origin;
 		return *std::max(points.begin(), points.end()) + pos;
 	}
 
-	geo::Vector PolygonCollider::Min() const noexcept
+	geo::Vector2 PolygonCollider::Min() const noexcept
 	{
 		if (!points.size())
-			return geo::Vector::Origin;
+			return geo::Vector2::Origin;
 		return *std::min(points.begin(), points.end()) + pos;
-	}
-
-	Serializable* PolygonCollider::Deserialize(const std::vector<byte>& v,
-			const size_t& index, const size_t& length) const
-	{
-		return NULL;
-	}
-
-	unsigned char PolygonCollider::GetByte(const size_t& index) const
-	{
-		return 0x01;
-	}
-
-	unsigned long PolygonCollider::TotalByteSize() const noexcept
-	{
-		return 0UL;
-	}
-
-	std::vector<unsigned char> PolygonCollider::Serialize() const noexcept
-	{
-		std::vector<unsigned char> vec;
-		return vec;
 	}
 }
