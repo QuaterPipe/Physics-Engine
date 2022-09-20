@@ -85,7 +85,7 @@ namespace physics::algo
 		const geo::Vector2& b
 	);
 
-	geo::Vector2 PointOfIntersect(
+	std::vector<geo::Vector2> PointOfIntersect(
 		const PolygonCollider* a, const Transform &ta,
 		const PolygonCollider* b, const Transform& tb
 	);
@@ -124,7 +124,7 @@ namespace physics::algo
 		const CircleCollider* b, const Transform& tb
 	);
 
-	CollisionPoints PolygonLineInCircle(
+	CollisionPoints PolygonLinePenetratingCircle(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
@@ -138,5 +138,10 @@ namespace physics::algo
 		const PolygonCollider* a, const Transform& ta,
 		const PolygonCollider* b, const Transform& tb,
 		const geo::Vector2& orthogonal
+	);
+
+	CollisionPoints PolygonCircleContacts(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
 	);
 }

@@ -94,6 +94,10 @@ namespace geo
 	};
 	Vector2 operator*(const f64& d, const Vector2& v) noexcept;
 	Vector2 operator+(const f64& d, const Vector2& v) noexcept;
+	Vector2 operator-(const f64& d, const Vector2& v) noexcept;
+	Vector2 operator/(const f64& d, const Vector2& v) noexcept;
+
+	std::ostream& operator<<(std::ostream& os, const Vector2& v);
 
 	struct Vector3
 	{
@@ -157,8 +161,87 @@ namespace geo
 			static const Vector3 jHat;
 			static const Vector3 kHat;
 	};
+	Vector3 operator*(const f64& d, const Vector3& v) noexcept;
+	Vector3 operator+(const f64& d, const Vector3& v) noexcept;
+	Vector3 operator-(const f64& d, const Vector3& v) noexcept;
+	Vector3 operator/(const f64& d, const Vector3& v) noexcept;
+
+	std::ostream& operator<<(std::ostream& os, const Vector3& v);
+
+	struct Vector
+	{
+		public:
+			Vector() noexcept;
+			Vector(f64 size, f64 n = 0) noexcept;
+			Vector(const std::vector<f64>& numbers) noexcept;
+			Vector(const Vector& v) noexcept;
+			std::vector<f64>::iterator begin() noexcept;
+			std::vector<f64>::const_iterator begin() const noexcept;
+			std::vector<f64>::iterator end() noexcept;
+			std::vector<f64>::const_iterator end() const noexcept;
+			size_t GetSize() const noexcept;
+			const f64& operator[](size_t i) const noexcept;
+			f64& operator[](size_t i) noexcept;
+			Vector Abs() const noexcept;
+			/// \brief Returns the dot product between 'this' and the 'other' Vector.
+			f64 Dot(const Vector& v) const;
+			/// \brief Returns the magnitude of the Vector.
+			f64 GetMagnitude() const noexcept;
+			/// \brief Returns the squared magnitude of the Vector.
+			f64 GetMagnitudeSquared() const noexcept;
+			/// \brief Returns the magnitude of the Vector and using FastSqrt().
+			f64 GetMagnitudeQuick() const noexcept;
+			/// \brief Linearly interpolates a point with the other Vector.
+			Vector Lerp(const Vector& other, const f64& t) const;
+			/// \brief Set's the Vector's magnitude to one.
+			void Normalize() noexcept;
+			/// \brief Returns a copy of the Vector that has been normalized.
+			Vector Normalized() const noexcept;
+			/// \brief Projects one Vector onto another.
+			static Vector Projection(const Vector& lhs, const Vector& rhs);
+			/// \brief Returns a Vector reflected off of the given normal given
+			Vector Reflection(const Vector& normal) const;
+			/// \brief Reflects this Vector across the given normal
+			void Reflect(const Vector& normal);
+			/// \brief Sets the vector to the given values
+			void Set(const std::vector<f64>& values);
+			/// \brief Sets the size of the vector to the given number
+			void SetSize(size_t n);
+			/// \brief Returns the sum of all values in the Vector
+			f64 Sum() const noexcept;
+			/// \brief Returns the Vector in string form.
+			std::string ToString() const noexcept;
+			Vector operator-() const noexcept;
+			Vector operator+() const noexcept;
+			bool operator==(const Vector& v) const;
+			bool operator!=(const Vector& v) const;
+			Vector operator-(const Vector& v) const;
+			Vector operator-(const f64& d) const noexcept;
+			void operator-=(const Vector& v);
+			void operator-=(const f64& d) noexcept;
+			Vector operator+(const Vector& v) const;
+			Vector operator+(const f64& d) const noexcept;
+			void operator+=(const Vector& v);
+			void operator+=(const f64& d) noexcept;
+			Vector operator/(const Vector& v) const;
+			Vector operator/(const f64& d) const noexcept;
+			void operator/=(const Vector& v);
+			void operator/=(const f64& d) noexcept;
+			Vector operator*(const Vector& v) const;
+			Vector operator*(const f64& d) const noexcept;
+			void operator*=(const Vector& v);
+			void operator*=(const f64& d) noexcept;
+			bool operator<(const Vector& v) const;
+			bool operator>(const Vector& v) const;
+			Vector operator()() const noexcept;
+		private:
+			size_t m_size;
+			std::vector<f64> m_nums;
+	};
+
+	Vector operator*(const f64& d, const Vector& v);
+	Vector operator+(const f64& d, const Vector& v);
+	Vector operator-(const f64& d, const Vector& v);
+	Vector operator/(const f64& d, const Vector& v);
+	std::ostream& operator<<(std::ostream& os, const Vector& v) noexcept;
 }
-geo::Vector2 cos(const geo::Vector2& v);
-geo::Vector2 sin(const geo::Vector2& v);
-geo::Vector2 tan(const geo::Vector2& v);
-geo::Vector2 abs(const geo::Vector2& v);

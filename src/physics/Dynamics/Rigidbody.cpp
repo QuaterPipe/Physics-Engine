@@ -63,11 +63,11 @@ namespace physics
 	{
 		if (!isStatic && !isKinematic)
 		{
-		 	force += Force * dt;
+		 	force += Force;
 			if (contactPoint != geo::Vector2::Infinity && Force.GetMagnitudeQuick())
 			{
 				torque = (collider->GetCenter() + centerOfRotation).Cross(Force);
-				angularForce += torque * dt;
+				angularForce += torque;
 			}
 		}
 	}
@@ -76,9 +76,9 @@ namespace physics
 	{
 		if (!isStatic && !isKinematic)
 		{
-			velocity += _invMass * impulse * dt;
+			velocity += _invMass * impulse;
 			if (contactVec != geo::Vector2::Infinity && impulse.GetMagnitudeQuick())
-				angularVelocity += _invInertia * contactVec.Cross(impulse) * dt;
+				angularVelocity += _invInertia * contactVec.Cross(impulse);
 		}
 	}
 
@@ -97,10 +97,10 @@ namespace physics
 	{
 		if (!isKinematic && !isStatic)
 		{
-			velocity += (force * _invMass);
-			position += velocity;
-			angularVelocity += (angularForce * _invInertia);
-			rotation = rotation * geo::Matrix2(angularVelocity);
+			velocity += (force * _invMass + gravity) * (dt / 2.0);
+			angularVelocity += (angularForce * _invInertia) * (dt / 2.0);
+			position += velocity * dt;
+			rotation = rotation * geo::Matrix2(angularVelocity * dt);
 			angularForce = 0;
 			force.Set(0, 0);
 		}

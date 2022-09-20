@@ -47,6 +47,33 @@ namespace physics
 		return !(position == other.position && scale == other.scale && rotation == other.rotation);
 	}
 
+	
+	f64 Transform::GetAngle() const noexcept
+	{
+		return geo::Vector2(1, 1).Angle(rotation * geo::Vector2(1, 1));
+	}
+
+	void Transform::Rotate(f64 theta) noexcept
+	{
+		rotation = rotation * geo::Matrix2(theta);
+	}
+
+	void Transform::SetAngle(f64 theta) noexcept
+	{
+		rotation = geo::Matrix2(theta);
+	}
+
+	void Transform::Scale(f64 xScale, f64 yScale) noexcept
+	{
+		scale.a = xScale;
+		scale.d = yScale;
+	}
+
+	void Transform::Translate(geo::Vector2 offset) noexcept
+	{
+		position += offset;
+	}
+
 	geo::Matrix3 Transform::GetTransformationMatrix() const noexcept
 	{
 		geo::Matrix3 result(rotation * scale);
@@ -54,6 +81,36 @@ namespace physics
 		result.f = position.y;
 		return result;
 	}
+
+	void Transform::Integrate(f64 dt, const geo::Vector2& velocity, f64 angularVelocity, const geo::Vector2& force,
+		f64 torque, u32 steps) noexcept
+	{
+		/*auto rhs = [&](f64 t, const geo::Vector& x) {
+			geo::Vector output(4);
+			output[0] = x[2];
+			output[1] = x[3];
+			output[2] = force.x;
+			output[3] = force.y;
+		};
+		geo::Vector X(4);
+		X[0] = position.x;
+		X[1] = position.y;
+		X[2] = velocity.x;
+		X[3] = velocity.y;
+		f64 t = 0;
+		for (int stepNumber = 0; stepNumber <= steps; stepNumber++)
+		{
+
+			geo::Vector k1 = rhs( t, X );
+			geo::Vector k2 = rhs( t + (dt / (f64)steps) / 2.0,  X + (dt / (f64)steps) / 2.0 * k1 );
+			geo::Vector k3 = rhs( t + (dt / (f64)steps) / 2.0, X + (dt / (f64)steps) / 2.0 * k2 );
+			geo::Vector k4 = rhs( t + (dt / (f64)steps), X + (dt / (f64)steps) * k3 );
+
+			X += (dt / (f64)steps) / 6.0 * ( k1 + 2.0 * k2 + 2.0 * k3 + k4 );
+			t += (dt / (f64)steps);
+		}*/
+	}
+
 
 	geo::Vector2 Transform::TransformVector(const geo::Vector2& v) const noexcept
 	{

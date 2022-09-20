@@ -117,6 +117,24 @@ namespace physics
 		return _mass;
 	}
 
+	
+	void Dynamicbody::IntegrateForces(f64 dt) noexcept
+	{
+		if (isStatic)
+			return;
+		velocity += (force * _invMass + gravity) * (dt / 2.0f);
+  		angularVelocity += angularForce * _invInertia * (dt / 2.0f);
+	}
+
+	void Dynamicbody::IntegrateVelocity(f64 dt) noexcept
+	{
+		if (isStatic)
+			return;
+		position += velocity * dt;
+		rotation = rotation * geo::Matrix2(angularVelocity * dt);
+		IntegrateForces(dt);
+	}
+
 	void Dynamicbody::SetInertia(const f64& inertia) noexcept
 	{
 		_inertia = inertia;

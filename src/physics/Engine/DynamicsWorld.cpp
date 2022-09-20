@@ -5,6 +5,11 @@
 
 namespace physics
 {
+	DynamicsWorld::DynamicsWorld() noexcept
+	{
+		_solvers.push_back(new PhysicsSolver());
+	}
+
 	void DynamicsWorld::AddObject(const CollisionObject& o) noexcept
 	{
 		_objects.push_back(o);
@@ -18,9 +23,7 @@ namespace physics
 
 	void DynamicsWorld::AddRigidbody(const Rigidbody& rb) noexcept
 	{
-		std::cout<<"Added!\n";
 		_rigidbodies.push_back(rb);
-		//_allObjects.push_back(&_rigidbodies[_rigidbodies.size() - 1]);
 	}
 
 	void DynamicsWorld::AddSoftbody(const Softbody& sb) noexcept
@@ -67,7 +70,7 @@ namespace physics
 
 	void DynamicsWorld::ResolveCollisions(f64 dt) noexcept
 	{
-		std::vector<Collision> collisions;
+		_collisions.clear();
 		for (auto& a: _rigidbodies)
 		{
 			for (auto& b: _rigidbodies)
@@ -84,7 +87,7 @@ namespace physics
 						c.a = &a;
 						c.b = &b;
 						c.points = points;
-						collisions.push_back(c);
+						_collisions.push_back(c);
 					}
 				}
 			}
@@ -105,13 +108,11 @@ namespace physics
 						c.a = &a;
 						c.b = &b;
 						c.points = points;
-						collisions.push_back(c);
+						_collisions.push_back(c);
 					}
 				}
 			}
 		}
-		for (auto solver: _solvers)
-			solver->Solve(collisions, dt);
 	}
 
 	void DynamicsWorld::RemoveObject(const CollisionObject& o) noexcept
@@ -186,7 +187,7 @@ namespace physics
 		}
 	}
 
-	void DynamicsWorld::SetCollisionCallBack(std::function<void(Collision&, f64)>& callback, f64 dt) noexcept
+	void DynamicsWorld::SetCollisionCallBack(const std::function<void(Collision&, f64)>& callback, f64 dt) noexcept
 	{
 		_onCollision = callback;
 	}
@@ -205,18 +206,53 @@ namespace physics
 
 	void DynamicsWorld::MoveObjects(f64 dt) noexcept
 	{
-		for (auto& rb: _rigidbodies)
-			rb.Update(dt);
-		for (auto& sb: _softbodies)
-			sb.Update(dt);
+		// for (auto& rb: _rigidbodies)
+		// 	rb.force += rb.gravity;//rb.IntegrateForces(dt);
+		// for (auto& sb: _softbodies)
+		// 	sb.IntegrateForces(dt);
+	}
+
+	void PositionalCorrectionSolve(Collision& c, f64 dt)
+	{
+		if (!c.a->IsDynamic() || !c.b->IsDynamic()) return;
+		return;
+		Rigidbody* a = (Rigidbody*) c.a;
+		Rigidbody* b = (Rigidbody*) c.b;
+		f64 percentage = 0.8;
+		f64 slop = 0.05;
+		geo::Vector2 correction = (std::max(c.points.depth - slop, 0.0) / (a->GetInvMass() + b->GetInvMass())) * percentage * c.points.normal;
+		geo::Vector2 aPos = a->position;
+		geo::Vector2 bPos = b->position;
+		aPos -= a->GetInvMass() * correction;
+		bPos += b->GetInvMass() * correction;
+		
+		if (!a->isKinematic && !a->isStatic)
+			a->position = aPos;
+		if (!b->isKinematic && !a->isStatic)
+			b->position = bPos;
 	}
 
 	void DynamicsWorld::Update(f64 dt) noexcept
 	{
-		ApplyGravity(dt);
-		UpdateSoftbodies(dt);
 		ResolveCollisions(dt);
-		MoveObjects(dt);
+		//MoveObjects(dt);
+		for (auto& rb: _rigidbodies)
+			rb.IntegrateForces(dt);
+		SendCollisionCallBacks(_collisions, dt);
+		for (auto solver: _solvers)
+			solver->Solve(_collisions, dt);
+		UpdateSoftbodies(dt);
+		for (auto& rb: _rigidbodies)
+			rb.IntegrateVelocity(dt);
+		for (auto& sb: _softbodies)
+			sb.IntegrateVelocity(dt);
+		//for (auto& c: _collisions)
+		//	PositionalCorrectionSolve(c, dt);
+		for (auto& rb: _rigidbodies)
+		{
+			rb.force.Set(0, 0);
+			rb.angularForce = 0;
+		}
 	}
 
 	void DynamicsWorld::UpdateSoftbodies(f64 dt) noexcept
@@ -227,9 +263,4 @@ namespace physics
 		}
 	}
 
-	DynamicsWorld::DynamicsWorld() noexcept
-	{
-		_solvers.push_back(new PhysicsSolver());
-		//_solvers.push_back(new PositionalCorrectionSolver());
-	}
 }

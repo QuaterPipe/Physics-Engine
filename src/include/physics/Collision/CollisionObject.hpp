@@ -1,4 +1,5 @@
 #pragma once
+#include "../Dynamics/VelocityConstraint.hpp"
 #include "Collider.hpp"
 #include "../Engine/Time.hpp"
 #include <functional>
@@ -12,6 +13,11 @@ namespace physics
 		CollisionObject* a = NULL;
 		CollisionObject* b = NULL;
 		CollisionPoints points;
+		// the normal impulse of the collision.
+		geo::Vector2 nImp;
+		// the friction(tangent) impulse of the collision.
+		geo::Vector2 tImp;
+		bool persistent = false;
 	};
 
 	struct CollisionObject

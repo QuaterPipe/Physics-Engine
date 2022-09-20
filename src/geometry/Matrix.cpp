@@ -1,5 +1,4 @@
 #include "../include/geometry/Matrix.hpp"
-
 namespace geo
 {
 	Matrix2::Matrix2() noexcept
@@ -210,5 +209,192 @@ namespace geo
 		newMatrix.jHat = vecs[1] + vecs[4] + vecs[7];
 		newMatrix.kHat = vecs[2] + vecs[5] + vecs[8];
 		return newMatrix;
+	}
+
+	Matrix::Matrix() noexcept
+	{
+	}
+
+	Matrix::Matrix(const Matrix& mat) noexcept
+	: array(mat.array)
+	{
+	}
+	
+	Matrix::Matrix(u32 width, u32 height) noexcept
+	: width(width), height(height)
+	{
+		array.resize(height);
+		for (auto& arr: array)
+			arr.resize(width);
+	}
+
+	Matrix::Matrix(f64* arr, u32 width, u32 height) noexcept
+	: width(width), height(height)
+	{
+		array.resize(height);
+		for (u32 i = 0; i < width; i++)
+			array[i].resize(width);
+		u32 index = 0;
+		for (u32 i = 0; i < height; i++)
+		{
+			for (int j = 0; j < width; j++)
+				array[i][j] = arr[index++];
+		}
+		
+	}
+	
+	Vector Matrix::Axis(u32 index) const
+	{
+		assert(index < width && "Index out of range.");
+		Vector x(height, 0);
+		x.Set(array[index]);
+		return x;
+	}
+
+	i32 Matrix::GetDeterminant() const
+	{
+		assert(width == height && "Cannot find determinant of non-square matrix.");
+		if (!width)
+			return 0;
+		if (width == 1)
+			return (*this)[0][0];
+		if (width == 2)
+			return (*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0];
+		i32 dimension = width;
+		f64 result = 0;
+		i32 sign = 1;
+		for (i32 i = 0; i < dimension; i++)
+		{
+			Matrix subMatrix(dimension - 1, dimension - 1);
+			for (i32 m = 1; m < dimension; m++)
+			{
+				i32 z = 0;
+				for (int n = 0; n < dimension; n++)
+				{
+					if (n != i)
+					{
+						subMatrix[m - 1][z] = array[m][n];
+						z++;
+					}
+				}
+			}
+			result = result + sign * (*this)[0][1] * subMatrix.GetDeterminant();
+			sign = -sign;
+		}
+		return result;
+	}
+
+	Matrix Matrix::GetTranspose() const
+	{
+		Matrix solution(height, width);
+		for (size_t i = 0; i < height; i++)
+		{
+			for (size_t j = 0; j < width; j++)
+				solution[j][i] = (*this)[i][j];
+		}
+		return solution;
+	}
+
+	const std::vector<f64>& Matrix::operator[](size_t index) const
+	{
+		assert(index < width && "Index out of range.");
+		return array[index];
+	}
+
+	std::vector<f64>& Matrix::operator[](size_t index)
+	{
+		assert(index < height && "Index out of range.");
+		return array[index];
+	}
+
+	bool Matrix::operator==(const Matrix& other) const noexcept
+	{
+		if (width != other.width || height != other.height)
+			return false;
+		return array == other.array;
+	}
+	
+	bool Matrix::operator!=(const Matrix& other) const noexcept
+	{
+		if (width != other.width || height != other.height)
+			return true;
+		return array != other.array;
+	}
+
+	Vector Matrix::operator*(const Vector& v) const noexcept
+	{
+		Vector vCopy = v;
+		if (vCopy.GetSize() < height)
+			vCopy.SetSize(height);
+		Vector a;
+		for (u32 i = 0; i < width; i++)
+		{
+			Vector x;
+			x.Set(array[i]);
+			a[i] = (x * vCopy).Sum();
+		}
+		return a;
+	}
+
+	Matrix Matrix::operator*(const Matrix& other) const noexcept
+	{
+		u32 w = std::max(width, other.width);
+		u32 h = std::max(height, other.height);
+		f64  x[h][w] = {};
+		f64 thisCopy[h][w] = {};
+		for (u32 i = 0; i < height; i++)
+		{
+			for (u32 j = 0; j < width; j++)
+				thisCopy[i][j] = (*this)[i][j];
+		}
+		f64 otherCopy[h][w] = {};
+		for (u32 i = 0; i < other.height; i++)
+		{
+			for (u32 j = 0; j < other.width; j++)
+				otherCopy[i][j] = other[i][j];
+		}
+		for (u32 i = 0; i < h; i++)
+		{
+			for (u32 j = 0; j < w; j++)
+			{
+				for (u32 k = 0; k < w; k++)
+					x[i][j] += thisCopy[i][k] * otherCopy[k][j];
+			}
+		}
+		Matrix result(w, h);
+		for (u32 i = 0; i < h; i++)
+		{
+			for (u32 j = 0; j < w; j++)
+				result[i][j] = x[i][j];
+		}
+		return result;
+	}
+
+	u32 Matrix::GetHeight() const noexcept
+	{
+		return height;
+	}
+
+	u32 Matrix::GetWidth() const noexcept
+	{
+		return width;
+	}
+
+	void Matrix::SetHeight(u32 height) noexcept
+	{
+		array.resize(height);
+		this->height = height;
+		for (auto& arr: array)
+		{
+			if (arr.size() != width)
+				arr.resize(width);
+		}
+	}
+
+	void Matrix::SetWidth(u32 width) noexcept
+	{
+		for (auto& arr: array)
+			arr.resize(width);
+		this->width = width;
 	}
 }

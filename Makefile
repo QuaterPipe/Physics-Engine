@@ -78,7 +78,7 @@ link:
 	g++ -lX11 -Wl,-rpath,bin -Wall -std=c++17 src/main.cpp -o bin/main lib/physics.a -L lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network
 
 debugLink:
-	g++ -Wl,-rpath,bin -g -Wall -std=c++17 src/main.cpp -L lib -lphysics $(libs) -o bin/main.exe
+	g++ -pthread -Wl,-rpath,bin -g -Wall -std=c++17 src/main.cpp -L lib -lphysics $(libs) -o bin/main.exe
 
 run:
 	./bin/main

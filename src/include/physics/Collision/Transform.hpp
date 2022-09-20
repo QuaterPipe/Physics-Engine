@@ -17,7 +17,13 @@ namespace physics
 			virtual ~Transform() noexcept;
 			bool operator==(const Transform& other) const noexcept;
 			bool operator!=(const Transform& other) const noexcept;
+			f64 GetAngle() const noexcept;
 			geo::Matrix3 GetTransformationMatrix() const noexcept;
+			void Integrate(f64 dt, const geo::Vector2& velocity, f64 angularVelocity, const geo::Vector2& force, f64 torque, u32 steps = 50) noexcept;
+			void Rotate(f64 theta) noexcept;
+			void SetAngle(f64 theta) noexcept;
+			void Scale(f64 xScale, f64 yScale) noexcept;
+			void Translate(geo::Vector2 offset) noexcept;
 			geo::Vector2 TransformVector(const geo::Vector2& v) const noexcept;
 	};
 

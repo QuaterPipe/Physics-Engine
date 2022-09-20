@@ -15,23 +15,20 @@ namespace physics
 
 	struct CollisionPoints
 	{
-		// the deepest point into collider b that is a part of a.
-		geo::Vector2 a;
-		// the deepest point into collider a that is a part of b.
-		geo::Vector2 b;
-		// it is b - a(usually) is always pointint in the direction
-		// to push a out of b in the shortest distance.
+		//the points where the two objects touch
+		std::vector<geo::Vector2> contactPoints;
+		// the normal direction
 		geo::Vector2 normal;
-		// The distance between the two deepest points.
+		// The distance between the two most shallow points.
 		f64 depth = 0;
 		bool hasCollision = false;
 		inline bool operator==(const CollisionPoints& other) const noexcept
 		{
-			return a == other.a && b == other.b && normal == other.normal && hasCollision == other.hasCollision;
+			return contactPoints == other.contactPoints && normal == other.normal && hasCollision == other.hasCollision;
 		}
 		inline bool operator!=(const CollisionPoints& other) const noexcept
 		{
-			return !(a == other.a && b == other.b && normal == other.normal && hasCollision == other.hasCollision);
+			return !(contactPoints != contactPoints && normal == other.normal && hasCollision == other.hasCollision);
 		}
 	};
 

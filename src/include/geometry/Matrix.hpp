@@ -62,61 +62,27 @@ namespace geo
 		Matrix3 operator*(const Matrix3& other) const noexcept;
 	};
 
-	/*template <u32 N>
 	struct Matrix
 	{
-		std::array<std::array<f64, N>, N> array;
-		Matrix() noexcept
-		{
-		}
-		Matrix(const Matrix<N>& mat) noexcept
-		: array(mat.array)
-		{
-		}
-		template <u32 Index>
-		Vector<N> Axis() const
-		{
-			assert(Index < N && "Index out of range.");
-			Vector<N> x;
-			x.Set(array[Index]);
-			return x;
-		}
-		std::array<f64, N>& operator[](size_t index) const
-		{
-			assert(index < N && "Index out of range.");
-			return array[index];
-		}
-		bool operator==(const Matrix<N>& other) const noexcept
-		{
-			return array == other.array;
-		}
-		bool operator!=(const Matrix<N>& other) const noexcept
-		{
-			return array != other.array;
-		}
-		Vector<N> operator*(const Vector<N>& v) const noexcept
-		{
-			Vector<N> a;
-			for (u32 i = 0; i < N; i++)
-			{
-				Vector<N> x;
-				x.set(array[i]);
-				a[i] = (x * v).Sum();
-			}
-			return a;
-		}
-		Matrix<N> operator*(const Matrix<N>& other) const noexcept
-		{
-			Matrix<N> x;
-			for (u32 i = 0; i < N; i++)
-			{
-				for (u32 j = 0; j < N; j++)
-				{
-					for (u32 k = 0; k < N; k++)
-						x[i][j] += array[i][k] * other.array[k][j];
-				}
-			}
-			return x;
-		}
-	};*/
+		u32 width;
+		u32 height;
+		std::vector<std::vector<f64>> array;
+		Matrix() noexcept;
+		Matrix(const Matrix& mat) noexcept;
+		Matrix(u32 width, u32 height) noexcept;
+		Matrix(f64* arr, u32 width, u32 height) noexcept;
+		Vector Axis(u32 index) const;
+		const std::vector<f64>& operator[](size_t index) const;
+		std::vector<f64>& operator[](size_t index);
+		bool operator==(const Matrix& other) const noexcept;
+		bool operator!=(const Matrix& other) const noexcept;
+		Vector operator*(const Vector& v) const noexcept;
+		Matrix operator*(const Matrix& other) const noexcept;
+		i32 GetDeterminant() const;
+		u32 GetHeight() const noexcept;
+		u32 GetWidth() const noexcept;
+		Matrix GetTranspose() const;
+		void SetHeight(u32 height) noexcept;
+		void SetWidth(u32 width) noexcept;
+	};
 }

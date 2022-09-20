@@ -58,6 +58,8 @@ namespace physics
 			f64 GetInvInertia() const noexcept;
 			f64 GetMass() const noexcept;
 			f64 GetInvMass() const noexcept;
+			void IntegrateForces(f64 dt) noexcept;
+			void IntegrateVelocity(f64 dt) noexcept;
 			void SetInertia(const f64& inertia) noexcept;
 			void SetMass(const f64& mass) noexcept;
 			virtual void Update(f64 dt) noexcept;

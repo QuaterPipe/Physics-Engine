@@ -17,11 +17,11 @@ namespace physics::algo
 		const geo::Vector2 APos = ta.TransformVector(a->position);
 		if (geo::DistanceSquared(BCenter, APos) <= SQRD(b->radius))
 		{
-			c.a = APos;
+			c.contactPoints.push_back(APos);
 			geo::Vector2 tmp = (APos - BCenter).Normalized();
-			c.b = tmp * b->radius + BCenter;
-			c.depth = geo::Distance(c.a, c.b);
-			c.normal = (c.b - c.a).Normalized();
+			c.contactPoints.push_back(tmp * b->radius + BCenter);
+			c.depth = geo::Distance(c.contactPoints[0], c.contactPoints[1]);
+			c.normal = (c.contactPoints[1] - c.contactPoints[0]).Normalized();
 			c.hasCollision = true;
 		}
 		return c;
@@ -43,7 +43,8 @@ namespace physics::algo
 		{
 			BPoints.push_back(tb.TransformVector(v + b->pos));
 		}
-		c.b = APos;
+		c.contactPoints.push_back(geo::Vector2::Infinity);
+		c.contactPoints.push_back(APos);
 		geo::Vector2 closest = geo::Vector2::Infinity;
 		for (size_t i = 0; i < BPoints.size(); i++)
 		{
@@ -55,9 +56,9 @@ namespace physics::algo
 					closest = p;
 			}
 		}
-		c.a = closest;
-		c.depth = geo::Distance(c.a, c.b);
-		c.normal = (c.b - c.a).Normalized();
+		c.contactPoints[0] = closest;
+		c.depth = geo::Distance(c.contactPoints[0], c.contactPoints[1]);
+		c.normal = (c.contactPoints[1] - c.contactPoints[0]).Normalized();
 		c.hasCollision = true;
 		return c;
 	}
@@ -70,10 +71,10 @@ namespace physics::algo
 		CollisionPoints c;
 		c.hasCollision = false;
 		if (!a || !b) return c;
-		PolygonCollider* bb = new PolygonCollider(b->pos, b->pos,
+		PolygonCollider bb = PolygonCollider(b->pos, b->pos,
 			geo::Vector2(b->x + b->width, b->y), 
 			geo::Vector2(b->x + b->width, b->y + b->height), {geo::Vector2(b->x , b->y + b->height)});
-		return PointPolygonCollision(a, ta, bb, tb);
+		return PointPolygonCollision(a, ta, &bb, tb);
 	}
 
 	CollisionPoints PointMeshCollision(
@@ -102,10 +103,10 @@ namespace physics::algo
 		if (!a || !b) {return c;}
 		if (geo::DistanceSquared(ta.TransformVector(a->position), tb.TransformVector(b->position)) < SQRD(EPSILON))
 		{
-			c.a = a->position;
-			c.b = b->position;
-			c.depth = geo::Distance(c.a, c.b);
-			c.normal = (c.b - c.a).Normalized();
+			c.contactPoints.push_back(ta.TransformVector(a->position));
+			c.contactPoints.push_back(tb.TransformVector(b->position));
+			c.depth = geo::Distance(c.contactPoints[0], c.contactPoints[1]);
+			c.normal = (c.contactPoints[1] - c.contactPoints[0]).Normalized();
 			c.hasCollision = true;
 		}
 		return c;
@@ -126,10 +127,10 @@ namespace physics::algo
 		if (SQRD(a->radius + b->radius) >= r)
 		{
 			geo::Line l(ACenter, BCenter);
-			c.b= l.GetVectorAlongLine(a->radius);
-			c.a = l.GetVectorAlongLine(b->radius, false);
-			c.depth = geo::Distance(c.a, c.b);
-			c.normal = c.b - c.a;
+			c.contactPoints.push_back(l.GetVectorAlongLine(b->radius, false));
+			c.contactPoints.push_back(l.GetVectorAlongLine(a->radius));
+			c.depth = geo::Distance(c.contactPoints[0], c.contactPoints[1]);
+			c.normal = c.contactPoints[1] - c.contactPoints[0];
 			c.normal.Normalize();
 			c.hasCollision = true;
 		}
@@ -144,10 +145,10 @@ namespace physics::algo
 		CollisionPoints c;
 		if (!a || !b ) {return c;}
 		//easier to  collision points as a PolygonCollider
-		PolygonCollider* bb = new PolygonCollider(b->pos, b->pos,
+		PolygonCollider bb = PolygonCollider(b->pos, b->pos,
 			geo::Vector2(b->x + b->width, b->y), 
 			geo::Vector2(b->x + b->width, b->y + b->height), {geo::Vector2(b->x , b->y + b->height)});
-		return PolygonCircleCollision(bb, tb, a, ta);
+		return PolygonCircleCollision(&bb, tb, a, ta);
 	}
 
 	CollisionPoints CircleMeshCollision(
@@ -193,7 +194,7 @@ namespace physics::algo
 		if (pointInCircleCount == a->points.size())
 			return PolygonInsideCircle(a, ta, b, tb);
 		if (lineInCircleCount)
-			return PolygonLineInCircle(a, ta, b, tb);
+			return PolygonLinePenetratingCircle(a, ta, b, tb);
 		if (pointInCircleCount)
 			return PolygonVertexInCircle(a, ta, b, tb);
 		c = CircleCenterInPolygon(a, ta, b, tb);
@@ -265,9 +266,8 @@ namespace physics::algo
 		geo::Vector2 d = mean(BPoints) - mean(APoints);
 		if (d.Dot(minPush) > 0)
 			minPush = -minPush;
+		c.contactPoints = PointOfIntersect(a, ta, b, tb);
 		c.normal = minPush.Normalized();
-		c.a = PointOfIntersect(a, ta, b, tb);
-		c.b = c.a + c.normal;
 		c.depth = minPush.GetMagnitude();
 		c.hasCollision = minPush.GetMagnitude();
 		return c;
@@ -279,10 +279,10 @@ namespace physics::algo
 	{
 		CollisionPoints c;
 		if (!a || !b) {return c;}
-		PolygonCollider* bb = new PolygonCollider(b->pos, b->pos,
+		PolygonCollider bb = PolygonCollider(b->pos, b->pos,
 			geo::Vector2(b->x + b->width, b->y), 
 			geo::Vector2(b->x + b->width, b->y + b->height), {geo::Vector2(b->x , b->y + b->height)});
-		return PolygonPolygonCollision(a, ta, bb, tb);
+		return PolygonPolygonCollision(a, ta, &bb, tb);
 	}
 
 	CollisionPoints PolygonMeshCollision(
@@ -307,13 +307,13 @@ namespace physics::algo
 	{
 		CollisionPoints c;
 		if (!a || !b) {return c;}
-		PolygonCollider* bb = new PolygonCollider(b->pos, b->pos,
+		PolygonCollider bb = PolygonCollider(b->pos, b->pos,
 			geo::Vector2(b->x + b->width, b->y), 
 			geo::Vector2(b->x + b->width, b->y + b->height), {geo::Vector2(b->x , b->y + b->height)});
-		PolygonCollider* aa = new PolygonCollider(a->pos, a->pos,
+		PolygonCollider aa = PolygonCollider(a->pos, a->pos,
 			geo::Vector2(a->x + a->width, a->y), 
 			geo::Vector2(a->x + a->width, a->y + a->height), {geo::Vector2(a->x , a->y + a->height)});
-		return PolygonPolygonCollision(aa, ta, bb, tb);
+		return PolygonPolygonCollision(&aa, ta, &bb, tb);
 	}
 
 	CollisionPoints BoxMeshCollision(
@@ -404,10 +404,10 @@ namespace physics::algo
 		}
 		if (minDis == MAX || !VectorInPolygon(a, ta, BCenter))
 			return c;
-		c.a = closestPoint;
-		c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
-		c.depth = geo::Distance(c.a, c.b);
-		c.normal = (c.a - c.b).Normalized();
+		c.contactPoints.push_back(closestPoint);
+		c.contactPoints.push_back(geo::Line(BCenter, closestPoint).GetVectorAlongLine(b->radius));
+		c.depth = geo::Distance(closestPoint, c.contactPoints[0]);
+		c.normal = (c.contactPoints[0] - c.contactPoints[1]).Normalized();
 		c.hasCollision = true;
 		return c;
 	}
@@ -432,6 +432,7 @@ namespace physics::algo
 				return c;
 			if (geo::DistanceSquared(tmp, BCenter) > maxDis)
 			{
+				c.contactPoints.push_back(tmp);
 				farthestPoint = tmp;
 				maxDis = geo::DistanceSquared(tmp, BCenter);
 			}
@@ -449,11 +450,11 @@ namespace physics::algo
 				maxDis = geo::DistanceSquared(BCenter, Proj);
 			}
 		}
-		c.a = farthestPoint;
-		c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
-		c.depth = geo::Distance(c.a, c.b);
+		geo::Vector2 proj  = geo::Line(BCenter, farthestPoint).GetVectorAlongLine(b->radius);
+		c.contactPoints.push_back(proj);
+		c.depth = geo::Distance(farthestPoint, proj);
 		c.hasCollision = true;
-		c.normal = (c.a - c.b).Normalized();
+		c.normal = (farthestPoint - proj).Normalized();
 		return c;
 	}
 
@@ -479,15 +480,15 @@ namespace physics::algo
 		}
 		if (minDis > b->radius)
 			return c;
-		c.b = closestPoint;
-		c.a = geo::Line(BCenter, c.b).GetVectorAlongLine(minDis + b->radius);
-		c.normal = (c.b - c.a).Normalized();
+		c.contactPoints.push_back(geo::Line(BCenter, closestPoint).GetVectorAlongLine(minDis + b->radius));
+		c.contactPoints.push_back(closestPoint);
+		c.normal = (closestPoint - c.contactPoints[0]).Normalized();
 		c.depth = minDis + b->radius;
 		c.hasCollision = true;
 		return c;
 	}
 
-	CollisionPoints PolygonLineInCircle(
+	CollisionPoints PolygonLinePenetratingCircle(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	)
@@ -508,21 +509,23 @@ namespace physics::algo
 				side.VectorIsOnLine(Proj))
 			{
 				closestPoint = geo::Vector2::Projection(BCenter, side);
+				c.contactPoints.push_back(closestPoint);
 				minDis = geo::DistanceSquared(closestPoint, BCenter);
 			}
 			if (geo::DistanceSquared(vA, BCenter) < minDis)
 			{
 				closestPoint = vA;
+				c.contactPoints.push_back(closestPoint);
 				minDis = geo::DistanceSquared(vA, BCenter);
 			}
 		}
-		// there actually IS a collision here, but this function does not handle this type of collision
+		//// there actually IS a collision here, but this function does not handle this type of collision
 		//if (AllLinesInCircle)
 		//	return c;
-		c.a = closestPoint;
-		c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
-		c.depth = geo::Distance(c.a, c.b);
-		c.normal = (c.a - c.b).Normalized();
+		geo::Vector2 proj = geo::Line(BCenter, closestPoint).GetVectorAlongLine(b->radius);
+		c.contactPoints.push_back(proj);
+		c.depth = geo::Distance(closestPoint, proj);
+		c.normal = (closestPoint - proj).Normalized();
 		c.hasCollision = true;
 		return c;
 	}
@@ -542,12 +545,11 @@ namespace physics::algo
 			Point = ta.TransformVector(v);
 			if (VectorInCircle(Point, b, tb))
 			{
-				c.a = Point;
-				c.b = geo::Line(BCenter, c.a).GetVectorAlongLine(b->radius);
-				c.depth = geo::Distance(c.a, c.b);
-				c.normal = (c.b - c.a).Normalized();
+				c.contactPoints.push_back(Point);
+				c.contactPoints.push_back(geo::Line(BCenter, Point).GetVectorAlongLine(b->radius));
+				c.depth = geo::Distance(Point, *(c.contactPoints.end() - 1));
+				c.normal = (*(c.contactPoints.end() - 1) - Point).Normalized();
 				c.hasCollision = true;
-				return c;
 			}	
 		}
 		return c;
@@ -603,10 +605,10 @@ namespace physics::algo
 		{
 			geo::Vector2 ACenter = ta.TransformVector(a->center);
 			geo::Vector2 proj = geo::Vector2::Projection(ACenter, b);
-			c.a = proj;
-			c.b = ACenter;
-			c.normal = c.b - c.a;
-			c.depth = geo::Distance(c.a, c.b);
+			c.contactPoints.push_back(proj);
+			c.contactPoints.push_back(ACenter);
+			c.normal = c.contactPoints[1] - c.contactPoints[0];
+			c.depth = geo::Distance(proj, ACenter);
 		}
 		return c;
 	}
@@ -649,45 +651,33 @@ namespace physics::algo
 		return c;
 	}
 
-	geo::Vector2 PointOfIntersect(
+	std::vector<geo::Vector2> PointOfIntersect(
 		const PolygonCollider* a, const Transform &ta,
 		const PolygonCollider* b, const Transform& tb
 	)
 	{
 		if (!a || !b)
-			return geo::Vector2::Infinity;
+			return std::vector<geo::Vector2>();
 		if (a->points.size() + b->points.size() < 6)
-			return geo::Vector2::Infinity;
-		geo::Vector2 farthestVec;
-		f64 farthestDis = MIN;
-		const geo::Vector2 centroidA = geo::Centroid(&*a->points.begin(), &*a->points.end());
-		for (size_t i = 0; i < a->points.size(); i++)
+			return std::vector<geo::Vector2>();
+		std::vector<geo::Vector2> contacts;
+		for (auto p: a->points)
 		{
-			const geo::Vector2 p = ta.TransformVector(a->points[i]);
-			if (VectorInPolygon(b, tb, p))
-			{
-				if (geo::DistanceSquared(p, centroidA) > farthestDis)
-				{
-					farthestVec = p;
-					farthestDis = geo::DistanceSquared(p, centroidA);
-				}
-			}
+			if (VectorInPolygon(b, tb, ta.TransformVector(p)))
+				contacts.push_back(ta.TransformVector(p));
 		}
-		const geo::Vector2 centroidB = geo::Centroid(&*b->points.begin(), &*b->points.end());
-		for (size_t i = 0; i < b->points.size(); i++)
+		for (auto p: b->points)
 		{
-			const geo::Vector2 p = tb.TransformVector(b->points[i]);
-			if (VectorInPolygon(a, ta, p))
-			{
-				if (geo::DistanceSquared(p, centroidB) > farthestDis)
-				{
-					farthestVec = p;
-					farthestDis = geo::DistanceSquared(p, centroidB);
-				}
-			}
+			if (VectorInPolygon(a, ta, tb.TransformVector(p)))
+				contacts.push_back(tb.TransformVector(p));
 		}
-		if (farthestDis == MIN)
-			return geo::Vector2::Infinity;
-		return farthestVec;
+		return contacts;
+	}
+	CollisionPoints PolygonCircleContacts(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
+	)
+	{
+
 	}
 }
