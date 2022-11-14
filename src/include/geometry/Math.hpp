@@ -25,27 +25,38 @@ using i64 = int64_t;
 ( \
 	(X) * (X) * (X) \
 )
-#define EPSILON 0.0000001
-#define V_EPSILON geo::Vector(0.0000001, 0.0000001)
+#define EPSILON 10e-8
+#define V3_EPSILON geo::Vector2(10e-8, 10e-8, 10e-8)
+#define V2_EPSILON geo::Vector2(10e-8, 10e-8)
+#define V_EPSILON(X) geo::Vector(X, 10e-8)
 #define BIT(x) (1 << x)
 
 namespace geo
 {
+	/// \brief returns the closest Line to the Vector2
+	Line ClosestLine(std::vector<geo::Line> lines, Vector2 vector) noexcept;
 	/// \brief Compares two inputs, 1 if a is greater than b, 0 if they are equal,
 	/// and -1 if a is less than b.
 	template <typename T>
 	int Compare(T& a, T& b);
 	/// \brief returns the calculated centroid of the given points.
 	Vector2 Centroid(const Vector2* start, const Vector2* end) noexcept;
+	/// \brief returns the calculated centroid of the given points.
+	Vector2 Centroid(const std::vector<geo::Vector2>& vertexes) noexcept;
 	/// \brief Converts radians to degrees.
 	f64 Degrees(const f64& radians) noexcept;
 	/// \brief Gets the distance between two Vectors.
 	f64 Distance(const Vector2& a, const Vector2& b) noexcept;
+	/// \brief Gets the distance between a Line and a Vector2.
+	f64 Distance(const Line& a, const Vector2& b) noexcept;
 	/// \brief Gets the distance between two Vector3s.
 	f64 Distance(const Vector3& a, const Vector3& b) noexcept;
 	/// \brief Gets the distance between two Vectors squared. It does not
 	/// use sqrt at all.
 	f64 DistanceSquared(const Vector2& a, const Vector2& b) noexcept;
+	/// \brief Gets the distance between a Line and a Vector2 squared. It does not
+	/// use sqrt at all.
+	f64 DistanceSquared(const Line& a, const Vector2& b) noexcept;
 	/// \brief Gets the distance between two Vector3s squared. It does not
 	/// use sqrt at all.
 	f64 DistanceSquared(const Vector3& a, const Vector3& b) noexcept;

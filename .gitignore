@@ -1,4 +1,5 @@
 bin/o/
+bin/*.ttf
 *.log
 test/
 *.txt

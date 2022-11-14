@@ -1,4 +1,7 @@
 #include "../../geometry/main.hpp"
+#ifndef PHYSICS_RK4_TMAX
+#define PHYSICS_RK4_TMAX 50
+#endif
 
 namespace physics
 {
@@ -18,6 +21,8 @@ namespace physics
 			bool operator==(const Transform& other) const noexcept;
 			bool operator!=(const Transform& other) const noexcept;
 			f64 GetAngle() const noexcept;
+			f64 GetScaleAsScalar() const noexcept;
+			geo::Vector2 GetScaleAsVector() const noexcept;
 			geo::Matrix3 GetTransformationMatrix() const noexcept;
 			void Integrate(f64 dt, const geo::Vector2& velocity, f64 angularVelocity, const geo::Vector2& force, f64 torque, u32 steps = 50) noexcept;
 			void Rotate(f64 theta) noexcept;
@@ -29,24 +34,6 @@ namespace physics
 
 	namespace rk4
 	{
-		struct State
-		{
-			geo::Vector2 pos;
-			geo::Vector2 vel;
-			geo::Matrix2 orient;
-			f64 angVel;
-		};
-
-		struct Derivative
-		{
-			geo::Vector2 dpos;
-			geo::Vector2 dvel;
-			geo::Matrix2 dorient;
-			f64 dangVel;
-		};
-
-		geo::Vector2 Acceleration(const State& state, const f64& t);
-		Derivative Evaluate(const State& initial, const f64& t, const f64& dt, const Derivative& d);
-		State Integrate(const State& state, f64 t, f64 dt);
+		void Integrate(f64 dt, f64& pos, f64& vel, f64& force);
 	}
 }

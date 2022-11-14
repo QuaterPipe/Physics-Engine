@@ -12,7 +12,8 @@ namespace physics
 			geo::Vector2 pos;
 			std::vector<geo::Vector2> points;
 			PolygonCollider();
-			PolygonCollider(const PolygonCollider& d) noexcept;
+			PolygonCollider(const BoxCollider& b) noexcept;
+			PolygonCollider(const PolygonCollider& p) noexcept;
 			PolygonCollider(const geo::Vector2& pos, double distanceBetweenPoints=1, unsigned long count=3) noexcept;
 			PolygonCollider(const geo::Vector2& pos, const geo::Vector2& a, const geo::Vector2& b, const geo::Vector2& c, std::initializer_list<geo::Vector2> extra={}) noexcept;
 			~PolygonCollider() noexcept;

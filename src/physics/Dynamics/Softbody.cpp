@@ -361,6 +361,13 @@ namespace physics
 	{
 		if (!isStatic)
 		{
+			velocity += (force * _invMass) * (dt / 2.0);
+			angularVelocity += (angularForce * _invInertia) * (dt / 2.0);
+			position += velocity * dt;
+			rotation = geo::Matrix2(transform.GetAngle() + angularVelocity * dt);
+			angularForce = 0;
+			force.Set(0, 0);
+			ApplySpringForces(dt);
 			for (std::vector<MassPoint>& mVec: points)
 			{
 				for (MassPoint& m: mVec)

@@ -1,10 +1,19 @@
 #include "../../include/physics/Collision/Collision.hpp"
 namespace physics
 {
-	PolygonCollider::PolygonCollider(const PolygonCollider& d) noexcept
+	PolygonCollider::PolygonCollider(const BoxCollider& b) noexcept
+	: pos(0, 0), points(4)
 	{
-		this->pos = d.pos;
-		this->points = d.points;
+		points[0] = b.pos;
+		points[1] = geo::Vector2(b.x + b.width, b.y);
+		points[2] = geo::Vector2(b.x + b.width, b.y + b.height);
+		points[3] = geo::Vector2(b.x , b.y + b.height);
+	}
+
+	PolygonCollider::PolygonCollider(const PolygonCollider& p) noexcept
+	{
+		pos = p.pos;
+		points = p.points;
 	}
 
 	PolygonCollider::PolygonCollider(const geo::Vector2& pos,
@@ -58,7 +67,7 @@ namespace physics
 			return true;
 		return pos != dynamic_cast<const PolygonCollider&>(c).pos || points != dynamic_cast<const PolygonCollider&>(c).points;
 	}
-
+	
 	BoxCollider PolygonCollider::BoundingBox(const Transform& t) const noexcept
 	{
 		f64 minx = std::numeric_limits<f64>::max();

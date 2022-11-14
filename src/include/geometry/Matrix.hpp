@@ -64,25 +64,39 @@ namespace geo
 
 	struct Matrix
 	{
-		u32 width;
-		u32 height;
-		std::vector<std::vector<f64>> array;
-		Matrix() noexcept;
-		Matrix(const Matrix& mat) noexcept;
-		Matrix(u32 width, u32 height) noexcept;
-		Matrix(f64* arr, u32 width, u32 height) noexcept;
-		Vector Axis(u32 index) const;
-		const std::vector<f64>& operator[](size_t index) const;
-		std::vector<f64>& operator[](size_t index);
-		bool operator==(const Matrix& other) const noexcept;
-		bool operator!=(const Matrix& other) const noexcept;
-		Vector operator*(const Vector& v) const noexcept;
-		Matrix operator*(const Matrix& other) const noexcept;
-		i32 GetDeterminant() const;
-		u32 GetHeight() const noexcept;
-		u32 GetWidth() const noexcept;
-		Matrix GetTranspose() const;
-		void SetHeight(u32 height) noexcept;
-		void SetWidth(u32 width) noexcept;
+		public:
+			struct Row
+			{
+				f64* data;
+				size_t start;
+				size_t end;
+				Row(f64* data, size_t start, size_t end) noexcept;
+				Row() = delete;
+				f64& operator[](size_t index);
+				const f64& operator[](size_t index) const;
+				Row& operator=(const Row& other);
+			};
+			f64* array = NULL;
+			~Matrix() noexcept;
+			Matrix() noexcept;
+			Matrix(const Matrix& mat) noexcept;
+			Matrix(Matrix && mat) noexcept;
+			Matrix(u32 width, u32 height, f64 n = 0) noexcept;
+			Matrix(f64* arr, u32 width, u32 height) noexcept;
+			Matrix& operator=(const Matrix& other) noexcept;
+			Vector Axis(u32 index) const;
+			const Row operator[](size_t index) const;
+			Row operator[](size_t index);
+			bool operator==(const Matrix& other) const noexcept;
+			bool operator!=(const Matrix& other) const noexcept;
+			Vector operator*(const Vector& v) const noexcept;
+			Matrix operator*(const Matrix& other) const noexcept;
+			i32 GetDeterminant() const;
+			size_t GetHeight() const noexcept;
+			size_t GetWidth() const noexcept;
+			Matrix GetTranspose() const;
+		private:
+			size_t _width;
+			size_t _height;
 	};
 }

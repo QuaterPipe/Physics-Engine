@@ -16,7 +16,8 @@ namespace physics
 	struct CollisionPoints
 	{
 		//the points where the two objects touch
-		std::vector<geo::Vector2> contactPoints;
+		geo::Vector2 a;
+		geo::Vector2 b;
 		// the normal direction
 		geo::Vector2 normal;
 		// The distance between the two most shallow points.
@@ -24,11 +25,11 @@ namespace physics
 		bool hasCollision = false;
 		inline bool operator==(const CollisionPoints& other) const noexcept
 		{
-			return contactPoints == other.contactPoints && normal == other.normal && hasCollision == other.hasCollision;
+			return a == other.a && b == other.b && normal == other.normal && hasCollision == other.hasCollision;
 		}
 		inline bool operator!=(const CollisionPoints& other) const noexcept
 		{
-			return !(contactPoints != contactPoints && normal == other.normal && hasCollision == other.hasCollision);
+			return !operator==(other);
 		}
 	};
 

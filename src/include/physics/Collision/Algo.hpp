@@ -90,16 +90,6 @@ namespace physics::algo
 		const PolygonCollider* b, const Transform& tb
 	);
 
-	bool LinePassesThroughCircle(
-		const geo::Line& a, const CircleCollider* b,
-		const Transform& tb
-	);
-
-	CollisionPoints LineInCircle(
-		const CircleCollider* a, const Transform& ta,
-		const geo::Line& b
-	);
-
 	bool VectorInCircle(const geo::Vector2& a, const CircleCollider* b,
 		const Transform& tb
 	);

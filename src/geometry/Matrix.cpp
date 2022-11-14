@@ -108,7 +108,11 @@ namespace geo
 		b = mat2.b;
 		d = mat2.c;
 		e = mat2.d;
-		c = 1, f = 1, g = 0, h = 0, i = 1;
+		c = 0, f = 0, g = 0, h = 0, i = 1;
+		/* 
+		[mat2.a, mat2.b, 0,
+		 mat2.c, mat2.d, 0,
+		 	0, 	0, 	1]*/
 	}
 
 	Matrix3::Matrix3(const Matrix3& mat3) noexcept
@@ -211,56 +215,73 @@ namespace geo
 		return newMatrix;
 	}
 
+	Matrix::~Matrix() noexcept
+	{
+		delete[] array;
+	}
+
 	Matrix::Matrix() noexcept
 	{
 	}
 
-	Matrix::Matrix(const Matrix& mat) noexcept
-	: array(mat.array)
+	Matrix::Matrix(Matrix && mat) noexcept
 	{
+		array = mat.array;
+		mat.array = NULL;
+	}
+
+	Matrix::Matrix(const Matrix& mat) noexcept
+	{
+		array = new f64[mat._height * mat._width];
+		for (size_t i = 0; i < mat._width * mat._height; i++)
+			array[i] = mat.array[i];
 	}
 	
-	Matrix::Matrix(u32 width, u32 height) noexcept
-	: width(width), height(height)
+	Matrix::Matrix(u32 width, u32 height, f64 n) noexcept
+	: _width(width), _height(height)
 	{
-		array.resize(height);
-		for (auto& arr: array)
-			arr.resize(width);
+		array = new f64[_width * _height];
+		for (size_t i = 0; i < _width * _height; i++)
+			array[i] = n;
 	}
 
 	Matrix::Matrix(f64* arr, u32 width, u32 height) noexcept
-	: width(width), height(height)
+	: _width(width), _height(height)
 	{
-		array.resize(height);
-		for (u32 i = 0; i < width; i++)
-			array[i].resize(width);
-		u32 index = 0;
-		for (u32 i = 0; i < height; i++)
-		{
-			for (int j = 0; j < width; j++)
-				array[i][j] = arr[index++];
-		}
-		
+		array = new f64[_width * _height];
 	}
+
+	Matrix& Matrix::operator=(const Matrix& other) noexcept
+	{
+		delete array;
+		array = new f64[other.GetWidth() * other.GetHeight()];
+		_width = other.GetWidth();
+		_height = other.GetHeight();
+		for (size_t i = 0; i < _height * _width; i++)
+			array[i] = other.array[i];
+		return *this;
+	}
+
 	
 	Vector Matrix::Axis(u32 index) const
 	{
-		assert(index < width && "Index out of range.");
-		Vector x(height, 0);
-		x.Set(array[index]);
+		assert(index < _width && "Index out of range.");
+		Vector x(_height, 0);
+		for (size_t i = 0; i < _height; i++)
+			x[i] = operator[](i)[index];
 		return x;
 	}
 
 	i32 Matrix::GetDeterminant() const
 	{
-		assert(width == height && "Cannot find determinant of non-square matrix.");
-		if (!width)
+		assert(_width == _height && "Cannot find determinant of non-square matrix.");
+		if (!_width)
 			return 0;
-		if (width == 1)
+		if (_width == 1)
 			return (*this)[0][0];
-		if (width == 2)
+		if (_width == 2)
 			return (*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0];
-		i32 dimension = width;
+		i32 dimension = _width;
 		f64 result = 0;
 		i32 sign = 1;
 		for (i32 i = 0; i < dimension; i++)
@@ -273,7 +294,7 @@ namespace geo
 				{
 					if (n != i)
 					{
-						subMatrix[m - 1][z] = array[m][n];
+						subMatrix[m - 1][z] = operator[](m)[n];
 						z++;
 					}
 				}
@@ -286,51 +307,62 @@ namespace geo
 
 	Matrix Matrix::GetTranspose() const
 	{
-		Matrix solution(height, width);
-		for (size_t i = 0; i < height; i++)
+		Matrix solution(_height, _width);
+		for (size_t i = 0; i < _height; i++)
 		{
-			for (size_t j = 0; j < width; j++)
+			for (size_t j = 0; j < _width; j++)
 				solution[j][i] = (*this)[i][j];
 		}
 		return solution;
 	}
 
-	const std::vector<f64>& Matrix::operator[](size_t index) const
+	const Matrix::Row Matrix::operator[](size_t index) const
 	{
-		assert(index < width && "Index out of range.");
-		return array[index];
+		assert(index < _width && "Index out of range.");
+		return Row(array, index * _width, index * _width + _width);
 	}
 
-	std::vector<f64>& Matrix::operator[](size_t index)
+	Matrix::Row Matrix::operator[](size_t index)
 	{
-		assert(index < height && "Index out of range.");
-		return array[index];
+		assert(index < _height && "Index out of range.");
+		return Row(array, index * _width, index * _width + _width);
 	}
 
 	bool Matrix::operator==(const Matrix& other) const noexcept
 	{
-		if (width != other.width || height != other.height)
+		if (_width != other.GetWidth() || _height != other.GetHeight())
 			return false;
-		return array == other.array;
+		for (size_t i = 0; i < _width * _height; i++)
+		{
+			if (array[i] != other.array[i])
+				return false;
+		}
+		return true;
 	}
 	
 	bool Matrix::operator!=(const Matrix& other) const noexcept
 	{
-		if (width != other.width || height != other.height)
+		if (_width != other.GetWidth() || _height != other.GetHeight())
 			return true;
-		return array != other.array;
+		for (size_t i = 0; i < _width * _height; i++)
+		{
+			if (array[i] == other.array[i])
+				return false;
+		}
+		return true;
 	}
 
 	Vector Matrix::operator*(const Vector& v) const noexcept
 	{
 		Vector vCopy = v;
-		if (vCopy.GetSize() < height)
-			vCopy.SetSize(height);
+		if (vCopy.GetSize() < _height)
+			vCopy.SetSize(_height);
 		Vector a;
-		for (u32 i = 0; i < width; i++)
+		for (u32 i = 0; i < _width; i++)
 		{
-			Vector x;
-			x.Set(array[i]);
+			Vector x(_width);
+			for (u32 j = 0; j < _width; j++)
+				x[j] = (*this)[i][j];
 			a[i] = (x * vCopy).Sum();
 		}
 		return a;
@@ -338,63 +370,66 @@ namespace geo
 
 	Matrix Matrix::operator*(const Matrix& other) const noexcept
 	{
-		u32 w = std::max(width, other.width);
-		u32 h = std::max(height, other.height);
-		f64  x[h][w] = {};
+		u32 w = std::max(_width, other.GetWidth());
+		u32 h = std::max(_height, other.GetHeight());
 		f64 thisCopy[h][w] = {};
-		for (u32 i = 0; i < height; i++)
+		for (u32 i = 0; i < _height; i++)
 		{
-			for (u32 j = 0; j < width; j++)
+			for (u32 j = 0; j < _width; j++)
 				thisCopy[i][j] = (*this)[i][j];
 		}
 		f64 otherCopy[h][w] = {};
-		for (u32 i = 0; i < other.height; i++)
+		for (u32 i = 0; i < other.GetHeight(); i++)
 		{
-			for (u32 j = 0; j < other.width; j++)
+			for (u32 j = 0; j < other.GetWidth(); j++)
 				otherCopy[i][j] = other[i][j];
-		}
-		for (u32 i = 0; i < h; i++)
-		{
-			for (u32 j = 0; j < w; j++)
-			{
-				for (u32 k = 0; k < w; k++)
-					x[i][j] += thisCopy[i][k] * otherCopy[k][j];
-			}
 		}
 		Matrix result(w, h);
 		for (u32 i = 0; i < h; i++)
 		{
-			for (u32 j = 0; j < w; j++)
-				result[i][j] = x[i][j];
+			for (u32 k = 0; k < w; k++)
+			{
+				for (u32 j = 0; j < w; j++)
+					result[i][j] += thisCopy[i][k] * otherCopy[k][j];
+			}
 		}
 		return result;
 	}
 
-	u32 Matrix::GetHeight() const noexcept
+	size_t Matrix::GetHeight() const noexcept
 	{
-		return height;
+		return _height;
 	}
 
-	u32 Matrix::GetWidth() const noexcept
+	size_t Matrix::GetWidth() const noexcept
 	{
-		return width;
+		return _width;
 	}
 
-	void Matrix::SetHeight(u32 height) noexcept
+	Matrix::Row::Row(f64* data, size_t start, size_t end) noexcept
+	: data(data), start(start), end(end)
 	{
-		array.resize(height);
-		this->height = height;
-		for (auto& arr: array)
-		{
-			if (arr.size() != width)
-				arr.resize(width);
-		}
 	}
 
-	void Matrix::SetWidth(u32 width) noexcept
+	f64& Matrix::Row::operator[](size_t index)
 	{
-		for (auto& arr: array)
-			arr.resize(width);
-		this->width = width;
+		size_t width = end - start;
+		assert(0 <= index && index < width);
+		return data[start + index];
+	}
+
+	const f64& Matrix::Row::operator[](size_t index) const
+	{
+		size_t width = end - start;
+		assert(0 <= index && index < width);
+		return data[start + index];
+	}
+
+	Matrix::Row& Matrix::Row::operator=(const Row& other)
+	{
+		assert(other.end - other.start == end - start);
+		for (size_t i = 0; i < end - start; i++)
+			data[start + i] = other[i];
+		return *this;
 	}
 }

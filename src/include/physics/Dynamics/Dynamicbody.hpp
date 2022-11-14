@@ -1,5 +1,6 @@
 #pragma once
 #include "../Collision/CollisionObject.hpp"
+#include "AllConstraints.hpp"
 
 namespace physics
 {
@@ -37,19 +38,22 @@ namespace physics
 			PhysicsMaterial physicsMaterial;
 			bool usesGravity = true;
 			bool isStatic = false;
+			bool hadCollisionLastFrame = false;
 			double& staticFriction = physicsMaterial.staticFriction;
 			double& kineticFriction = physicsMaterial.kineticFriction;
 			double& restitution = physicsMaterial.restitution;
 			std::vector<Joint*> joints;
+			std::vector<Constraint*> constraints;
 			Dynamicbody() noexcept;
-			Dynamicbody(const Collider& c, const Transform& t = Transform(), const bool& isTrigger = false,
-			const PhysicsMaterial& p = PhysicsMaterial(), const f64& mass = 1000, bool usesGravity = true,
+			Dynamicbody(const Collider& c, const Transform& t = Transform(), bool isTrigger = false,
+			const PhysicsMaterial& p = PhysicsMaterial(), f64 mass = 1000, bool usesGravity = true,
 			const geo::Vector2& drag = geo::Vector2(0.1, 0.1)) noexcept;
 			Dynamicbody(const Dynamicbody& d) noexcept;
 			Dynamicbody(Dynamicbody && d) noexcept;
 			virtual bool operator==(const CollisionObject& c) const noexcept override;
 			virtual bool operator!=(const CollisionObject& c) const noexcept override;
 			virtual Dynamicbody& operator=(const Dynamicbody& d) noexcept;
+			void AddConstraint(Constraint* constraint) noexcept;
 			virtual void ApplyAngularForce(f64 dt, f64 force) noexcept = 0;
 			virtual void ApplyAngularImpulse(f64 dt, f64 force) noexcept = 0;
 			virtual void ApplyForce(f64 dt, const geo::Vector2& Force, const geo::Vector2& contactPoint = geo::Vector2::Infinity) noexcept = 0;
@@ -60,8 +64,9 @@ namespace physics
 			f64 GetInvMass() const noexcept;
 			void IntegrateForces(f64 dt) noexcept;
 			void IntegrateVelocity(f64 dt) noexcept;
-			void SetInertia(const f64& inertia) noexcept;
-			void SetMass(const f64& mass) noexcept;
+			void RemoveConstraint(Constraint* constrainat) noexcept;
+			void SetInertia(f64 inertia) noexcept;
+			void SetMass(f64 mass) noexcept;
 			virtual void Update(f64 dt) noexcept;
 	};
 	struct Joint

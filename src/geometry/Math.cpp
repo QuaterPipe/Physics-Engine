@@ -2,6 +2,23 @@
 
 namespace geo
 {
+
+	
+	Line ClosestLine(std::vector<geo::Line> lines, Vector2 vector) noexcept
+	{
+		Line closestLine = Line();
+		f64 minDis = std::numeric_limits<f64>::infinity();
+		for (Line l: lines)
+		{
+			if (minDis > DistanceSquared(l, vector))
+			{
+				closestLine = l;
+				minDis = DistanceSquared(l, vector);
+			}
+		}
+		return closestLine;
+	}
+
 	f64 Degrees(const f64& radians) noexcept
 	{
 		return radians * (180 / M_PI);
@@ -11,6 +28,12 @@ namespace geo
 	{
 		f64 dis = SQRD(b.x - a.x) + SQRD(b.y - a.y);
 		return sqrt(dis);
+	}
+
+	f64 Distance(const Line& a, const Vector2& b) noexcept
+	{
+		const Vector2 proj = Vector2::Projection(b, a);
+		return Distance(proj, b);
 	}
 
 	f64 Distance(const Vector3& a, const Vector3& b) noexcept
@@ -25,36 +48,17 @@ namespace geo
 		return dis;
 	}
 
+	f64 DistanceSquared(const Line& a, const Vector2& b) noexcept
+	{
+		const Vector2 proj = Vector2::Projection(b, a);
+		return DistanceSquared(proj, b);
+	}
+
 	f64 DistanceSquared(const Vector3& a, const Vector3& b) noexcept
 	{
 		f64 dis = (SQRD(b.x - a.x) + SQRD(b.y - a.y) + SQRD(b.z - a.z));
 		if (dis < 0) {dis *= -1;}
 		return dis;
-	}
-
-	f64 Distance(const Line& a, const Vector2& b) noexcept
-	{
-		const Vector2 ac = b - a.a;
-		const Vector2 ab = a.b - a.a;
-		auto project = [&] (const Vector2& vA, const Vector2& vB) {
-			double tmp = vA.Dot(vB) / vB.Dot(vB);
-			return Vector2(tmp * vB.x, tmp *vB.y);
-		};
-		const Vector2 d = project(ac, ab) + a.a;
-		const Vector2 ad = d - a.a;
-		auto hypot2 = [&] (const Vector2& vA, const Vector2& vB) {
-			return (vA - vB).Dot(vA - vB);
-		};
-		const double k = fabs(ab.x) > fabs(ab.y) ? ad.x / ab.x : ad.y / ab.y;
-		if (k <= 0)
-		{
-			return sqrt(hypot2(b, a.a));
-		}
-		else if (k >= 1)
-		{
-			return sqrt(hypot2(b, a.b));
-		}
-		return sqrt(hypot2(b, d));
 	}
 
 	f64 FastSqrt(const f64& x) noexcept
@@ -92,7 +96,7 @@ namespace geo
 	f64 GetSlope(const Vector2& a, const Vector2& b) noexcept
 	{
 		if (a.y == b.y || a.x == b.x)
-		{return 0;}
+			return 0;
 		return (b.y - a.y) / (b.x - a.x);
 	}
 
@@ -116,9 +120,7 @@ namespace geo
 		double y = (a * c1 - a1 *c ) / det;
 		Vector2 v(x, y);
 		if (!isInfLine && (!la.VectorIsOnLine(v) || !lb.VectorIsOnLine(v)))
-		{
 			return Vector2::Infinity;
-		}
 		return v;
 	}
 
@@ -129,6 +131,37 @@ namespace geo
 		Vector2 last = *end;
 		std::vector<Vector2> points;
 		points.insert(points.end(), start, end);
+		if (points.size())
+		{
+			if (first.x != last.x || first.y != last.y)
+			{
+				points.push_back(first);
+			}
+			f64 twiceArea = 0, x = 0, y = 0, f = 0;
+			Vector2 p1, p2;
+			// absolutely no clue what this does, it just works lol
+			for (size_t i = 0, j = points.size() - 1; i < points.size(); j=i++)
+			{
+				p1 = points[i]; p2 = points[j];
+				f = (p1.y - first.y) * (p2.x - first.x) - (p2.y - first.y) * (p1.x - first.x);
+				twiceArea += f;
+				x += (p1.x + p2.x - 2 * first.x) * f;
+				y += (p1.y + p2.y - 2 * first.y) * f;
+			}
+			f = twiceArea * 3;
+			return Vector2(x / f + first.x, y / f + first.y);
+		}
+		else
+			return Vector2::Origin;
+	}
+
+	Vector2 Centroid(const std::vector<geo::Vector2>& vertexes) noexcept
+	{
+		
+		Vector2 first = *vertexes.begin();
+		Vector2 last = *(vertexes.end() - 1);
+		std::vector<Vector2> points;
+		points.insert(points.end(), vertexes.begin(), vertexes.end());
 		if (points.size())
 		{
 			if (first.x != last.x || first.y != last.y)

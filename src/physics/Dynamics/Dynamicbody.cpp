@@ -29,8 +29,8 @@ namespace physics
 		_isDynamic = true;
 	}
 
-	Dynamicbody::Dynamicbody(const Collider& c, const Transform& t, const bool& isTrigger, const PhysicsMaterial& p,
-		const f64& mass, bool usesGravity, const geo::Vector2& drag) noexcept
+	Dynamicbody::Dynamicbody(const Collider& c, const Transform& t, bool isTrigger, const PhysicsMaterial& p,
+		f64 mass, bool usesGravity, const geo::Vector2& drag) noexcept
 	: CollisionObject(c, t, isTrigger),  _mass(mass), drag(drag), physicsMaterial(p), usesGravity(usesGravity)
 	{
 		_isDynamic = true;
@@ -97,6 +97,11 @@ namespace physics
 			isStatic != o.isStatic || force != o.force;
 	}
 
+	void Dynamicbody::AddConstraint(Constraint* constraint) noexcept
+	{
+		constraints.push_back(constraint);
+	}
+
 	f64 Dynamicbody::GetInertia() const noexcept
 	{
 		return _inertia;
@@ -124,6 +129,8 @@ namespace physics
 			return;
 		velocity += (force * _invMass + gravity) * (dt / 2.0f);
   		angularVelocity += angularForce * _invInertia * (dt / 2.0f);
+		force.Set(0, 0);
+		angularForce = 0;
 	}
 
 	void Dynamicbody::IntegrateVelocity(f64 dt) noexcept
@@ -131,17 +138,28 @@ namespace physics
 		if (isStatic)
 			return;
 		position += velocity * dt;
-		rotation = rotation * geo::Matrix2(angularVelocity * dt);
-		IntegrateForces(dt);
+		rotation = geo::Matrix2(transform.GetAngle() + angularVelocity * dt);
 	}
 
-	void Dynamicbody::SetInertia(const f64& inertia) noexcept
+	void Dynamicbody::RemoveConstraint(Constraint* constraint) noexcept
+	{
+		for (auto p = constraints.begin(); p < constraints.end(); p++)
+		{
+			if (*p == constraint)
+			{
+				constraints.erase(p);
+				return;
+			}
+		}
+	}
+
+	void Dynamicbody::SetInertia(f64 inertia) noexcept
 	{
 		_inertia = inertia;
 		_invInertia = inertia ? 1 / inertia : 0;
 	}
 
-	void Dynamicbody::SetMass(const f64& mass) noexcept
+	void Dynamicbody::SetMass(f64 mass) noexcept
 	{
 		_mass = mass;
 		_invMass = mass ? 1 / mass : 0;

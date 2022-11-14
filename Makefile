@@ -49,18 +49,22 @@ compileObjects:
 	rm bin/o/*.o
 
 debugCompileObjects:
-	g++ -g -c -Wall -std=c++17 src/physics/Collision/Algo.cpp -o bin/o/Algo.o
 	g++ -g -c -Wall -std=c++17 src/physics/Collision/BoxCollider.cpp -o bin/o/BoxCollider.o
+	g++ -g -c -Wall -std=c++17 src/physics/Collision/BoxCollision.cpp -o bin/o/BoxCollision.o
 	g++ -g -c -Wall -std=c++17 src/physics/Collision/CircleCollider.cpp -o bin/o/CircleCollider.o
+	g++ -g -c -Wall -std=c++17 src/physics/Collision/CircleCollision.cpp -o bin/o/CircleCollision.o
 	g++ -g -c -Wall -std=c++17 src/physics/Collision/Collision.cpp -o bin/o/Collision.o
 	g++ -g -c -Wall -std=c++17 src/physics/Collision/Collider.cpp -o bin/o/Collider.o
 	g++ -g -c -Wall -std=c++17 src/physics/Collision/CollisionObject.cpp -o bin/o/CollisionObject.o
 	g++ -g -c -Wall -std=c++17 src/physics/Dynamics/Dynamicbody.cpp -o bin/o/Dynamicbody.o
 	g++ -g -c -Wall -std=c++17 src/physics/Engine/DynamicsWorld.cpp -o bin/o/DynamicsWorld.o
 	g++ -g -c -Wall -std=c++17 src/physics/Collision/MeshCollider.cpp -o bin/o/MeshCollider.o
+	g++ -g -c -Wall -std=c++17 src/physics/Collision/MeshCollision.cpp -o bin/o/MeshCollision.o
 	g++ -g -c -Wall -std=c++17 src/physics/Engine/PhysicsSolver.cpp -o bin/o/PhysicSolver.o
 	g++ -g -c -Wall -std=c++17 src/physics/Collision/PointCollider.cpp -o bin/o/PointCollider.o
+	g++ -g -c -Wall -std=c++17 src/physics/Collision/PointCollision.cpp -o bin/o/PointCollision.o
 	g++ -g -c -Wall -std=c++17 src/physics/Collision/PolygonCollider.cpp -o bin/o/PolygonCollider.o
+	g++ -g -c -Wall -std=c++17 src/physics/Collision/PolygonCollision.cpp -o bin/o/PolygonCollision.o
 	g++ -g -c -Wall -std=c++17 src/physics/Dynamics/Rigidbody.cpp -o bin/o/Rigidbody.o
 	g++ -g -c -Wall -std=c++17 src/physics/Dynamics/Softbody.cpp -o bin/o/Softbody.o
 	g++ -g -c -Wall -std=c++17 src/physics/Engine/Time.cpp -o bin/o/Time.o

@@ -100,7 +100,7 @@ namespace physics
 			velocity += (force * _invMass + gravity) * (dt / 2.0);
 			angularVelocity += (angularForce * _invInertia) * (dt / 2.0);
 			position += velocity * dt;
-			rotation = rotation * geo::Matrix2(angularVelocity * dt);
+			rotation = geo::Matrix2(transform.GetAngle() + angularVelocity * dt);
 			angularForce = 0;
 			force.Set(0, 0);
 		}
