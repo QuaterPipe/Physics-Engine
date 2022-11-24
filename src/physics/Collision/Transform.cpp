@@ -1,4 +1,5 @@
 #include "../../include/physics/Collision/Transform.hpp"
+#include <iostream>
 
 namespace physics
 {
@@ -75,8 +76,8 @@ namespace physics
 
 	void Transform::Scale(f64 xScale, f64 yScale) noexcept
 	{
-		scale.a = xScale;
-		scale.d = yScale;
+		scale[0][0] = xScale;
+		scale[1][1] = yScale;
 	}
 
 	void Transform::Translate(geo::Vector2 offset) noexcept
@@ -86,14 +87,11 @@ namespace physics
 
 	geo::Matrix3 Transform::GetTransformationMatrix() const noexcept
 	{
-		geo::Matrix3 result(scale * rotation);
-		//geo::Matrix3 rot(rotation);
-		result.c = position.x + centerOfRotation.x;
-		result.f = position.y + centerOfRotation.y;
-		/*geo::Matrix3 negResult(result);
-		negResult.c *= -1;
-		negResult.f *= -1;
-		result = result * rot * negResult;*/
+		geo::Matrix3 result(rotation * scale);
+		result[0][2] = centerOfRotation.x - rotation[0][0] * centerOfRotation.x - rotation[0][1] * centerOfRotation.y;
+		result[1][2] = centerOfRotation.y - rotation[1][0] * centerOfRotation.x - rotation[1][1] * centerOfRotation.y;
+		result[0][2] += position.x;
+		result[1][2] += position.y;
 		return result;
 	}
 
@@ -104,7 +102,7 @@ namespace physics
 			geo::Vector output(4);
 			output[0] = x[2];
 			output[1] = x[3];
-			output[2] = force.x;
+			output[2] = forcex;
 			output[3] = force.y;
 		};
 		geo::Vector X(4);

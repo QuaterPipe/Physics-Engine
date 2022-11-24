@@ -43,7 +43,11 @@ compileObjects:
 	g++ -c -Wall -std=c++17 src/geometry/Line.cpp -o bin/o/Line.o
 	g++ -c -Wall -std=c++17 src/geometry/Math.cpp -o bin/o/Math.o
 	g++ -c -Wall -std=c++17 src/geometry/Matrix.cpp -o bin/o/Matrix.o
+	g++ -c -Wall -std=c++17 src/geometry/Matrix2.cpp -o bin/o/Matrix2.o
+	g++ -c -Wall -std=c++17 src/geometry/Matrix3.cpp -o bin/o/Matrix3.o
 	g++ -c -Wall -std=c++17 src/geometry/Vector.cpp -o bin/o/Vector.o
+	g++ -c -Wall -std=c++17 src/geometry/Vector2.cpp -o bin/o/Vector2.o
+	g++ -c -Wall -std=c++17 src/geometry/Vector3.cpp -o bin/o/Vector3.o
 	ar rcs lib/libphysics.a bin/o/*.o
 	ranlib lib/libphysics.a
 	rm bin/o/*.o
@@ -73,7 +77,11 @@ debugCompileObjects:
 	g++ -g -c -Wall -std=c++17 src/geometry/Line.cpp -o bin/o/Line.o
 	g++ -g -c -Wall -std=c++17 src/geometry/Math.cpp -o bin/o/Math.o
 	g++ -g -c -Wall -std=c++17 src/geometry/Matrix.cpp -o bin/o/Matrix.o
+	g++ -g -c -Wall -std=c++17 src/geometry/Matrix2.cpp -o bin/o/Matrix2.o
+	g++ -g -c -Wall -std=c++17 src/geometry/Matrix3.cpp -o bin/o/Matrix3.o
 	g++ -g -c -Wall -std=c++17 src/geometry/Vector.cpp -o bin/o/Vector.o	
+	g++ -g -c -Wall -std=c++17 src/geometry/Vector2.cpp -o bin/o/Vector2.o	
+	g++ -g -c -Wall -std=c++17 src/geometry/Vector3.cpp -o bin/o/Vector3.o	
 	ar rcs lib/libphysics.a bin/o/*.o
 	ranlib lib/libphysics.a
 	rm bin/o/*.o

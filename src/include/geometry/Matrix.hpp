@@ -1,22 +1,35 @@
 #pragma once
+#include <cstring>
 #include "Math.hpp"
 namespace geo
 {
 	/// \brief A 2x2 Matrix struct
 	struct Matrix2
 	{
-		Vector2 iHat;
-		Vector2 jHat;
-		f64& a = iHat.x;
-		f64& c = iHat.y;
-		f64& b = jHat.x;
-		f64& d = jHat.y;
+		struct ConstRow
+		{
+			ConstRow(const f64* ptr) noexcept;
+			const f64& operator[](size_t index) const;
+			private:
+				const f64* ptr = nullptr;
+		};
+
+		struct Row
+		{
+			Row(f64* ptr) noexcept;
+			f64& operator[](size_t index) const;
+			Row& operator=(const Row& row);
+			Row& operator=(const ConstRow& row);
+			private:
+				f64* ptr = nullptr;
+		};
+
+		f64 arr[4];
 		Matrix2() noexcept;
-		Matrix2(const f64& radians) noexcept;
-		Matrix2(const f64& a, const f64& b, const f64& c, const f64& d) noexcept;
-		Matrix2(const Vector2& iHat, const Vector2& jHat) noexcept;
-		Vector2 AxisX() const noexcept;
-		Vector2 AxisY() const noexcept;
+		Matrix2(f64 radians) noexcept;
+		Matrix2(f64 a, f64 b, f64 c, f64 d) noexcept;
+		Row operator[](size_t index);
+		ConstRow operator[](size_t index) const;
 		f64 Angle() const noexcept;
 		/// \brief Returns the determinant of the matrix.
 		f64 Determinant() const noexcept;
@@ -31,25 +44,35 @@ namespace geo
 		bool operator!=(const Matrix2& other) const noexcept;
 		Vector2 operator*(const Vector2& v) const noexcept;
 		Matrix2 operator*(const Matrix2& m) const noexcept;
-		void operator*=(const Matrix2& m) noexcept;
+		Matrix2& operator*=(const Matrix2& other) noexcept;
 	};
 
-	/// | a b c |
-	/// | d e f |
-	/// | g h i |
 	struct Matrix3
 	{
-		Vector3 iHat; //a, d, g
-		Vector3 jHat; //b, e, h
-		Vector3 kHat; //c, f, i
-		f64& a = iHat.x, d = iHat.y, g = iHat.z;
-		f64& b = jHat.x, e = jHat.y, h = jHat.z;
-		f64& c = kHat.x, f = kHat.y, i = kHat.z;
+		struct ConstRow
+		{
+			ConstRow(const f64* ptr) noexcept;
+			const f64& operator[](size_t index) const;
+			private:
+				const f64* ptr = NULL;
+		};
+
+		struct Row
+		{
+			Row(f64* ptr) noexcept;
+			f64& operator[](size_t index) const;
+			Row& operator=(const Row& row);
+			Row& operator=(const ConstRow& row);
+			private:
+				f64* ptr = NULL;
+		};
+		f64 arr[9];
 		Matrix3() noexcept;
 		Matrix3(const Matrix2& mat2) noexcept;
 		Matrix3(const Matrix3& mat3) noexcept;
-		Matrix3(const f64& a, const f64& d, const f64& g, const f64& b, const f64& e, const f64& h, const f64& c, const f64& f, const f64& i) noexcept;
-		Matrix3(const Vector3& iHat, const Vector3& jHat, const Vector3& kHat) noexcept;
+		Matrix3(f64 a, f64 b, f64 c, f64 d, f64 e, f64 f, f64 g, f64 h, f64 i) noexcept;
+		Row operator[](size_t index);
+		ConstRow operator[](size_t index) const;
 		Matrix3& operator=(const Matrix3& other) noexcept;
 		Vector3 AxisX() const noexcept;
 		Vector3 AxisY() const noexcept;
@@ -60,6 +83,7 @@ namespace geo
 		bool operator!=(const Matrix3& other) const noexcept;
 		Vector3 operator*(const Vector3& v) const noexcept;
 		Matrix3 operator*(const Matrix3& other) const noexcept;
+		void operator*=(const Matrix3& other) noexcept;
 	};
 
 	struct Matrix
@@ -91,6 +115,7 @@ namespace geo
 			bool operator!=(const Matrix& other) const noexcept;
 			Vector operator*(const Vector& v) const noexcept;
 			Matrix operator*(const Matrix& other) const noexcept;
+			void operator*=(const Matrix& other) noexcept;
 			i32 GetDeterminant() const;
 			size_t GetHeight() const noexcept;
 			size_t GetWidth() const noexcept;

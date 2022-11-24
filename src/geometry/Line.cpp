@@ -87,7 +87,7 @@ namespace geo
 
 	void Line::Update() noexcept
 	{
-		this->_length = Distance(this->a, this->b);
+		this->_length = Distance(this->b, this->a);
 		this->_angle = GetAngle(this->a, this->b);
 	}
 

@@ -19,12 +19,13 @@ int main()
 {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
-    sf::RenderWindow    window(sf::VideoMode(500, 500), "Physics Engine", sf::Style::Default, settings);
+    sf::RenderWindow window(sf::VideoMode(500, 500), "Physics Engine", sf::Style::Default, settings);
     sf::View v = window.getView();
     v.setSize(500, -500);
     window.setView(v);
     PolygonCollider poly(BoxCollider(50, 50));
     Transform t;
+    t.Scale(2, 3);
     t.position.Set(250, 250);
     t.centerOfRotation = geo::Vector2(25, 25);
     bool pressing = false;
@@ -45,16 +46,18 @@ int main()
         {
             auto pos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
             geo::Vector2 posVec(pos.x, pos.y);
-            angle = (angle + 0.05);
+            angle = fmod(angle + 0.05, M_PI * 2);
             //angle = acos(posVec.Dot(geo::Vector2(250, 250)) /  (posVec.GetMagnitude() * 353.553391));
             t.rotation = geo::Matrix2(angle);
+            std::cout<<"\n["<<t.rotation[0][0]<<", "<<t.rotation[0][1]<<"]\n";
+            std::cout<<"["<<t.rotation[1][0]<<", "<<t.rotation[1][1]<<"]\n-----";
+            std::cout<<t.rotation.Angle();
         }
         window.clear();
         sf::CircleShape c(3);
         for (geo::Vector2 vec: poly.points)
         {
             vec = t.TransformVector(vec);
-            std::cout<<vec<<"\n";
             c.setPosition(vec.x - 3, vec.y - 3);
             window.draw(c);
         }

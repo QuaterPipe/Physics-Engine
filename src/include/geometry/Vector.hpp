@@ -19,6 +19,8 @@ namespace geo
 			Vector2() noexcept;
 			Vector2(const Vector2& v) noexcept;
 			Vector2(const f64& x, const f64& y) noexcept;
+			f64& operator[](size_t index);
+			const f64& operator[](size_t index) const;
 			/// \brief returns the positive x & y values of *this vector
 			Vector2 Abs() const noexcept;
 			/// \brief Gets that angle between 'this' vector and the 'other' Vector.
@@ -108,6 +110,8 @@ namespace geo
 			Vector3() noexcept;
 			Vector3(const Vector3& v) noexcept;
 			Vector3(const f64& x, const f64& y, const f64& z) noexcept;
+			f64& operator[](size_t index);
+			const f64& operator[](size_t index) const;
 			/// \brief Returns the magnitude of the Vector3.
 			f64 GetMagnitude() const noexcept;
 			/// \brief Returns the magnitude of the Vector3 using FastSqrt().
