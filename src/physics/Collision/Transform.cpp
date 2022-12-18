@@ -54,11 +54,6 @@ namespace physics
 		return geo::Vector2(1, 1).Angle(rotation * geo::Vector2(1, 1));
 	}
 
-	f64 Transform::GetScaleAsScalar() const noexcept
-	{
-		return geo::Distance(scale * geo::Vector2(1, 1), geo::Vector2());
-	}
-
 	geo::Vector2 Transform::GetScaleAsVector() const noexcept
 	{
 		return scale * geo::Vector2(1, 1);

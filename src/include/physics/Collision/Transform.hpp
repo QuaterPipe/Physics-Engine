@@ -21,7 +21,6 @@ namespace physics
 			bool operator==(const Transform& other) const noexcept;
 			bool operator!=(const Transform& other) const noexcept;
 			f64 GetAngle() const noexcept;
-			f64 GetScaleAsScalar() const noexcept;
 			geo::Vector2 GetScaleAsVector() const noexcept;
 			geo::Matrix3 GetTransformationMatrix() const noexcept;
 			void Integrate(f64 dt, const geo::Vector2& velocity, f64 angularVelocity, const geo::Vector2& force, f64 torque, u32 steps = 50) noexcept;

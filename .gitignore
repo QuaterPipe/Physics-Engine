@@ -4,4 +4,4 @@ bin/*.ttf
 test/
 *.txt
 *.exe
-*.cpp
+./*.cpp

@@ -36,6 +36,7 @@ namespace physics
 		_isDynamic = true;
 		_mass = mass;
 		_invMass = _mass ? 1 / _mass : 0;
+
 	}
 
 	Dynamicbody::Dynamicbody(const Dynamicbody& d) noexcept

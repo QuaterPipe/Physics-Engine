@@ -4,66 +4,57 @@
 #include <random>
 #include <chrono>
 #include <thread>
-
+#define MAX std::numeric_limits<f64>::max()
+#define MIN std::numeric_limits<f64>::min()
 using namespace physics;
 using namespace geo;
-std::vector<Collision> collisions;
 
-
-void CallBack(Collision& c, f64 dt)
+int main(int argc, char** args)
 {
-    collisions.push_back(c);
-}
-
-int main()
-{
+    std::cout<<std::boolalpha;
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     sf::RenderWindow window(sf::VideoMode(500, 500), "Physics Engine", sf::Style::Default, settings);
     sf::View v = window.getView();
     v.setSize(500, -500);
     window.setView(v);
-    PolygonCollider poly(BoxCollider(50, 50));
-    Transform t;
-    t.Scale(2, 3);
-    t.position.Set(250, 250);
-    t.centerOfRotation = geo::Vector2(25, 25);
-    bool pressing = false;
-    f64 angle = 0;
+    Rigidbody r1(BoxCollider(50, 50));
+    Rigidbody r2(CircleCollider(50));
+    r1.position.Set(250, 250);
     while (window.isOpen())
     {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-            if (event.type == sf::Event::MouseButtonPressed)
-                pressing = true;
-            if (event.type == sf::Event::MouseButtonReleased)
-                pressing = false;
-        }
-        if (pressing)
-        {
-            auto pos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
-            geo::Vector2 posVec(pos.x, pos.y);
-            angle = fmod(angle + 0.05, M_PI * 2);
-            //angle = acos(posVec.Dot(geo::Vector2(250, 250)) /  (posVec.GetMagnitude() * 353.553391));
-            t.rotation = geo::Matrix2(angle);
-            std::cout<<"\n["<<t.rotation[0][0]<<", "<<t.rotation[0][1]<<"]\n";
-            std::cout<<"["<<t.rotation[1][0]<<", "<<t.rotation[1][1]<<"]\n-----";
-            std::cout<<t.rotation.Angle();
-        }
         window.clear();
-        sf::CircleShape c(3);
-        for (geo::Vector2 vec: poly.points)
+        sf::Event e;
+        while (window.pollEvent(e))
         {
-            vec = t.TransformVector(vec);
-            c.setPosition(vec.x - 3, vec.y - 3);
-            window.draw(c);
+            if (e.type == sf::Event::Closed)
+                window.close();
         }
-        c.setFillColor(sf::Color::Red);
-        c.setPosition(247, 247);
-        window.draw(c);
+        sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
+        r2.position.Set(worldPos.x, worldPos.y);
+        sf::RectangleShape rect(sf::Vector2f(50, 50));
+        sf::CircleShape cir(50);
+        cir.setFillColor(sf::Color::Transparent);
+        cir.setOutlineColor(sf::Color::White);
+        cir.setOutlineThickness(1);
+        rect.setPosition(sf::Vector2f(250, 250));
+        rect.setFillColor(sf::Color::Transparent);
+        rect.setOutlineColor(sf::Color::White);
+        rect.setOutlineThickness(1);
+        window.draw(rect);
+        cir.setPosition(r2.position.x - 50, r2.position.y - 50);
+        CollisionPoints c = r1.collider->TestCollision(r1.transform, r2.collider.get(), r2.transform);
+        //rect.setRotation(45);
+        window.draw(cir);
+        sf::CircleShape circ(3);
+        circ.setFillColor(sf::Color::Red);
+        circ.setPosition(c.a.x - 3, c.a.y - 3);
+        window.draw(circ);
+        circ.setPosition(c.b.x - 3, c.b.y - 3);
+        circ.setFillColor(sf::Color::Blue);
+        window.draw(circ);
+        //std::cout<<c.hasCollision<<"\r";
         window.display();
     }
 }

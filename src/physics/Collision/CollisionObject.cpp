@@ -6,23 +6,27 @@ namespace physics
 	CollisionObject::CollisionObject() noexcept
 	{
 		collider.reset(new BoxCollider());
+		centerOfRotation = collider->GetCenter();
 	}
 
 	CollisionObject::CollisionObject(const Collider& c, const Transform& t, const bool& isTrigger) noexcept
 	: isTrigger(isTrigger), collider(c.Clone()), transform(t)
 	{
+		centerOfRotation = collider->GetCenter();
 	}
 
 	CollisionObject::CollisionObject(const CollisionObject& c) noexcept
 	: isTrigger(c.isTrigger), onCollision(c.onCollision), 
 	collider(c.GetCollider().Clone()), transform(c.transform)
 	{
+		centerOfRotation = collider->GetCenter();
 	}
 
 	CollisionObject::CollisionObject(CollisionObject && c) noexcept
 	: isTrigger(c.isTrigger), onCollision(c.onCollision),
 	collider(c.collider.release()), transform(c.transform)
 	{
+		centerOfRotation = collider->GetCenter();
 	}
 
 	bool CollisionObject::operator!=(const CollisionObject& other) const noexcept

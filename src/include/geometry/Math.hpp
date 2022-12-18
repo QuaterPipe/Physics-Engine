@@ -5,7 +5,6 @@
 #include "Curve.hpp"
 #include "Vector.hpp"
 #include "Line.hpp"
-typedef geo::Vector2 Vector2;
 typedef double f64;
 typedef float f32;
 using u8 = uint8_t;

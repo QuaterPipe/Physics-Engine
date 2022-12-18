@@ -62,5 +62,10 @@
         "valarray": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled",
-    "C_Cpp.dimInactiveRegions": false
+    "C_Cpp.dimInactiveRegions": false,
+    "cSpell.words": [
+        "antialiasing",
+        "Rigidbody",
+        "SQRD"
+    ]
 }
