@@ -82,25 +82,15 @@ namespace physics::algo
 
 	bool VectorInPolygon(
 		const PolygonCollider* a, const Transform& ta,
-		const geo::Vector& b
+		const geo::Vector2& b
 	);
 
-	geo::Vector PointOfIntersect(
+	std::vector<geo::Vector2> PointOfIntersect(
 		const PolygonCollider* a, const Transform &ta,
 		const PolygonCollider* b, const Transform& tb
 	);
 
-	bool LinePassesThroughCircle(
-		const geo::Line& a, const CircleCollider* b,
-		const Transform& tb
-	);
-
-	CollisionPoints LineInCircle(
-		const CircleCollider* a, const Transform& ta,
-		const geo::Line& b
-	);
-
-	bool VectorInCircle(const geo::Vector& a, const CircleCollider* b,
+	bool VectorInCircle(const geo::Vector2& a, const CircleCollider* b,
 		const Transform& tb
 	);
 
@@ -124,7 +114,7 @@ namespace physics::algo
 		const CircleCollider* b, const Transform& tb
 	);
 
-	CollisionPoints PolygonLineInCircle(
+	CollisionPoints PolygonLinePenetratingCircle(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
 	);
@@ -137,6 +127,11 @@ namespace physics::algo
 	CollisionPoints SeparatingAxisCheck(
 		const PolygonCollider* a, const Transform& ta,
 		const PolygonCollider* b, const Transform& tb,
-		const geo::Vector& orthogonal
+		const geo::Vector2& orthogonal
+	);
+
+	CollisionPoints PolygonCircleContacts(
+		const PolygonCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb
 	);
 }

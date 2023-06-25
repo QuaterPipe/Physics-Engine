@@ -19,17 +19,17 @@ namespace geo
 			f64 _angle = 0;
 		public:
 			Line() noexcept;
-			Line(const Vector& a, const Vector& b) noexcept;
+			Line(const Vector2& a, const Vector2& b) noexcept;
 			Line(const Line& l) noexcept;
 			~Line() noexcept;
-			Vector a;
-			Vector b;
+			Vector2 a;
+			Vector2 b;
 			bool operator==(const Line& l) const noexcept;
 			bool operator!=(const Line& l) const noexcept;
 			// \brief Returns the angle of the line.
 			f64 angle() const noexcept;
 			// \brief Returns a vector along the line based on the distance given.
-			Vector GetVectorAlongLine(const f64& distance, const bool& startFromA = true) const noexcept;
+			Vector2 GetVectorAlongLine(const f64& distance, const bool& startFromA = true) const noexcept;
 			// \brief Returns a perpendicular line relative to 'this'.
 			Line GetPerpendicular() const noexcept;
 			// \brief Returns the length of the line.
@@ -41,9 +41,9 @@ namespace geo
 			// \brief Returns a tuple form of the line.
 			std::tuple<std::tuple<f64, f64>, std::tuple<f64, f64>> ToTuple() const noexcept;
 			// \brief Rotates both points of the line about a pivot point.
-			void Rotate(const Vector& pivot, const f64& angle) noexcept;
+			void Rotate(const Vector2& pivot, const f64& angle) noexcept;
 			// \brief Checks if the given Vector is one the line.
-			bool VectorIsOnLine(const Vector& v) const noexcept;
+			bool VectorIsOnLine(const Vector2& v) const noexcept;
 			// \brief Updates the angle and length values, if a & b Vectors are changed.
 			void Update() noexcept;
 	};

@@ -4,635 +4,399 @@
 
 namespace geo
 {
-
-	const Vector Vector::Origin = Vector(0, 0);
-	const Vector Vector::Infinity = Vector(std::numeric_limits<f64>::infinity(), std::numeric_limits<f64>::infinity());
-	const Vector Vector::iHat = Vector(1, 0);
-	const Vector Vector::jHat = Vector(0, 1);
-
 	Vector::Vector() noexcept
-	: x(0), y(0)
 	{
 	}
 
-	Vector::Vector(const f64& x, const f64& y) noexcept
-	: x(x), y(y)
+	Vector::Vector(f64 size, f64 n) noexcept
+	: m_size(size)
 	{
+		m_nums.resize(size);
+		for (auto& x: m_nums)
+			x = n;
+	}
+
+	Vector::Vector(const std::vector<f64>& numbers) noexcept
+	: m_size(numbers.size()), m_nums(numbers)
+	{
+	}
+
+	Vector::Vector(const Vector& v) noexcept
+	: m_size(v.GetSize()), m_nums(v.m_nums)
+	{
+	}
+
+	std::vector<f64>::iterator Vector::begin() noexcept
+	{
+		return m_nums.begin();
+	}
+
+	std::vector<f64>::iterator Vector::end() noexcept
+	{
+		return m_nums.end();
+	}
+	
+	std::vector<f64>::const_iterator Vector::begin() const noexcept
+	{
+		return m_nums.begin();
+	}
+
+	std::vector<f64>::const_iterator Vector::end() const noexcept
+	{
+		return m_nums.end();
+	}
+
+	size_t Vector::GetSize() const noexcept
+	{
+		return m_size;
+	}
+
+	const f64& Vector::operator[](size_t i) const noexcept
+	{
+		assert(i < m_size && "Index is out of range.");
+		return m_nums[i];
+	}
+
+	f64& Vector::operator[](size_t i) noexcept
+	{
+		assert(i < m_size && "Index is out of range.");
+		return m_nums[i];
 	}
 
 	Vector Vector::Abs() const noexcept
 	{
-		return Vector(fabs(x), fabs(y));
+		auto x = m_nums;
+		for (auto& tmp: x)
+			tmp = tmp < 0 ? -tmp : tmp;
+		return x;
 	}
 
-	f64 Vector::Angle(const Vector& other) const noexcept
+	f64 Vector::Dot(const Vector& v) const
 	{
-		return acos(Dot(other) / (GetMagnitude() * other.GetMagnitude()));
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		f64 sum = 0;
+		for (size_t i = 0 ; i < m_size; i++)
+			sum += m_nums[i] * v[i];
+		return sum;
 	}
-
-	f64 Vector::Cross(const Vector& v) const noexcept
-	{
-		return x * v.y - y * v.x;
-	}
-
-	Vector Vector::Cross(const Vector& v, const f64& s) noexcept
-	{
-		return Vector(s * v.y, -s * v.x);
-	}
-
-	Vector Vector::Cross(const f64& s, const Vector& v) noexcept
-	{
-		return Vector(-s * v.y, s * v.x);
-	}
-
-	f64 Vector::Dot(const Vector& v) const noexcept
-	{
-		return x * v.x + y * v.y;
-	}
-
+	
 	f64 Vector::GetMagnitude() const noexcept
 	{
-		if (!fabs(x) && !fabs(y))
-			return 0;
-		return sqrt(x * x + y * y);
+		f64 sum = 0;
+		for (const f64& x: m_nums)
+			sum += x * x;
+		return sqrt(sum);
 	}
-
+	
 	f64 Vector::GetMagnitudeSquared() const noexcept
 	{
-		if (!fabs(x) && !fabs(y))
-			return 0;
-		return x * x + y * y;
+		f64 sum = 0;
+		for (const f64& x: m_nums)
+			sum += x * x;
+		return sum;
 	}
-
+	
 	f64 Vector::GetMagnitudeQuick() const noexcept
 	{
-		if (!fabs(x) && !fabs(y))
-			return 0;
-		return FastSqrt(x * x + y * y);
+		f64 sum = 0;
+		for (const f64& x: m_nums)
+			sum += x * x;
+		return FastSqrt(sum);
 	}
-
-	Vector Vector::Lerp(const Vector& other, const f64& t) const noexcept
+	
+	Vector Vector::Lerp(const Vector& other, const f64& t) const
 	{
-		return *this + (other - *this) * t;
+		assert(m_size == other.GetSize() && "Must have vector of equal size.");
+		return *this - (other - *this) - t;
 	}
-
+	
 	void Vector::Normalize() noexcept
 	{
 		f64 mag = GetMagnitude();
-		if (mag > EPSILON)
+		if (mag > 0.0000001)
 			*this = *this / mag;
 		else
-			*this = Vector(0, 0);
+			*this = Vector(m_size);
 	}
-
+	
 	Vector Vector::Normalized() const noexcept
 	{
-		Vector v = Vector(this->x, this->y);
-		v.Normalize();
-		return v;
+		Vector tmp(*this);
+		tmp.Normalize();
+		return tmp;
 	}
-
-	Vector operator*(const f64 & d, const Vector& v) noexcept
+	
+	Vector Vector::Projection(const Vector& lhs, const Vector& rhs)
 	{
-		return Vector(d * v.x, d * v.y);
+		assert(rhs.GetSize() == lhs.GetSize() && "Must have Vector of equal size.");
+		f64 rhs_ls = rhs.GetMagnitudeSquared();
+		return rhs * (rhs.Dot(lhs) / rhs_ls);
 	}
-
-	Vector operator+(const f64 & d, const Vector& v) noexcept
+	
+	Vector Vector::Reflection(const Vector& normal) const
 	{
-		return Vector(d + v.x, d + v.y);
+		assert(m_size == normal.GetSize() && "Must have vector of equal size.");
+		return *this - 2 * Dot(normal) * normal;
+	}
+	
+	void Vector::Reflect(const Vector& normal)
+	{
+		assert(m_size == normal.GetSize() && "Must have vector of equal size.");
+		*this = *this - 2 * Dot(normal) * normal;
+	}
+	
+	void Vector::Set(const std::vector<f64>& values)
+	{
+		m_nums = values;
+		m_size = m_nums.size();
+	}
+	
+	void Vector::SetSize(size_t n)
+	{
+		m_nums.resize(n);
+		m_size = n;
+	}
+	
+	f64 Vector::Sum() const noexcept
+	{
+		f64 sum = 0;
+		for (const f64& x: m_nums)
+			sum += x;
+		return sum;
+	}
+	
+	std::string Vector::ToString() const noexcept
+	{
+		if (!m_size)
+			return "()";
+		std::string str = "(";
+		for (size_t i = 0; i < m_size - 1; i++)
+			str = str + std::to_string(m_nums[i]) + ", ";
+		str = str + std::to_string(m_nums[m_size - 1]) + ")";
+		return str;
 	}
 
 	Vector Vector::operator-() const noexcept
 	{
-		return Vector(-x, -y);
+		Vector x(*this);
+		for (auto& tmp: x.m_nums)
+			tmp = -tmp;
+		return x;
 	}
 
 	Vector Vector::operator+() const noexcept
 	{
-		return Vector(+x, +y);
+		return *this;
 	}
 
-	bool Vector::operator==(const Vector &v) const noexcept
+	bool Vector::operator==(const Vector& v) const
 	{
-		return x == v.x && y == v.y;
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		return m_nums == v.m_nums;
 	}
 
-	bool Vector::operator!=(const Vector &v) const noexcept
+	bool Vector::operator!=(const Vector& v) const
 	{
-		return x != v.x || y != v.y;
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		return m_nums != v.m_nums;
 	}
 
-	Vector Vector::operator+(const Vector& v) const noexcept
+	Vector Vector::operator-(const Vector& v) const
 	{
-		Vector result(*this);
-		result.x += v.x;
-		result.y += v.y;
-		return result;
-	}
-
-	Vector Vector::operator+(const f64& d) const noexcept
-	{
-		Vector result(*this);
-		result.x += d;
-		result.y += d;
-		return result;
-	}
-
-	void Vector::operator+=(const Vector& v) noexcept
-	{
-		x += v.x;
-		y += v.y;
-	}
-
-	void Vector::operator+=(const f64& d) noexcept
-	{
-		x += d;
-		y += d;
-	}
-
-	Vector Vector::operator-(const Vector& v) const noexcept
-	{
-		Vector result(*this);
-		result.x -= v.x;
-		result.y -= v.y;
-		return result;
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		Vector x(*this);
+		for (size_t i = 0; i < m_size; i++)
+			x[i] -= v[i];
+		return x;
 	}
 
 	Vector Vector::operator-(const f64& d) const noexcept
 	{
-		Vector result(*this);
-		result.x -= d;
-		result.y -= d;
-		return result;
+		Vector x(*this);
+		for (size_t i = 0; i < m_size; i++)
+			x[i] -= d;
+		return x;
 	}
 
-	void Vector::operator-=(const Vector& v) noexcept
+	void Vector::operator-=(const Vector& v)
 	{
-		x -= v.x;
-		y -= v.y;
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		for (size_t i = 0; i < m_size; i++)
+			m_nums[i] -= v[i];
 	}
 
 	void Vector::operator-=(const f64& d) noexcept
 	{
-		x -= d;
-		y -= d;
+		for (size_t i = 0; i < m_size; i++)
+			m_nums[i] -= d;
 	}
 
-	Vector Vector::operator*(const Vector& v) const noexcept
+	Vector Vector::operator+(const Vector& v) const
 	{
-		Vector result(*this);
-		result.x *= v.x;
-		result.y *= v.y;
-		return result;
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		Vector x(*this);
+		for (size_t i = 0; i < m_size; i++)
+			x[i] += v[i];
+		return x;
 	}
 
-	Vector Vector::operator*(const f64& d) const noexcept
+	Vector Vector::operator+(const f64& d) const noexcept
 	{
-		Vector result(*this);
-		result.x *= d;
-		result.y *= d;
-		return result;
+		Vector x(*this);
+		for (size_t i = 0; i < m_size; i++)
+			x[i] += d;
+		return x;
 	}
 
-	void Vector::operator*=(const Vector& v) noexcept
+	void Vector::operator+=(const Vector& v)
 	{
-		x *= v.x;
-		y *= v.y;
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		for (size_t i = 0; i < m_size; i++)
+			m_nums[i] += v[i];
 	}
 
-	void Vector::operator*=(const f64& d) noexcept
+	void Vector::operator+=(const f64& d) noexcept
 	{
-		x *= d;
-		y *= d;
+		for (size_t i = 0; i < m_size; i++)
+			m_nums[i] += d;
 	}
 
-	Vector Vector::operator/(const Vector& v) const noexcept
+	Vector Vector::operator/(const Vector& v) const
 	{
-		Vector result(*this);
-		result.x /= v.x;
-		result.y /= v.y;
-		return result;
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		Vector x(*this);
+		for (size_t i = 0; i < m_size; i++)
+			x[i] /= v[i];
+		return x;
 	}
 
 	Vector Vector::operator/(const f64& d) const noexcept
 	{
-		Vector result(*this);
-		result.x /= d;
-		result.y /= d;
-		return result;
+		Vector x(*this);
+		for (size_t i = 0; i < m_size; i++)
+			x[i] /= d;
+		return x;
 	}
 
-	void Vector::operator/=(const Vector& v) noexcept
+	void Vector::operator/=(const Vector& v)
 	{
-		x /= v.x;
-		y /= v.y;
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		for (size_t i = 0; i < m_size; i++)
+			m_nums[i] /= v[i];
 	}
 
 	void Vector::operator/=(const f64& d) noexcept
 	{
-		x /= d;
-		y /= d;
+		for (size_t i = 0; i < m_size; i++)
+			m_nums[i] /= d;
 	}
 
-	bool Vector::operator^(const Line& l) const noexcept
+	Vector Vector::operator*(const Vector& v) const
 	{
-		return (Line(l.a(), *this).angle() == Line(*this, l.b()).angle());
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		Vector x(*this);
+		for (size_t i = 0; i < m_size; i++)
+			x[i] *= v[i];
+		return x;
 	}
 
-	bool Vector::operator<(const Vector& v) const noexcept
+	Vector Vector::operator*(const f64& d) const noexcept
 	{
-		return Distance(Origin, v) > Distance(Origin, *this);
+		Vector x(*this);
+		for (size_t i = 0; i < m_size; i++)
+			x[i]*= d;
+		return x;
 	}
 
-	bool Vector::operator>(const Vector& v) const noexcept
+	void Vector::operator*=(const Vector& v)
 	{
-		return Distance(Origin, v) < Distance(Origin, *this);
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		for (size_t i = 0; i < m_size; i++)
+			m_nums[i] *= v[i];
+	}
+
+	void Vector::operator*=(const f64& d) noexcept
+	{
+		for (size_t i = 0; i < m_size; i++)
+			m_nums[i] *= d;
+	}
+
+	bool Vector::operator<(const Vector& v) const
+	{
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		return GetMagnitudeSquared() < v.GetMagnitudeSquared();
+	}
+
+	bool Vector::operator>(const Vector& v) const
+	{
+		assert(m_size == v.GetSize() && "Must have vector of equal size.");
+		return GetMagnitudeSquared() > v.GetMagnitudeSquared();
 	}
 
 	Vector Vector::operator()() const noexcept
 	{
-		return Vector(x, y);
+		return *this;
 	}
 
-	void Vector::Move(const f64& offsetX, const f64& offsetY) noexcept
+	Vector operator*(const f64& d, const Vector& v)
 	{
-		this->x += offsetX;
-		this->y += offsetY;
+		return v * d;
 	}
 
-	Vector Vector::Projection(const Vector& lhs, const Vector& rhs) noexcept
+	Vector operator+(const f64& d, const Vector& v)
 	{
-		double rhs_ls = rhs.GetMagnitudeSquared();
-		return rhs * (rhs.Dot(lhs) / rhs_ls);
+		return v + d;
 	}
 
-	Vector Vector::Projection(const Vector& vector, const Line& target) noexcept
+	Vector operator-(const f64& d, const Vector& v)
 	{
-		Vector AV = vector - target.a;
-		Vector AB = target.b - target.a;
-		return target.a + AV.Dot(AB) / AB.Dot(AB) * AB;
+		Vector x(v);
+		for (f64& tmp: x)
+			tmp = d - tmp;
+		return x;
 	}
 
-	int Vector::Quadrant(const Vector& p) const noexcept
+	Vector operator/(const f64& d, const Vector& v)
 	{
-		if (p.x < this->x)
-		{
-			if (p.y < this->y)
-			{
-				return 3;
-			}
-			else if (p.y > this->y)
-			{
-				return 2;
-			}
-			return 3;
-		}
-		else if (p.x > this->x)
-		{
-			if (p.y < this->y)
-			{
-				return 4;
-			}
-			else if (p.y > this->y)
-			{
-				return 1;
-			}
-			return 1;
-		}
-		return 0;
-	}
-
-	Vector Vector::Reflection(const Vector& normal) const noexcept
-	{
-		return *this - 2 * Dot(normal) * normal;
-	}
-
-	void Vector::Reflect(const Vector& normal) noexcept
-	{
-		*this = Reflection(normal);
-	}
-
-	void Vector::Rotate(const Vector& p, const f64& angle) noexcept
-	{
-		f64 currentAngle = GetAngle(p, *this);
-		f64 ang = angle;
-		ang += currentAngle;
-		if (ang < 0) {ang += (M_PI * 2);}
-		if (ang > (M_PI) * 2) {ang -= M_PI;}
-		f64 distance = Distance(*this, p);
-		Vector v2 = GetVectorOnCircle(p, distance, ang);
-		this->x = v2.x;
-		this->y = v2.y;
-	}
-
-	void Vector::Set(const f64& newX, const f64& newY) noexcept
-	{
-		this->x = newX;
-		this->y = newY;
-	}
-
-	std::string Vector::ToString() const noexcept
-	{
-		std::string strX = std::to_string(this->x);
-		std::string strY = std::to_string(this->y);
-		return "(" + strX + ", " + strY + ")";
+		Vector x(v);
+		for (f64& tmp: x)
+			tmp = d / tmp;
+		return x;
 	}
 	
-	std::tuple<f64, f64> Vector::ToTuple() const noexcept
+	std::ostream& operator<<(std::ostream& os, const Vector2& v)
 	{
-		return std::tuple<f64, f64>(this->x, this->y);
+		return os << v.ToString();
 	}
 
-	const Vector3 Vector3::Origin = Vector3(0, 0, 0);
-	const Vector3 Vector3::Infinity = Vector3(std::numeric_limits<f64>::infinity(), std::numeric_limits<f64>::infinity(), std::numeric_limits<f64>::infinity());
-	const Vector3 Vector3::iHat = Vector3(1, 0, 0);
-	const Vector3 Vector3::jHat = Vector3(0, 1, 0);
-	const Vector3 Vector3::kHat = Vector3(0, 0, 1);
-
-	Vector3::Vector3() noexcept
+	std::ostream& operator<<(std::ostream& os, const Vector& v) noexcept
 	{
-		x = 0;
-		y = 0;
-		z = 0;
-	}
-
-	Vector3::Vector3(const f64& x, const f64& y, const f64& z) noexcept
-	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
-	}
-
-	f64 Vector3::Dot(const Vector3& v) const noexcept
-	{
-		return x * v.x + y * v.y + z * v.z;
-	}
-
-	f64 Vector3::GetMagnitude() const noexcept
-	{
-		if (!x && !y && !z)
-			return 0;
-		return sqrt(x * x + y * y + z * z);
-	}
-
-	f64 Vector3::GetMagnitudeSquared() const noexcept
-	{
-		if (!x && !y && !z)
-			return 0;
-		return x * x + y * y + z * z;
-	}
-
-	f64 Vector3::GetMagnitudeQuick() const noexcept
-	{
-		if (!x && !y && !z)
-			return 0;
-		return FastSqrt(x * x + y * y + z * z);
-	}
-
-	Vector3 Vector3::Lerp(const Vector3& other, const f64& t) const noexcept
-	{
-		return *this + (other - *this) * t;
-	}
-
-	void Vector3::Normalize() noexcept
-	{
-		f64 mag = GetMagnitude();
-		if (mag > EPSILON)
-			*this = *this / mag;
-		else
-			*this = Vector3(0, 0, 0);
-	}
-
-	Vector3 Vector3::Normalized() const noexcept
-	{
-		Vector3 v = Vector3(this->x, this->y, this->z);
-		v.Normalize();
-		return v;
-	}
-
-	Vector3 operator*(const f64& d, const Vector3& v) noexcept
-	{
-		return Vector3(d * v.x, d * v.y, d * v.z);
-	}
-
-	Vector3 operator+(const f64& d, const Vector3& v) noexcept
-	{
-		return Vector3(d + v.x, d + v.y, d + v.z);
-	}
-
-	Vector3 Vector3::operator-() const noexcept
-	{
-		return Vector3(-x, -y, -z);
-	}
-
-	Vector3 Vector3::operator+() const noexcept
-	{
-		return Vector3(+x, +y, +z);
-	}
-
-	bool Vector3::operator==(const Vector3 &v) const noexcept
-	{
-		return x == v.x && y == v.y && z == v.z;
-	}
-
-	bool Vector3::operator!=(const Vector3 &v) const noexcept
-	{
-		return x != v.x || y != v.y || z != v.z;
-	}
-
-	Vector3 Vector3::operator+(const Vector3& v) const noexcept
-	{
-		Vector3 result(*this);
-		result.x += v.x;
-		result.y += v.y;
-		result.z += v.z;
-		return result;
-	}
-
-	Vector3 Vector3::operator+(const f64& d) const noexcept
-	{
-		Vector3 result(*this);
-		result.x += d;
-		result.y += d;
-		result.z += d;
-		return result;
-	}
-
-	void Vector3::operator+=(const Vector3& v) noexcept
-	{
-		x += v.x;
-		y += v.y;
-		z += v.z;
-	}
-
-	void Vector3::operator+=(const f64& d) noexcept
-	{
-		x += d;
-		y += d;
-		z += d;
-	}
-
-	Vector3 Vector3::operator-(const Vector3& v) const noexcept
-	{
-		Vector3 result(*this);
-		result.x -= v.x;
-		result.y -= v.y;
-		result.z -= v.z;
-		return result;
-	}
-
-	Vector3 Vector3::operator-(const f64& d) const noexcept
-	{
-		Vector3 result(*this);
-		result.x -= d;
-		result.y -= d;
-		result.z -= d;
-		return result;
-	}
-
-	void Vector3::operator-=(const Vector3& v) noexcept
-	{
-		x -= v.x;
-		y -= v.y;
-		z -= v.z;
-	}
-
-	void Vector3::operator-=(const f64& d) noexcept
-	{
-		x -= d;
-		y -= d;
-		z -= d;
-	}
-
-	Vector3 Vector3::operator*(const Vector3& v) const noexcept
-	{
-		Vector3 result(*this);
-		result.x *= v.x;
-		result.y *= v.y;
-		result.z *= v.z;
-		return result;
-	}
-
-	Vector3 Vector3::operator*(const f64& d) const noexcept
-	{
-		Vector3 result(*this);
-		result.x *= d;
-		result.y *= d;
-		result.z *= d;
-		return result;
-	}
-
-	void Vector3::operator*=(const Vector3& v) noexcept
-	{
-		x *= v.x;
-		y *= v.y;
-		z *= v.z;
-	}
-
-	void Vector3::operator*=(const f64& d) noexcept
-	{
-		x *= d;
-		y *= d;
-		z *= d;
-	}
-
-	Vector3 Vector3::operator/(const Vector3& v) const noexcept
-	{
-		Vector3 result(*this);
-		result.x /= v.x;
-		result.y /= v.y;
-		result.z /= v.z;
-		return result;
-	}
-
-	Vector3 Vector3::operator/(const f64& d) const noexcept
-	{
-		Vector3 result(*this);
-		result.x /= d;
-		result.y /= d;
-		result.z /= d;
-		return result;
-	}
-
-	void Vector3::operator/=(const Vector3& v) noexcept
-	{
-		x /= v.x;
-		y /= v.y;
-		z /= v.z;
-	}
-
-	void Vector3::operator/=(const f64& d) noexcept
-	{
-		x /= d;
-		y /= d;
-		z /= d;
-	}
-
-	bool Vector3::operator<(const Vector3& v) const noexcept
-	{
-		return Distance(Vector3(0, 0, 0), v) > Distance(Vector3(0, 0, 0), *this);
-	}
-
-	bool Vector3::operator>(const Vector3& v) const noexcept
-	{
-		return Distance(Vector3(0, 0, 0), v) < Distance(Vector3(0, 0, 0), *this);
-	}
-
-	Vector3 Vector3::operator()() const noexcept
-	{
-		return Vector3(x, y, z);
-	}
-
-	void Vector3::Move(const f64& offsetX, const f64& offsetY, const f64& offsetZ) noexcept
-	{
-		this->x += offsetX;
-		this->y += offsetY;
-		this->z += offsetZ;
-	}
-
-	Vector3 Vector3::Projection(const Vector3& lhs, const Vector3& rhs) noexcept
-	{
-		double rhs_ls = rhs.GetMagnitudeSquared();
-		return rhs * (rhs.Dot(lhs) / rhs_ls);
-	}
-
-	std::string Vector3::ToString() const noexcept
-	{
-		std::string strX = std::to_string(this->x);
-		std::string strY = std::to_string(this->y);
-		std::string strZ = std::to_string(this->z);
-		return "(" + strX + ", " + strY + ", " + strZ + ")";
+		return os << v.ToString();
 	}
 	
-	std::tuple<f64, f64, f64> Vector3::ToTuple() const noexcept
+	std::ostream& operator<<(std::ostream& os, const Vector3& v)
 	{
-		return std::tuple<f64, f64, f64>(this->x, this->y, this->z);
+		return os << v.ToString();
 	}
 
-	void Vector3::Set(const f64& newX, const f64& newY, const f64& newZ) noexcept
-	{
-		x = newX;
-		y = newY;
-		z = newZ;
-	}
 }
 
-geo::Vector sin(const geo::Vector& v)
+geo::Vector2 sin(const geo::Vector2& v)
 {
-	return geo::Vector(sin(v.x), sin(v.y));
+	return geo::Vector2(sin(v.x), sin(v.y));
 }
 
-geo::Vector cos(const geo::Vector& v)
+geo::Vector2 cos(const geo::Vector2& v)
 {
-	return geo::Vector(cos(v.x), cos(v.y));
+	return geo::Vector2(cos(v.x), cos(v.y));
 }
 
-geo::Vector tan(const geo::Vector& v)
+geo::Vector2 tan(const geo::Vector2& v)
 {
-	return geo::Vector(tan(v.x), tan(v.y));
+	return geo::Vector2(tan(v.x), tan(v.y));
 }
 
-geo::Vector abs(const geo::Vector& v)
+geo::Vector2 abs(const geo::Vector2& v)
 {
-	return geo::Vector(fabs(v.x), fabs(v.y));
+	return geo::Vector2(fabs(v.x), fabs(v.y));
 }
