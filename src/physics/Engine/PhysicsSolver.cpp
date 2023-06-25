@@ -1,105 +1,44 @@
-#include "../../include/physics/Engine/World.hpp"
-#include "../../include/physics/Tools/OstreamOverloads.hpp"
+#include "../../include/physics/Engine/DynamicsWorld.hpp"
 #include <iostream>
-#include <cmath>
 namespace physics
 {
-	void ImpulseSolve(Collision& c, f64 dt)
+	geo::Vector ProjectedGaussianEliminationSolve(geo::Matrix matrix, geo::Vector right, f64 relaxation,
+		i32 iterations, geo::Vector lo, geo::Vector hi)
 	{
-		Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
-		Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
-		if (!a || !b) return;
-		// Impulses
-		// Calculate relative velocity in terms of the normal direction
-		geo::Vector rv = b->velocity - a->velocity;
-		f64 velocityAlongNormal = rv.Dot(c.points.normal);
-		if(velocityAlongNormal > 0)
-			return;
-		geo::Vector tangent = (rv - rv.Dot(c.points.normal) * c.points.normal).Normalized();
-		f64 e = std::min(a->restitution, b->restitution);
-		//geo::Vector rA = c.points.b - (a->GetCollider().GetCenter() + a->position);
-		//geo::Vector rB = c.points.a - (b->GetCollider().GetCenter() + b->position);
-		f64 j = -(1 + e) * velocityAlongNormal * c.points.depth;
-		j /= a->GetInvMass() + b->GetInvMass();
-		geo::Vector imp = j * c.points.normal;
-		f64 aPrcnt = a->GetMass() / (a->GetMass() + b->GetMass());
-		f64 bPrcnt = b->GetMass() / (a->GetMass() + b->GetMass());
-		if (std::isnan(j) || j == std::numeric_limits<f64>::infinity())
-			j = 0;
-		if (!a->isStatic)
-			a->ApplyImpulse(-imp * aPrcnt, c.points.a);
-		if (!b->isStatic)
-			b->ApplyImpulse(imp * bPrcnt, c.points.a);
-		// Friction & rotation
-		rv = b->velocity - a->velocity;
-		tangent = (rv - rv.Dot(c.points.normal) * c.points.normal).Normalized();
-		//f64 jt = -rv.Dot(tangent) / (a);
-	}
-
-	static void PositionalCorrectionSolve(Collision& c, f64 dt)
-	{
-		if (!c.a->IsDynamic() || !c.b->IsDynamic()) return;
-		Rigidbody* a = (Rigidbody*) c.a;
-		Rigidbody* b = (Rigidbody*) c.b;
-		double percentage = -100000000;
-		geo::Vector correction = c.points.depth / (a->GetMass() + b->GetMass()) * percentage * c.points.normal;
-		//geo::Vector correction = std::max(c.points.depth - slop, 0.0) / (a->GetInvMass() + b->GetInvMass()) * percentage * c.points.normal;
-		geo::Vector aPos = a->position;
-		geo::Vector bPos = b->position;
-		aPos -= a->GetInvMass() * correction;
-		bPos += b->GetInvMass() * correction;
-		
-		if (a->isKinematic && !a->isStatic)
-			a->position = aPos;
-		if (b->isKinematic && !a->isStatic)
-			b->position = bPos;
-	}
-
-	static void FrictionSolve(Collision& c, f64 dt)
-	{
-		Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
-		Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
-		if (!a || !b) return;
-		geo::Vector rv = b->velocity - a->velocity;
-		geo::Vector tangent = rv - rv.Dot(c.points.normal) * c.points.normal;
-		tangent.Normalize();
-		f64 e = std::min(a->restitution, b->restitution);
-		f64 j = -(1 + e) * rv.Dot(c.points.normal) * c.points.depth;
-		j /= a->GetInvMass() + b->GetInvMass();
-		f64 jt = -rv.Dot(tangent);
-		jt /= a->GetMass() + b->GetMass();
-		f64 mu = sqrt(SQRD(a->staticFriction) + SQRD(b->staticFriction));
-		geo::Vector frictionImpulse;
-		if (fabs(jt) < j * mu)
-			frictionImpulse = jt * tangent;
-		else
+		// Validation omitted
+		geo::Vector x = right;
+		double delta;
+		// Gauss-Seidel with Successive OverRelaxation Solver
+		for (int k = 0; k < iterations; ++k)
 		{
-			f64 kineticFriction = sqrt(SQRD(a->kineticFriction) + SQRD(b->kineticFriction));
-			frictionImpulse = -j * tangent * kineticFriction;
+			for (int i = 0; i < right.GetSize(); ++i)
+			{
+				delta = 0.;
+				for (int j = 0; j < i; ++j)
+					delta += matrix[i][j] * x[j];
+				for (int j = i + 1; j < right.GetSize(); ++j)
+					delta += matrix[i][j] * x[j];
+				delta = (right[i] - delta) / matrix[i][i];
+				x[i] += relaxation * (delta - x[i]);
+				// Project the solution within the lower and higher limits
+				if (x[i] < lo[i])
+					x[i] = lo[i];
+				if (x[i] > hi[i])
+					x[i] = hi[i];
+			}
 		}
-		if (!a->isStatic)
-			a->ApplyImpulse(-frictionImpulse);
-		if (!b->isStatic)
-			b->ApplyImpulse(frictionImpulse);
+		return x;
 	}
-	//credit to: https://gamedevelopment.tutsplus.com/tutorials/how-to-create-a-custom-2d-physics-engine-friction-scene-and-jump-table--gamedev-7756
-	//and https://gamedevelopment.tutsplus.com/tutorials/how-to-create-a-custom-2d-physics-engine-the-basics-and-impulse-resolution--gamedev-6331
+	
 	void PhysicsSolver::Solve(std::vector<Collision>& collisions, f64 dt) noexcept
 	{
 		for (Collision& c: collisions)
 		{
 			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
-			ImpulseSolve(c, dt);
-		}
-		int i = 0;
-		for (Collision& c: collisions)
-		{
-			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
-			if (i == 2)
-				std::cout<<c.a->position<<" "<<c.b->position<<"\n";
-			//ImpulseSolve(c, dt);
-			PositionalCorrectionSolve(c, dt);
-			i++;
+			Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
+			Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
+			if (!a || !b) return;
+			
 		}
 	}
 }

@@ -29,17 +29,18 @@ namespace physics
 		_isDynamic = true;
 	}
 
-	Dynamicbody::Dynamicbody(const Collider& c, const Transform& t, const bool& isTrigger, const PhysicsMaterial& p,
-		const f64& mass, bool usesGravity, const geo::Vector& drag) noexcept
+	Dynamicbody::Dynamicbody(const Collider& c, const Transform& t, bool isTrigger, const PhysicsMaterial& p,
+		f64 mass, bool usesGravity, const geo::Vector2& drag) noexcept
 	: CollisionObject(c, t, isTrigger),  _mass(mass), drag(drag), physicsMaterial(p), usesGravity(usesGravity)
 	{
 		_isDynamic = true;
 		_mass = mass;
 		_invMass = _mass ? 1 / _mass : 0;
+
 	}
 
 	Dynamicbody::Dynamicbody(const Dynamicbody& d) noexcept
-	: CollisionObject((const CollisionObject&)d), _mass(d.GetMass()), _inertia(d.GetInertia()), gravity(d.gravity), velocity(d.velocity), drag(d.drag),
+	: CollisionObject(d), _mass(d.GetMass()), _inertia(d.GetInertia()), gravity(d.gravity), velocity(d.velocity), drag(d.drag),
 		force(d.force), angularVelocity(d.angularVelocity), angularForce(d.angularForce), physicsMaterial(d.physicsMaterial), usesGravity(d.usesGravity), isStatic(d.isStatic)
 	{
 		_isDynamic = true;
@@ -73,18 +74,33 @@ namespace physics
 		return *this;
 	}
 
-	bool Dynamicbody::Equals(const Dynamicbody& other) const noexcept
+	bool Dynamicbody::operator==(const CollisionObject& other) const noexcept
 	{
-		return CollisionObject::Equals(other) && _mass == other.GetMass() &&
-			_inertia == other.GetInertia() && physicsMaterial == other.physicsMaterial &&
-			usesGravity == other.usesGravity && gravity == other.gravity && velocity == other.velocity &&
-			drag == other.drag && angularVelocity == other.angularVelocity && angularForce == other.angularForce &&
-			isStatic == other.isStatic && force == other.force;
+		if (typeid(other).name() != (typeid(*this).name()))
+			return false;
+		const Dynamicbody& o = dynamic_cast<const Dynamicbody&>(other);
+		return CollisionObject::operator==(other) && _mass == o.GetMass() &&
+			_inertia == o.GetInertia() && physicsMaterial == o.physicsMaterial &&
+			usesGravity == o.usesGravity && gravity == o.gravity && velocity == o.velocity &&
+			drag == o.drag && angularVelocity == o.angularVelocity && angularForce == o.angularForce &&
+			isStatic == o.isStatic && force == o.force;
 	}
 
-	std::vector<unsigned char> Dynamicbody::GetBytes() const noexcept
+	bool Dynamicbody::operator!=(const CollisionObject& other) const noexcept
 	{
-		return ToBytes(this, sizeof(*this));
+		if (typeid(other).name() != typeid(*this).name())
+			return true;
+		const Dynamicbody& o = dynamic_cast<const Dynamicbody&>(other);
+		return CollisionObject::operator!=(other) || _mass != o.GetMass() ||
+			_inertia != o.GetInertia() || physicsMaterial != o.physicsMaterial ||
+			usesGravity != o.usesGravity || gravity != o.gravity || velocity != o.velocity ||
+			drag != o.drag || angularVelocity != o.angularVelocity || angularForce != o.angularForce ||
+			isStatic != o.isStatic || force != o.force;
+	}
+
+	void Dynamicbody::AddConstraint(Constraint* constraint) noexcept
+	{
+		constraints.push_back(constraint);
 	}
 
 	f64 Dynamicbody::GetInertia() const noexcept
@@ -107,22 +123,44 @@ namespace physics
 		return _mass;
 	}
 
-	bool Dynamicbody::NotEquals(const Dynamicbody& other) const noexcept
+	
+	void Dynamicbody::IntegrateForces(f64 dt) noexcept
 	{
-		return CollisionObject::NotEquals((CollisionObject&)other) || _mass != other.GetMass() ||
-			_inertia != other.GetInertia() || physicsMaterial != other.physicsMaterial ||
-			usesGravity != other.usesGravity || gravity != other.gravity || velocity != other.velocity ||
-			drag != other.drag || angularVelocity != other.angularVelocity || angularForce != other.angularForce ||
-			isStatic != other.isStatic || force != other.force;
+		if (isStatic)
+			return;
+		velocity += (force * _invMass + gravity) * (dt / 2.0f);
+  		angularVelocity += angularForce * _invInertia * (dt / 2.0f);
+		force.Set(0, 0);
+		angularForce = 0;
 	}
 
-	void Dynamicbody::SetInertia(const f64& inertia) noexcept
+	void Dynamicbody::IntegrateVelocity(f64 dt) noexcept
+	{
+		if (isStatic)
+			return;
+		position += velocity * dt;
+		rotation = geo::Matrix2(transform.GetAngle() + angularVelocity * dt);
+	}
+
+	void Dynamicbody::RemoveConstraint(Constraint* constraint) noexcept
+	{
+		for (auto p = constraints.begin(); p < constraints.end(); p++)
+		{
+			if (*p == constraint)
+			{
+				constraints.erase(p);
+				return;
+			}
+		}
+	}
+
+	void Dynamicbody::SetInertia(f64 inertia) noexcept
 	{
 		_inertia = inertia;
 		_invInertia = inertia ? 1 / inertia : 0;
 	}
 
-	void Dynamicbody::SetMass(const f64& mass) noexcept
+	void Dynamicbody::SetMass(f64 mass) noexcept
 	{
 		_mass = mass;
 		_invMass = mass ? 1 / mass : 0;

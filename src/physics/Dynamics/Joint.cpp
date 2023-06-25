@@ -17,8 +17,8 @@ namespace physics
 			a->position += dis * (a->GetMass() / (a->GetMass() + b->GetMass())) * (b->position - a->position).Normalized();
 			b->position += dis * (b->GetMass() / (a->GetMass() + b->GetMass())) * (a->position - b->position).Normalized();
 		}
-		a->ApplyForce(b->GetMass() * b->velocity);
-		b->ApplyForce(a->GetMass() * a->velocity);
+		a->ApplyForce(dt, b->GetMass() * b->velocity);
+		b->ApplyForce(dt, a->GetMass() * a->velocity);
 	}
 
 	SpringJoint::SpringJoint(Dynamicbody* a, Dynamicbody* b, f64 length, f64 stiffness, f64 dampingFactor) noexcept
@@ -35,8 +35,8 @@ namespace physics
 
 	void SpringJoint::Update(f64 dt) noexcept
 	{
-		a->ApplyForce(ForceExerting() * (b->position - a->position).Normalized());
-		b->ApplyForce(ForceExerting() * (a->position - b->position).Normalized());
+		a->ApplyForce(dt, ForceExerting() * (b->position - a->position).Normalized());
+		b->ApplyForce(dt, ForceExerting() * (a->position - b->position).Normalized());
 	}
 
 	HingeJoint::HingeJoint(Dynamicbody* a, Dynamicbody* b, f64 angularFriction) noexcept

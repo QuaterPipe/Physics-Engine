@@ -1,6 +1,5 @@
 #include "../../include/physics/Collision/Collision.hpp"
 #include "../../include/physics/Collision/Algo.hpp"
-#include "../../include/physics/Tools/OstreamOverloads.hpp"
 #include <iostream>
 
 namespace physics

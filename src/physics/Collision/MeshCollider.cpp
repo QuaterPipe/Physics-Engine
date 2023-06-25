@@ -2,21 +2,17 @@
 
 namespace physics
 {
-	using namespace serialization;
 	MeshCollider::MeshCollider() noexcept
 	{
-		classCode = 0x05;
 	}
 
 	MeshCollider::MeshCollider(const std::vector<Collider*>& colliders) noexcept
 	{
-		classCode = 0x05;
 		this->colliders = colliders;
 	}
 
 	MeshCollider::MeshCollider(const MeshCollider& c) noexcept
 	{
-		classCode = 0x05;
 		for (Collider* cldr : c.colliders)
 		{
 			if (cldr)
@@ -28,6 +24,24 @@ namespace physics
 
 	MeshCollider::~MeshCollider() noexcept
 	{
+	}
+
+	bool MeshCollider::operator==(const Collider& c) const noexcept
+	{
+		if (typeid(c).name() != typeid(*this).name())
+			return false;
+		if (colliders.size() != dynamic_cast<const MeshCollider&>(c).colliders.size())
+			return false;
+		return colliders == dynamic_cast<const MeshCollider&>(c).colliders;
+	}
+
+	bool MeshCollider::operator!=(const Collider& c) const noexcept
+	{
+		if (typeid(c).name() != typeid(*this).name())
+			return true;
+		if (colliders.size() != dynamic_cast<const MeshCollider&>(c).colliders.size())
+			return true;
+		return colliders != dynamic_cast<const MeshCollider&>(c).colliders;
 	}
 
 	BoxCollider MeshCollider::BoundingBox(const Transform& t) const noexcept
@@ -57,18 +71,18 @@ namespace physics
 		return result;
 	}
 
-	geo::Vector getCentroid(std::vector<geo::Vector> points)
+	geo::Vector2 getCentroid(std::vector<geo::Vector2> points)
 	{
 		if (points.size())
 		{
-			geo::Vector first = points.at(0);
-			geo::Vector last = points.at(points.size() - 1);
+			geo::Vector2 first = points.at(0);
+			geo::Vector2 last = points.at(points.size() - 1);
 			if (first.x != last.x || first.y != last.y)
 			{
 				points.push_back(first);
 			}
 			f64 twiceArea = 0, x = 0, y = 0, f = 0;
-			geo::Vector p1, p2;
+			geo::Vector2 p1, p2;
 			// absolutely no clue what this does, it just works lol
 			for (size_t i = 0, j = points.size() - 1; i < points.size(); j=i++)
 			{
@@ -79,15 +93,15 @@ namespace physics
 				y += (p1.y + p2.y - 2 * first.y) * f;
 			}
 			f = twiceArea * 3;
-			return geo::Vector(x / f + first.x, y / f + first.y);
+			return geo::Vector2(x / f + first.x, y / f + first.y);
 		}
 		else
-			return geo::Vector::Origin;
+			return geo::Vector2::Origin;
 	}
 
-	geo::Vector MeshCollider::GetCenter() const noexcept
+	geo::Vector2 MeshCollider::GetCenter() const noexcept
 	{
-		std::vector<geo::Vector> coms;
+		std::vector<geo::Vector2> coms;
 		for (Collider* c : colliders)
 		{
 			coms.push_back(c->GetCenter());
@@ -95,9 +109,9 @@ namespace physics
 		return getCentroid(coms);
 	}
 
-	std::vector<geo::Vector> MeshCollider::GetPoints(const Transform& t) const noexcept
+	std::vector<geo::Vector2> MeshCollider::GetPoints(const Transform& t) const noexcept
 	{
-		std::vector<geo::Vector> v;
+		std::vector<geo::Vector2> v;
 		for (Collider* c : colliders)
 		{
 			auto p = c->GetPoints(t);
@@ -111,29 +125,9 @@ namespace physics
 		return (Collider*)new MeshCollider(*this);
 	}
 
-	bool MeshCollider::Equals(const MeshCollider& other) const noexcept
+	geo::Vector2 MeshCollider::Max() const noexcept
 	{
-		if (other.colliders.size() != colliders.size())
-			return false;
-		bool equals = true;
-		for (size_t i = 0; i < colliders.size(); i++)
-			equals = equals && colliders[i]->Equals(*other.colliders[i]);
-		return equals;
-	}
-
-	bool MeshCollider::NotEquals(const MeshCollider& other) const noexcept
-	{
-		return !operator==(other);
-	}
-
-	std::vector<unsigned char> MeshCollider::GetBytes() const noexcept
-	{
-		return ToBytes(this, sizeof(*this));
-	}
-
-	geo::Vector MeshCollider::Max() const noexcept
-	{
-		std::vector<geo::Vector> maxes;
+		std::vector<geo::Vector2> maxes;
 		for (auto& c : this->colliders)
 		{
 			maxes.push_back(c->Max());
@@ -141,35 +135,13 @@ namespace physics
 		return *std::max(maxes.begin(), maxes.end());
 	}
 
-	geo::Vector MeshCollider::Min() const noexcept
+	geo::Vector2 MeshCollider::Min() const noexcept
 	{
-		std::vector<geo::Vector> mins;
+		std::vector<geo::Vector2> mins;
 		for (auto& c : this->colliders)
 		{
 			mins.push_back(c->Min());
 		}
 		return *std::min(mins.begin(), mins.end());
-	}
-
-	Serializable* MeshCollider::Deserialize(const std::vector<byte>& v,
-			const size_t& index, const size_t& length) const
-	{
-		return NULL;
-	}
-
-	unsigned char MeshCollider::GetByte(const size_t& index) const
-	{
-		return Serialize().at(index);
-	}
-
-	unsigned long MeshCollider::TotalByteSize() const noexcept
-	{
-		return sizeof(*this);
-	}
-
-	std::vector<unsigned char> MeshCollider::Serialize() const noexcept
-	{
-		std::vector<unsigned char> vec;
-		return vec;
 	}
 }
