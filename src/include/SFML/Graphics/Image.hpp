@@ -21,6 +21,7 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 ////////////////////////////////////////////////////////////
+// THIS IS AN ALTERED SOURCE VERSION
 
 #ifndef SFML_IMAGE_HPP
 #define SFML_IMAGE_HPP

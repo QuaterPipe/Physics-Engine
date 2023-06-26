@@ -26,7 +26,7 @@ namespace physics
 	{
 	}
 
-	MassPoint::MassPoint(geo::Vector position, geo::Vector velocity, geo::Vector force, f64 invMass, f64 radius) noexcept
+	MassPoint::MassPoint(geo::Vector2 position, geo::Vector2 velocity, geo::Vector2 force, f64 invMass, f64 radius) noexcept
 	: position(position), velocity(velocity), force(force), radius(radius), invMass(invMass)
 	{
 	}
@@ -99,7 +99,7 @@ namespace physics
 		const f64& radiusPerPoint, const f64& invMassPerPoint) noexcept
 	: Dynamicbody(BoxCollider(), t, false), width(width), height(height), radiusPerPoint(radiusPerPoint)
 	{
-		geo::Vector vec(0, height * spacing);
+		geo::Vector2 vec(0, height * spacing);
 		for (int i = 0; i < height; i++)
 		{
 			std::vector<MassPoint> arr;
@@ -153,10 +153,10 @@ namespace physics
 		{
 			for (int j = 0; j < width - 1; j++)
 			{
-				geo::Vector a = points[i][j].position;
-				geo::Vector b = points[i][j + 1].position;
-				geo::Vector c = points[i + 1][j + 1].position;
-				geo::Vector d = points[i + 1][j].position;
+				geo::Vector2 a = points[i][j].position;
+				geo::Vector2 b = points[i][j + 1].position;
+				geo::Vector2 c = points[i + 1][j + 1].position;
+				geo::Vector2 d = points[i + 1][j].position;
 				PolygonCollider p(a, b, c, {d});
 				_colliders.push_back(p);
 			}
@@ -242,52 +242,45 @@ namespace physics
 		return *this;
 	}
 
-	void Softbody::ApplyForce(const geo::Vector& Force, const geo::Vector& contactPoint) noexcept
+	bool Softbody::operator==(const CollisionObject& other) const noexcept
 	{
-		if (contactPoint == geo::Vector::Infinity)
-		{
-			for (auto& vec: points)
-			{
-				for (MassPoint& v: vec)
-					v.force += Force * v.invMass;
-			}
-		}
-		else
-		{
-			for (auto& vec: points)
-			{
-				for (MassPoint& m: vec)
-				{
-					if (geo::DistanceSquared(m.position, contactPoint) <= SQRD(0.000001))
-					{
-						m.force += Force * m.invMass;
-						break;
-					}
-				}
-			}
-		}
-		pointsChanged = true;
+		if (typeid(other).name() != typeid(*this).name())
+			return false;
+		auto o = dynamic_cast<const Softbody&>(other);
+		return Dynamicbody::operator==((const Dynamicbody&)other) && (o.points == this->points) && 
+			(o.springs == this->springs) && (o.width == this->width) &&
+			(o.height == this->height) && (o.usesGravity == this->usesGravity);
 	}
 
-	void Softbody::ApplySpringForces() noexcept
+	bool Softbody::operator!=(const CollisionObject& other) const noexcept
+	{
+		if (typeid(other).name() != typeid(*this).name())
+			return true;
+		auto o = dynamic_cast<const Softbody&>(other);
+		return Dynamicbody::operator!=(other) || (o.points != this->points) || 
+			(o.springs != this->springs) || (o.width != this->width) ||
+			(o.height != this->height) || (o.usesGravity != this->usesGravity);
+	}
+
+	void Softbody::ApplySpringForces(f64 dt) noexcept
 	{
 		for (Spring& s: springs)
 		{
-			s.a->force += s.ForceExerting() * (s.b->position - s.a->position).Normalized();
-			s.b->force += s.ForceExerting() * (s.a->position - s.b->position).Normalized();	
+			s.a->force += s.ForceExerting() * (s.b->position - s.a->position).Normalized() * dt;
+			s.b->force += s.ForceExerting() * (s.a->position - s.b->position).Normalized() * dt;	
 			if ((s.a->force * s.a->invMass).GetMagnitudeSquared() > SQRD(EPSILON) ||( s.b->force * s.b->invMass).GetMagnitudeSquared() > SQRD(EPSILON))
 				pointsChanged = true;
 		}
 	}
 
-	void Softbody::ApplyImpulse(const geo::Vector& impulse, const geo::Vector& contactVec) noexcept
+	void Softbody::ApplyImpulse(f64 dt, const geo::Vector2& impulse, const geo::Vector2& contactVec) noexcept
 	{
-		if (contactVec == geo::Vector::Infinity)
+		if (contactVec == geo::Vector2::Infinity)
 		{
 			for (auto& vec: points)
 			{
 				for (MassPoint& m: vec)
-					m.velocity += impulse * m.invMass;
+					m.velocity += impulse * m.invMass *  dt;
 			}
 		}
 		else
@@ -298,7 +291,7 @@ namespace physics
 				{
 					if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
 					{
-						m.velocity += impulse * m.invMass;
+						m.velocity += impulse * m.invMass * dt;
 						pointsChanged = true;
 						return;
 					}
@@ -307,21 +300,46 @@ namespace physics
 		}
 	}
 
-	void Softbody::ApplyAngularForce(f64 force) noexcept
+	void Softbody::ApplyForce(f64 dt, const geo::Vector2& force, const geo::Vector2& contactVec) noexcept
 	{
-		angularVelocity += force;
+		if (contactVec == geo::Vector2::Infinity)
+		{
+			for (auto& vec: points)
+			{
+				for (MassPoint& m: vec)
+					m.force += force *  dt;
+			}
+		}
+		else
+		{
+			for (auto& vec: points)
+			{
+				for (MassPoint& m: vec)
+				{
+					if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
+					{
+						m.force += force * dt;
+						pointsChanged = true;
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	void Softbody::ApplyAngularForce(f64 dt, f64 force) noexcept
+	{
+		angularForce += force * dt;
+	}
+
+	void Softbody::ApplyAngularImpulse(f64 dt, f64 force) noexcept
+	{
+		angularVelocity += force * dt;
 	}
 
 	CollisionObject* Softbody::Clone() const noexcept
 	{
 		return (CollisionObject*)new Softbody(*this);
-	}
-
-	bool Softbody::Equals(const Softbody& other) const noexcept
-	{
-		return Dynamicbody::Equals(other) && (other.points == this->points) && 
-			(other.springs == this->springs) && (other.width == this->width) &&
-			(other.height == this->height) && (other.usesGravity == this->usesGravity);
 	}
 
 	void Softbody::FixCollapsing() noexcept
@@ -339,22 +357,17 @@ namespace physics
 		}
 	}
 
-	bool Softbody::NotEquals(const Softbody& other) const noexcept
-	{
-		return Dynamicbody::NotEquals(other) || (other.points != this->points) || 
-			(other.springs != this->springs) || (other.width != this->width) ||
-			(other.height != this->height) || (other.usesGravity != this->usesGravity);
-	}
-
-	std::vector<unsigned char> Softbody::GetBytes() const noexcept
-	{
-		return ToBytes(this, sizeof(*this));
-	}
-
 	void Softbody::Update(f64 dt) noexcept
 	{
 		if (!isStatic)
 		{
+			velocity += (force * _invMass) * (dt / 2.0);
+			angularVelocity += (angularForce * _invInertia) * (dt / 2.0);
+			position += velocity * dt;
+			rotation = geo::Matrix2(transform.GetAngle() + angularVelocity * dt);
+			angularForce = 0;
+			force.Set(0, 0);
+			ApplySpringForces(dt);
 			for (std::vector<MassPoint>& mVec: points)
 			{
 				for (MassPoint& m: mVec)
@@ -377,11 +390,11 @@ namespace physics
 		{
 			for (int j = 0; j < width - 1; j++)
 			{
-				geo::Vector a = points[i][j].position;
-				geo::Vector b = points[i][j + 1].position;
-				geo::Vector c = points[i + 1][j + 1].position;
-				geo::Vector d = points[i + 1][j].position;
-				PolygonCollider p(geo::Vector(0, 0), a, b, c, {d});
+				geo::Vector2 a = points[i][j].position;
+				geo::Vector2 b = points[i][j + 1].position;
+				geo::Vector2 c = points[i + 1][j + 1].position;
+				geo::Vector2 d = points[i + 1][j].position;
+				PolygonCollider p(geo::Vector2(0, 0), a, b, c, {d});
 				_colliders.push_back(p);
 			}
 		}
