@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,20 +29,20 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
-#include "System.hpp"
-#include "Audio/InputSoundFile.hpp"
-#include "Audio/Listener.hpp"
-#include "Audio/Music.hpp"
-#include "Audio/OutputSoundFile.hpp"
-#include "Audio/Sound.hpp"
-#include "Audio/SoundBuffer.hpp"
-#include "Audio/SoundBufferRecorder.hpp"
-#include "Audio/SoundFileFactory.hpp"
-#include "Audio/SoundFileReader.hpp"
-#include "Audio/SoundFileWriter.hpp"
-#include "Audio/SoundRecorder.hpp"
-#include "Audio/SoundSource.hpp"
-#include "Audio/SoundStream.hpp"
+#include <SFML/System.hpp>
+#include <SFML/Audio/InputSoundFile.hpp>
+#include <SFML/Audio/Listener.hpp>
+#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/OutputSoundFile.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Audio/SoundBufferRecorder.hpp>
+#include <SFML/Audio/SoundFileFactory.hpp>
+#include <SFML/Audio/SoundFileReader.hpp>
+#include <SFML/Audio/SoundFileWriter.hpp>
+#include <SFML/Audio/SoundRecorder.hpp>
+#include <SFML/Audio/SoundSource.hpp>
+#include <SFML/Audio/SoundStream.hpp>
 
 
 #endif // SFML_AUDIO_HPP

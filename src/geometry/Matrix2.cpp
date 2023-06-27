@@ -28,25 +28,19 @@ namespace geo
 	Matrix2::Row Matrix2::operator[](size_t index)
 	{
 		assert(index <= 1);
-		switch (index)
-		{
-			case 0:
-				return Matrix2::Row(arr);
-			case 1:
-				return Matrix2::Row(arr + 2);
-		}
+		if (!index)
+			return Matrix2::Row(arr);
+		else
+			return Matrix2::Row(arr + 2);
 	}
 
 	Matrix2::ConstRow Matrix2::operator[](size_t index) const
 	{
 		assert(index <= 1);
-		switch (index)
-		{
-			case 0:
-				return Matrix2::ConstRow(arr);
-			case 1:
-				return Matrix2::ConstRow(arr + 2);
-		}
+		if (!index)
+			return Matrix2::ConstRow(arr);
+		else
+			return Matrix2::ConstRow(arr + 2);
 	}
 
 	Matrix2& Matrix2::operator=(const Matrix2& other) noexcept

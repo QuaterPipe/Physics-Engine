@@ -46,11 +46,31 @@ namespace physics
 		return b;
 	}
 
+	Collider* PointCollider::Clone() const noexcept
+	{
+		return new PointCollider(*this);
+	}
+
+	geo::Vector2 PointCollider::GetCenter() const noexcept
+	{
+		return position;
+	}
+
 	std::vector<geo::Vector2> PointCollider::GetPoints(const Transform& t) const noexcept
 	{
 		std::vector<geo::Vector2> v;
 		v.push_back(t.TransformVector(position));
 		return v;
+	}
+
+	geo::Vector2 PointCollider::Max() const noexcept
+	{
+		return position;
+	}
+
+	geo::Vector2 PointCollider::Min() const noexcept
+	{
+		return position;
 	}
 
 }

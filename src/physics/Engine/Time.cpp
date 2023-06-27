@@ -4,7 +4,7 @@ namespace physics
 	void Time::Tick()
 	{
 		std::chrono::time_point<clock> t = clock::now();
-		microDeltaTime = std::chrono::duration_cast<std::chrono::microseconds>(t - time).count();
+		microDeltaTime = (double)std::chrono::duration_cast<std::chrono::microseconds>(t - time).count();
 		deltaTime = microDeltaTime * 0.001;
 		time = clock::now();
 	}
@@ -19,7 +19,7 @@ namespace physics
 	void Timer::Stop()
 	{
 		stop = clock::now();
-		microDeltaTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+		microDeltaTime = (double)std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
 		deltaTime = microDeltaTime * 0.001;
 	}
 

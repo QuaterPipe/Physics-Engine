@@ -3,6 +3,10 @@
 #include <cassert>
 #define _USE_MATH_DEFINES
 #include <cmath>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+#include <sstream>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -176,7 +180,7 @@ namespace geo
 	{
 		public:
 			Vector() noexcept;
-			Vector(f64 size, f64 n = 0) noexcept;
+			Vector(size_t size, f64 n = 0) noexcept;
 			Vector(const std::vector<f64>& numbers) noexcept;
 			Vector(const Vector& v) noexcept;
 			std::vector<f64>::iterator begin() noexcept;

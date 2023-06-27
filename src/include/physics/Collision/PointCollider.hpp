@@ -14,7 +14,10 @@ namespace physics
 			Collider* Clone() const noexcept override;
 			bool operator==(const Collider& c) const noexcept override;
 			bool operator!=(const Collider& c) const noexcept override;
+			virtual geo::Vector2 GetCenter() const noexcept override;
 			virtual std::vector<geo::Vector2> GetPoints(const Transform& t = Transform()) const noexcept override;
+			geo::Vector2 Max() const noexcept override;
+			geo::Vector2 Min() const noexcept override;
 			virtual CollisionPoints TestCollision(
 				const Transform& transform,
 				const Collider* collider,

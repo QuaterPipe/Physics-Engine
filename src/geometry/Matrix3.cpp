@@ -54,29 +54,24 @@ namespace geo
 	Matrix3::Row Matrix3::operator[](size_t index)
 	{
 		assert(index <= 3);
-		switch (index)
-		{
-			case 0:
-				return Row(arr);
-			case 1:
-				return Row(arr + 3);
-			case 2:
-				return Row(arr + 6);
-		}
+		if (!index)
+			return Row(arr);
+		else if (index == 1)
+			return Row(arr + 3);
+		else
+			return Row(arr + 6);
 	}
 	
 	Matrix3::ConstRow Matrix3::operator[](size_t index) const
 	{
 		assert(index <= 3);
-		switch (index)
-		{
-			case 0:
-				return ConstRow(arr);
-			case 1:
-				return ConstRow(arr + 3);
-			case 2:
-				return ConstRow(arr + 6);
-		}
+		
+		if (!index)
+			return ConstRow(arr);
+		else if (index == 1)
+			return ConstRow(arr + 3);
+		else
+			return ConstRow(arr + 6);
 	}
 
 	Vector3 Matrix3::AxisX() const noexcept

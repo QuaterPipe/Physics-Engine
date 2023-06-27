@@ -25,25 +25,19 @@ namespace geo
 	f64& Vector2::operator[](size_t index)
 	{
 		assert(index <= 1);
-		switch (index)
-		{
-			case 0:
-				return x;
-			case 1:
-				return y;
-		}
+		if (!index)
+			return x;
+		else;
+			return y;
 	}
 
 	const f64& Vector2::operator[](size_t index) const
 	{
 		assert(index <= 1);
-		switch (index)
-		{
-			case 0:
-				return x;
-			case 1:
-				return y;
-		}
+		if (!index)
+			return x;
+		else
+			return y;
 	}
 
 	Vector2 Vector2::Abs() const noexcept

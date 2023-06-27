@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,10 +28,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "../Config.hpp"
-#include "../System/Export.hpp"
-#include "../System/InputStream.hpp"
-#include "../System/NonCopyable.hpp"
+#include <SFML/Config.hpp>
+#include <SFML/System/Export.hpp>
+#include <SFML/System/InputStream.hpp>
+#include <SFML/System/NonCopyable.hpp>
 #include <cstdio>
 #include <string>
 
@@ -125,7 +125,7 @@ private:
 #ifdef SFML_SYSTEM_ANDROID
     priv::ResourceStream* m_file;
 #else
-    std::FILE* m_file; ///< stdio file stream
+    std::FILE* m_file; //!< stdio file stream
 #endif
 };
 

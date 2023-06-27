@@ -8,7 +8,7 @@ namespace geo
 	{
 	}
 
-	Vector::Vector(f64 size, f64 n) noexcept
+	Vector::Vector(size_t size, f64 n) noexcept
 	: m_size(size)
 	{
 		m_nums.resize(size);

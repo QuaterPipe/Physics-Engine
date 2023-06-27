@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,12 +28,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "../Graphics/Export.hpp"
-#include "../Graphics/Glsl.hpp"
-#include "../Window/GlResource.hpp"
-#include "../System/NonCopyable.hpp"
-#include "../System/Vector2.hpp"
-#include "../System/Vector3.hpp"
+#include <SFML/Graphics/Export.hpp>
+#include <SFML/Graphics/Glsl.hpp>
+#include <SFML/Window/GlResource.hpp>
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/System/Vector3.hpp>
 #include <map>
 #include <string>
 
@@ -59,9 +59,9 @@ public:
     ////////////////////////////////////////////////////////////
     enum Type
     {
-        Vertex,   ///< %Vertex shader
-        Geometry, ///< Geometry shader
-        Fragment  ///< Fragment (pixel) shader
+        Vertex,   //!< %Vertex shader
+        Geometry, //!< Geometry shader
+        Fragment  //!< Fragment (pixel) shader
     };
 
     ////////////////////////////////////////////////////////////
@@ -745,10 +745,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_shaderProgram;  ///< OpenGL identifier for the program
-    int          m_currentTexture; ///< Location of the current texture in the shader
-    TextureTable m_textures;       ///< Texture variables in the shader, mapped to their location
-    UniformTable m_uniforms;       ///< Parameters location cache
+    unsigned int m_shaderProgram;  //!< OpenGL identifier for the program
+    int          m_currentTexture; //!< Location of the current texture in the shader
+    TextureTable m_textures;       //!< Texture variables in the shader, mapped to their location
+    UniformTable m_uniforms;       //!< Parameters location cache
 };
 
 } // namespace sf

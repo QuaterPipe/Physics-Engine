@@ -64,9 +64,9 @@ namespace geo
 		if (!_width)
 			return 0;
 		if (_width == 1)
-			return (*this)[0][0];
+			return (i32)(*this)[0][0];
 		if (_width == 2)
-			return (*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0];
+			return (i32)(*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0];
 		i32 dimension = _width;
 		f64 result = 0;
 		i32 sign = 1;
@@ -88,7 +88,7 @@ namespace geo
 			result = result + sign * (*this)[0][1] * subMatrix.GetDeterminant();
 			sign = -sign;
 		}
-		return result;
+		return (i32)result;
 	}
 
 	Matrix Matrix::GetTranspose() const
@@ -158,25 +158,13 @@ namespace geo
 	{
 		u32 w = std::max(_width, other.GetWidth());
 		u32 h = std::max(_height, other.GetHeight());
-		f64 thisCopy[h][w] = {};
-		for (u32 i = 0; i < _height; i++)
-		{
-			for (u32 j = 0; j < _width; j++)
-				thisCopy[i][j] = (*this)[i][j];
-		}
-		f64 otherCopy[h][w] = {};
-		for (u32 i = 0; i < other.GetHeight(); i++)
-		{
-			for (u32 j = 0; j < other.GetWidth(); j++)
-				otherCopy[i][j] = other[i][j];
-		}
 		Matrix result(w, h);
 		for (u32 i = 0; i < h; i++)
 		{
 			for (u32 k = 0; k < w; k++)
 			{
 				for (u32 j = 0; j < w; j++)
-					result[i][j] += thisCopy[i][k] * otherCopy[k][j];
+					result[i][j] += (*this)[i][k] * other[k][j];
 			}
 		}
 		return result;

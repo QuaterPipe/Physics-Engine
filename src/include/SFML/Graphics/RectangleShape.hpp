@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2023 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,8 +28,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "../Graphics/Export.hpp"
-#include "../Graphics/Shape.hpp"
+#include <SFML/Graphics/Export.hpp>
+#include <SFML/Graphics/Shape.hpp>
 
 
 namespace sf
@@ -99,7 +99,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f m_size; ///< Size of the rectangle
+    Vector2f m_size; //!< Size of the rectangle
 };
 
 } // namespace sf

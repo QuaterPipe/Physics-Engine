@@ -11,12 +11,12 @@ namespace physics
 		// Gauss-Seidel with Successive OverRelaxation Solver
 		for (int k = 0; k < iterations; ++k)
 		{
-			for (int i = 0; i < right.GetSize(); ++i)
+			for (unsigned int i = 0; i < right.GetSize(); ++i)
 			{
 				delta = 0.;
 				for (int j = 0; j < i; ++j)
 					delta += matrix[i][j] * x[j];
-				for (int j = i + 1; j < right.GetSize(); ++j)
+				for (unsigned int j = i + 1; j < right.GetSize(); ++j)
 					delta += matrix[i][j] * x[j];
 				delta = (right[i] - delta) / matrix[i][i];
 				x[i] += relaxation * (delta - x[i]);

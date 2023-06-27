@@ -48,8 +48,8 @@ namespace physics
 	{
 		BoxCollider smallest;
 		BoxCollider largest;
-		bool reachedSmallest;
-		bool reachedLargest;
+		bool reachedSmallest = false;
+		bool reachedLargest = false;
 		for (Collider* c: colliders)
 		{
 			if (!reachedSmallest && !reachedLargest)

@@ -5,3 +5,11 @@ test/
 *.txt
 *.exe
 ./*.cpp
+.vscode
+.vs
+Debug
+x64
+*.sln
+*.vcxproj
+*.filters
+*.user
