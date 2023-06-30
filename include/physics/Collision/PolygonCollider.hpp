@@ -51,9 +51,5 @@ namespace physics
 				const Transform& transform,
 				const MeshCollider* collider,
 				const Transform& colliderTransform) const noexcept override;
-			virtual CollisionPoints TestCollision(
-				const Transform& transform,
-				const PointCollider* collider,
-				const Transform& colliderTransform) const noexcept override;
 	};
 }

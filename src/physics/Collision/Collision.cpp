@@ -40,13 +40,6 @@ namespace physics
 		return algo::CircleMeshCollision(this, transform, collider, colliderTransform);
 	}
 
-	CollisionPoints CircleCollider::TestCollision(const Transform &transform,
-		const PointCollider* collider,
-		const Transform& colliderTransform) const noexcept
-	{
-		return algo::PointCircleCollision(collider, colliderTransform, this, transform);
-	}
-
 	CollisionPoints PolygonCollider::TestCollision(const Transform& transform,
 		const Collider* collider,
 		const Transform& colliderTransform) const noexcept
@@ -80,13 +73,6 @@ namespace physics
 		const Transform& colliderTransform) const noexcept
 	{
 		return algo::PolygonMeshCollision(this, transform, collider, colliderTransform);
-	}
-
-	CollisionPoints PolygonCollider::TestCollision(const Transform &transform,
-		const PointCollider* collider,
-		const Transform& colliderTransform) const noexcept
-	{
-		return algo::PointPolygonCollision(collider, colliderTransform, this, transform);
 	}
 
 	CollisionPoints BoxCollider::TestCollision(const Transform& transform,
@@ -124,13 +110,6 @@ namespace physics
 		return algo::BoxMeshCollision(this, transform, collider, colliderTransform);
 	}
 
-	CollisionPoints BoxCollider::TestCollision(const Transform &transform,
-		const PointCollider* collider,
-		const Transform& colliderTransform) const noexcept
-	{
-		return algo::PointBoxCollision(collider, colliderTransform, this, transform);
-	}
-
 	CollisionPoints MeshCollider::TestCollision(const Transform& transform,
 		const Collider* collider,
 		const Transform& colliderTransform
@@ -165,55 +144,5 @@ namespace physics
 		const Transform& colliderTransform) const noexcept
 	{
 		return algo::MeshMeshCollision(this, transform, collider, colliderTransform);
-	}
-
-	CollisionPoints MeshCollider::TestCollision(const Transform &transform,
-		const PointCollider* collider,
-		const Transform& colliderTransform) const noexcept
-	{
-		return algo::PointMeshCollision(collider, colliderTransform, this, transform);
-	}
-
-	CollisionPoints PointCollider::TestCollision(const Transform& transform,
-		const Collider* collider,
-		const Transform& colliderTransform
-	) const noexcept
-	{
-		return collider->TestCollision(colliderTransform, this, transform);
-	}
-
-	CollisionPoints PointCollider::TestCollision(const Transform& transform,
-		const CircleCollider* collider,
-		const Transform& colliderTransform) const noexcept
-	{
-		return algo::PointCircleCollision(this, transform, collider, colliderTransform);
-	}
-
-	CollisionPoints PointCollider::TestCollision(const Transform& transform,
-		const PolygonCollider* collider,
-		const Transform& colliderTransform) const noexcept
-	{
-		return algo::PointPolygonCollision(this, transform, collider, colliderTransform);
-	}
-
-	CollisionPoints PointCollider::TestCollision(const Transform& transform,
-		const BoxCollider* collider,
-		const Transform& colliderTransform) const noexcept
-	{
-		return algo::PointBoxCollision(this, transform, collider, colliderTransform);
-	}
-
-	CollisionPoints PointCollider::TestCollision(const Transform& transform,
-		const MeshCollider* collider,
-		const Transform& colliderTransform) const noexcept
-	{
-		return algo::PointMeshCollision(this, transform, collider, colliderTransform);
-	}
-
-	CollisionPoints PointCollider::TestCollision(const Transform &transform,
-		const PointCollider* collider,
-		const Transform& colliderTransform) const noexcept
-	{
-		return algo::PointPointCollision(this, transform, collider, colliderTransform);
 	}
 }
