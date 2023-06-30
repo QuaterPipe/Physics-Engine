@@ -1,7 +1,7 @@
 #pragma once
-#include "../Dynamics/VelocityConstraint.hpp"
+#include "physics/Dynamics/VelocityConstraint.hpp"
 #include "Collider.hpp"
-#include "../Engine/Time.hpp"
+#include "physics/Engine/Time.hpp"
 #include <functional>
 #include <memory>
 

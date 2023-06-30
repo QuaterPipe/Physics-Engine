@@ -1,4 +1,4 @@
-#include "../../include/physics/Dynamics/Dynamicbody.hpp"
+#include "physics/Dynamics/Dynamicbody.hpp"
 
 namespace physics
 {

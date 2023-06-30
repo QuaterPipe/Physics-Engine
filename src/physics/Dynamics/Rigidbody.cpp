@@ -1,4 +1,4 @@
-#include "../../include/physics/Dynamics/Rigidbody.hpp"
+#include "physics/Dynamics/Rigidbody.hpp"
 #include <iostream>
 
 namespace physics

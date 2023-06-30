@@ -1,4 +1,4 @@
-#include "../include/geometry/Matrix.hpp"
+#include "geometry/Matrix.hpp"
 namespace geo
 {
 	Matrix::~Matrix() noexcept
@@ -23,7 +23,7 @@ namespace geo
 			array[i] = mat.array[i];
 	}
 	
-	Matrix::Matrix(u32 width, u32 height, f64 n) noexcept
+	Matrix::Matrix(size_t width, size_t height, f64 n) noexcept
 	: _width(width), _height(height)
 	{
 		array = new f64[_width * _height];
@@ -31,10 +31,12 @@ namespace geo
 			array[i] = n;
 	}
 
-	Matrix::Matrix(f64* arr, u32 width, u32 height) noexcept
+	Matrix::Matrix(const f64* arr, size_t width, size_t height) noexcept
 	: _width(width), _height(height)
 	{
-		array = new f64[_width * _height];
+		array = new f64[width * height];
+		for (size_t i = 0; i < width * height; i++)
+			array[i] = arr[i];
 	}
 
 	Matrix& Matrix::operator=(const Matrix& other) noexcept

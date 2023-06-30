@@ -1,16 +1,16 @@
-#include "../../include/physics/Collision/Transform.hpp"
+#include "physics/Collision/Transform.hpp"
 #include <iostream>
 
 namespace physics
 {
 	Transform::Transform() noexcept
-	: position(0, 0), centerOfRotation(0, 0)
+		: position(0, 0), centerOfRotation(0, 0)
 	{
 	}
 
 	Transform::Transform(const Transform& transform) noexcept
-	: position(transform.position), centerOfRotation(transform.centerOfRotation),
-	scale(transform.scale), rotation(transform.rotation)
+		: position(transform.position), centerOfRotation(transform.centerOfRotation),
+		scale(transform.scale), rotation(transform.rotation)
 	{
 	}
 
@@ -46,6 +46,15 @@ namespace physics
 	bool Transform::operator!=(const Transform& other) const noexcept
 	{
 		return !(position == other.position && scale == other.scale && rotation == other.rotation);
+	}
+
+	Transform Transform::operator*(const Transform& other) const noexcept
+	{
+		Transform t;
+		t.rotation = rotation * other.rotation;
+		t.scale = scale * other.scale;
+		t.position = position + other.position;
+		return t;
 	}
 
 	

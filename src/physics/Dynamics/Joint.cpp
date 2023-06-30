@@ -1,4 +1,4 @@
-#include "../../include/physics/Dynamics/Dynamicbody.hpp"
+#include "physics/Dynamics/Dynamicbody.hpp"
 
 namespace physics
 {
@@ -53,7 +53,7 @@ namespace physics
 			a->centerOfRotation = aContact;
 		if (b->centerOfRotation != aContact)
 			b->centerOfRotation = aContact;
-		a->angularVelocity *= (1 - angularFriction);
-		b->angularVelocity *= (1 - angularFriction);
+		a->angularVelocity *= (1 - angularFriction) * dt;
+		b->angularVelocity *= (1 - angularFriction) * dt;
 	}
 }

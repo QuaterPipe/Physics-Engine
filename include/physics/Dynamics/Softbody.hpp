@@ -1,5 +1,5 @@
 #pragma once
-#include "../Collision/Collision.hpp"
+#include "physics/Collision/Collision.hpp"
 #include "Dynamicbody.hpp"
 namespace physics
 {

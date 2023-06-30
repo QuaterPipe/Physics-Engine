@@ -1,4 +1,4 @@
-#include "../Dynamics/Constraint.hpp"
+#include "physics/Dynamics/Constraint.hpp"
 namespace physics
 {
 	geo::Vector ProjectedGaussianEliminationSolve(geo::Matrix matrix, geo::Vector right, f64 relaxation,

@@ -1,5 +1,5 @@
-#include "../include/geometry/Math.hpp"
-#include "../include/geometry/Line.hpp"
+#include "geometry/Math.hpp"
+#include "geometry/Line.hpp"
 #include <iostream>
 
 namespace geo

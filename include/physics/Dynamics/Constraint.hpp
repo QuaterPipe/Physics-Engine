@@ -1,5 +1,5 @@
 #pragma once
-#include "../../geometry/main.hpp"
+#include "geometry/main.hpp"
 namespace physics
 {	
 	struct Dynamicbody;

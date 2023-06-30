@@ -1,4 +1,4 @@
-#include "../../include/physics/Engine/DynamicsWorld.hpp"
+#include "physics/Engine/DynamicsWorld.hpp"
 #include <iostream>
 #define MAXXVEL 100000
 #define MAXYVEL 100000
@@ -55,7 +55,7 @@ namespace physics
 						c.a = a;
 						c.b = b;
 						c.points = points;
-						_collisions.push_back(c);
+						/*_collisions.push_back(c);
 						if (!a->hadCollisionLastFrame || !b->hadCollisionLastFrame)
 						{
 							VelocityConstraint* constraint = new VelocityConstraint();
@@ -66,7 +66,7 @@ namespace physics
 							constraint->contactB = c.points.b;
 							a->AddConstraint(constraint);
 							b->AddConstraint(constraint);
-						}
+						}*/
 					}
 				}
 			}

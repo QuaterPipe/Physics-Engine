@@ -1,4 +1,4 @@
-#include "../include/geometry/main.hpp"
+#include "geometry/main.hpp"
 
 namespace geo
 {

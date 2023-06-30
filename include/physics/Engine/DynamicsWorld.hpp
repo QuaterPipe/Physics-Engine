@@ -1,9 +1,9 @@
 #pragma once
 #include "ConstraintSolver.hpp"
-#include "../Collision/Collision.hpp"
-#include "../Dynamics/Rigidbody.hpp"
-#include "../Dynamics/Softbody.hpp"
-#include "../Dynamics/VelocityConstraint.hpp"
+#include "physics/Collision/Collision.hpp"
+#include "physics/Dynamics/Rigidbody.hpp"
+#include "physics/Dynamics/Softbody.hpp"
+#include "physics/Dynamics/VelocityConstraint.hpp"
 #include <algorithm>
 
 namespace physics

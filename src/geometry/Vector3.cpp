@@ -1,5 +1,5 @@
-#include "../include/geometry/Vector.hpp"
-#include "../include/geometry/Math.hpp"
+#include "geometry/Vector.hpp"
+#include "geometry/Math.hpp"
 
 namespace geo
 {

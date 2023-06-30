@@ -1,4 +1,4 @@
-#include "../../include/physics/Collision/Algo.hpp"
+#include "physics/Collision/Algo.hpp"
 #include <iostream>
 #define MAX std::numeric_limits<f64>::max()
 #define MIN std::numeric_limits<f64>::min()
@@ -20,11 +20,13 @@ namespace physics::algo
 		if (SQRD(a->radius + b->radius) >= r)
 		{
 			geo::Line l(ACenter, BCenter);
-			c.a = l.GetVectorAlongLine(a->radius);
-			c.b = l.GetVectorAlongLine(b->radius, false);
-			c.depth = geo::Distance(c.a, c.b);
-			c.normal = c.a - c.b;
+			geo::Vector2 ca = l.GetVectorAlongLine(a->radius);
+			geo::Vector2 cb = l.GetVectorAlongLine(b->radius, false);
+			c.depth = geo::Distance(ca, cb);
+			c.normal = ca - cb;
 			c.normal.Normalize();
+			c.points.push_back(ca);
+			c.points.push_back(cb);
 			c.hasCollision = true;
 		}
 		return c;
@@ -48,13 +50,27 @@ namespace physics::algo
 	)
 	{
 		CollisionPoints c;
-		c.hasCollision = false;
-		if (!a || !b) {return c;}
-		for (const Collider* ptr: b->colliders)
+		if (!a || !b)
+			return c;
+		f64 avg = 0;
+		for (const Collider* ptr : b->colliders)
 		{
-			c = ptr->TestCollision(tb, a, ta);
-			if (c.hasCollision) {return c;}
+			CollisionPoints tmp = ptr->TestCollision(tb, a, ta);
+			if (tmp.hasCollision)
+			{
+				avg += tmp.depth;
+				c.hasCollision = true;
+				if (c.depth < tmp.depth)
+				{
+					c.depth = tmp.depth;
+					c.normal = tmp.normal;
+				}
+				for (auto p : tmp.points)
+					c.points.push_back(p);
+			}
 		}
+		if (avg)
+			c.depth = avg / (f64)c.points.size();
 		return c;
 	}
 }

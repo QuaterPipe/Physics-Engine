@@ -43,7 +43,7 @@ namespace geo
 	/// \brief returns the calculated centroid of the given points.
 	Vector2 Centroid(const std::vector<geo::Vector2>& vertexes) noexcept;
 	/// \brief Converts radians to degrees.
-	f64 Degrees(const f64& radians) noexcept;
+	f64 Degrees(const f64 radians) noexcept;
 	/// \brief Gets the distance between two Vectors.
 	f64 Distance(const Vector2& a, const Vector2& b) noexcept;
 	/// \brief Gets the distance between a Line and a Vector2.
@@ -62,30 +62,22 @@ namespace geo
 	/// \brief Gets the minimum distance between a line and a Vector.
 	f64 Distance(const Line& a, const Vector2& b) noexcept;
 	/// \brief Fast way to get sqrt, not as accurate as sqrt().
-	f64 FastSqrt(const f64& x) noexcept;
+	f64 FastSqrt(f64 x) noexcept;
 	/// \brief Gets the angle between three Vectors.
 	f64 GetAngle(const Vector2& a, const Vector2& b, const Vector2& c) noexcept;
 	/// \brief Gets the angle from a slope.
-	f64 GetAngle(const f64& slope) noexcept;
+	f64 GetAngle(f64 slope) noexcept;
 	/// \brief Gets the angle between two Vectors.
 	f64 GetAngle(const Vector2& center, const Vector2& Vector) noexcept;
 	/// \brief Returns a Vector on a circle based on the angle given.
-	Vector2 GetVectorOnCircle(const Vector2& center, const f64& radius, const f64& angle) noexcept;
+	Vector2 GetVectorOnCircle(const Vector2& center, f64 radius, f64 angle) noexcept;
 	/// \brief Returns the slope between two Vectors.
 	f64 GetSlope(const Vector2& a, const Vector2& b) noexcept;
 	/// \brief Checks if two lines are intersecting are not.
-	bool Intersecting(const Line& a, const Line& b, const bool& isInfLine = false) noexcept;
+	bool Intersecting(const Line& a, const Line& b, bool isInfLine = false) noexcept;
 	/// \brief Returns the point of Intersect between two lines if they are intersecting.
-	Vector2 PointOfIntersect(const Line& la, const Line& lb, const bool& isInfLine = false) noexcept;
-	//\brief
-	/// Quicksort algorithm that sorts using function to compare a to b.
-	/// The functions's first parameter is a, and it's second, b.
-	/// The function given must return negative numbers if a is less than b. 0 if they are equal,
-	/// and positive values a is greater than b. ex. returns: -1, 0, 1.
-	template <typename T>
-	void Sort(T* array, size_t low, size_t high, std::function<int(T&, T&)>& comparer = Compare) noexcept;
-	/// \brief Returns the average of the given types.
-	template <typename Numeric>
-	Numeric Average(const Numeric* start, const Numeric* end) noexcept;
+	Vector2 PointOfIntersect(const Line& la, const Line& lb, bool isInfLine = false) noexcept;
+	/// \brief converts degrees to radians
+	f64 Radians(f64 degrees) noexcept;
 #include "Math.inl"
 }

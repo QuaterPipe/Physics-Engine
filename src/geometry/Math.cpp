@@ -1,4 +1,4 @@
-#include "../include/geometry/Math.hpp"
+#include "geometry/Math.hpp"
 
 namespace geo
 {
@@ -19,7 +19,7 @@ namespace geo
 		return closestLine;
 	}
 
-	f64 Degrees(const f64& radians) noexcept
+	f64 Degrees(f64 radians) noexcept
 	{
 		return radians * (180 / M_PI);
 	}
@@ -61,7 +61,7 @@ namespace geo
 		return dis;
 	}
 
-	f64 FastSqrt(const f64& x) noexcept
+	f64 FastSqrt(f64 x) noexcept
 	{
 		f32 n = x;
 	   	static union{int i; float f;} u;
@@ -76,7 +76,7 @@ namespace geo
 		return result;
 	}
 
-	f64 GetAngle(const f64& slope) noexcept
+	f64 GetAngle(f64 slope) noexcept
 	{
 		return atan(slope);
 	}	
@@ -86,7 +86,7 @@ namespace geo
 		return atan2(Vector.y - center.y, Vector.x - center.x);
 	}
 
-	Vector2 GetVectorOnCircle(const Vector2& center, const f64& radius, const f64& angle) noexcept
+	Vector2 GetVectorOnCircle(const Vector2& center, f64 radius, f64 angle) noexcept
 	{
 		f64 x = center.x + (fabs(radius) * cos(angle));
 		f64 y = center.y + (fabs(radius) < 0 ? -radius : radius * sin(angle));
@@ -100,12 +100,12 @@ namespace geo
 		return (b.y - a.y) / (b.x - a.x);
 	}
 
-	bool Intersecting(const Line& a, const Line& b, const bool& isInfLine) noexcept
+	bool Intersecting(const Line& a, const Line& b, bool isInfLine) noexcept
 	{
 		return PointOfIntersect(a, b, isInfLine) != Vector2::Infinity;
 	}
 
-	Vector2 PointOfIntersect(const Line& la, const Line& lb, const bool& isInfLine) noexcept
+	Vector2 PointOfIntersect(const Line& la, const Line& lb, bool isInfLine) noexcept
 	{
 		double a = la.b.y - la.a.y;
 		double b = la.a.x - la.b.x;
@@ -122,6 +122,11 @@ namespace geo
 		if (!isInfLine && (!la.VectorIsOnLine(v) || !lb.VectorIsOnLine(v)))
 			return Vector2::Infinity;
 		return v;
+	}
+
+	f64 Radians(f64 degrees) noexcept
+	{
+		return degrees * (M_PI / 180);
 	}
 
 	Vector2 Centroid(const Vector2* start, const Vector2* end) noexcept

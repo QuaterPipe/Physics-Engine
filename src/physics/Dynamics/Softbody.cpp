@@ -1,4 +1,4 @@
-#include "../../include/physics/Dynamics/Softbody.hpp"
+#include "physics/Dynamics/Softbody.hpp"
 #include <iostream>
 
 namespace physics

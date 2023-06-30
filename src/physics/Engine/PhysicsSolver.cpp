@@ -1,4 +1,4 @@
-#include "../../include/physics/Engine/DynamicsWorld.hpp"
+#include "physics/Engine/DynamicsWorld.hpp"
 #include <iostream>
 namespace physics
 {
@@ -38,7 +38,8 @@ namespace physics
 			Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
 			Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
 			if (!a || !b) return;
-			
+			//f64 e = std::min(a->restitution, b->resitution);
+			//f64 sf = sqrt(a->staticFriction)
 		}
 	}
 }

@@ -1,4 +1,4 @@
-#include "../include/geometry/Matrix.hpp"
+#include "geometry/Matrix.hpp"
 namespace geo
 {
     Matrix2::Matrix2() noexcept

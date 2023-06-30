@@ -1,6 +1,6 @@
-#include "../include/geometry/Math.hpp"
-#include "../include/geometry/Line.hpp"
-#include "../include/geometry/Vector.hpp"
+#include "geometry/Math.hpp"
+#include "geometry/Line.hpp"
+#include "geometry/Vector.hpp"
 
 namespace geo
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Collision/CollisionObject.hpp"
+#include "physics/Collision/CollisionObject.hpp"
 #include "AllConstraints.hpp"
 
 namespace physics

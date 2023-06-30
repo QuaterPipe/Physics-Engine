@@ -1,37 +1,58 @@
-#include "../../include/physics/Collision/Collision.hpp"
+#include "physics/Collision/Collision.hpp"
 namespace physics
 {
 	PolygonCollider::PolygonCollider(const BoxCollider& b) noexcept
-	: pos(0, 0), points(4)
+	: pos(0, 0), _points(4)
 	{
-		points[0] = b.pos;
-		points[1] = geo::Vector2(b.x + b.width, b.y);
-		points[2] = geo::Vector2(b.x + b.width, b.y + b.height);
-		points[3] = geo::Vector2(b.x , b.y + b.height);
+		_points[0] = b.pos;
+		_points[1] = geo::Vector2(b.x + b.width, b.y);
+		_points[2] = geo::Vector2(b.x + b.width, b.y + b.height);
+		_points[3] = geo::Vector2(b.x , b.y + b.height);
+		for (size_t i = 0; i < _points.size(); i++)
+		{
+			geo::Vector2 norm = _points[(i + 1) % _points.size()] - _points[i];
+			norm.Set(norm.y, -norm.x);
+			norm.Normalize();
+			_normals.push_back(norm);
+		}
 	}
 
 	PolygonCollider::PolygonCollider(const PolygonCollider& p) noexcept
 	{
 		pos = p.pos;
-		points = p.points;
+		_points = p._points;
+		for (size_t i = 0; i < _points.size(); i++)
+		{
+			geo::Vector2 norm = _points[(i + 1) % _points.size()] - _points[i];
+			norm.Set(norm.y, -norm.x);
+			norm.Normalize();
+			_normals.push_back(norm);
+		}
 	}
 
 	PolygonCollider::PolygonCollider(const geo::Vector2& pos,
-		f64 distanceBetweenPoints, ulong count	
-	) noexcept
+		f64 sideLength, unsigned long count	
+	) noexcept : pos(pos)
 	{
-		if (distanceBetweenPoints < 0)
-			distanceBetweenPoints = fabs(distanceBetweenPoints);
-		if (count < 3)
+		if (count < 3 || sideLength < 0)
 			return;
-		f64 angle = 0;
-		geo::Vector2 current(0, 0);
-		for (ulong i = 0; i < count; i++)
+		f64 rotation = floor((count + 1) / 4) * (M_PI * 2) / count + M_PI / count - (M_PI / 2);
+		f64 angle = rotation;
+		geo::Vector2 current = geo::GetVectorOnCircle(geo::Vector2(0, 0), (sideLength * (1 / (sin((M_PI * 2) / count)))) / 2, rotation);
+		_points.push_back(current);
+		for (ulong i = 1; i < count; i++)
 		{
-			points.push_back(current);
-			current = geo::GetVectorOnCircle(current, distanceBetweenPoints, angle);
-			angle += (count - 2) * M_PI;
+			angle += (M_PI * 2) / count;
 			angle = fmod(angle, M_PI * 2);
+			current = geo::GetVectorOnCircle(geo::Vector2(0, 0), (sideLength * (1 / (sin((M_PI * 2) / count)))) / 2, angle);
+			_points.push_back(current);
+		}
+		for (size_t i = 0; i < _points.size(); i++)
+		{
+			geo::Vector2 norm = _points[(i + 1) % _points.size()] - _points[i];
+			norm.Set(norm.y, -norm.x);
+			norm.Normalize();
+			_normals.push_back(norm);
 		}
 	}
 
@@ -46,10 +67,17 @@ namespace physics
 		std::initializer_list<geo::Vector2> extra) noexcept
 	{
 		this->pos = pos;
-		points = {extra};
-		points.insert(points.begin(), c);
-		points.insert(points.begin(), b);
-		points.insert(points.begin(), a);
+		_points = {extra};
+		_points.insert(_points.begin(), c);
+		_points.insert(_points.begin(), b);
+		_points.insert(_points.begin(), a);
+		for (size_t i = 0; i < _points.size(); i++)
+		{
+			geo::Vector2 norm = _points[(i + 1) % _points.size()] - _points[i];
+			norm.Set(norm.y, -norm.x);
+			norm.Normalize();
+			_normals.push_back(norm);
+		}
 	}
 
 	PolygonCollider::~PolygonCollider() noexcept {}
@@ -58,14 +86,14 @@ namespace physics
 	{
 		if (typeid(c).name() != typeid(*this).name())
 			return false;
-		return pos == dynamic_cast<const PolygonCollider&>(c).pos && points == dynamic_cast<const PolygonCollider&>(c).points;
+		return pos == dynamic_cast<const PolygonCollider&>(c).pos && _points == dynamic_cast<const PolygonCollider&>(c).GetPoints();
 	}
 
 	bool PolygonCollider::operator!=(const Collider& c) const noexcept
 	{
 		if (typeid(c).name() != typeid(*this).name())
 			return true;
-		return pos != dynamic_cast<const PolygonCollider&>(c).pos || points != dynamic_cast<const PolygonCollider&>(c).points;
+		return pos != dynamic_cast<const PolygonCollider&>(c).pos || _points != dynamic_cast<const PolygonCollider&>(c).GetPoints();
 	}
 	
 	BoxCollider PolygonCollider::BoundingBox(const Transform& t) const noexcept
@@ -74,7 +102,7 @@ namespace physics
 		f64 miny = std::numeric_limits<f64>::max();
 		f64 maxx = std::numeric_limits<f64>::min();
 		f64 maxy = std::numeric_limits<f64>::min();
-		for (geo::Vector2 p: points)
+		for (geo::Vector2 p: _points)
 		{
 			geo::Vector2 tp = t.TransformVector(p);
 			minx = tp.x < minx ? tp.x : minx;
@@ -118,15 +146,32 @@ namespace physics
 
 	geo::Vector2 PolygonCollider::GetCenter() const noexcept
 	{
-		return GetCentroid(this->points);
+		return GetCentroid(_points);
+	}
+
+	geo::Vector2 PolygonCollider::GetPoint(size_t index) const
+	{
+		assert(index < _points.size());
+		return _points[index];
 	}
 
 	std::vector<geo::Vector2> PolygonCollider::GetPoints(const Transform& t) const noexcept
 	{
 		std::vector<geo::Vector2> v;
-		for (geo::Vector2 vec: points)
+		for (geo::Vector2 vec: _points)
 			v.push_back(t.TransformVector(vec));
 		return v;
+	}
+
+	geo::Vector2 PolygonCollider::GetNormal(size_t index) const
+	{
+		assert(index < _normals.size());
+		return _normals[index];
+	}
+
+	std::vector<geo::Vector2> PolygonCollider::GetNormals() const noexcept
+	{
+		return _normals;
 	}
 
 	Collider* PolygonCollider::Clone() const noexcept
@@ -136,15 +181,31 @@ namespace physics
 	
 	geo::Vector2 PolygonCollider::Max() const noexcept
 	{
-		if (!points.size())
+		if (!_points.size())
 			return geo::Vector2::Origin;
-		return *std::max(points.begin(), points.end()) + pos;
+		return *std::max(_points.begin(), _points.end()) + pos;
 	}
 
 	geo::Vector2 PolygonCollider::Min() const noexcept
 	{
-		if (!points.size())
+		if (!_points.size())
 			return geo::Vector2::Origin;
-		return *std::min(points.begin(), points.end()) + pos;
+		return *std::min(_points.begin(), _points.end()) + pos;
+	}
+
+	geo::Vector2 PolygonCollider::SupportPoint(geo::Vector2 direction) const noexcept
+	{
+		f64 bestProj = std::numeric_limits<f64>::min();
+		geo::Vector2 bestVertex;
+		for (size_t i = 0; i < _points.size(); i++)
+		{
+			f64 proj = _points[i].Dot(direction);
+			if (proj > bestProj)
+			{
+				bestVertex = _points[i];
+				bestProj = proj;
+			}
+		}
+		return bestVertex;
 	}
 }

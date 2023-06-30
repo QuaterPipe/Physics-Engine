@@ -1,4 +1,4 @@
-#include "../include/geometry/Curve.hpp"
+#include "geometry/Curve.hpp"
 
 namespace geo
 {

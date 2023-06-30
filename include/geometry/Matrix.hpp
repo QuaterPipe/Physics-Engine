@@ -105,8 +105,8 @@ namespace geo
 			Matrix() noexcept;
 			Matrix(const Matrix& mat) noexcept;
 			Matrix(Matrix && mat) noexcept;
-			Matrix(u32 width, u32 height, f64 n = 0) noexcept;
-			Matrix(f64* arr, u32 width, u32 height) noexcept;
+			Matrix(size_t width, size_t height, f64 n = 0) noexcept;
+			Matrix(const f64* arr, size_t width, size_t height) noexcept;
 			Matrix& operator=(const Matrix& other) noexcept;
 			Vector Axis(u32 index) const;
 			const Row operator[](size_t index) const;

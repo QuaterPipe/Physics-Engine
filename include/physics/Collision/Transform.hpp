@@ -1,4 +1,4 @@
-#include "../../geometry/main.hpp"
+#include "geometry/main.hpp"
 #ifndef PHYSICS_RK4_TMAX
 #define PHYSICS_RK4_TMAX 50
 #endif
@@ -20,6 +20,7 @@ namespace physics
 			virtual ~Transform() noexcept;
 			bool operator==(const Transform& other) const noexcept;
 			bool operator!=(const Transform& other) const noexcept;
+			Transform operator*(const Transform& other) const noexcept;
 			f64 GetAngle() const noexcept;
 			geo::Vector2 GetScaleAsVector() const noexcept;
 			geo::Matrix3 GetTransformationMatrix() const noexcept;
