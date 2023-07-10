@@ -116,6 +116,30 @@ namespace physics
 		return result;
 	}
 
+	bool PolygonCollider::Contains(const geo::Vector2& point, const Transform& t) const noexcept
+	{
+		f64 x = point.x, y = point.y;
+		bool inside = false;
+		geo::Vector2 p1, p2;
+		for (int i = 1; i <= _points.size(); i++)
+		{
+			p1 = t.TransformVector(_points[i % _points.size()]);
+			p2 = t.TransformVector(_points[(i + 1) % _points.size()]);
+			if (y > std::min(p1.y, p2.y) && y <= std::max(p1.y, p2.y))
+			{
+				if (x <= std::max(p1.x, p2.x))
+				{
+					f64 x_inter = (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+					if (p1.x == p2.x || x <= x_inter)
+					{
+						inside = !inside;
+					}
+				}
+			}
+		}
+		return inside;
+	}
+
 	geo::Vector2 GetCentroid(std::vector<geo::Vector2> points)
 	{
 		if (points.size())

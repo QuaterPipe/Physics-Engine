@@ -17,13 +17,15 @@ namespace physics::algo
 		const geo::Vector2 BCenter = tb.TransformVector(b->center);
 		const f64 r = geo::DistanceSquared(ACenter, BCenter);
 		// If the sum of their radii is greater than or equal to the distance between their centers
-		if (SQRD(a->radius + b->radius) >= r)
+		const f64 aRadius = a->radius * std::max(ta.scale[0][0], ta.scale[1][1]);
+		const f64 bRadius = b->radius * std::max(tb.scale[0][0], tb.scale[1][1]);
+		if (SQRD(aRadius + bRadius) >= r)
 		{
 			geo::Line l(ACenter, BCenter);
-			geo::Vector2 ca = l.GetVectorAlongLine(a->radius);
-			geo::Vector2 cb = l.GetVectorAlongLine(b->radius, false);
-			c.depth = geo::Distance(ca, cb);
-			c.normal = ca - cb;
+			geo::Vector2 ca = l.GetVectorAlongLine(aRadius);
+			geo::Vector2 cb = l.GetVectorAlongLine(aRadius, false);
+			c.depth = ca != cb ? geo::Distance(ca, cb) : std::max(aRadius, bRadius);
+			c.normal = ca != cb ? ca - cb : geo::Vector2(0, 1);
 			c.normal.Normalize();
 			c.points.push_back(ca);
 			c.points.push_back(cb);

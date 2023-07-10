@@ -105,20 +105,18 @@ namespace geo
 		return PointOfIntersect(a, b, isInfLine) != Vector2::Infinity;
 	}
 
+	f64 Lerp(f64 a, f64 b, f64 t)
+	{
+		return a + (b - a) * t;
+	}
+
 	Vector2 PointOfIntersect(const Line& la, const Line& lb, bool isInfLine) noexcept
 	{
-		double a = la.b.y - la.a.y;
-		double b = la.a.x - la.b.x;
-		double c = a * (la.a.x) + b * (la.a.y);
-		double a1 = lb.b.y - lb.a.y;
-		double b1 = lb.a.x - lb.b.x;
-		double c1 = a1 * (lb.a.x)+ b1 * (lb.a.y);
-		double det = a * b1 - a1 * b;
-		if (det == 0) 
-			return Vector2::Infinity;
-		double x = (b1 * c - b * c1) / det;
-		double y = (a * c1 - a1 *c ) / det;
-		Vector2 v(x, y);
+		const geo::Vector2& A = la.a, & B = la.b, & C = lb.a, & D = lb.b;
+		const f64 top = (D.x - C.x) * (A.y - C.y) - (D.y - C.y) * (A.x - C.x);
+		const f64 bottom = (D.y - C.y) * (B.x - A.x) - (D.x - C.x) * (B.y - A.y);
+		const f64 t = top / bottom;
+		const Vector2 v(Lerp(A.x, B.x, t), Lerp(A.y, B.y, t));
 		if (!isInfLine && (!la.VectorIsOnLine(v) || !lb.VectorIsOnLine(v)))
 			return Vector2::Infinity;
 		return v;

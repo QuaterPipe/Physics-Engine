@@ -3,6 +3,11 @@
 
 namespace physics::algo
 {
+	CollisionPoints AABBCollision(
+		const BoxCollider* a,
+		const BoxCollider* b
+	);
+
 	CollisionPoints PolygonCircleCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb
@@ -52,11 +57,6 @@ namespace physics::algo
 	CollisionPoints MeshMeshCollision(
 		const MeshCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb
-	);
-
-	bool VectorInPolygon(
-		const PolygonCollider* a, const Transform& ta,
-		const geo::Vector2& b
 	);
 
 	bool VectorInCircle(const geo::Vector2& a, const CircleCollider* b,

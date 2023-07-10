@@ -20,6 +20,7 @@ namespace physics
 			PolygonCollider(const geo::Vector2& pos, const geo::Vector2& a, const geo::Vector2& b, const geo::Vector2& c, std::initializer_list<geo::Vector2> extra={}) noexcept;
 			~PolygonCollider() noexcept;
 			virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept override;
+			virtual bool Contains(const geo::Vector2& point, const Transform& t = Transform()) const noexcept override;
 			Collider* Clone() const noexcept override;
 			virtual geo::Vector2 GetCenter() const noexcept override;
 			bool operator==(const Collider& c) const noexcept override;

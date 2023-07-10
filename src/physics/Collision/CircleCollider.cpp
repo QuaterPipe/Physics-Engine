@@ -44,6 +44,11 @@ namespace physics
 		return BoxCollider(c - radius, geo::Vector2(radius * 2, radius * 2));
 	}
 
+	bool CircleCollider::Contains(const geo::Vector2& point, const Transform& t) const noexcept
+	{
+		return geo::DistanceSquared(point, t.position + center) <= SQRD(radius * std::max(t.scale[0][0], t.scale[1][1]));
+	}
+
 	Collider* CircleCollider::Clone() const noexcept
 	{
 		return new CircleCollider(*this);

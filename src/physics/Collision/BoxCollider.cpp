@@ -46,6 +46,20 @@ namespace physics
 		return p.BoundingBox(t);
 	}
 
+	bool BoxCollider::Contains(const geo::Vector2& point, const Transform& t) const noexcept
+	{
+		if (!t.GetAngle())
+		{
+			f64 posX = x + t.position.x;
+			f64 posY = y + t.position.y;
+			f64 sclW = x * t.scale[0][0];
+			f64 sclH = y * t.scale[1][1];
+			return posX <= point.x && point.x <= posX + sclW && posY <= point.y && point.y <= posY + sclH;
+		}
+		return PolygonCollider(*this).Contains(point, t);
+	}
+
+
 	Collider* BoxCollider::Clone() const noexcept
 	{
 		return new BoxCollider(*this);

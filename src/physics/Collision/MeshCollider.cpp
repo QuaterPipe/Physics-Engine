@@ -120,6 +120,16 @@ namespace physics
 		return v;
 	}
 
+	bool MeshCollider::Contains(const geo::Vector2& point, const Transform& t) const noexcept
+	{
+		for (Collider* c : colliders)
+		{
+			if (c->Contains(point, t))
+				return true;
+		}
+		return false;
+	}
+
 	Collider* MeshCollider::Clone() const noexcept
 	{
 		return (Collider*)new MeshCollider(*this);

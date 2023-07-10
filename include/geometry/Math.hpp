@@ -75,6 +75,8 @@ namespace geo
 	f64 GetSlope(const Vector2& a, const Vector2& b) noexcept;
 	/// \brief Checks if two lines are intersecting are not.
 	bool Intersecting(const Line& a, const Line& b, bool isInfLine = false) noexcept;
+	/// \brief Linear Interpolation between two values.
+	f64 Lerp(f64 a, f64 b, f64 t);
 	/// \brief Returns the point of Intersect between two lines if they are intersecting.
 	Vector2 PointOfIntersect(const Line& la, const Line& lb, bool isInfLine = false) noexcept;
 	/// \brief converts degrees to radians
