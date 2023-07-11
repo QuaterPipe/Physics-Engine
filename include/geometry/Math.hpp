@@ -61,6 +61,8 @@ namespace geo
 	f64 DistanceSquared(const Vector3& a, const Vector3& b) noexcept;
 	/// \brief Gets the minimum distance between a line and a Vector.
 	f64 Distance(const Line& a, const Vector2& b) noexcept;
+	/// \brief Checks if two values equal within epsilon range.
+	bool Equal(f64 a, f64 b) noexcept;
 	/// \brief Fast way to get sqrt, not as accurate as sqrt().
 	f64 FastSqrt(f64 x) noexcept;
 	/// \brief Gets the angle between three Vectors.

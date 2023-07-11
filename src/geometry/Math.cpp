@@ -61,9 +61,14 @@ namespace geo
 		return dis;
 	}
 
+	bool Equal(f64 a, f64 b) noexcept
+	{
+		return std::abs(a - b) <= EPSILON;
+	}
+
 	f64 FastSqrt(f64 x) noexcept
 	{
-		f32 n = x;
+		f32 n = (f32)x;
 	   	static union{int i; float f;} u;
 	   	u.i = 0x5F375A86 - (*(int*)&n >> 1);
 	   	return (f64)((int(3) - n * u.f * u.f) * n * u.f * 0.5f);

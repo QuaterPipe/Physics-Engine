@@ -32,7 +32,7 @@ namespace physics
 		{
 			if (!db->usesGravity)
 				continue;
-			db->ApplyForce(dt, db->gravity);
+			db->ApplyForce(db->gravity * dt);
 		}
 	}
 

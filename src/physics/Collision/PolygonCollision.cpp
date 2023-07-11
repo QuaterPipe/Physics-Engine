@@ -27,7 +27,7 @@ namespace physics::algo
         if (a->GetPoints().size() < 3)
             return c;
         std::vector<geo::Vector2> aPoints;
-        geo::Vector2 bCenter(tb.TransformVector(b->center));
+        geo::Vector2 bCenter(ta.rotation.Transpose() * b->center);
         f64 bRadius = b->radius * std::max(tb.scale[0][0], tb.scale[1][1]);
         for (const geo::Vector2& v: a->GetPoints())
             aPoints.push_back(ta.TransformVector(v));
@@ -117,28 +117,6 @@ namespace physics::algo
             }
         }
         return inside;
-        /*
-        
-		f64 x = point.x, y = point.y;
-		bool inside = false;
-		geo::Vector2 p1, p2;
-		for (int i = 1; i <= _points.size(); i++)
-		{
-			p1 = t.TransformVector(_points[i % _points.size()]);
-			p2 = t.TransformVector(_points[(i + 1) % _points.size()]);
-			if (y > std::min(p1.y, p2.y) && y <= std::max(p1.y, p2.y))
-			{
-				if (x <= std::max(p1.x, p2.x))
-				{
-					f64 x_inter = (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
-					if (p1.x == p2.x || x <= x_inter)
-					{
-						inside = !inside;
-					}
-				}
-			}
-		}
-		return inside;*/
     }
 
     CollisionPoints PolygonPolygonCollision(
@@ -365,7 +343,7 @@ namespace physics::algo
             }
         }
         v[0] = incTransform.TransformVector(incPoly->GetPoint(incidentFace));
-        incidentFace = incidentFace + 1 < incPoly->GetPoints().size() > incidentFace ? incidentFace + 1 : 0;
+        incidentFace = incidentFace + 1 < incPoly->GetPoints().size() ? incidentFace + 1 : 0;
         v[1] = incTransform.TransformVector(incPoly->GetPoint(incidentFace));
     }
 

@@ -49,17 +49,17 @@ namespace physics
 		return Dynamicbody::operator!=((const Dynamicbody&)other) || isKinematic != dynamic_cast<const Rigidbody&>(other).isKinematic;
 	}
 
-	void Rigidbody::ApplyAngularForce(f64 dt, f64 force) noexcept
+	void Rigidbody::ApplyAngularForce(f64 force) noexcept
 	{
-		angularForce += force * dt;
+		angularForce += force;
 	}
 
-	void Rigidbody::ApplyAngularImpulse(f64 dt, f64 force) noexcept
+	void Rigidbody::ApplyAngularImpulse(f64 force) noexcept
 	{
-		angularVelocity += force * dt;
+		angularVelocity += force;
 	}
 
-	void Rigidbody::ApplyForce(f64 dt, const geo::Vector2& Force, const geo::Vector2& contactPoint) noexcept
+	void Rigidbody::ApplyForce(const geo::Vector2& Force, const geo::Vector2& contactPoint) noexcept
 	{
 		if (!isStatic && !isKinematic)
 		{
@@ -72,7 +72,7 @@ namespace physics
 		}
 	}
 
-	void Rigidbody::ApplyImpulse(f64 dt, const geo::Vector2& impulse, const geo::Vector2& contactVec) noexcept
+	void Rigidbody::ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2& contactVec) noexcept
 	{
 		if (!isStatic && !isKinematic)
 		{

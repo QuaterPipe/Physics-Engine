@@ -273,14 +273,14 @@ namespace physics
 		}
 	}
 
-	void Softbody::ApplyImpulse(f64 dt, const geo::Vector2& impulse, const geo::Vector2& contactVec) noexcept
+	void Softbody::ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2& contactVec) noexcept
 	{
 		if (contactVec == geo::Vector2::Infinity)
 		{
 			for (auto& vec: points)
 			{
 				for (MassPoint& m: vec)
-					m.velocity += impulse * m.invMass *  dt;
+					m.velocity += impulse * m.invMass;
 			}
 		}
 		else
@@ -291,7 +291,7 @@ namespace physics
 				{
 					if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
 					{
-						m.velocity += impulse * m.invMass * dt;
+						m.velocity += impulse * m.invMass;
 						pointsChanged = true;
 						return;
 					}
@@ -300,14 +300,14 @@ namespace physics
 		}
 	}
 
-	void Softbody::ApplyForce(f64 dt, const geo::Vector2& force, const geo::Vector2& contactVec) noexcept
+	void Softbody::ApplyForce(const geo::Vector2& force, const geo::Vector2& contactVec) noexcept
 	{
 		if (contactVec == geo::Vector2::Infinity)
 		{
 			for (auto& vec: points)
 			{
 				for (MassPoint& m: vec)
-					m.force += force *  dt;
+					m.force += force;
 			}
 		}
 		else
@@ -318,7 +318,7 @@ namespace physics
 				{
 					if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
 					{
-						m.force += force * dt;
+						m.force += force;
 						pointsChanged = true;
 						return;
 					}
@@ -327,14 +327,14 @@ namespace physics
 		}
 	}
 
-	void Softbody::ApplyAngularForce(f64 dt, f64 force) noexcept
+	void Softbody::ApplyAngularForce(f64 force) noexcept
 	{
-		angularForce += force * dt;
+		angularForce += force;
 	}
 
-	void Softbody::ApplyAngularImpulse(f64 dt, f64 force) noexcept
+	void Softbody::ApplyAngularImpulse(f64 force) noexcept
 	{
-		angularVelocity += force * dt;
+		angularVelocity += force;
 	}
 
 	CollisionObject* Softbody::Clone() const noexcept

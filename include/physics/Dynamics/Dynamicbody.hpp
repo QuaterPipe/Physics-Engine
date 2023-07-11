@@ -54,10 +54,10 @@ namespace physics
 			virtual bool operator!=(const CollisionObject& c) const noexcept override;
 			virtual Dynamicbody& operator=(const Dynamicbody& d) noexcept;
 			void AddConstraint(Constraint* constraint) noexcept;
-			virtual void ApplyAngularForce(f64 dt, f64 force) noexcept = 0;
-			virtual void ApplyAngularImpulse(f64 dt, f64 force) noexcept = 0;
-			virtual void ApplyForce(f64 dt, const geo::Vector2& Force, const geo::Vector2& contactPoint = geo::Vector2::Infinity) noexcept = 0;
-			virtual void ApplyImpulse(f64 dt, const geo::Vector2& impulse, const geo::Vector2& contactVec = geo::Vector2::Infinity) noexcept = 0;
+			virtual void ApplyAngularForce(f64 force) noexcept = 0;
+			virtual void ApplyAngularImpulse(f64 force) noexcept = 0;
+			virtual void ApplyForce(const geo::Vector2& Force, const geo::Vector2& contactPoint = geo::Vector2::Infinity) noexcept = 0;
+			virtual void ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2& contactVec = geo::Vector2::Infinity) noexcept = 0;
 			f64 GetInertia() const noexcept;
 			f64 GetInvInertia() const noexcept;
 			f64 GetMass() const noexcept;

@@ -69,7 +69,7 @@ namespace geo
 			return (i32)(*this)[0][0];
 		if (_width == 2)
 			return (i32)(*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0];
-		i32 dimension = _width;
+		i32 dimension = (i32)_width;
 		f64 result = 0;
 		i32 sign = 1;
 		for (i32 i = 0; i < dimension; i++)
@@ -158,14 +158,14 @@ namespace geo
 
 	Matrix Matrix::operator*(const Matrix& other) const noexcept
 	{
-		u32 w = std::max(_width, other.GetWidth());
-		u32 h = std::max(_height, other.GetHeight());
+		size_t w = std::max(_width, other.GetWidth());
+		size_t h = std::max(_height, other.GetHeight());
 		Matrix result(w, h);
-		for (u32 i = 0; i < h; i++)
+		for (size_t i = 0; i < h; i++)
 		{
-			for (u32 k = 0; k < w; k++)
+			for (size_t k = 0; k < w; k++)
 			{
-				for (u32 j = 0; j < w; j++)
+				for (size_t j = 0; j < w; j++)
 					result[i][j] += (*this)[i][k] * other[k][j];
 			}
 		}

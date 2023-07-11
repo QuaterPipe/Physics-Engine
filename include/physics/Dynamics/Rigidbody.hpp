@@ -17,10 +17,10 @@ namespace physics
 			virtual bool operator!=(const CollisionObject& c) const noexcept override;
 			virtual ~Rigidbody() noexcept;
 			Rigidbody& operator=(const Rigidbody& other) noexcept;
-			void ApplyAngularForce(f64 dt, f64 force) noexcept override;
-			void ApplyAngularImpulse(f64 dt, f64 force) noexcept override;
-			void ApplyForce(f64 dt, const geo::Vector2& Force, const geo::Vector2& contactPoint = geo::Vector2::Infinity) noexcept override;
-			void ApplyImpulse(f64 dt, const geo::Vector2& impulse, const geo::Vector2& contactVec = geo::Vector2::Infinity) noexcept override;
+			void ApplyAngularForce(f64 force) noexcept override;
+			void ApplyAngularImpulse(f64 force) noexcept override;
+			void ApplyForce(const geo::Vector2& Force, const geo::Vector2& contactPoint = geo::Vector2::Infinity) noexcept override;
+			void ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2& contactVec = geo::Vector2::Infinity) noexcept override;
 			virtual CollisionObject* Clone() const noexcept override;
 			void Move(f64 offsetX, f64 offsetY) noexcept;
 			virtual void Update(f64 dt) noexcept override;
