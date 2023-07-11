@@ -71,34 +71,6 @@ namespace physics
 		return result;
 	}
 
-	geo::Vector2 getCentroid(std::vector<geo::Vector2> points)
-	{
-		if (points.size())
-		{
-			geo::Vector2 first = points.at(0);
-			geo::Vector2 last = points.at(points.size() - 1);
-			if (first.x != last.x || first.y != last.y)
-			{
-				points.push_back(first);
-			}
-			f64 twiceArea = 0, x = 0, y = 0, f = 0;
-			geo::Vector2 p1, p2;
-			// absolutely no clue what this does, it just works lol
-			for (size_t i = 0, j = points.size() - 1; i < points.size(); j=i++)
-			{
-				p1 = points[i]; p2 = points[j];
-				f = (p1.y - first.y) * (p2.x - first.x) - (p2.y - first.y) * (p1.x - first.x);
-				twiceArea += f;
-				x += (p1.x + p2.x - 2 * first.x) * f;
-				y += (p1.y + p2.y - 2 * first.y) * f;
-			}
-			f = twiceArea * 3;
-			return geo::Vector2(x / f + first.x, y / f + first.y);
-		}
-		else
-			return geo::Vector2::Origin;
-	}
-
 	geo::Vector2 MeshCollider::GetCenter() const noexcept
 	{
 		std::vector<geo::Vector2> coms;
@@ -106,7 +78,7 @@ namespace physics
 		{
 			coms.push_back(c->GetCenter());
 		}
-		return getCentroid(coms);
+		return geo::Centroid(coms);
 	}
 
 	std::vector<geo::Vector2> MeshCollider::GetPoints(const Transform& t) const noexcept
