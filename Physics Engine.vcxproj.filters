@@ -1,0 +1,711 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{63f6f152-19eb-47b1-81c5-9bf2905bc74f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\physics">
+      <UniqueIdentifier>{c11354d2-a715-4aa3-a626-92602ce68dbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\physics\Collision">
+      <UniqueIdentifier>{e108ebec-44c2-4fc8-81ab-c8cb2aab80f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\physics\Dynamics">
+      <UniqueIdentifier>{e45a0fe9-9893-4afd-960a-46c47307d284}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\physics\Engine">
+      <UniqueIdentifier>{cbd3a899-c431-4e73-a311-7d8db27d1403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\geometry">
+      <UniqueIdentifier>{55e40b9e-1727-4619-bc4b-714f9536a989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bin">
+      <UniqueIdentifier>{0057b636-4a1a-4692-a45a-0704528786f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{2e450df5-9b65-4d83-8ad3-d6105bbaedf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\SFML">
+      <UniqueIdentifier>{047fc1fb-823e-4355-ba1a-5b8347403c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{25e73383-44d8-411b-b415-e59f98c33fa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\geometry">
+      <UniqueIdentifier>{00cdc3d3-4378-48a6-8856-103589b2785e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\physics">
+      <UniqueIdentifier>{f7967f7a-02e5-4d19-85c9-456e056a653f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\physics\Collision">
+      <UniqueIdentifier>{fb2d5477-a2d9-460a-ad37-4e207e810593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\physics\Dynamics">
+      <UniqueIdentifier>{14493512-d867-49c0-833d-26b3e8ccb407}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\physics\Engine">
+      <UniqueIdentifier>{277b3ec6-0009-4382-ac24-659138a0ea79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\SFML">
+      <UniqueIdentifier>{6bfa3311-b850-4b25-869c-6ae43b2e4f6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\SFML\Audio">
+      <UniqueIdentifier>{9f2b2a4a-1e45-4e48-bb96-eaf95b21b00f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\SFML\Graphics">
+      <UniqueIdentifier>{c50a7472-8c0c-4879-925d-093eca77a98f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\SFML\Network">
+      <UniqueIdentifier>{a45f07da-3e21-4534-b3a2-eb89cfcaab67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\SFML\System">
+      <UniqueIdentifier>{7823c017-e937-4ebc-9dcb-340f96a35e80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\SFML\Window">
+      <UniqueIdentifier>{459e25b5-f6f0-4ad5-b7f8-5d43e76c8e3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="testing">
+      <UniqueIdentifier>{047f0429-5745-4165-b9fb-aa343ecb3b0b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\physics\Collision\BoxCollider.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\BoxCollision.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\CircleCollider.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\CircleCollision.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\Collider.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\Collision.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\CollisionObject.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\MeshCollider.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\MeshCollision.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\PolygonCollider.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\PolygonCollision.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Collision\Transform.cpp">
+      <Filter>src\physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Dynamics\Dynamicbody.cpp">
+      <Filter>src\physics\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Dynamics\Joint.cpp">
+      <Filter>src\physics\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Dynamics\Rigidbody.cpp">
+      <Filter>src\physics\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Dynamics\Softbody.cpp">
+      <Filter>src\physics\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Dynamics\VelocityConstraint.cpp">
+      <Filter>src\physics\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Engine\ConstraintSolver.cpp">
+      <Filter>src\physics\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Engine\DynamicsWorld.cpp">
+      <Filter>src\physics\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Engine\PhysicsSolver.cpp">
+      <Filter>src\physics\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Engine\Time.cpp">
+      <Filter>src\physics\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\Curve.cpp">
+      <Filter>src\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\Line.cpp">
+      <Filter>src\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\Math.cpp">
+      <Filter>src\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\Matrix.cpp">
+      <Filter>src\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\Matrix2.cpp">
+      <Filter>src\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\Matrix3.cpp">
+      <Filter>src\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\Vector.cpp">
+      <Filter>src\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\Vector2.cpp">
+      <Filter>src\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\Vector3.cpp">
+      <Filter>src\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="testing\CollisionTesting.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\sfml-graphics-d-2.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\sfml-network-2.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\sfml-network-d-2.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\sfml-system-2.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\sfml-system-d-2.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\sfml-window-2.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\sfml-window-d-2.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\openal32.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\sfml-audio-2.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\sfml-audio-d-2.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\sfml-graphics-2.dll">
+      <Filter>lib</Filter>
+    </None>
+    <None Include=".gitignore" />
+    <None Include="README.md" />
+    <None Include="include\geometry\Math.inl">
+      <Filter>include\geometry</Filter>
+    </None>
+    <None Include="include\SFML\Audio\SoundFileFactory.inl">
+      <Filter>include\SFML\Audio</Filter>
+    </None>
+    <None Include="include\SFML\Graphics\Glsl.inl">
+      <Filter>include\SFML\Graphics</Filter>
+    </None>
+    <None Include="include\SFML\Graphics\Rect.inl">
+      <Filter>include\SFML\Graphics</Filter>
+    </None>
+    <None Include="include\SFML\System\String.inl">
+      <Filter>include\SFML\System</Filter>
+    </None>
+    <None Include="include\SFML\System\Thread.inl">
+      <Filter>include\SFML\System</Filter>
+    </None>
+    <None Include="include\SFML\System\ThreadLocalPtr.inl">
+      <Filter>include\SFML\System</Filter>
+    </None>
+    <None Include="include\SFML\System\Utf.inl">
+      <Filter>include\SFML\System</Filter>
+    </None>
+    <None Include="include\SFML\System\Vector2.inl">
+      <Filter>include\SFML\System</Filter>
+    </None>
+    <None Include="include\SFML\System\Vector3.inl">
+      <Filter>include\SFML\System</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\SFML\sfml-system-s-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-window.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-window-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-window-s.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-window-s-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\vorbis.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\vorbisenc.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\vorbisfile.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\flac.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\freetype.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\ogg.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\openal32.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-audio.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-audio-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-audio-s.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-audio-s-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-graphics.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-graphics-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-graphics-s.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-graphics-s-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-main.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-main-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-network.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-network-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-network-s.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-network-s-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-system.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-system-d.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+    <Library Include="lib\SFML\sfml-system-s.lib">
+      <Filter>lib\SFML</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="notes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\geometry\Curve.hpp">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\geometry\Line.hpp">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\geometry\main.hpp">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\geometry\Math.hpp">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\geometry\Matrix.hpp">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\geometry\Vector.hpp">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Collision\Algo.hpp">
+      <Filter>include\physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Collision\BoxCollider.hpp">
+      <Filter>include\physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Collision\CircleCollider.hpp">
+      <Filter>include\physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Collision\Collider.hpp">
+      <Filter>include\physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Collision\Collision.hpp">
+      <Filter>include\physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Collision\CollisionObject.hpp">
+      <Filter>include\physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Collision\MeshCollider.hpp">
+      <Filter>include\physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Collision\PolygonCollider.hpp">
+      <Filter>include\physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Collision\Transform.hpp">
+      <Filter>include\physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\AllConstraints.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\Constraint.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\Dynamicbody.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\Rigidbody.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\SocketConstraint.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\Softbody.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\VelocityConstraint.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Engine\ConstraintSolver.hpp">
+      <Filter>include\physics\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Engine\DynamicsWorld.hpp">
+      <Filter>include\physics\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Engine\Time.hpp">
+      <Filter>include\physics\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Main.hpp">
+      <Filter>include\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\AlResource.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\Export.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\InputSoundFile.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\Listener.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\Music.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\OutputSoundFile.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\Sound.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\SoundBuffer.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\SoundBufferRecorder.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\SoundFileFactory.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\SoundFileReader.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\SoundFileWriter.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\SoundRecorder.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\SoundSource.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio\SoundStream.hpp">
+      <Filter>include\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\BlendMode.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\CircleShape.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Color.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\ConvexShape.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Drawable.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Export.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Font.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Glsl.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Glyph.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Image.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\PrimitiveType.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Rect.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\RectangleShape.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\RenderStates.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\RenderTarget.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\RenderTexture.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\RenderWindow.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Shader.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Shape.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Sprite.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Text.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Texture.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Transform.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Transformable.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\Vertex.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\VertexArray.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\VertexBuffer.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics\View.hpp">
+      <Filter>include\SFML\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\Export.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\Ftp.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\Http.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\IpAddress.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\Packet.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\Socket.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\SocketHandle.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\SocketSelector.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\TcpListener.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\TcpSocket.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network\UdpSocket.hpp">
+      <Filter>include\SFML\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Clipboard.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Context.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\ContextSettings.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Cursor.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Event.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Export.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\GlResource.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Joystick.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Keyboard.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Mouse.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Sensor.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Touch.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\VideoMode.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Vulkan.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\Window.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\WindowBase.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\WindowHandle.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window\WindowStyle.hpp">
+      <Filter>include\SFML\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Clock.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Err.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Export.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\FileInputStream.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\InputStream.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Lock.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\MemoryInputStream.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Mutex.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\NativeActivity.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\NonCopyable.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Sleep.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\String.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Thread.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\ThreadLocal.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\ThreadLocalPtr.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Time.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Utf.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Vector2.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System\Vector3.hpp">
+      <Filter>include\SFML\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Graphics.hpp">
+      <Filter>include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Main.hpp">
+      <Filter>include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Network.hpp">
+      <Filter>include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\OpenGL.hpp">
+      <Filter>include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\System.hpp">
+      <Filter>include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Window.hpp">
+      <Filter>include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Audio.hpp">
+      <Filter>include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\Config.hpp">
+      <Filter>include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SFML\GpuPreference.hpp">
+      <Filter>include\SFML</Filter>
+    </ClInclude>
+    <ClInclude Include="testing\Testing.hpp">
+      <Filter>testing</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
