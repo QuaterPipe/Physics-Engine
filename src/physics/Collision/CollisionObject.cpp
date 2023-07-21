@@ -81,7 +81,7 @@ namespace physics
 
 	int CollisionObject::GetHash() const noexcept
 	{
-		std::string s = transform.position.ToString() + transform.centerOfRotation.ToString();
+		std::string s = transform.position.ToString() + transform.centerOfMass.ToString();
 		s = s + std::to_string(_isDynamic) + std::to_string(isTrigger);
 		int h = 0;
 		for (size_t i = 0; i < s.size(); i++)

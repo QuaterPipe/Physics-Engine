@@ -165,6 +165,15 @@
     <ClCompile Include="testing\CollisionTesting.cpp">
       <Filter>testing</Filter>
     </ClCompile>
+    <ClCompile Include="testing\EngineTesting.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Engine\PositionalCorrectionSolver.cpp">
+      <Filter>src\physics\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="testing\DynamicsTesting.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\sfml-graphics-d-2.dll">

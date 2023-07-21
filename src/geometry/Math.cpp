@@ -3,6 +3,13 @@
 namespace geo
 {
 
+	f64 Abs(f64 x) noexcept
+	{
+		if (x < 0)
+			return -x;
+		else
+			return x;
+	}
 	
 	Line ClosestLine(std::vector<geo::Line> lines, Vector2 vector) noexcept
 	{
@@ -110,9 +117,25 @@ namespace geo
 		return PointOfIntersect(a, b, isInfLine) != Vector2::Infinity;
 	}
 
-	f64 Lerp(f64 a, f64 b, f64 t)
+	f64 Lerp(f64 a, f64 b, f64 t) noexcept
 	{
 		return a + (b - a) * t;
+	}
+
+	f64 Max(f64 a, f64 b) noexcept
+	{
+		if (a > b)
+			return a;
+		else
+			return b;
+	}
+
+	f64 Min(f64 a, f64 b) noexcept
+	{
+		if (a < b)
+			return a;
+		else
+			return b;
 	}
 
 	Vector2 PointOfIntersect(const Line& la, const Line& lb, bool isInfLine) noexcept

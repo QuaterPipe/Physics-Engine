@@ -10,7 +10,7 @@ namespace physics
 	{
 		public:
 			geo::Vector2 position = geo::Vector2(0, 0);
-			geo::Vector2 centerOfRotation = geo::Vector2(0, 0);
+			geo::Vector2 centerOfMass = geo::Vector2(0, 0);
 			geo::Matrix2 scale = geo::Matrix2();
 			geo::Matrix2 rotation = geo::Matrix2();
 			Transform() noexcept;

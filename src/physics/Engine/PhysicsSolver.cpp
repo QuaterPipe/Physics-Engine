@@ -45,24 +45,37 @@ namespace physics
 			{
 				geo::Vector2 ra = c.points.points[i] - a->position;
 				geo::Vector2 rb = c.points.points[i] - b->position;
+				geo::Vector2 rv = b->velocity + geo::Vector2::Cross(b->angularVelocity, rb) -
+					a->velocity - geo::Vector2::Cross(a->angularVelocity, ra);
+				if (rv.GetMagnitudeSquared() < (dt * gravity).GetMagnitudeSquared() + EPSILON)
+					e = 0.0;
+			}
+			for (int i = 0; i < c.points.points.size(); i++)
+			{
+				geo::Vector2 ra = c.points.points[i] - a->position;
+				geo::Vector2 rb = c.points.points[i] - b->position;
 
 				geo::Vector2 rv = b->velocity + geo::Vector2::Cross(b->angularVelocity, rb) -
 					a->velocity - geo::Vector2::Cross(a->angularVelocity, ra);
 
 				f64 contactVel = rv.Dot(c.points.normal);
+				// std::cout << contactVel << '\n';
 
 				if (contactVel > 0)
 					break;
 				f64 raCrossN = ra.Cross(c.points.normal);
 				f64 rbCrossN = rb.Cross(c.points.normal);
+				// std::cout << "crosses: " << raCrossN << " " << rbCrossN << "\n";
 				f64 invMassSum = a->GetInvMass() + b->GetInvMass() + SQRD(raCrossN) * a->GetInvInertia() +
 					SQRD(rbCrossN) * b->GetInvInertia();
-
+				// std::cout << "mass: " << invMassSum;
+				// std::cout << " e: " << e << '\n';
 				f64 j = -(1.0 + e) * contactVel;
 				j /= invMassSum;
-				j /= c.points.points.size();
+				j /= (f64)c.points.points.size();
 
 				geo::Vector2 impulse = c.points.normal * j;
+				// std::cout << "impulse: " << impulse << std::endl;
 				a->ApplyImpulse(-impulse, ra);
 				b->ApplyImpulse(impulse, rb);
 
@@ -77,7 +90,7 @@ namespace physics
 				jt /= c.points.points.size();
 
 				if (geo::Equal(jt, 0.0))
-					break;
+					continue;
 				geo::Vector2 tangentImpulse;
 				if (std::abs(jt) < j * sf)
 					tangentImpulse = t * jt;
@@ -86,11 +99,6 @@ namespace physics
 				a->ApplyImpulse(-tangentImpulse, ra);
 				b->ApplyImpulse(tangentImpulse, rb);
 			}
-			const f64 k_slop = 0.05; // Penetration allowance
-			const f64 percent = 0.4; // Penetration percentage to correct
-			geo::Vector2 correction = (std::max(c.points.depth - k_slop, 0.0) / (a->GetInvMass() + b->GetInvMass())) * c.points.normal * percent;
-			a->position -= correction * a->GetInvMass();
-			b->position += correction * b->GetInvMass();
 		}
 	}
 }

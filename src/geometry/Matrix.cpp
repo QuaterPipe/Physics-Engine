@@ -140,37 +140,41 @@ namespace geo
 		return true;
 	}
 
-	Vector Matrix::operator*(const Vector& v) const noexcept
+	Vector Matrix::operator*(const Vector& v) const
 	{
-		Vector vCopy = v;
-		if (vCopy.GetSize() < _height)
-			vCopy.SetSize(_height);
+		assert(v.GetSize() == _height);
 		Vector a;
 		for (u32 i = 0; i < _width; i++)
 		{
-			Vector x(_width);
-			for (u32 j = 0; j < _width; j++)
+			Vector x(_height);
+			for (u32 j = 0; j < _height; j++)
 				x[j] = (*this)[i][j];
-			a[i] = (x * vCopy).Sum();
+			a[i] = (x * v).Sum();
 		}
 		return a;
 	}
 
-	Matrix Matrix::operator*(const Matrix& other) const noexcept
+	Matrix Matrix::operator*(const Matrix& other) const
 	{
-		size_t w = std::max(_width, other.GetWidth());
-		size_t h = std::max(_height, other.GetHeight());
-		Matrix result(w, h);
-		for (size_t i = 0; i < h; i++)
+		assert(other.GetWidth() == _width && other.GetHeight() == _height);
+		Matrix result(_width, _height);
+		for (size_t i = 0; i < _height; i++)
 		{
-			for (size_t k = 0; k < w; k++)
+			for (size_t k = 0; k < _width; k++)
 			{
-				for (size_t j = 0; j < w; j++)
+				for (size_t j = 0; j < _width; j++)
 					result[i][j] += (*this)[i][k] * other[k][j];
 			}
 		}
 		return result;
 	}
+
+	Matrix& Matrix::operator*=(const Matrix& other)
+	{
+		*this = (*this) * other;
+		return *this;
+	}
+
 
 	size_t Matrix::GetHeight() const noexcept
 	{

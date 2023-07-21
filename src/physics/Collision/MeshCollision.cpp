@@ -7,7 +7,7 @@ namespace physics::algo
 {
     CollisionPoints MeshMeshCollision(
 		const MeshCollider* a, const Transform& ta,
-		const MeshCollider* b, const Transform& tb
+		const MeshCollider* b, const Transform& tb, bool flipped
 	)
 	{
         CollisionPoints c;
@@ -24,7 +24,7 @@ namespace physics::algo
                 if (c.depth < tmp.depth)
                 {
                     c.depth = tmp.depth;
-                    c.normal = tmp.normal;
+                    c.normal = -tmp.normal;
                 }
                 for (auto p : tmp.points)
                     c.points.push_back(p);
@@ -32,6 +32,8 @@ namespace physics::algo
         }
         if (avg)
             c.depth = avg / (f64)c.points.size();
+        if (flipped)
+            c.normal = -c.normal;
         return c;
 	}
 }

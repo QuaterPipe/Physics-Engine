@@ -27,11 +27,11 @@ namespace physics
 		public:
 			bool isTrigger = false;
 			bool isActive = true;
-			std::function<void(Collision&, f64)> onCollision;
+			void (*onCollision) (Collision&, f64) = nullptr;
 			std::unique_ptr<Collider> collider;
 			Transform transform;
 			geo::Vector2& position = transform.position;
-			geo::Vector2& centerOfRotation = transform.centerOfRotation;
+			geo::Vector2& centerOfRotation = transform.centerOfMass;
 			geo::Matrix2& scale = transform.scale;
 			geo::Matrix2& rotation = transform.rotation;
 			CollisionObject() noexcept;

@@ -128,10 +128,8 @@ namespace physics
 	{
 		if (isStatic)
 			return;
-		velocity += (force * _invMass + gravity) * (dt / 2.0f);
-  		angularVelocity += angularForce * _invInertia * (dt / 2.0f);
-		force.Set(0, 0);
-		angularForce = 0;
+		velocity += (force * _invMass + gravity) * (dt / 2.0);
+  		angularVelocity += angularForce * _invInertia * (dt / 2.0);
 	}
 
 	void Dynamicbody::IntegrateVelocity(f64 dt) noexcept
@@ -140,6 +138,7 @@ namespace physics
 			return;
 		position += velocity * dt;
 		rotation = geo::Matrix2(transform.GetAngle() + angularVelocity * dt);
+		IntegrateForces(dt);
 	}
 
 	void Dynamicbody::RemoveConstraint(Constraint* constraint) noexcept

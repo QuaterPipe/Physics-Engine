@@ -10,53 +10,53 @@ namespace physics::algo
 
 	CollisionPoints PolygonCircleCollision(
 		const PolygonCollider* a, const Transform& ta,
-		const CircleCollider* b, const Transform& tb
+		const CircleCollider* b, const Transform& tb, bool flipped = false
 	);
 
 	CollisionPoints PolygonBoxCollision(
 		const PolygonCollider* a, const Transform& ta,
-		const BoxCollider* b, const Transform& tb
+		const BoxCollider* b, const Transform& tb, bool flipped = false
 	);
 
 	CollisionPoints PolygonMeshCollision(
 		const PolygonCollider* a, const Transform& ta,
-		const MeshCollider* b, const Transform& tb
+		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
 
 
 	CollisionPoints CircleCircleCollision(
 		const CircleCollider* a, const Transform& ta,
-		const CircleCollider* b, const Transform& tb
+		const CircleCollider* b, const Transform& tb, bool flipped = false
 	);
 
 	CollisionPoints CircleBoxCollision(
 		const CircleCollider* a, const Transform& ta,
-		const BoxCollider* b, const Transform& tb
+		const BoxCollider* b, const Transform& tb, bool flipped = false
 	);
 
 	CollisionPoints CircleMeshCollision(
 		const CircleCollider* a, const Transform& ta,
-		const MeshCollider* b, const Transform& tb
+		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
 
 	CollisionPoints BoxMeshCollision(
 		const BoxCollider* a, const Transform& ta,
-		const MeshCollider* b, const Transform& tb
+		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
 
 	CollisionPoints PolygonPolygonCollision(
 		const PolygonCollider* a, const Transform& ta,
-		const PolygonCollider* b, const Transform& tb
+		const PolygonCollider* b, const Transform& tb, bool flipped = false
 	);
 
 	CollisionPoints BoxBoxCollision(
 		const BoxCollider* a, const Transform& ta,
-		const BoxCollider* b, const Transform& tb
+		const BoxCollider* b, const Transform& tb, bool flipped = false
 	);
 
 	CollisionPoints MeshMeshCollision(
 		const MeshCollider* a, const Transform& ta,
-		const MeshCollider* b, const Transform& tb
+		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
 
 	bool VectorInCircle(const geo::Vector2& a, const CircleCollider* b,

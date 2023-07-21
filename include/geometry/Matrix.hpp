@@ -83,7 +83,7 @@ namespace geo
 		bool operator!=(const Matrix3& other) const noexcept;
 		Vector3 operator*(const Vector3& v) const noexcept;
 		Matrix3 operator*(const Matrix3& other) const noexcept;
-		void operator*=(const Matrix3& other) noexcept;
+		Matrix3& operator*=(const Matrix3& other) noexcept;
 	};
 
 	struct Matrix
@@ -113,9 +113,9 @@ namespace geo
 			Row operator[](size_t index);
 			bool operator==(const Matrix& other) const noexcept;
 			bool operator!=(const Matrix& other) const noexcept;
-			Vector operator*(const Vector& v) const noexcept;
-			Matrix operator*(const Matrix& other) const noexcept;
-			void operator*=(const Matrix& other) noexcept;
+			Vector operator*(const Vector& v) const;
+			Matrix operator*(const Matrix& other) const;
+			Matrix& operator*=(const Matrix& other);
 			i32 GetDeterminant() const;
 			size_t GetHeight() const noexcept;
 			size_t GetWidth() const noexcept;

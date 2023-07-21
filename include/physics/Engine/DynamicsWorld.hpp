@@ -20,6 +20,12 @@ namespace physics
 		public:
 			void Solve(std::vector<Collision>& collisions, f64 dt) noexcept override;
 	};
+
+	class PositionalCorrectionSolver : public Solver
+	{
+		public:
+			void Solve(std::vector<Collision>& collision, f64 dt) noexcept override;
+	};
 	
 	class DynamicsWorld
 	{

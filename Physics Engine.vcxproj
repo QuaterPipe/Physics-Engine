@@ -51,8 +51,11 @@
     <ClCompile Include="src\physics\Engine\ConstraintSolver.cpp" />
     <ClCompile Include="src\physics\Engine\DynamicsWorld.cpp" />
     <ClCompile Include="src\physics\Engine\PhysicsSolver.cpp" />
+    <ClCompile Include="src\physics\Engine\PositionalCorrectionSolver.cpp" />
     <ClCompile Include="src\physics\Engine\Time.cpp" />
     <ClCompile Include="testing\CollisionTesting.cpp" />
+    <ClCompile Include="testing\DynamicsTesting.cpp" />
+    <ClCompile Include="testing\EngineTesting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

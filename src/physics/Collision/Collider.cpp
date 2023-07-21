@@ -10,6 +10,7 @@ namespace physics
 	{
 		return NULL;
 	}
+
 	Collider::~Collider() noexcept
 	{
 	}

@@ -4,12 +4,12 @@
 namespace physics
 {
 	Transform::Transform() noexcept
-		: position(0, 0), centerOfRotation(0, 0)
+		: position(0, 0), centerOfMass(0, 0)
 	{
 	}
 
 	Transform::Transform(const Transform& transform) noexcept
-		: position(transform.position), centerOfRotation(transform.centerOfRotation),
+		: position(transform.position), centerOfMass(transform.centerOfMass),
 		scale(transform.scale), rotation(transform.rotation)
 	{
 	}
@@ -22,7 +22,7 @@ namespace physics
 	Transform& Transform::operator=(const Transform& transform) noexcept
 	{
 		position = transform.position;
-		centerOfRotation = transform.centerOfRotation;
+		centerOfMass = transform.centerOfMass;
 		scale = transform.scale;
 		rotation = transform.rotation;
 		return *this;
@@ -31,7 +31,7 @@ namespace physics
 	Transform& Transform::operator=(Transform&& transform) noexcept
 	{
 		position = transform.position;
-		centerOfRotation = transform.centerOfRotation;
+		centerOfMass = transform.centerOfMass;
 		scale = transform.scale;
 		rotation = transform.rotation;
 		return *this;
@@ -92,8 +92,8 @@ namespace physics
 	geo::Matrix3 Transform::GetTransformationMatrix() const noexcept
 	{
 		geo::Matrix3 result(rotation * scale);
-		result[0][2] = centerOfRotation.x - rotation[0][0] * centerOfRotation.x - rotation[0][1] * centerOfRotation.y;
-		result[1][2] = centerOfRotation.y - rotation[1][0] * centerOfRotation.x - rotation[1][1] * centerOfRotation.y;
+		result[0][2] = centerOfMass.x - rotation[0][0] * centerOfMass.x - rotation[0][1] * centerOfMass.y;
+		result[1][2] = centerOfMass.y - rotation[1][0] * centerOfMass.x - rotation[1][1] * centerOfMass.y;
 		result[0][2] += position.x;
 		result[1][2] += position.y;
 		return result;

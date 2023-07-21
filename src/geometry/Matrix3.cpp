@@ -162,9 +162,10 @@ namespace geo
 		return c;
 	}
 
-	void Matrix3::operator*=(const Matrix3& other) noexcept
+	Matrix3& Matrix3::operator*=(const Matrix3& other) noexcept
 	{
 		*this = *this * other;
+		return *this;
 	}
 
 	Matrix3::Row::Row(f64* ptr) noexcept

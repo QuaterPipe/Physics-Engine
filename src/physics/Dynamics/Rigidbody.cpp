@@ -97,8 +97,8 @@ namespace physics
 	{
 		if (!isKinematic && !isStatic)
 		{
-			velocity += (force * _invMass + gravity) * (dt / 2.0);
-			angularVelocity += (angularForce * _invInertia) * (dt / 2.0);
+			//velocity += (force * _invMass) * (dt / 2.0);
+			//angularVelocity += (angularForce * _invInertia) * (dt / 2.0);
 			position += velocity * dt;
 			rotation = geo::Matrix2(transform.GetAngle() + angularVelocity * dt);
 			angularForce = 0;

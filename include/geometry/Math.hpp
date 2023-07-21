@@ -25,19 +25,17 @@ using i64 = int64_t;
 	(X) * (X) * (X) \
 )
 #define EPSILON 10e-8
-#define V3_EPSILON geo::Vector2(10e-8, 10e-8, 10e-8)
-#define V2_EPSILON geo::Vector2(10e-8, 10e-8)
-#define V_EPSILON(X) geo::Vector(X, 10e-8)
+#define V3_EPSILON geo::Vector3(EPSILON, EPSILON, EPSILON)
+#define V2_EPSILON geo::Vector2(EPSILON, EPSILON)
+#define V_EPSILON(X) geo::Vector(X, EPSILON)
 #define BIT(x) (1 << x)
 
 namespace geo
 {
-	/// \brief returns the closest Line to the Vector2
+	/// \brief returns the absolut value of x.
+	f64 Abs(f64 x) noexcept;
+	/// \brief returns the closest Line to the Vector2.
 	Line ClosestLine(std::vector<geo::Line> lines, Vector2 vector) noexcept;
-	/// \brief Compares two inputs, 1 if a is greater than b, 0 if they are equal,
-	/// and -1 if a is less than b.
-	template <typename T>
-	int Compare(T& a, T& b);
 	/// \brief returns the calculated centroid of the given points.
 	Vector2 Centroid(const Vector2* start, const Vector2* end) noexcept;
 	/// \brief returns the calculated centroid of the given points.
@@ -78,7 +76,11 @@ namespace geo
 	/// \brief Checks if two lines are intersecting are not.
 	bool Intersecting(const Line& a, const Line& b, bool isInfLine = false) noexcept;
 	/// \brief Linear Interpolation between two values.
-	f64 Lerp(f64 a, f64 b, f64 t);
+	f64 Lerp(f64 a, f64 b, f64 t) noexcept;
+	/// \brief returns the maximum value.
+	f64 Max(f64 a, f64 b) noexcept;
+	/// \brief returns the minimum value.
+	f64 Min(f64 a, f64 b) noexcept;
 	/// \brief Returns the point of Intersect between two lines if they are intersecting.
 	Vector2 PointOfIntersect(const Line& la, const Line& lb, bool isInfLine = false) noexcept;
 	/// \brief converts degrees to radians

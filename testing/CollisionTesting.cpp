@@ -7,12 +7,16 @@ using namespace geo;
 using namespace physics;
 Collider* cldA[6];
 Collider* cldB[6];
+bool paused = false;
+sf::Vector2f pos;
 void Render(sf::RenderWindow* win, int a, int b)
 {
     sf::Vector2i pixelPos = sf::Mouse::getPosition(*win);
     sf::Vector2f worldPos = win->mapPixelToCoords(pixelPos);
-    worldPos.x = 250;
-    worldPos.y = 250;
+    if (paused)
+        worldPos = pos;
+    else
+        pos = worldPos;
     Transform tB;
     tB.position.Set(worldPos.x, worldPos.y);
     if (a < 2)
@@ -94,11 +98,10 @@ void Render(sf::RenderWindow* win, int a, int b)
         win->draw(line, 2, sf::Lines);
     }
 }
-
+int size = 3;
 void Render2(sf::RenderWindow* window)
 {
-    int size = 20;
-    auto p = PolygonCollider(geo::Vector2(), 100, size);
+    auto p = PolygonCollider(geo::Vector2(), 1000 / size, size);
     Transform tt;
     tt.position.Set(250, 250);
     sf::ConvexShape cvx(size);
@@ -187,9 +190,23 @@ void CollisionTest()
                 if (e.key.code == sf::Keyboard::S)
                     b = b ? b - 1 : 5;
                 if (e.key.code == sf::Keyboard::T)
-                    sz++;
-                if (e.key.code == sf::Keyboard::Y)
-                    sz--;
+                {
+                    size++;
+                    window.clear();
+                    Render2(&window);
+                    window.display();
+                }
+                if (e.key.code == sf::Keyboard::Y && size > 3)
+                {
+                    size--;
+                    window.clear();
+                    Render2(&window);
+                    window.display();
+                }
+                if (e.key.code == sf::Keyboard::Space)
+                {
+                    paused = !paused;
+                }
             }
         }
         Render(&window, a, b);

@@ -5,9 +5,14 @@
 
 namespace physics::algo
 {
-    CollisionPoints SeparatingAxisCheck(
+    CollisionPoints SeparatingAxis(
         const geo::Vector2& orthogonal, const std::vector<geo::Vector2>& a,
         const std::vector<geo::Vector2>& b
+    );
+
+    CollisionPoints SeparatingAxis(
+        const geo::Vector2& orthogonal, const std::vector<geo::Vector2>& a,
+        const geo::Vector2& bCenter, f64 bRadius
     );
 
     std::vector<geo::Vector2> FindCollisionPoints(
@@ -17,7 +22,7 @@ namespace physics::algo
 
     CollisionPoints PolygonCircleCollision(
         const PolygonCollider* a, const Transform& ta,
-        const CircleCollider* b, const Transform& tb
+        const CircleCollider* b, const Transform& tb, bool flipped
     )
     {
         CollisionPoints c;
@@ -27,69 +32,67 @@ namespace physics::algo
         if (a->GetPoints().size() < 3)
             return c;
         std::vector<geo::Vector2> aPoints;
-        geo::Vector2 bCenter(ta.rotation.Transpose() * b->center);
-        f64 bRadius = b->radius * std::max(tb.scale[0][0], tb.scale[1][1]);
-        for (const geo::Vector2& v: a->GetPoints())
-            aPoints.push_back(ta.TransformVector(v));
-        f64 separation = std::numeric_limits<f64>::min();
-        u32 faceNormal = 0;
-        // Find edge with minimum penetration
-        // Exact concept as using support points in Polygon vs Polygon
-        for (u32 i = 0; i < aPoints.size(); i++)
+        geo::Vector2 centroid;
+        for (geo::Vector2 v : a->GetPoints())
         {
-            f64 s = a->GetNormal(i).Dot(bCenter - aPoints[i]);
-            if (s > bRadius)
-                return c;
-            if (s > separation)
+            aPoints.push_back(ta.TransformVector(v));
+            centroid += *(aPoints.end() - 1);
+        }
+        centroid /= aPoints.size();
+        geo::Vector2 bCenter = b->center + tb.position; // no other members of tb will affect b->center.
+        f64 bRadius = b->radius * std::max(tb.scale[0][0], tb.scale[1][1]);
+        bool centerInA = a->Contains(bCenter, ta), polyInB = true;
+        std::vector<geo::Vector2> projections;
+        for (geo::Vector2 v : aPoints)
+        {
+            polyInB &= b->Contains(v, tb);
+        }
+        for (int i = 0; i < aPoints.size(); i++)
+        {
+            geo::Line l(aPoints[(i + 1) % aPoints.size()], aPoints[i]);
+            geo::Vector2 proj = geo::Vector2::Projection(bCenter, l);
+            if (l.VectorIsOnLine(proj))
+                projections.push_back(proj);
+        }
+        geo::Vector2 closest = geo::Vector2::Infinity;
+        f64 minDis = std::numeric_limits<f64>::infinity();
+        for (geo::Vector2 v : aPoints)
+        {
+            if (geo::DistanceSquared(bCenter, v) < minDis)
             {
-                separation = s;
-                faceNormal = i;
+                minDis = geo::DistanceSquared(bCenter, v);
+                closest = v;
             }
         }
-        geo::Vector2 v1 = aPoints[faceNormal];
-        geo::Vector2 v2 = aPoints[(faceNormal + 1) % aPoints.size()];
-        if (separation < EPSILON)
+        for (geo::Vector2 v : projections)
         {
-            c.normal = (ta.rotation * a->GetNormals()[faceNormal]);
-            c.points.push_back(c.normal * bRadius + tb.position);
-            c.depth = bRadius;
-            c.hasCollision = true;
+            if (geo::DistanceSquared(bCenter, v) < minDis)
+            {
+                minDis = geo::DistanceSquared(bCenter, v);
+                closest = v;
+            }
+        }
+        if (!b->Contains(closest, tb) && !centerInA)
             return c;
-        }
-        
-        f64 dot1 = (bCenter - v1).Dot(v2 - v1);
-        f64 dot2 = (bCenter - v2).Dot(v1 - v2);
-        c.depth = bRadius - separation;
-        if (dot1 <= 0.0)
+        if (centerInA || polyInB || closest != geo::Vector2::Infinity)
         {
-            if (geo::DistanceSquared(bCenter, v1) > SQRD(bRadius))
-                return c;
-            geo::Vector2 n = v1 - bCenter;
-            n.Normalize();
-            c.normal = -n;
-            c.points.push_back(v1);
+            c.hasCollision = true;
+            c.points.push_back(closest);
+            c.depth = (geo::Distance(bCenter, closest)) + bRadius;
+            if (centerInA)
+            {
+                c.normal = -(closest - bCenter).Normalized();
+                c.points.push_back(c.normal * bRadius + bCenter);
+            }
+            else
+            {
+                c.normal = (closest - bCenter).Normalized();
+                c.points.push_back((c.normal) * bRadius + bCenter);
+                c.depth = bRadius - geo::Distance(bCenter, closest);
+            }
         }
-
-        else if (dot2 <= 0.0)
-        {
-            if (geo::DistanceSquared(bCenter, v2) > SQRD(bRadius))
-                return c;
-            geo::Vector2 n = v2 - bCenter;
-            n.Normalize();
-            c.normal = -n;
-            c.points.push_back(v2);
-        }
-        
-        else
-        {
-            geo::Vector2 n = a->GetNormal(faceNormal);
-            if ((bCenter - v1).Dot(n) > bRadius)
-                return c;
-            n = ta.rotation * n;
-            c.normal = n;
-            c.points.push_back(-n * bRadius + tb.position);
-        }
-        c.hasCollision = true;
+        if (flipped)
+            c.normal = -c.normal;
         return c;
     }
 
@@ -121,7 +124,8 @@ namespace physics::algo
 
     CollisionPoints PolygonPolygonCollision(
             const PolygonCollider* a, const Transform& ta,
-            const PolygonCollider* b, const Transform& tb)
+            const PolygonCollider* b, const Transform& tb, bool flipped
+    )
     {
         CollisionPoints c;
         c.hasCollision = false;
@@ -143,7 +147,7 @@ namespace physics::algo
             else
                 edge = bPoints[(i - aPoints.size() + 1) % bPoints.size()] - bPoints[i - aPoints.size()];
             geo::Vector2 ortho(-edge.y, edge.x);
-            CollisionPoints clsn = SeparatingAxisCheck(ortho, aPoints, bPoints);
+            CollisionPoints clsn = SeparatingAxis(ortho, aPoints, bPoints);
             if (clsn.hasCollision == true)
                 return c;
             else
@@ -168,23 +172,26 @@ namespace physics::algo
         c.depth = mpv.GetMagnitude();
         std::vector<geo::Vector2> inter = FindCollisionPoints(aPoints, bPoints);
         c.points = inter; 
+        if (flipped)
+            c.normal = -c.normal;
         return c;
     };
 
     CollisionPoints PolygonBoxCollision(
         const PolygonCollider* a, const Transform& ta,
-        const BoxCollider* b, const Transform& tb)
+        const BoxCollider* b, const Transform& tb, bool flipped
+    )
     {
         CollisionPoints c;
         if (!a || !b)
             return c;
         PolygonCollider bb = PolygonCollider(*b);
-        return PolygonPolygonCollision(a, ta, &bb, tb);
+        return PolygonPolygonCollision(a, ta, &bb, tb, flipped);
     }
 
     CollisionPoints PolygonMeshCollision(
         const PolygonCollider* a, const Transform& ta,
-        const MeshCollider* b, const Transform& tb
+        const MeshCollider* b, const Transform& tb, bool flipped
     )
     {
         CollisionPoints c;
@@ -201,7 +208,7 @@ namespace physics::algo
                 if (c.depth < tmp.depth)
                 {
                     c.depth = tmp.depth;
-                    c.normal = tmp.normal;
+                    c.normal = -tmp.normal;
                 }
                 for (auto p: tmp.points)
                     c.points.push_back(p);
@@ -209,6 +216,8 @@ namespace physics::algo
         }
         if (avg)
             c.depth = avg / (f64)c.points.size();
+        if (flipped)
+            c.normal = -c.normal;
         return c;
     }
 
@@ -232,7 +241,7 @@ namespace physics::algo
         return points;
     }
 
-    CollisionPoints SeparatingAxisCheck(
+    CollisionPoints SeparatingAxis(
         const geo::Vector2& orthogonal, const std::vector<geo::Vector2>& a,
         const std::vector<geo::Vector2>& b
     )
@@ -266,110 +275,36 @@ namespace physics::algo
         return c;
     }
 
-    f64 FindMaxSeparation(size_t* edgeIndex, const PolygonCollider* a, const Transform& ta,
-        const PolygonCollider* b, const Transform& tb)
+    CollisionPoints SeparatingAxis(
+        const geo::Vector2& orthogonal, const std::vector<geo::Vector2>& a,
+        const geo::Vector2& bCenter, f64 bRadius
+    )
     {
-        size_t count1 = a->GetPoints().size();
-        size_t count2 = b->GetPoints().size();
-        Transform t = tb * ta;
-        size_t bestIndex = 0;
-        f64 maxseparation = std::numeric_limits<f64>::min();
-        for (size_t i = 0; i < count1; i++)
+        CollisionPoints c;
+        c.hasCollision = false;
+        f64 minA = MAX, maxA = MIN;
+        f64 minB = MAX, maxB = MIN;
+        for (const geo::Vector2& v : a)
         {
-            geo::Vector2 n = t.rotation * a->GetNormal(i);
-            geo::Vector2 v1 = t.TransformVector(a->GetPoint(i));
-            f64 si = std::numeric_limits<f64>::max();
-            for (size_t j = 0; j < count2; j++)
-            {
-                f64 sij = n.Dot(b->GetPoint(j) - v1);
-                si = std::min(si, sij);
-                if (si > maxseparation)
-                {
-                    maxseparation = si;
-                    bestIndex = i;
-                }
-            }
+            f64 projection = v.Dot(orthogonal);
+            minA = std::min(minA, projection);
+            maxA = std::max(maxA, projection);
         }
-        *edgeIndex = bestIndex;
-        return maxseparation;
-    }
-
-    bool VectorInCircle(const geo::Vector2& a, const CircleCollider* b,
-    const Transform& tb)
-    {
-        return geo::DistanceSquared(a, tb.TransformVector(b->center)) <= SQRD(b->radius * std::max(tb.scale[0][0], tb.scale[1][1]));
-    }
-
-    i32 Clip(geo::Vector2 n, f64 c, geo::Vector2* face)
-    {
-        u32 sp = 0;
-        geo::Vector2 out[2] = {
-            face[0],
-            face[1]
-        };
-
-        f64 d1 = n.Dot(face[0]) - c;
-        f64 d2 = n.Dot(face[1]) - c;
-        if (d1 <= 0.0)
-            out[sp++] = face[0];
-        if (d2 <= 0.0)
-            out[sp++] = face[1];
-        if (d1 * d2 <= 0.0)
         {
-            f64 alpha = d1 / (d1 - d2);
-            out[sp] = face[0] + alpha * (face[1] - face[0]);
-            ++sp;
+            f64 projection = bCenter.Dot(orthogonal);
+            minB = projection - bRadius;
+            maxB = projection + bRadius;
         }
-        face[0] = out[0];
-        face[1] = out[1];
-        assert(sp != 3);
-        return sp;
-    }
 
-    void FindIncidentFace(geo::Vector2* v, const PolygonCollider* refPoly, const Transform& refTransform, const PolygonCollider* incPoly, const Transform& incTransform, size_t refIndex)
-    {
-        geo::Vector2 refNormal = refPoly->GetNormals()[refIndex];
-        refNormal = refTransform.rotation * refNormal;
-        refNormal = incTransform.rotation.Transpose() * refNormal;
-        size_t incidentFace = 0;
-        f64 minDot = std::numeric_limits<f64>::min();
-        for (size_t i = 0; i < incPoly->GetPoints().size(); i++)
+        if (maxA >= minB && maxB >= minA)
         {
-            f64 dot = refNormal.Dot(incPoly->GetNormals()[i]);
-            if (dot < minDot)
-            {
-                minDot = dot;
-                incidentFace = i;
-            }
+            f64 d = std::min(maxB - minA, maxA - minB);
+            f64 e = d / orthogonal.Dot(orthogonal) + EPSILON;
+            geo::Vector2 pv = e * orthogonal;
+            c.normal = pv;
+            return c;
         }
-        v[0] = incTransform.TransformVector(incPoly->GetPoint(incidentFace));
-        incidentFace = incidentFace + 1 < incPoly->GetPoints().size() ? incidentFace + 1 : 0;
-        v[1] = incTransform.TransformVector(incPoly->GetPoint(incidentFace));
-    }
-
-    f64 FindAxisLeastPenetration(size_t* faceIndex, const PolygonCollider* a, const Transform& ta, const PolygonCollider* b, const Transform& tb)
-    {
-        f64 bestDist = std::numeric_limits<f64>::min();
-        size_t bestIndex = 0;
-        for (size_t i = 0; i < a->GetPoints().size(); i++)
-        {
-            geo::Vector2 n = a->GetNormal(i);
-            geo::Vector2 nw = ta.rotation * n;
-            geo::Matrix2 buT = tb.rotation.Transpose();
-            n = buT * nw;
-            geo::Vector2 s = b->SupportPoint(-n);
-            geo::Vector2 v = a->GetPoint(i);
-            v = ta.TransformVector(v);
-            v -= tb.position;
-            v = buT * v;
-            f64 d = n.Dot(s - v);
-            if (d > bestDist)
-            {
-                bestDist = d;
-                bestIndex = i;
-            }
-        }
-        *faceIndex = bestIndex;
-        return bestDist;
+        c.hasCollision = true;
+        return c;
     }
 }

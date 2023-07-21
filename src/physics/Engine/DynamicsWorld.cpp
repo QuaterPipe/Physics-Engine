@@ -8,6 +8,7 @@ namespace physics
 	DynamicsWorld::DynamicsWorld() noexcept
 	{
 		_solvers.push_back(new PhysicsSolver());
+		_solvers.push_back(new PositionalCorrectionSolver());
 	}
 
 	void DynamicsWorld::AddObject(CollisionObject* o) noexcept
@@ -44,7 +45,7 @@ namespace physics
 			for (auto& b: _dynamicbodies)
 			{
 				if (a == b)
-					break;
+					continue;
 				if (a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform)))
 				{
 					CollisionPoints points = a->GetCollider().TestCollision(
@@ -55,18 +56,7 @@ namespace physics
 						c.a = a;
 						c.b = b;
 						c.points = points;
-						/*_collisions.push_back(c);
-						if (!a->hadCollisionLastFrame || !b->hadCollisionLastFrame)
-						{
-							VelocityConstraint* constraint = new VelocityConstraint();
-							constraint->a = a;
-							constraint->b = b;
-							constraint->normal = c.points.normal;
-							constraint->contactA = c.points.a;
-							constraint->contactB = c.points.b;
-							a->AddConstraint(constraint);
-							b->AddConstraint(constraint);
-						}*/
+						_collisions.push_back(c);
 					}
 				}
 			}
@@ -119,18 +109,16 @@ namespace physics
 	{
 		for (Collision& c: collisions)
 		{
-			_onCollision(c, dt);
-			const auto& a = c.a->onCollision;
-			const auto& b = c.b->onCollision;
-			if (a) a(c, dt);
-			if (b) b(c, dt);
+			if (_onCollision) _onCollision(c, dt);
+			if (c.a->onCollision) c.a->onCollision(c, dt);
+			if (c.b->onCollision) c.b->onCollision(c, dt);
 		}
 	}
 
 	void DynamicsWorld::IntegrateObjects(f64 dt) noexcept
 	{
 		for (auto& db: _dynamicbodies)
-			db->Update(dt);
+			db->IntegrateVelocity(dt);
 	}
 	
 	void DynamicsWorld::Update(f64 dt) noexcept
@@ -139,8 +127,13 @@ namespace physics
 			db->IntegrateForces(dt);
 		CheckCollisions(dt);
 		SendCollisionCallBacks(_collisions, dt);
-		for (auto solver: _solvers)
-			solver->Solve(_collisions, dt);
+		_solvers[0]->Solve(_collisions, dt);
 		IntegrateObjects(dt);
+		_solvers[1]->Solve(_collisions, dt);
+		for (auto& db : _dynamicbodies)
+		{
+			db->force.Set(0, 0);
+			db->angularForce = 0;
+		}
 	}
 }

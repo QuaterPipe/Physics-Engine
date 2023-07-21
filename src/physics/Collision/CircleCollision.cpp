@@ -7,7 +7,7 @@ namespace physics::algo
 {
     CollisionPoints CircleCircleCollision(
 		const CircleCollider* a, const Transform& ta,
-		const CircleCollider* b, const Transform& tb
+		const CircleCollider* b, const Transform& tb, bool flipped
 	)
 	{
 		CollisionPoints c;
@@ -23,32 +23,34 @@ namespace physics::algo
 		{
 			geo::Line l(ACenter, BCenter);
 			geo::Vector2 ca = l.GetVectorAlongLine(aRadius);
-			geo::Vector2 cb = l.GetVectorAlongLine(aRadius, false);
+			geo::Vector2 cb = l.GetVectorAlongLine(bRadius, false);
 			c.depth = ca != cb ? geo::Distance(ca, cb) : std::max(aRadius, bRadius);
 			c.normal = ca != cb ? ca - cb : geo::Vector2(0, 1);
 			c.normal.Normalize();
 			c.points.push_back(ca);
 			c.points.push_back(cb);
 			c.hasCollision = true;
+			if (flipped)
+				c.normal = -c.normal;
 		}
 		return c;
 	}
 
 	CollisionPoints CircleBoxCollision(
 		const CircleCollider* a, const Transform& ta,
-		const BoxCollider* b, const Transform& tb
+		const BoxCollider* b, const Transform& tb, bool flipped
 	)
 	{
 		CollisionPoints c;
 		if (!a || !b ) {return c;}
 		//easier to  collision points as a PolygonCollider
 		PolygonCollider bb = PolygonCollider(*b);
-		return PolygonCircleCollision(&bb, tb, a, ta);
+		return PolygonCircleCollision(&bb, tb, a, ta, !flipped);
 	}
 
 	CollisionPoints CircleMeshCollision(
 		const CircleCollider* a, const Transform& ta,
-		const MeshCollider* b, const Transform& tb
+		const MeshCollider* b, const Transform& tb, bool flipped
 	)
 	{
 		CollisionPoints c;
@@ -65,7 +67,7 @@ namespace physics::algo
 				if (c.depth < tmp.depth)
 				{
 					c.depth = tmp.depth;
-					c.normal = tmp.normal;
+					c.normal = -tmp.normal;
 				}
 				for (auto p : tmp.points)
 					c.points.push_back(p);
@@ -73,6 +75,8 @@ namespace physics::algo
 		}
 		if (avg)
 			c.depth = avg / (f64)c.points.size();
+		if (flipped)
+			c.normal = -c.normal;
 		return c;
 	}
 }
