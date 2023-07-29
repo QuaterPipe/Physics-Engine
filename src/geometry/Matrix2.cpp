@@ -51,7 +51,7 @@ namespace geo
 
 	f64 Matrix2::Angle() const noexcept
 	{
-		return asin(arr[2]);
+		return atan2(arr[2], arr[3]);
 	}
 
 	f64 Matrix2::Determinant() const noexcept

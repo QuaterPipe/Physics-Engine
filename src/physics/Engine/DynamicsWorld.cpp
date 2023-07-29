@@ -123,10 +123,8 @@ namespace physics
 	
 	void DynamicsWorld::Update(f64 dt) noexcept
 	{
-		for (auto& db: _dynamicbodies)
+		for (auto& db : _dynamicbodies)
 			db->IntegrateForces(dt);
-		CheckCollisions(dt);
-		SendCollisionCallBacks(_collisions, dt);
 		_solvers[0]->Solve(_collisions, dt);
 		IntegrateObjects(dt);
 		_solvers[1]->Solve(_collisions, dt);
@@ -135,5 +133,7 @@ namespace physics
 			db->force.Set(0, 0);
 			db->angularForce = 0;
 		}
+		CheckCollisions(dt);
+		SendCollisionCallBacks(_collisions, dt);
 	}
 }

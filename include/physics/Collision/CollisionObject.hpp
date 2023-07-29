@@ -31,7 +31,7 @@ namespace physics
 			std::unique_ptr<Collider> collider;
 			Transform transform;
 			geo::Vector2& position = transform.position;
-			geo::Vector2& centerOfRotation = transform.centerOfMass;
+			geo::Vector2& centerOfMass = transform.centerOfMass;
 			geo::Matrix2& scale = transform.scale;
 			geo::Matrix2& rotation = transform.rotation;
 			CollisionObject() noexcept;

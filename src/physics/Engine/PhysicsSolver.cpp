@@ -43,17 +43,17 @@ namespace physics
 			f64 kf = sqrt(SQRD(a->kineticFriction) + SQRD(b->kineticFriction));
 			for (int i = 0; i < c.points.points.size(); i++)
 			{
-				geo::Vector2 ra = c.points.points[i] - a->position;
-				geo::Vector2 rb = c.points.points[i] - b->position;
+				geo::Vector2 ra = c.points.points[i] - (a->position + a->centerOfMass);
+				geo::Vector2 rb = c.points.points[i] - (b->position + b->centerOfMass);
 				geo::Vector2 rv = b->velocity + geo::Vector2::Cross(b->angularVelocity, rb) -
 					a->velocity - geo::Vector2::Cross(a->angularVelocity, ra);
-				if (rv.GetMagnitudeSquared() < (dt * gravity).GetMagnitudeSquared() + EPSILON)
-					e = 0.0;
+				// if (rv.GetMagnitudeSquared() < (dt * gravity).GetMagnitudeSquared() + EPSILON)
+					// e = 0.0;
 			}
 			for (int i = 0; i < c.points.points.size(); i++)
 			{
-				geo::Vector2 ra = c.points.points[i] - a->position;
-				geo::Vector2 rb = c.points.points[i] - b->position;
+				geo::Vector2 ra = c.points.points[i] - (a->position + a->centerOfMass);
+				geo::Vector2 rb = c.points.points[i] - (b->position + b->centerOfMass);
 
 				geo::Vector2 rv = b->velocity + geo::Vector2::Cross(b->angularVelocity, rb) -
 					a->velocity - geo::Vector2::Cross(a->angularVelocity, ra);
@@ -81,13 +81,13 @@ namespace physics
 
 				rv = b->velocity + geo::Vector2::Cross(b->angularVelocity, rb) -
 					a->velocity - geo::Vector2::Cross(a->angularVelocity, ra);
-				
+
 				geo::Vector2 t = rv - (c.points.normal * rv.Dot(c.points.normal));
 				t.Normalize();
-				
+
 				f64 jt = -rv.Dot(t);
 				jt /= invMassSum;
-				jt /= c.points.points.size();
+				jt /= (f64)c.points.points.size();
 
 				if (geo::Equal(jt, 0.0))
 					continue;
@@ -95,10 +95,10 @@ namespace physics
 				if (std::abs(jt) < j * sf)
 					tangentImpulse = t * jt;
 				else
-					tangentImpulse = t * -jt * kf;
+					tangentImpulse = t * -j * kf;
 				a->ApplyImpulse(-tangentImpulse, ra);
 				b->ApplyImpulse(tangentImpulse, rb);
 			}
-		}
+		}	
 	}
 }

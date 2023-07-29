@@ -9,6 +9,7 @@ Collider* cldA[6];
 Collider* cldB[6];
 bool paused = false;
 sf::Vector2f pos;
+f64 rotA = 0, rotB = 0;
 void Render(sf::RenderWindow* win, int a, int b)
 {
     sf::Vector2i pixelPos = sf::Mouse::getPosition(*win);
@@ -19,6 +20,7 @@ void Render(sf::RenderWindow* win, int a, int b)
         pos = worldPos;
     Transform tB;
     tB.position.Set(worldPos.x, worldPos.y);
+    tB.rotation.Set(rotB);
     if (a < 2)
     {
         f64 rad = !a ? 10 : 50;
@@ -40,24 +42,6 @@ void Render(sf::RenderWindow* win, int a, int b)
         c.setOutlineThickness(1);
         c.setPosition(worldPos.x, worldPos.y);
         win->draw(c);
-    }
-    if (a == 2)
-    {
-        sf::RectangleShape r(sf::Vector2f(50, 50));
-        r.setFillColor(sf::Color::Transparent);
-        r.setOutlineColor(sf::Color::White);
-        r.setOutlineThickness(1);
-        r.setPosition(250, 250);
-        win->draw(r);
-    }
-    if (b == 2)
-    {
-        sf::RectangleShape r(sf::Vector2f(50, 50));
-        r.setFillColor(sf::Color::Transparent);
-        r.setOutlineColor(sf::Color::White);
-        r.setOutlineThickness(1);
-        r.setPosition(worldPos.x, worldPos.y);
-        win->draw(r);
     }
     if (a > 2)
     {
@@ -86,6 +70,7 @@ void Render(sf::RenderWindow* win, int a, int b)
     c.setFillColor(sf::Color::Red);
     Transform tA;
     tA.position.Set(250, 250);
+    tA.rotation.Set(rotA);
     CollisionPoints result = cldA[a]->TestCollision(tA, cldB[b], tB);
     for (auto p : result.points)
     {
@@ -179,6 +164,17 @@ void CollisionTest()
         {
             if (e.type == sf::Event::Closed)
                 window.close();
+            if (e.type == sf::Event::MouseButtonPressed)
+            {
+                if (e.mouseButton.button == sf::Mouse::Right)
+                {
+                    rotA += 0.1;
+                }
+                if (e.mouseButton.button == sf::Mouse::Left)
+                {
+                    rotB += 0.1;
+                }
+            }
             if (e.type == sf::Event::KeyReleased)
             {
                 if (e.key.code == sf::Keyboard::Q)

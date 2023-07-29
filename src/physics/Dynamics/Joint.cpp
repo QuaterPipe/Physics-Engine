@@ -49,10 +49,10 @@ namespace physics
 	void HingeJoint::Update(f64 dt) noexcept
 	{
 		aContact = bContact;
-		if (a->centerOfRotation != aContact)
-			a->centerOfRotation = aContact;
-		if (b->centerOfRotation != aContact)
-			b->centerOfRotation = aContact;
+		if (a->centerOfMass != aContact)
+			a->centerOfMass = aContact;
+		if (b->centerOfMass != aContact)
+			b->centerOfMass = aContact;
 		a->angularVelocity *= (1 - angularFriction) * dt;
 		b->angularVelocity *= (1 - angularFriction) * dt;
 	}

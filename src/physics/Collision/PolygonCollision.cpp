@@ -166,7 +166,7 @@ namespace physics::algo
         if (d.Dot(mpv) > 0)
             mpv = -mpv;
         c.hasCollision = true;
-        c.normal = mpv.Normalized();
+        c.normal = -mpv.Normalized();
         if (!c.normal.GetMagnitudeSquared())
             c.normal.Set(1, 0);
         c.depth = mpv.GetMagnitude();

@@ -110,11 +110,15 @@ namespace physics
 
 	f64 Dynamicbody::GetInvInertia() const noexcept
 	{
+		if (isStatic)
+			return 0;
 		return _invInertia;
 	}
  
 	f64 Dynamicbody::GetInvMass() const noexcept
 	{
+		if (isStatic)
+			return 0;
 		return _invMass;
 	}
 
@@ -129,7 +133,7 @@ namespace physics
 		if (isStatic)
 			return;
 		velocity += (force * _invMass + gravity) * (dt / 2.0);
-  		angularVelocity += angularForce * _invInertia * (dt / 2.0);
+  		angularVelocity += 0 * angularForce * _invInertia * (dt / 2.0);
 	}
 
 	void Dynamicbody::IntegrateVelocity(f64 dt) noexcept
