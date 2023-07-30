@@ -37,7 +37,7 @@ void Render(void)
     // std::cout << rigidbodies[1].velocity << "\n";
     for (int i = 1; i < 6; i++)
     {
-        rect.setPosition(rigidbodies[i].position.x + 25, rigidbodies[i].position.y + 25);
+        /*rect.setPosition(rigidbodies[i].position.x + 25, rigidbodies[i].position.y + 25);
         Vector2 ang = GetVectorOnCircle(rigidbodies[i].position, 50, rigidbodies[i].rotation.Angle());
         rect.setRotation(geo::Degrees(rigidbodies[i].rotation.Angle()));
         sf::Vertex line[2] = {
@@ -45,8 +45,12 @@ void Render(void)
             sf::Vertex(sf::Vector2f(ang.x, ang.y))
         };
 
-        w->draw(line, 2, sf::Lines);
-        w->draw(rect);
+        w->draw(line, 2, sf::Lines);*/
+        sf::CircleShape circ(25);
+        circ.setPosition(rigidbodies[i].position.x - 25, rigidbodies[i].position.y - 25);
+        circ.setFillColor(sf::Color::Transparent);
+        circ.setOutlineThickness(1);
+        w->draw(circ);
     }
 }
 
@@ -69,8 +73,8 @@ void EngineTest(void)
     d.AddDynamicbody(&rigidbodies[0]);
     for (int i = 1; i < 6; i++)
     {
-        rigidbodies[i] = Rigidbody(BoxCollider(50, 50));
-        rigidbodies[i].centerOfMass.Set(25, 25);
+        rigidbodies[i] = Rigidbody(CircleCollider(25));
+        // rigidbodies[i].centerOfMass.Set(25, 25);
         rigidbodies[i].position.Set(200 + i * 1, 100);
         rigidbodies[i].SetMass(0.05);
         rigidbodies[i].SetInertia(5);

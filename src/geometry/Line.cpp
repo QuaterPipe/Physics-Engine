@@ -93,6 +93,6 @@ namespace geo
 
 	bool Line::VectorIsOnLine(const Vector2& v) const noexcept
 	{
-		return Equal(DistanceSquared(a, v) + DistanceSquared(v, b), DistanceSquared(a, b));
+		return Equal(Distance(a, v) + Distance(v, b), Distance(a, b));
 	}
 }

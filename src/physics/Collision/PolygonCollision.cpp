@@ -39,7 +39,7 @@ namespace physics::algo
             centroid += *(aPoints.end() - 1);
         }
         centroid /= aPoints.size();
-        geo::Vector2 bCenter = b->center + tb.position; // no other members of tb will affect b->center.
+        geo::Vector2 bCenter = b->center + tb.position + tb.centerOfMass; // no other members of tb will affect b->center.
         f64 bRadius = b->radius * std::max(tb.scale[0][0], tb.scale[1][1]);
         bool centerInA = a->Contains(bCenter, ta), polyInB = true;
         std::vector<geo::Vector2> projections;
@@ -91,7 +91,7 @@ namespace physics::algo
                 c.depth = bRadius - geo::Distance(bCenter, closest);
             }
         }
-        if (flipped)
+        if (!flipped)
             c.normal = -c.normal;
         return c;
     }

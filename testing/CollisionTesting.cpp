@@ -43,6 +43,24 @@ void Render(sf::RenderWindow* win, int a, int b)
         c.setPosition(worldPos.x, worldPos.y);
         win->draw(c);
     }
+    if (a == 2)
+    {
+        sf::RectangleShape r(sf::Vector2f(50, 50));
+        r.setFillColor(sf::Color::Transparent);
+        r.setOutlineColor(sf::Color::White);
+        r.setOutlineThickness(1);
+        r.setPosition(250, 250);
+        win->draw(r);
+    }
+    if (b == 2)
+    {
+        sf::RectangleShape r(sf::Vector2f(50, 50));
+        r.setFillColor(sf::Color::Transparent);
+        r.setOutlineColor(sf::Color::White);
+        r.setOutlineThickness(1);
+        r.setPosition(worldPos.x, worldPos.y);
+        win->draw(r);
+    }
     if (a > 2)
     {
         std::vector<geo::Vector2> pts = ((PolygonCollider*)cldA[a])->GetPoints();
