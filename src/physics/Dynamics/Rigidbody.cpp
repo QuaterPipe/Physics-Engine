@@ -97,10 +97,13 @@ namespace physics
 	{
 		if (!isKinematic && !isStatic)
 		{
-			//velocity += (force * _invMass) * (dt / 2.0);
-			//angularVelocity += (angularForce * _invInertia) * (dt / 2.0);
-			position += velocity * dt;
-			rotation = geo::Matrix2(transform.GetAngle() + angularVelocity * dt);
+			force *= _invMass;
+			angularForce *= _invInertia;
+			Transform::RK4Integrate(&position.x, &velocity.x, &force.x, dt);
+			Transform::RK4Integrate(&position.y, &velocity.y, &force.y, dt);
+			f64 ang = rotation.Angle();
+			Transform::RK4Integrate(&ang, &angularVelocity, &angularForce, dt);
+			rotation.Set(ang);
 			angularForce = 0;
 			force.Set(0, 0);
 		}

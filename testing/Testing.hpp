@@ -5,4 +5,5 @@
 void CollisionTest();
 void DynamicsTest();
 void EngineTest();
+void IntegrationTest();
 void SoftbodyTest();

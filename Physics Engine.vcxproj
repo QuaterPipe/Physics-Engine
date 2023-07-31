@@ -56,6 +56,7 @@
     <ClCompile Include="testing\CollisionTesting.cpp" />
     <ClCompile Include="testing\DynamicsTesting.cpp" />
     <ClCompile Include="testing\EngineTesting.cpp" />
+    <ClCompile Include="testing\IntegrationTesting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

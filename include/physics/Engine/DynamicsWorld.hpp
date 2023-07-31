@@ -49,7 +49,7 @@ namespace physics
 			void RemoveDynamicbody(Dynamicbody* dynamicbody) noexcept;
 			void RemoveSolver(Solver* s) noexcept;
 			void ResolveConstraints(f64 dt) noexcept;
-			void SendCollisionCallBacks(std::vector<Collision>& collisions, f64 dt) noexcept;
+			void SendCollisionCallBacks(f64 dt) noexcept;
 			void SetCollisionCallBack(const std::function<void(Collision&, f64)>& callback, f64 dt) noexcept;
 			void Update(f64 dt) noexcept;
 	};

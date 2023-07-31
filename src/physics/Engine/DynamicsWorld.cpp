@@ -33,7 +33,7 @@ namespace physics
 		{
 			if (!db->usesGravity)
 				continue;
-			db->ApplyForce(db->gravity * dt);
+			db->ApplyForce(db->gravity);
 		}
 	}
 
@@ -105,9 +105,9 @@ namespace physics
 		_onCollision = callback;
 	}
 
-	void DynamicsWorld::SendCollisionCallBacks(std::vector<Collision>& collisions, f64 dt) noexcept
+	void DynamicsWorld::SendCollisionCallBacks(f64 dt) noexcept
 	{
-		for (Collision& c: collisions)
+		for (Collision& c: _collisions)
 		{
 			if (_onCollision) _onCollision(c, dt);
 			if (c.a->onCollision) c.a->onCollision(c, dt);
@@ -123,17 +123,12 @@ namespace physics
 	
 	void DynamicsWorld::Update(f64 dt) noexcept
 	{
+		ApplyGravity(dt);
 		for (auto& db : _dynamicbodies)
-			db->IntegrateForces(dt);
-		_solvers[0]->Solve(_collisions, dt);
-		IntegrateObjects(dt);
-		_solvers[1]->Solve(_collisions, dt);
-		for (auto& db : _dynamicbodies)
-		{
-			db->force.Set(0, 0);
-			db->angularForce = 0;
-		}
+			db->Update(dt);
 		CheckCollisions(dt);
-		SendCollisionCallBacks(_collisions, dt);
+		SendCollisionCallBacks(dt);
+		_solvers[0]->Solve(_collisions, dt);
+		_solvers[1]->Solve(_collisions, dt);
 	}
 }

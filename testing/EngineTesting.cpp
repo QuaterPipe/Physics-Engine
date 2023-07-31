@@ -1,5 +1,6 @@
 #include "Testing.hpp"
 #include <iostream>
+#include <thread>
 using namespace geo;
 using namespace physics;
 Rigidbody rigidbodies[10];
@@ -82,6 +83,8 @@ void EngineTest(void)
         rigidbodies[i].restitution = 0.9;
         d.AddDynamicbody(&rigidbodies[i]);
     }
+    rigidbodies[2].angularVelocity = -5000000;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     Time::Tick();
     while (window.isOpen())
     {
@@ -99,8 +102,8 @@ void EngineTest(void)
         }
         Time::Tick();
         if (tick || lock)
-            d.Update(1.0 / 60.0);
-        // std::cout << Time::deltaTime << "\n";
+            d.Update(Time::deltaTime * 0.001);
+        std::cout << Time::deltaTime << "\n";
         if (tick || lock)
         {
             Render();

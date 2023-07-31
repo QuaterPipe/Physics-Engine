@@ -99,39 +99,69 @@ namespace physics
 		return result;
 	}
 
-	void Transform::Integrate(f64 dt, const geo::Vector2& velocity, f64 angularVelocity, const geo::Vector2& force,
-		f64 torque, u32 steps) noexcept
-	{
-		/*auto rhs = [&](f64 t, const geo::Vector& x) {
-			geo::Vector output(4);
-			output[0] = x[2];
-			output[1] = x[3];
-			output[2] = forcex;
-			output[3] = force.y;
-		};
-		geo::Vector X(4);
-		X[0] = position.x;
-		X[1] = position.y;
-		X[2] = velocity.x;
-		X[3] = velocity.y;
-		f64 t = 0;
-		for (int stepNumber = 0; stepNumber <= steps; stepNumber++)
-		{
-
-			geo::Vector k1 = rhs( t, X );
-			geo::Vector k2 = rhs( t + (dt / (f64)steps) / 2.0,  X + (dt / (f64)steps) / 2.0 * k1 );
-			geo::Vector k3 = rhs( t + (dt / (f64)steps) / 2.0, X + (dt / (f64)steps) / 2.0 * k2 );
-			geo::Vector k4 = rhs( t + (dt / (f64)steps), X + (dt / (f64)steps) * k3 );
-
-			X += (dt / (f64)steps) / 6.0 * ( k1 + 2.0 * k2 + 2.0 * k3 + k4 );
-			t += (dt / (f64)steps);
-		}*/
-	}
-
 	geo::Vector2 Transform::TransformVector(const geo::Vector2& v) const noexcept
 	{
 		geo::Vector3 tmp(v.x, v.y, 1);
 		tmp = GetTransformationMatrix() * tmp;
 		return geo::Vector2(tmp.x, tmp.y);
+	}
+
+	void Transform::SymplecticEulerIntegrate(f64* position, f64* velocity, f64* acceleration, f64 dt)
+	{
+		*velocity += *acceleration * dt;
+		*position += *velocity * dt;
+	}
+
+	struct State
+	{
+		f64 x, v;
+	};
+
+	struct Derivative
+	{
+		f64 dx, dv;
+	};
+	
+	Derivative Evaluate(State initial, f64 dt, Derivative d, f64 acceleration)
+	{
+
+		State state;
+		state.x = initial.x + d.dx * dt;
+		state.v = initial.v + d.dv * dt;
+
+		Derivative output;
+		output.dx = state.v;
+		output.dv = acceleration;
+		return output;
+	}
+
+	void Integrate(State& state,
+		f64 dt, f64 acceleration)
+	{
+		Derivative a, b, c, d;
+
+		a = Evaluate(state, 0.0, Derivative(), acceleration);
+		b = Evaluate(state, dt * 0.5, a, acceleration);
+		c = Evaluate(state, dt * 0.5, b, acceleration);
+		d = Evaluate(state, dt, c, acceleration);
+
+		float dxdt = 1.0 / 6.0 *
+			(a.dx + 2.0 * (b.dx + c.dx) + d.dx);
+
+		float dvdt = 1.0 / 6.0 *
+			(a.dv + 2.0 * (b.dv + c.dv) + d.dv);
+
+		state.x = state.x + dxdt * dt;
+		state.v = state.v + dvdt * dt;
+	}
+
+	void Transform::RK4Integrate(f64* position, f64* velocity, f64* acceleration, f64 dt)
+	{
+		State s;
+		s.x = *position;
+		s.v = *velocity;
+		Integrate(s, dt, *acceleration);
+		*position = s.x;
+		*velocity = s.v;
 	}
 }
