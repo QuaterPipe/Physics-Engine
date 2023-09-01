@@ -1,3 +1,7 @@
+# Installing
+Runs in Visual Studio 2022
+Add 'lib' to list in Project > Physics Engine Properties > Configuration Properties > Debugging > Environment
+
 # Physics Engine
 
 This is a simple physics engine meant to make physics easier to implement in games.
