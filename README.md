@@ -1,6 +1,6 @@
 # Installing
 Runs in Visual Studio 2022
-Add 'lib' to list in Project > Physics Engine Properties > Configuration Properties > Debugging > Environment
+Set Project > Physics Engine Properties > Configuration Properties > Debugging > Environment to 'PATH=%PATH%;lib'
 
 # Physics Engine
 
