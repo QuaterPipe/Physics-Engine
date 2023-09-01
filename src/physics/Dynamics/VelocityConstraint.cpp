@@ -6,18 +6,18 @@ namespace physics
 	Constraint::Output VelocityConstraint::Calculate(f64 dt)
 	{
 		Output out;
-		const geo::Vector2 rA = contactA - (a->GetCollider().GetCenter() + a->position);
-		const geo::Vector2 rB = contactB - (b->GetCollider().GetCenter() + b->position);
+		const geo::Vector2 rA = contactA - (a->GetCollider().GetCenter() + a->transform.GetPosition());
+		const geo::Vector2 rB = contactB - (b->GetCollider().GetCenter() + b->transform.GetPosition());
 		out.K = geo::Matrix(1, 1);
-		out.K[0][0] = a->GetInvMass() + b->GetInvMass() + a->GetInvMass() * SQRD(rA.Cross(normal))
+		out.K(0, 0) = a->GetInvMass() + b->GetInvMass() + a->GetInvMass() * SQRD(rA.Cross(normal))
 			+ b->GetInvMass() * SQRD(rB.Cross(normal));
 		out.J = geo::Matrix(1, 6);
-		out.J[0][0] = normal.x;
-		out.J[0][1] = normal.y;
-		out.J[0][2] = rA.Cross(normal);
-		out.J[0][3] = -normal.x;
-		out.J[0][4] = -normal.y;
-		out.J[0][5] = rB.Cross(normal);
+		out.J(0, 0) = normal.x;
+		out.J(0, 1) = normal.y;
+		out.J(0, 2) = rA.Cross(normal);
+		out.J(0, 3) = -normal.x;
+		out.J(0, 4) = -normal.y;
+		out.J(0, 5) = rB.Cross(normal);
 		const  geo::Vector2 relativeVel = (b->velocity + geo::Vector2::Cross(b->angularVelocity, rB) -
 			a->velocity );
 		const f64 restitutionBias = restitution * relativeVel.Dot(normal);

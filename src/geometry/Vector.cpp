@@ -51,7 +51,7 @@ namespace geo
 		return m_size;
 	}
 
-	const f64& Vector::operator[](size_t i) const noexcept
+	f64 Vector::operator[](size_t i) const noexcept
 	{
 		assert(i < m_size && "Index is out of range.");
 		return m_nums[i];
@@ -83,7 +83,7 @@ namespace geo
 	f64 Vector::GetMagnitude() const noexcept
 	{
 		f64 sum = 0;
-		for (const f64& x: m_nums)
+		for (f64 x: m_nums)
 			sum += x * x;
 		return sqrt(sum);
 	}
@@ -91,7 +91,7 @@ namespace geo
 	f64 Vector::GetMagnitudeSquared() const noexcept
 	{
 		f64 sum = 0;
-		for (const f64& x: m_nums)
+		for (f64 x: m_nums)
 			sum += x * x;
 		return sum;
 	}
@@ -99,12 +99,12 @@ namespace geo
 	f64 Vector::GetMagnitudeQuick() const noexcept
 	{
 		f64 sum = 0;
-		for (const f64& x: m_nums)
+		for (f64 x: m_nums)
 			sum += x * x;
 		return FastSqrt(sum);
 	}
 	
-	Vector Vector::Lerp(const Vector& other, const f64& t) const
+	Vector Vector::Lerp(const Vector& other, f64 t) const
 	{
 		assert(m_size == other.GetSize() && "Must have vector of equal size.");
 		return *this - (other - *this) - t;
@@ -160,7 +160,7 @@ namespace geo
 	f64 Vector::Sum() const noexcept
 	{
 		f64 sum = 0;
-		for (const f64& x: m_nums)
+		for (f64 x: m_nums)
 			sum += x;
 		return sum;
 	}
@@ -210,7 +210,7 @@ namespace geo
 		return x;
 	}
 
-	Vector Vector::operator-(const f64& d) const noexcept
+	Vector Vector::operator-(f64 d) const noexcept
 	{
 		Vector x(*this);
 		for (size_t i = 0; i < m_size; i++)
@@ -225,7 +225,7 @@ namespace geo
 			m_nums[i] -= v[i];
 	}
 
-	void Vector::operator-=(const f64& d) noexcept
+	void Vector::operator-=(f64 d) noexcept
 	{
 		for (size_t i = 0; i < m_size; i++)
 			m_nums[i] -= d;
@@ -240,7 +240,7 @@ namespace geo
 		return x;
 	}
 
-	Vector Vector::operator+(const f64& d) const noexcept
+	Vector Vector::operator+(f64 d) const noexcept
 	{
 		Vector x(*this);
 		for (size_t i = 0; i < m_size; i++)
@@ -255,7 +255,7 @@ namespace geo
 			m_nums[i] += v[i];
 	}
 
-	void Vector::operator+=(const f64& d) noexcept
+	void Vector::operator+=(f64 d) noexcept
 	{
 		for (size_t i = 0; i < m_size; i++)
 			m_nums[i] += d;
@@ -270,7 +270,7 @@ namespace geo
 		return x;
 	}
 
-	Vector Vector::operator/(const f64& d) const noexcept
+	Vector Vector::operator/(f64 d) const noexcept
 	{
 		Vector x(*this);
 		for (size_t i = 0; i < m_size; i++)
@@ -285,7 +285,7 @@ namespace geo
 			m_nums[i] /= v[i];
 	}
 
-	void Vector::operator/=(const f64& d) noexcept
+	void Vector::operator/=(f64 d) noexcept
 	{
 		for (size_t i = 0; i < m_size; i++)
 			m_nums[i] /= d;
@@ -300,7 +300,7 @@ namespace geo
 		return x;
 	}
 
-	Vector Vector::operator*(const f64& d) const noexcept
+	Vector Vector::operator*(f64 d) const noexcept
 	{
 		Vector x(*this);
 		for (size_t i = 0; i < m_size; i++)
@@ -315,7 +315,7 @@ namespace geo
 			m_nums[i] *= v[i];
 	}
 
-	void Vector::operator*=(const f64& d) noexcept
+	void Vector::operator*=(f64 d) noexcept
 	{
 		for (size_t i = 0; i < m_size; i++)
 			m_nums[i] *= d;
@@ -338,17 +338,17 @@ namespace geo
 		return *this;
 	}
 
-	Vector operator*(const f64& d, const Vector& v)
+	Vector operator*(f64 d, const Vector& v)
 	{
 		return v * d;
 	}
 
-	Vector operator+(const f64& d, const Vector& v)
+	Vector operator+(f64 d, const Vector& v)
 	{
 		return v + d;
 	}
 
-	Vector operator-(const f64& d, const Vector& v)
+	Vector operator-(f64 d, const Vector& v)
 	{
 		Vector x(v);
 		for (f64& tmp: x)
@@ -356,7 +356,7 @@ namespace geo
 		return x;
 	}
 
-	Vector operator/(const f64& d, const Vector& v)
+	Vector operator/(f64 d, const Vector& v)
 	{
 		Vector x(v);
 		for (f64& tmp: x)

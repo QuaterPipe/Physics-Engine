@@ -19,7 +19,7 @@ namespace geo
 	{
 	}
 
-	Vector3::Vector3(const f64& x, const f64& y, const f64& z) noexcept
+	Vector3::Vector3(f64 x, f64 y, f64 z) noexcept
 	: x(x), y(y), z(z)
 	{
 	}
@@ -39,7 +39,7 @@ namespace geo
 		return x;
 	}
 
-	const f64& Vector3::operator[](size_t index) const
+	f64 Vector3::operator[](size_t index) const
 	{
 		assert(index <= 2);
 		switch (index)
@@ -80,7 +80,7 @@ namespace geo
 		return FastSqrt(x * x + y * y + z * z);
 	}
 
-	Vector3 Vector3::Lerp(const Vector3& other, const f64& t) const noexcept
+	Vector3 Vector3::Lerp(const Vector3& other, f64 t) const noexcept
 	{
 		return *this + (other - *this) * t;
 	}
@@ -101,22 +101,22 @@ namespace geo
 		return v;
 	}
 
-	Vector3 operator*(const f64& d, const Vector3& v) noexcept
+	Vector3 operator*(f64 d, const Vector3& v) noexcept
 	{
 		return Vector3(d * v.x, d * v.y, d * v.z);
 	}
 
-	Vector3 operator+(const f64& d, const Vector3& v) noexcept
+	Vector3 operator+(f64 d, const Vector3& v) noexcept
 	{
 		return Vector3(d + v.x, d + v.y, d + v.z);
 	}
 	
-	Vector3 operator-(const f64& d, const Vector3& v) noexcept
+	Vector3 operator-(f64 d, const Vector3& v) noexcept
 	{
 		return Vector3(d - v.x, d - v.y, d - v.z);
 	}
 
-	Vector3 operator/(const f64& d, const Vector3& v) noexcept
+	Vector3 operator/(f64 d, const Vector3& v) noexcept
 	{
 		return Vector3(d / v.x, d / v.y, d / v.z);
 	}
@@ -150,7 +150,7 @@ namespace geo
 		return result;
 	}
 
-	Vector3 Vector3::operator+(const f64& d) const noexcept
+	Vector3 Vector3::operator+(f64 d) const noexcept
 	{
 		Vector3 result(*this);
 		result.x += d;
@@ -166,7 +166,7 @@ namespace geo
 		z += v.z;
 	}
 
-	void Vector3::operator+=(const f64& d) noexcept
+	void Vector3::operator+=(f64 d) noexcept
 	{
 		x += d;
 		y += d;
@@ -182,7 +182,7 @@ namespace geo
 		return result;
 	}
 
-	Vector3 Vector3::operator-(const f64& d) const noexcept
+	Vector3 Vector3::operator-(f64 d) const noexcept
 	{
 		Vector3 result(*this);
 		result.x -= d;
@@ -198,7 +198,7 @@ namespace geo
 		z -= v.z;
 	}
 
-	void Vector3::operator-=(const f64& d) noexcept
+	void Vector3::operator-=(f64 d) noexcept
 	{
 		x -= d;
 		y -= d;
@@ -214,7 +214,7 @@ namespace geo
 		return result;
 	}
 
-	Vector3 Vector3::operator*(const f64& d) const noexcept
+	Vector3 Vector3::operator*(f64 d) const noexcept
 	{
 		Vector3 result(*this);
 		result.x *= d;
@@ -230,7 +230,7 @@ namespace geo
 		z *= v.z;
 	}
 
-	void Vector3::operator*=(const f64& d) noexcept
+	void Vector3::operator*=(f64 d) noexcept
 	{
 		x *= d;
 		y *= d;
@@ -246,7 +246,7 @@ namespace geo
 		return result;
 	}
 
-	Vector3 Vector3::operator/(const f64& d) const noexcept
+	Vector3 Vector3::operator/(f64 d) const noexcept
 	{
 		Vector3 result(*this);
 		result.x /= d;
@@ -262,7 +262,7 @@ namespace geo
 		z /= v.z;
 	}
 
-	void Vector3::operator/=(const f64& d) noexcept
+	void Vector3::operator/=(f64 d) noexcept
 	{
 		x /= d;
 		y /= d;
@@ -284,7 +284,7 @@ namespace geo
 		return Vector3(x, y, z);
 	}
 
-	void Vector3::Move(const f64& offsetX, const f64& offsetY, const f64& offsetZ) noexcept
+	void Vector3::Move(f64 offsetX, f64 offsetY, f64 offsetZ) noexcept
 	{
 		this->x += offsetX;
 		this->y += offsetY;
@@ -310,7 +310,7 @@ namespace geo
 		return std::tuple<f64, f64, f64>(this->x, this->y, this->z);
 	}
 
-	void Vector3::Set(const f64& newX, const f64& newY, const f64& newZ) noexcept
+	void Vector3::Set(f64 newX, f64 newY, f64 newZ) noexcept
 	{
 		x = newX;
 		y = newY;

@@ -30,10 +30,6 @@ namespace physics
 			void (*onCollision) (Collision&, f64) = nullptr;
 			std::unique_ptr<Collider> collider;
 			Transform transform;
-			geo::Vector2& position = transform.position;
-			geo::Vector2& centerOfMass = transform.centerOfMass;
-			geo::Matrix2& scale = transform.scale;
-			geo::Matrix2& rotation = transform.rotation;
 			CollisionObject() noexcept;
 			CollisionObject(const Collider& c, const Transform& t = Transform(), const bool& isTrigger = false) noexcept;
 			CollisionObject(const CollisionObject& c) noexcept;

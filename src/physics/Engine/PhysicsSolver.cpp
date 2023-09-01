@@ -15,10 +15,10 @@ namespace physics
 			{
 				delta = 0.;
 				for (int j = 0; j < i; ++j)
-					delta += matrix[i][j] * x[j];
+					delta += matrix(i, j) * x[j];
 				for (unsigned int j = i + 1; j < right.GetSize(); ++j)
-					delta += matrix[i][j] * x[j];
-				delta = (right[i] - delta) / matrix[i][i];
+					delta += matrix(i, j) * x[j];
+				delta = (right[i] - delta) / matrix(i, i);
 				x[i] += relaxation * (delta - x[i]);
 				// Project the solution within the lower and higher limits
 				if (x[i] < lo[i])
@@ -43,8 +43,8 @@ namespace physics
 			f64 kf = sqrt(SQRD(a->kineticFriction) + SQRD(b->kineticFriction));
 			for (int i = 0; i < c.points.points.size(); i++)
 			{
-				geo::Vector2 ra = c.points.points[i] - (a->position + a->centerOfMass);
-				geo::Vector2 rb = c.points.points[i] - (b->position + b->centerOfMass);
+				geo::Vector2 ra = c.points.points[i] - (a->transform.GetPosition() + a->transform.GetCOM());
+				geo::Vector2 rb = c.points.points[i] - (b->transform.GetPosition() + b->transform.GetCOM());
 				geo::Vector2 rv = b->velocity + geo::Vector2::Cross(b->angularVelocity, rb) -
 					a->velocity - geo::Vector2::Cross(a->angularVelocity, ra);
 				// if (rv.GetMagnitudeSquared() < (dt * gravity).GetMagnitudeSquared() + EPSILON)
@@ -52,8 +52,8 @@ namespace physics
 			}
 			for (int i = 0; i < c.points.points.size(); i++)
 			{
-				geo::Vector2 ra = c.points.points[i] - (a->position + a->centerOfMass);
-				geo::Vector2 rb = c.points.points[i] - (b->position + b->centerOfMass);
+				geo::Vector2 ra = c.points.points[i] - (a->transform.GetPosition() + a->transform.GetCOM());
+				geo::Vector2 rb = c.points.points[i] - (b->transform.GetPosition() + b->transform.GetCOM());
 
 				geo::Vector2 rv = b->velocity + geo::Vector2::Cross(b->angularVelocity, rb) -
 					a->velocity - geo::Vector2::Cross(a->angularVelocity, ra);

@@ -6,8 +6,8 @@
 namespace physics::algo
 {
     CollisionPoints SeparatingAxis(
-        const geo::Vector2& orthogonal, const std::vector<geo::Vector2>& a,
-        const std::vector<geo::Vector2>& b
+        const geo::Vector2& orthogonal, const geo::Vector2* a,
+        const geo::Vector2* b, size_t aSize, size_t bSize
     );
 
     CollisionPoints SeparatingAxis(
@@ -16,8 +16,8 @@ namespace physics::algo
     );
 
     std::vector<geo::Vector2> FindCollisionPoints(
-        const std::vector<geo::Vector2>& a,
-        const std::vector<geo::Vector2>& b
+        const geo::Vector2* a,
+        const geo::Vector2* b, size_t aSize, size_t bSize
     );
 
     CollisionPoints PolygonCircleCollision(
@@ -31,37 +31,33 @@ namespace physics::algo
             return c;
         if (a->GetPoints().size() < 3)
             return c;
-        std::vector<geo::Vector2> aPoints;
-        geo::Vector2 centroid;
-        for (geo::Vector2 v : a->GetPoints())
-        {
-            aPoints.push_back(ta.TransformVector(v));
-            centroid += *(aPoints.end() - 1);
-        }
-        centroid /= aPoints.size();
-        geo::Vector2 bCenter = b->center + tb.position + tb.centerOfMass; // no other members of tb will affect b->center.
-        f64 bRadius = b->radius * std::max(tb.scale[0][0], tb.scale[1][1]);
+        size_t aSize = a->GetPointCount();
+        geo::Vector2 aPoints[MAX_POLYGONCOLLIDER_SIZE];
+        for (size_t i = 0; i < aSize; i++)
+            aPoints[i] = ta.TransformVector(a->GetPoint(i));
+        geo::Vector2 bCenter = tb.TransformVector(b->center); // no other members of tb will affect b->center.
+        f64 bRadius = b->radius * std::max(tb.GetScale().x, tb.GetScale().y);
         bool centerInA = a->Contains(bCenter, ta), polyInB = true;
         std::vector<geo::Vector2> projections;
-        for (geo::Vector2 v : aPoints)
+        for (size_t i = 0; i < aSize; i++)
         {
-            polyInB &= b->Contains(v, tb);
+            polyInB &= b->Contains(aPoints[i], tb);
         }
-        for (int i = 0; i < aPoints.size(); i++)
+        for (int i = 0; i < aSize; i++)
         {
-            geo::Line l(aPoints[(i + 1) % aPoints.size()], aPoints[i]);
+            geo::Line l(aPoints[(i + 1) % aSize], aPoints[i]);
             geo::Vector2 proj = geo::Vector2::Projection(bCenter, l);
             if (l.VectorIsOnLine(proj))
                 projections.push_back(proj);
         }
         geo::Vector2 closest = geo::Vector2::Infinity;
         f64 minDis = std::numeric_limits<f64>::infinity();
-        for (geo::Vector2 v : aPoints)
+        for (size_t i = 0; i < aSize; i++)
         {
-            if (geo::DistanceSquared(bCenter, v) < minDis)
+            if (geo::DistanceSquared(bCenter, aPoints[i]) < minDis)
             {
-                minDis = geo::DistanceSquared(bCenter, v);
-                closest = v;
+                minDis = geo::DistanceSquared(bCenter, aPoints[i]);
+                closest = aPoints[i];
             }
         }
         for (geo::Vector2 v : projections)
@@ -97,19 +93,19 @@ namespace physics::algo
     }
 
     bool VectorInPolygon(
-        const std::vector<geo::Vector2> points,
-        const geo::Vector2& b)
+        const geo::Vector2* points,
+        const geo::Vector2& b, size_t pointsSize)
     {
         f64 x = b.x, y = b.y;
         bool inside = false;
         geo::Vector2 p1, p2;
-        for (int i = 1; i <= points.size(); i++)
+        for (int i = 1; i <= pointsSize; i++)
         {
-            p1 = points[i % points.size()];
-            p2 = points[(i + 1) % points.size()];
-            if (y > std::min(p1.y, p2.y) && y <= std::max(p1.y, p2.y))
+            p1 = points[i % pointsSize];
+            p2 = points[(i + 1) % pointsSize];
+            if (y > geo::Min(p1.y, p2.y) && y <= geo::Max(p1.y, p2.y))
             {
-                if (x <= std::max(p1.x, p2.x))
+                if (x <= geo::Max(p1.x, p2.x))
                 {
                     f64 x_inter = (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
                     if (p1.x == p2.x || x <= x_inter)
@@ -131,23 +127,24 @@ namespace physics::algo
         c.hasCollision = false;
         if (!a || !b)
             return c;
-        if (a->GetPoints().size() < 3 || b->GetPoints().size() < 3)
+        if (a->GetPointCount() < 3 || b->GetPointCount() < 3)
             return c;
-        std::vector<geo::Vector2> aPoints, bPoints;
-        for (size_t i = 0; i < a->GetPoints().size(); i++)
-            aPoints.push_back(ta.TransformVector(a->GetPoint(i)));
-        for (size_t i = 0; i < b->GetPoints().size(); i++)
-            bPoints.push_back(tb.TransformVector(b->GetPoint(i)));
+        geo::Vector2 aPoints[MAX_POLYGONCOLLIDER_SIZE], bPoints[MAX_POLYGONCOLLIDER_SIZE];
+        size_t aSize = a->GetPointCount(), bSize = b->GetPointCount();
+        for (size_t i = 0; i < aSize; i++)
+            aPoints[i] = ta.TransformVector(a->GetPoint(i));
+        for (size_t i = 0; i < bSize; i++)
+            bPoints[i] = tb.TransformVector(b->GetPoint(i));
         std::vector<geo::Vector2> pushVectors;
-        for (size_t i = 0; i < aPoints.size() + bPoints.size(); i++)
+        for (size_t i = 0; i < aSize + bSize; i++)
         {
             geo::Vector2 edge;
-            if (i < aPoints.size())
-                edge = aPoints[(i + 1) % aPoints.size()] - aPoints[i];
+            if (i < aSize)
+                edge = aPoints[(i + 1) % aSize] - aPoints[i];
             else
-                edge = bPoints[(i - aPoints.size() + 1) % bPoints.size()] - bPoints[i - aPoints.size()];
+                edge = bPoints[(i - aSize + 1) % bSize] - bPoints[i - aSize];
             geo::Vector2 ortho(-edge.y, edge.x);
-            CollisionPoints clsn = SeparatingAxis(ortho, aPoints, bPoints);
+            CollisionPoints clsn = SeparatingAxis(ortho, aPoints, bPoints, aSize, bSize);
             if (clsn.hasCollision == true)
                 return c;
             else
@@ -170,7 +167,7 @@ namespace physics::algo
         if (!c.normal.GetMagnitudeSquared())
             c.normal.Set(1, 0);
         c.depth = mpv.GetMagnitude();
-        std::vector<geo::Vector2> inter = FindCollisionPoints(aPoints, bPoints);
+        std::vector<geo::Vector2> inter = FindCollisionPoints(aPoints, bPoints, aSize, bSize);
         c.points = inter; 
         if (flipped)
             c.normal = -c.normal;
@@ -223,49 +220,49 @@ namespace physics::algo
 
 
     std::vector<geo::Vector2> FindCollisionPoints(
-        const std::vector<geo::Vector2>& a,
-        const std::vector<geo::Vector2>& b
+        const geo::Vector2* a,
+        const geo::Vector2* b, size_t aSize, size_t bSize
     )
     {
         std::vector<geo::Vector2> points;
-        for (geo::Vector2 p : a)
+        for (size_t i = 0; i < aSize; i++)
         {
-            if (VectorInPolygon(b, p))
-                points.push_back(p);
+            if (VectorInPolygon(b, a[i], bSize))
+                points.push_back(a[i]);
         }
-        for (geo::Vector2 p : b)
+        for (size_t i = 0; i < bSize; i++)
         {
-            if (VectorInPolygon(a, p))
-            points.push_back(p);
+            if (VectorInPolygon(a, b[i], aSize))
+            points.push_back(b[i]);
         }
         return points;
     }
 
     CollisionPoints SeparatingAxis(
-        const geo::Vector2& orthogonal, const std::vector<geo::Vector2>& a,
-        const std::vector<geo::Vector2>& b
+        const geo::Vector2& orthogonal, const geo::Vector2* a,
+        const geo::Vector2* b, size_t aSize, size_t bSize
     )
     {
         CollisionPoints c;
         c.hasCollision = false;
         f64 minA = MAX, maxA = MIN;
         f64 minB = MAX, maxB = MIN;
-        for (const geo::Vector2& v : a)
+        for (size_t i = 0; i < aSize; i++)
         {
-            f64 projection = v.Dot(orthogonal);
-            minA = std::min(minA, projection);
-            maxA = std::max(maxA, projection);
+            f64 projection = a[i].Dot(orthogonal);
+            minA = geo::Min(minA, projection);
+            maxA = geo::Max(maxA, projection);
         }
-        for (const geo::Vector2& v : b)
+        for (size_t i = 0; i < bSize; i++)
         {
-            f64 projection = v.Dot(orthogonal);
-            minB = std::min(minB, projection);
-            maxB = std::max(maxB, projection);
+            f64 projection = b[i].Dot(orthogonal);
+            minB = geo::Min(minB, projection);
+            maxB = geo::Max(maxB, projection);
         }
 
         if (maxA >= minB && maxB >= minA)
         {
-            f64 d = std::min(maxB - minA, maxA - minB);
+            f64 d = geo::Min(maxB - minA, maxA - minB);
             f64 e = d / orthogonal.Dot(orthogonal) + EPSILON;
             geo::Vector2 pv = e * orthogonal;
             c.normal = pv;
@@ -287,8 +284,8 @@ namespace physics::algo
         for (const geo::Vector2& v : a)
         {
             f64 projection = v.Dot(orthogonal);
-            minA = std::min(minA, projection);
-            maxA = std::max(maxA, projection);
+            minA = geo::Min(minA, projection);
+            maxA = geo::Max(maxA, projection);
         }
         {
             f64 projection = bCenter.Dot(orthogonal);
@@ -298,7 +295,7 @@ namespace physics::algo
 
         if (maxA >= minB && maxB >= minA)
         {
-            f64 d = std::min(maxB - minA, maxA - minB);
+            f64 d = geo::Min(maxB - minA, maxA - minB);
             f64 e = d / orthogonal.Dot(orthogonal) + EPSILON;
             geo::Vector2 pv = e * orthogonal;
             c.normal = pv;

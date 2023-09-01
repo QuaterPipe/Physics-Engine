@@ -1,5 +1,6 @@
 #pragma once
 #include "BoxCollider.hpp"
+#define MAX_POLYGONCOLLIDER_SIZE 10000ULL
 
 
 namespace physics
@@ -9,15 +10,21 @@ namespace physics
 	struct PolygonCollider : public Collider
 	{
 		private:
-			std::vector<geo::Vector2> _points;
-			std::vector<geo::Vector2> _normals;
+			geo::Vector2* _points = nullptr;
+			geo::Vector2* _normals = nullptr;
+			size_t _pointCount;
+			geo::Vector2 _center;
+			BoxCollider _boundingBox;
+			geo::Vector2 _min = geo::Vector2::Infinity;
+			geo::Vector2 _max = -geo::Vector2::Infinity;
 		public:
-			geo::Vector2 pos;
-			PolygonCollider();
+			PolygonCollider() noexcept;
 			PolygonCollider(const BoxCollider& b) noexcept;
 			PolygonCollider(const PolygonCollider& p) noexcept;
-			PolygonCollider(const geo::Vector2& pos, f64 sideLength=1, unsigned long count=3) noexcept;
-			PolygonCollider(const geo::Vector2& pos, const geo::Vector2& a, const geo::Vector2& b, const geo::Vector2& c, std::initializer_list<geo::Vector2> extra={}) noexcept;
+			PolygonCollider(PolygonCollider&& p) noexcept;
+			PolygonCollider(f64 sideLength, unsigned long count=3) noexcept;
+			PolygonCollider(const geo::Vector2& a, const geo::Vector2& b, const geo::Vector2& c, std::initializer_list<geo::Vector2> extra={}) noexcept;
+			PolygonCollider(const std::vector<geo::Vector2>& points);
 			~PolygonCollider() noexcept;
 			virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept override;
 			virtual bool Contains(const geo::Vector2& point, const Transform& t = Transform()) const noexcept override;
@@ -25,12 +32,20 @@ namespace physics
 			virtual geo::Vector2 GetCenter() const noexcept override;
 			bool operator==(const Collider& c) const noexcept override;
 			bool operator!=(const Collider& c) const noexcept override;
+			PolygonCollider& operator=(const PolygonCollider& p) noexcept;
+			PolygonCollider& operator=(PolygonCollider&& p) noexcept;
 			geo::Vector2 Max() const noexcept override;
 			geo::Vector2 Min() const noexcept override;
-			geo::Vector2 GetPoint(size_t index) const;
 			virtual std::vector<geo::Vector2> GetPoints(const Transform& t = Transform()) const noexcept override;
 			geo::Vector2 GetNormal(size_t index) const;
 			std::vector<geo::Vector2> GetNormals() const noexcept;
+			geo::Vector2* GetNormalArray() const noexcept;
+			geo::Vector2 GetPoint(size_t index) const;
+			size_t GetPointCount() const noexcept;
+			geo::Vector2* GetVectorArray() const noexcept;
+			void Release() noexcept;
+			void Set(const std::vector<geo::Vector2>& points);
+			void SetPoint(size_t index, const geo::Vector2& point) noexcept;
 			geo::Vector2 SupportPoint(geo::Vector2 direction) const noexcept;
 			virtual CollisionPoints TestCollision(
 				const Transform& transform,

@@ -2,12 +2,12 @@
 
 namespace physics
 {
-	CircleCollider::CircleCollider(geo::Vector2 center, double radius) noexcept
+	CircleCollider::CircleCollider(geo::Vector2 center, f64 radius) noexcept
 	: center(center), radius(fabs(radius))
 	{
 	}
 
-	CircleCollider::CircleCollider(const f64& radius) noexcept
+	CircleCollider::CircleCollider(f64 radius) noexcept
 	: center(), radius(fabs(radius))
 	{
 	}
@@ -46,7 +46,7 @@ namespace physics
 
 	bool CircleCollider::Contains(const geo::Vector2& point, const Transform& t) const noexcept
 	{
-		return geo::DistanceSquared(point, t.position + center) <= SQRD(radius * std::max(t.scale[0][0], t.scale[1][1]));
+		return geo::DistanceSquared(point, t.TransformVector(center)) <= SQRD(radius * geo::Max(t.GetScale().x, t.GetScale().y));
 	}
 
 	Collider* CircleCollider::Clone() const noexcept

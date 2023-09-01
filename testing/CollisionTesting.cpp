@@ -19,8 +19,8 @@ void Render(sf::RenderWindow* win, int a, int b)
     else
         pos = worldPos;
     Transform tB;
-    tB.position.Set(worldPos.x, worldPos.y);
-    tB.rotation.Set(rotB);
+    tB.SetPosition(Vector2(worldPos.x, worldPos.y));
+    tB.SetRotation(rotB);
     if (a < 2)
     {
         f64 rad = !a ? 10 : 50;
@@ -87,8 +87,8 @@ void Render(sf::RenderWindow* win, int a, int b)
     sf::CircleShape c(3);
     c.setFillColor(sf::Color::Red);
     Transform tA;
-    tA.position.Set(250, 250);
-    tA.rotation.Set(rotA);
+    tA.SetPosition(Vector2(250, 250));
+    tA.SetRotation(rotA);
     CollisionPoints result = cldA[a]->TestCollision(tA, cldB[b], tB);
     for (auto p : result.points)
     {
@@ -104,9 +104,9 @@ void Render(sf::RenderWindow* win, int a, int b)
 int size = 3;
 void Render2(sf::RenderWindow* window)
 {
-    auto p = PolygonCollider(geo::Vector2(), 1000 / size, size);
+    auto p = PolygonCollider(1000 / size, size);
     Transform tt;
-    tt.position.Set(250, 250);
+    tt.SetPosition(geo::Vector2(250, 250));
     sf::ConvexShape cvx(size);
     for (int i = 0; i < size; i++)
         cvx.setPoint(i, sf::Vector2f(p.GetPoint(i).x, p.GetPoint(i).y));
@@ -160,15 +160,15 @@ void CollisionTest()
     cldA[0] = new CircleCollider(10);
     cldA[1] = new CircleCollider(50);
     cldA[2] = new BoxCollider(50, 50);
-    cldA[3] = new PolygonCollider(geo::Vector2(), 20, 3);
-    cldA[4] = new PolygonCollider(geo::Vector2(), 60, 3);
-    cldA[5] = new PolygonCollider(geo::Vector2(), 100, 20);
+    cldA[3] = new PolygonCollider(20, 3);
+    cldA[4] = new PolygonCollider(60, 3);
+    cldA[5] = new PolygonCollider(100, 20);
     cldB[0] = new CircleCollider(10);
     cldB[1] = new CircleCollider(50);
     cldB[2] = new BoxCollider(50, 50);
-    cldB[3] = new PolygonCollider(geo::Vector2(), 20, 3);
-    cldB[4] = new PolygonCollider(geo::Vector2(), 60, 3);
-    cldB[5] = new PolygonCollider(geo::Vector2(), 100, 20);
+    cldB[3] = new PolygonCollider(20, 3);
+    cldB[4] = new PolygonCollider(60, 3);
+    cldB[5] = new PolygonCollider(100, 20);
     int a = 0;
     int b = 0;
     int sz = 3;

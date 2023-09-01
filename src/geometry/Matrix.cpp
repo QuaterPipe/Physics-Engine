@@ -39,6 +39,18 @@ namespace geo
 			array[i] = arr[i];
 	}
 
+
+	f64& Matrix::operator()(size_t i, size_t j)
+	{
+		assert(i < _width && j < _height);
+		return array[i + j * _width];
+	}
+	const f64& Matrix::operator()(size_t i, size_t j) const
+	{
+		assert(i < _width && j < _height);
+		return array[i + j * _width];
+	}
+
 	Matrix& Matrix::operator=(const Matrix& other) noexcept
 	{
 		delete array;
@@ -56,7 +68,7 @@ namespace geo
 		assert(index < _width && "Index out of range.");
 		Vector x(_height, 0);
 		for (size_t i = 0; i < _height; i++)
-			x[i] = operator[](i)[index];
+			x[i] = (*this)(i, index);
 		return x;
 	}
 
@@ -66,9 +78,9 @@ namespace geo
 		if (!_width)
 			return 0;
 		if (_width == 1)
-			return (i32)(*this)[0][0];
+			return (i32)(*this)(0, 0);
 		if (_width == 2)
-			return (i32)(*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0];
+			return (i32)(*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0);
 		i32 dimension = (i32)_width;
 		f64 result = 0;
 		i32 sign = 1;
@@ -82,12 +94,12 @@ namespace geo
 				{
 					if (n != i)
 					{
-						subMatrix[m - 1][z] = operator[](m)[n];
+						subMatrix(m - 1, z) = (*this)(m, n);
 						z++;
 					}
 				}
 			}
-			result = result + sign * (*this)[0][1] * subMatrix.GetDeterminant();
+			result = result + sign * (*this)(0, 1) * subMatrix.GetDeterminant();
 			sign = -sign;
 		}
 		return (i32)result;
@@ -99,21 +111,9 @@ namespace geo
 		for (size_t i = 0; i < _height; i++)
 		{
 			for (size_t j = 0; j < _width; j++)
-				solution[j][i] = (*this)[i][j];
+				solution(j, i) = (*this)(i, j);
 		}
 		return solution;
-	}
-
-	const Matrix::Row Matrix::operator[](size_t index) const
-	{
-		assert(index < _width && "Index out of range.");
-		return Row(array, index * _width, index * _width + _width);
-	}
-
-	Matrix::Row Matrix::operator[](size_t index)
-	{
-		assert(index < _height && "Index out of range.");
-		return Row(array, index * _width, index * _width + _width);
 	}
 
 	bool Matrix::operator==(const Matrix& other) const noexcept
@@ -148,7 +148,7 @@ namespace geo
 		{
 			Vector x(_height);
 			for (u32 j = 0; j < _height; j++)
-				x[j] = (*this)[i][j];
+				x[j] = (*this)(i, j);
 			a[i] = (x * v).Sum();
 		}
 		return a;
@@ -163,7 +163,7 @@ namespace geo
 			for (size_t k = 0; k < _width; k++)
 			{
 				for (size_t j = 0; j < _width; j++)
-					result[i][j] += (*this)[i][k] * other[k][j];
+					result(i, j) += (*this)(i, k) * other(k, j);
 			}
 		}
 		return result;
@@ -184,32 +184,5 @@ namespace geo
 	size_t Matrix::GetWidth() const noexcept
 	{
 		return _width;
-	}
-
-	Matrix::Row::Row(f64* data, size_t start, size_t end) noexcept
-	: data(data), start(start), end(end)
-	{
-	}
-
-	f64& Matrix::Row::operator[](size_t index)
-	{
-		size_t width = end - start;
-		assert(0 <= index && index < width);
-		return data[start + index];
-	}
-
-	const f64& Matrix::Row::operator[](size_t index) const
-	{
-		size_t width = end - start;
-		assert(0 <= index && index < width);
-		return data[start + index];
-	}
-
-	Matrix::Row& Matrix::Row::operator=(const Row& other)
-	{
-		assert(other.end - other.start == end - start);
-		for (size_t i = 0; i < end - start; i++)
-			data[start + i] = other[i];
-		return *this;
 	}
 }

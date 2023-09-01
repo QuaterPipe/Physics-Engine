@@ -10,7 +10,7 @@ namespace physics
 			geo::Vector2 center = geo::Vector2();
 			f64 radius = 0;
 			CircleCollider() noexcept;
-			CircleCollider(const f64& radius) noexcept;
+			CircleCollider(f64 radius) noexcept;
 			CircleCollider(geo::Vector2 center, f64 radius) noexcept;
 			CircleCollider(const CircleCollider& c) noexcept;
 			~CircleCollider() noexcept;

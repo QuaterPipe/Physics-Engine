@@ -25,22 +25,16 @@ namespace geo
         arr[3] = d;
 	}
 
-	Matrix2::Row Matrix2::operator[](size_t index)
+	f64& Matrix2::operator()(size_t i, size_t j)
 	{
-		assert(index <= 1);
-		if (!index)
-			return Matrix2::Row(arr);
-		else
-			return Matrix2::Row(arr + 2);
+		assert(i < 2 && j < 2);
+		return arr[i * 2 + j];
 	}
 
-	Matrix2::ConstRow Matrix2::operator[](size_t index) const
+	const f64& Matrix2::operator()(size_t i, size_t j) const
 	{
-		assert(index <= 1);
-		if (!index)
-			return Matrix2::ConstRow(arr);
-		else
-			return Matrix2::ConstRow(arr + 2);
+		assert(i < 2 && j < 2);
+		return arr[i * 2 + j];
 	}
 
 	Matrix2& Matrix2::operator=(const Matrix2& other) noexcept
@@ -54,12 +48,23 @@ namespace geo
 		return atan2(arr[2], arr[3]);
 	}
 
-	f64 Matrix2::Determinant() const noexcept
+	f64 Matrix2::GetDeterminant() const noexcept
 	{
 		return arr[0] * arr[3] - arr[1] * arr[2];
 	}
 
-	Matrix2 Matrix2::Transpose() const noexcept
+	Matrix2 Matrix2::GetInverse() const noexcept
+	{
+		f64 invDet = 1.0 / GetDeterminant();
+		Matrix2 m;
+		m(0, 0) = arr[3] * invDet;
+		m(0, 1) = -arr[1] * invDet;
+		m(1, 0) = -arr[2] * invDet;
+		m(1, 1) = arr[0] * invDet;
+		return m;
+	}
+
+	Matrix2 Matrix2::GetTranspose() const noexcept
 	{
 		return Matrix2(arr[0], arr[2], arr[1], arr[3]);
 	}
@@ -74,10 +79,10 @@ namespace geo
 		Matrix2 c;
         const Matrix2& a = *this;
         const Matrix2& b = other;
-        c[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0];
-        c[0][1] = a[0][0] * b[0][1] + a[0][1] * b[1][1];
-        c[1][0] = a[1][0] * b[0][0] + a[1][1] * b[1][0];
-        c[1][1] = a[1][0] * b[0][1] + a[1][1] * b[1][1];
+        c(0, 0) = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0);
+        c(0, 1) = a(0, 0) * b(0, 1) + a(0, 1) * b(1, 1);
+        c(1, 0) = a(1, 0) * b(0, 0) + a(1, 1) * b(1, 0);
+        c(1, 1) = a(1, 0) * b(0, 1) + a(1, 1) * b(1, 1);
 		return c;
 	}
 
@@ -89,12 +94,12 @@ namespace geo
 
 	bool Matrix2::operator==(const Matrix2& other) const noexcept
 	{
-		return std::equal(arr, arr + 4, other.arr);
+		return arr[0] == other(0, 0) && arr[1] == other(0, 1) && arr[2] == other(1, 0) && arr[3] == other(1, 1);
 	}
 
 	bool Matrix2::operator!=(const Matrix2& other) const noexcept
 	{
-		return !std::equal(arr, arr + 4, other.arr);
+		return arr[0] != other(0, 0) || arr[1] != other(0, 1) || arr[2] != other(1, 0) || arr[3] != other(1, 1);
 	}
 
 	void Matrix2::Set(const f64& radians) noexcept
@@ -112,40 +117,4 @@ namespace geo
         arr[2] = c;
         arr[3] = d;
 	}
-
-    Matrix2::Row::Row(f64* ptr) noexcept
-    : ptr(ptr)
-    {
-    }
-
-    f64& Matrix2::Row::operator[](size_t index) const
-    {
-        assert(index <= 1);
-		return ptr[index];
-    }
-    
-    Matrix2::Row& Matrix2::Row::operator=(const Row& row)
-    {
-        ptr[0] = row[0];
-        ptr[1] = row[1];
-		return *this;
-    }
-	
-	Matrix2::Row& Matrix2::Row::operator=(const ConstRow& row)
-    {
-        ptr[0] = row[0];
-        ptr[1] = row[1];
-		return *this;
-    }
-	
-    Matrix2::ConstRow::ConstRow(const f64* ptr) noexcept
-    : ptr(ptr)
-    {
-    }
-
-    const f64& Matrix2::ConstRow::operator[](size_t index) const
-    {
-        assert(index <= 1);
-		return ptr[index];
-    }
 }

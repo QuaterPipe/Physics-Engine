@@ -22,9 +22,9 @@ namespace geo
 			f64 y;
 			Vector2() noexcept;
 			Vector2(const Vector2& v) noexcept;
-			Vector2(const f64& x, const f64& y) noexcept;
+			Vector2(f64 x, f64 y) noexcept;
 			f64& operator[](size_t index);
-			const f64& operator[](size_t index) const;
+			f64 operator[](size_t index) const;
 			/// \brief returns the positive x & y values of *this vector
 			Vector2 Abs() const noexcept;
 			/// \brief Gets that angle between 'this' vector and the 'other' Vector.
@@ -32,9 +32,9 @@ namespace geo
 			/// \brief Returns the cross product between 'this' and the other Vector.
 			f64 Cross(const Vector2& v) const noexcept;
 			/// \brief Returns the cross product between a Vector and a double.
-			static Vector2 Cross(const Vector2& v, const f64& s) noexcept;
+			static Vector2 Cross(const Vector2& v, f64 s) noexcept;
 			/// \brief Returns the cross product between a double and a Vector.
-			static Vector2 Cross(const f64& s, const Vector2& v) noexcept;
+			static Vector2 Cross(f64 s, const Vector2& v) noexcept;
 			/// \brief Returns the dot product between 'this' and the 'other' Vector.
 			f64 Dot(const Vector2& v) const noexcept;
 			/// \brief Returns the magnitude of the Vector.
@@ -44,9 +44,9 @@ namespace geo
 			/// \brief Returns the magnitude of the Vector and using FastSqrt().
 			f64 GetMagnitudeQuick() const noexcept;
 			/// \brief Linearly interpolates a point with the other Vector.
-			Vector2 Lerp(const Vector2& other, const f64& t) const noexcept;
+			Vector2 Lerp(const Vector2& other, f64 t) const noexcept;
 			/// \brief Offsets the Vector's x & y coordinates.
-			void Move(const f64& offsetX, const f64& offsetY) noexcept;
+			void Move(f64 offsetX, f64 offsetY) noexcept;
 			/// \brief Set's the Vector's magnitude to one.
 			void Normalize() noexcept;
 			/// \brief Returns a copy of the Vector that has been normalized.
@@ -62,9 +62,9 @@ namespace geo
 			/// \brief Reflects this Vector across the given normal
 			void Reflect(const Vector2& normal) noexcept;
 			/// \brief Rotates this Vector around the given point.
-			void Rotate(const Vector2& p, const f64& angle) noexcept;
+			void Rotate(const Vector2& p, f64 angle) noexcept;
 			/// \brief Set's the Vector's x & y coordinates.
-			void Set(const f64& newX, const f64& newY) noexcept;
+			void Set(f64 newX, f64 newY) noexcept;
 			/// \brief Returns the Vector in string form.
 			std::string ToString() const noexcept;
 			/// \brief Returns the Vector in tuple form.
@@ -74,21 +74,21 @@ namespace geo
 			bool operator==(const Vector2& v) const noexcept;
 			bool operator!=(const Vector2& v) const noexcept;
 			Vector2 operator-(const Vector2& v) const noexcept;
-			Vector2 operator-(const f64& d) const noexcept;
+			Vector2 operator-(f64 d) const noexcept;
 			void operator-=(const Vector2& v) noexcept;
-			void operator-=(const f64& d) noexcept;
+			void operator-=(f64 d) noexcept;
 			Vector2 operator+(const Vector2& v) const noexcept;
-			Vector2 operator+(const f64& d) const noexcept;
+			Vector2 operator+(f64 d) const noexcept;
 			void operator+=(const Vector2& v) noexcept;
-			void operator+=(const f64& d) noexcept;
+			void operator+=(f64 d) noexcept;
 			Vector2 operator/(const Vector2& v) const noexcept;
-			Vector2 operator/(const f64& d) const noexcept;
+			Vector2 operator/(f64 d) const noexcept;
 			void operator/=(const Vector2& v) noexcept;
-			void operator/=(const f64& d) noexcept;
+			void operator/=(f64 d) noexcept;
 			Vector2 operator*(const Vector2& v) const noexcept;
-			Vector2 operator*(const f64& d) const noexcept;
+			Vector2 operator*(f64 d) const noexcept;
 			void operator*=(const Vector2& v) noexcept;
-			void operator*=(const f64& d) noexcept;
+			void operator*=(f64 d) noexcept;
 			bool operator^(const Line& l) const noexcept;
 			bool operator<(const Vector2& v) const noexcept;
 			bool operator>(const Vector2& v) const noexcept;
@@ -98,10 +98,10 @@ namespace geo
 			static const Vector2 iHat;
 			static const Vector2 jHat;
 	};
-	Vector2 operator*(const f64& d, const Vector2& v) noexcept;
-	Vector2 operator+(const f64& d, const Vector2& v) noexcept;
-	Vector2 operator-(const f64& d, const Vector2& v) noexcept;
-	Vector2 operator/(const f64& d, const Vector2& v) noexcept;
+	Vector2 operator*(f64 d, const Vector2& v) noexcept;
+	Vector2 operator+(f64 d, const Vector2& v) noexcept;
+	Vector2 operator-(f64 d, const Vector2& v) noexcept;
+	Vector2 operator/(f64 d, const Vector2& v) noexcept;
 
 	std::ostream& operator<<(std::ostream& os, const Vector2& v);
 
@@ -113,9 +113,9 @@ namespace geo
 			f64 z;
 			Vector3() noexcept;
 			Vector3(const Vector3& v) noexcept;
-			Vector3(const f64& x, const f64& y, const f64& z) noexcept;
+			Vector3(f64 x, f64 y, f64 z) noexcept;
 			f64& operator[](size_t index);
-			const f64& operator[](size_t index) const;
+			f64 operator[](size_t index) const;
 			/// \brief Returns the magnitude of the Vector3.
 			f64 GetMagnitude() const noexcept;
 			/// \brief Returns the magnitude of the Vector3 using FastSqrt().
@@ -123,7 +123,7 @@ namespace geo
 			/// \brief Returns the squared magnitude of the Vector3.
 			f64 GetMagnitudeSquared() const noexcept;
 			/// \brief Linearly interpolates a point with the other Vector3.
-			Vector3 Lerp(const Vector3& other, const f64& t) const noexcept;
+			Vector3 Lerp(const Vector3& other, f64 t) const noexcept;
 			/// \brief Set's the Vector3's magnitude to one.
 			void Normalize() noexcept;
 			/// \brief Returns a normal version of the Vector3.
@@ -135,26 +135,26 @@ namespace geo
 			bool operator==(const Vector3& v) const noexcept;
 			bool operator!=(const Vector3& v) const noexcept;
 			Vector3 operator-(const Vector3& v) const noexcept;
-			Vector3 operator-(const f64& d) const noexcept;
+			Vector3 operator-(f64 d) const noexcept;
 			void operator-=(const Vector3& v) noexcept;
-			void operator-=(const f64& d) noexcept;
+			void operator-=(f64 d) noexcept;
 			Vector3 operator+(const Vector3& v) const noexcept;
-			Vector3 operator+(const f64& d) const noexcept;
+			Vector3 operator+(f64 d) const noexcept;
 			void operator+=(const Vector3& v) noexcept;
-			void operator+=(const f64& d) noexcept;
+			void operator+=(f64 d) noexcept;
 			Vector3 operator/(const Vector3& v) const noexcept;
-			Vector3 operator/(const f64& d) const noexcept;
+			Vector3 operator/(f64 d) const noexcept;
 			void operator/=(const Vector3& v) noexcept;
-			void operator/=(const f64& d) noexcept;
+			void operator/=(f64 d) noexcept;
 			Vector3 operator*(const Vector3& v) const noexcept;
-			Vector3 operator*(const f64& d) const noexcept;
+			Vector3 operator*(f64 d) const noexcept;
 			void operator*=(const Vector3& v) noexcept;
-			void operator*=(const f64& d) noexcept;
+			void operator*=(f64 d) noexcept;
 			bool operator<(const Vector3& v) const noexcept;
 			bool operator>(const Vector3& v) const noexcept;
 			Vector3 operator()() const noexcept;
 			/// \brief Offsets the Vector3's x, y, and z coordinates.
-			void Move(const f64& offsetX, const f64& offsetY, const f64& offsetZ) noexcept;
+			void Move(f64 offsetX, f64 offsetY, f64 offsetZ) noexcept;
 			/// \brief Projects a Vector3 onto another Vector3.
 			static Vector3 Projection(const Vector3& lhs, const Vector3& rhs) noexcept;
 			/// \brief Returns a string version of Vector3.
@@ -162,17 +162,17 @@ namespace geo
 			/// \brief Returns a tuple version of Vector3.
 			std::tuple<f64, f64, f64> ToTuple() const noexcept;
 			/// \brief Set's the x, y, and z values of the Vector3 to the new given ones.
-			void Set(const f64& newX, const f64& newY, const f64& newZ) noexcept;
+			void Set(f64 newX, f64 newY, f64 newZ) noexcept;
 			static const Vector3 Origin;
 			static const Vector3 Infinity;
 			static const Vector3 iHat;
 			static const Vector3 jHat;
 			static const Vector3 kHat;
 	};
-	Vector3 operator*(const f64& d, const Vector3& v) noexcept;
-	Vector3 operator+(const f64& d, const Vector3& v) noexcept;
-	Vector3 operator-(const f64& d, const Vector3& v) noexcept;
-	Vector3 operator/(const f64& d, const Vector3& v) noexcept;
+	Vector3 operator*(f64 d, const Vector3& v) noexcept;
+	Vector3 operator+(f64 d, const Vector3& v) noexcept;
+	Vector3 operator-(f64 d, const Vector3& v) noexcept;
+	Vector3 operator/(f64 d, const Vector3& v) noexcept;
 
 	std::ostream& operator<<(std::ostream& os, const Vector3& v);
 
@@ -188,7 +188,7 @@ namespace geo
 			std::vector<f64>::iterator end() noexcept;
 			std::vector<f64>::const_iterator end() const noexcept;
 			size_t GetSize() const noexcept;
-			const f64& operator[](size_t i) const noexcept;
+			f64 operator[](size_t i) const noexcept;
 			f64& operator[](size_t i) noexcept;
 			Vector Abs() const noexcept;
 			/// \brief Returns the dot product between 'this' and the 'other' Vector.
@@ -200,7 +200,7 @@ namespace geo
 			/// \brief Returns the magnitude of the Vector and using FastSqrt().
 			f64 GetMagnitudeQuick() const noexcept;
 			/// \brief Linearly interpolates a point with the other Vector.
-			Vector Lerp(const Vector& other, const f64& t) const;
+			Vector Lerp(const Vector& other, f64 t) const;
 			/// \brief Set's the Vector's magnitude to one.
 			void Normalize() noexcept;
 			/// \brief Returns a copy of the Vector that has been normalized.
@@ -224,21 +224,21 @@ namespace geo
 			bool operator==(const Vector& v) const;
 			bool operator!=(const Vector& v) const;
 			Vector operator-(const Vector& v) const;
-			Vector operator-(const f64& d) const noexcept;
+			Vector operator-(f64 d) const noexcept;
 			void operator-=(const Vector& v);
-			void operator-=(const f64& d) noexcept;
+			void operator-=(f64 d) noexcept;
 			Vector operator+(const Vector& v) const;
-			Vector operator+(const f64& d) const noexcept;
+			Vector operator+(f64 d) const noexcept;
 			void operator+=(const Vector& v);
-			void operator+=(const f64& d) noexcept;
+			void operator+=(f64 d) noexcept;
 			Vector operator/(const Vector& v) const;
-			Vector operator/(const f64& d) const noexcept;
+			Vector operator/(f64 d) const noexcept;
 			void operator/=(const Vector& v);
-			void operator/=(const f64& d) noexcept;
+			void operator/=(f64 d) noexcept;
 			Vector operator*(const Vector& v) const;
-			Vector operator*(const f64& d) const noexcept;
+			Vector operator*(f64 d) const noexcept;
 			void operator*=(const Vector& v);
-			void operator*=(const f64& d) noexcept;
+			void operator*=(f64 d) noexcept;
 			bool operator<(const Vector& v) const;
 			bool operator>(const Vector& v) const;
 			Vector operator()() const noexcept;
@@ -247,9 +247,9 @@ namespace geo
 			std::vector<f64> m_nums;
 	};
 
-	Vector operator*(const f64& d, const Vector& v);
-	Vector operator+(const f64& d, const Vector& v);
-	Vector operator-(const f64& d, const Vector& v);
-	Vector operator/(const f64& d, const Vector& v);
+	Vector operator*(f64 d, const Vector& v);
+	Vector operator+(f64 d, const Vector& v);
+	Vector operator-(f64 d, const Vector& v);
+	Vector operator/(f64 d, const Vector& v);
 	std::ostream& operator<<(std::ostream& os, const Vector& v) noexcept;
 }

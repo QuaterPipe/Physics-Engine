@@ -66,7 +66,7 @@ namespace physics
 		 	force += Force;
 			if (contactPoint != geo::Vector2::Infinity && Force.GetMagnitudeQuick())
 			{
-				torque = (collider->GetCenter() + centerOfMass).Cross(Force);
+				torque = (collider->GetCenter() + transform.GetCOM()).Cross(Force);
 				angularForce += torque;
 			}
 		}
@@ -90,20 +90,20 @@ namespace physics
 	void Rigidbody::Move(f64 offsetX, f64 offsetY) noexcept
 	{
 		if (isKinematic)
-			transform.position += geo::Vector2(offsetX, offsetY);
+			transform.Translate(geo::Vector2(offsetX, offsetY));
 	}
 
 	void Rigidbody::Update(f64 dt) noexcept
 	{
 		if (!isKinematic && !isStatic)
-		{
-			force *= _invMass;
-			angularForce *= _invInertia;
+		{	
+			geo::Vector2 position = transform.GetPosition();
 			Transform::RK4Integrate(&position.x, &velocity.x, &force.x, dt);
 			Transform::RK4Integrate(&position.y, &velocity.y, &force.y, dt);
-			f64 ang = rotation.Angle();
+			f64 ang = transform.GetAngle();
 			Transform::RK4Integrate(&ang, &angularVelocity, &angularForce, dt);
-			rotation.Set(ang);
+			transform.SetAngle(ang);
+			transform.SetPosition(position);
 			angularForce = 0;
 			force.Set(0, 0);
 		}

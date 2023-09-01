@@ -30,7 +30,7 @@ void Render(void)
     sf::RectangleShape rect(sf::Vector2f(500, 50));
     rect.setFillColor(sf::Color::Transparent);
     rect.setOutlineThickness(1);
-    rect.setPosition(rigidbodies[0].position.x, rigidbodies[0].position.y);
+    rect.setPosition(rigidbodies[0].transform.GetPosition().x, rigidbodies[0].transform.GetPosition().y);
     w->draw(rect);
 
     rect.setSize(sf::Vector2f(50, 50));
@@ -48,7 +48,7 @@ void Render(void)
 
         w->draw(line, 2, sf::Lines);*/
         sf::CircleShape circ(25);
-        circ.setPosition(rigidbodies[i].position.x - 25, rigidbodies[i].position.y - 25);
+        circ.setPosition(rigidbodies[i].transform.GetPosition().x - 25, rigidbodies[i].transform.GetPosition().y - 25);
         circ.setFillColor(sf::Color::Transparent);
         circ.setOutlineThickness(1);
         w->draw(circ);
@@ -68,7 +68,7 @@ void EngineTest(void)
     DynamicsWorld d;
     d.SetCollisionCallBack(onCollision, 0.16);
     rigidbodies[0] = Rigidbody(BoxCollider(500, 50), Transform(), false, PhysicsMaterial(), 1, false);
-    rigidbodies[0].position.Set(0, 2);
+    rigidbodies[0].transform.SetPosition(0, 2);
     rigidbodies[0].isStatic = true;
     rigidbodies[0].restitution = 0.9;
     d.AddDynamicbody(&rigidbodies[0]);
@@ -76,15 +76,14 @@ void EngineTest(void)
     {
         rigidbodies[i] = Rigidbody(CircleCollider(25));
         // rigidbodies[i].centerOfMass.Set(25, 25);
-        rigidbodies[i].position.Set(200 + i * 1, 100);
+        rigidbodies[i].transform.SetPosition(200 + i * 1, 100);
         rigidbodies[i].SetMass(0.05);
         rigidbodies[i].SetInertia(5);
-        rigidbodies[i].rotation.Set(fmod(i * 0.4123412382, M_PI * 2));
+        rigidbodies[i].transform.SetAngle(fmod(i * 0.4123412382, M_PI * 2));
         rigidbodies[i].restitution = 0.9;
         d.AddDynamicbody(&rigidbodies[i]);
     }
     rigidbodies[2].angularVelocity = -5000000;
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     Time::Tick();
     while (window.isOpen())
     {

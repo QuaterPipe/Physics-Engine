@@ -11,11 +11,11 @@ namespace physics
 
 	void DistanceJoint::Update(f64 dt) noexcept
 	{
-		if (geo::DistanceSquared(a->position, b->position) < SQRD(length))
+		if (geo::DistanceSquared(a->transform.GetPosition() + a->transform.GetCOM(), b->transform.GetPosition() + b->transform.GetCOM()) < SQRD(length))
 		{
-	 		f64 dis = geo::Distance(a->position, b->position) - length;
-			a->position += dis * (a->GetMass() / (a->GetMass() + b->GetMass())) * (b->position - a->position).Normalized();
-			b->position += dis * (b->GetMass() / (a->GetMass() + b->GetMass())) * (a->position - b->position).Normalized();
+	 		f64 dis = geo::Distance(a->transform.GetPosition() + a->transform.GetCOM(), b->transform.GetPosition() + b->transform.GetCOM()) - length;
+			a->transform.Translate(dis * (a->GetMass() / (a->GetMass() + b->GetMass())) * ((b->transform.GetPosition() + b->transform.GetCOM()) - (a->transform.GetPosition() + a->transform.GetCOM())).Normalized());
+			b->transform.Translate(dis * (b->GetMass() / (a->GetMass() + b->GetMass())) * ((a->transform.GetPosition() + a->transform.GetCOM()) - (b->transform.GetPosition() + b->transform.GetCOM())).Normalized());
 		}
 		a->ApplyForce(b->GetMass() * b->velocity * dt);
 		b->ApplyForce(a->GetMass() * a->velocity * dt);
@@ -28,15 +28,15 @@ namespace physics
 
 	f64 SpringJoint::ForceExerting() const noexcept
 	{
-		f64 Fs = (geo::Distance(a->position, b->position) - length) * stiffness;
-		f64 Fd = (b->position - a->position).Normalized().Dot(b->velocity - a->velocity) * dampingFactor;
+		f64 Fs = (geo::Distance(a->transform.GetPosition() + a->transform.GetCOM(), b->transform.GetPosition() + b->transform.GetCOM()) - length) * stiffness;
+		f64 Fd = ((b->transform.GetPosition() + b->transform.GetCOM()) - (a->transform.GetPosition() + a->transform.GetCOM())).Normalized().Dot(b->velocity - a->velocity) * dampingFactor;
 		return Fs + Fd;
 	}
 
 	void SpringJoint::Update(f64 dt) noexcept
 	{
-		a->ApplyForce(ForceExerting() * (b->position - a->position).Normalized() * dt);
-		b->ApplyForce(ForceExerting() * (a->position - b->position).Normalized() * dt);
+		a->ApplyForce(ForceExerting() * ((b->transform.GetPosition() + b->transform.GetCOM()) - (a->transform.GetPosition() + a->transform.GetCOM())).Normalized() * dt);
+		b->ApplyForce(ForceExerting() * ((a->transform.GetPosition() + a->transform.GetCOM()) - (b->transform.GetPosition() + b->transform.GetCOM())).Normalized() * dt);
 	}
 
 	HingeJoint::HingeJoint(Dynamicbody* a, Dynamicbody* b, f64 angularFriction) noexcept
@@ -49,10 +49,10 @@ namespace physics
 	void HingeJoint::Update(f64 dt) noexcept
 	{
 		aContact = bContact;
-		if (a->centerOfMass != aContact)
-			a->centerOfMass = aContact;
-		if (b->centerOfMass != aContact)
-			b->centerOfMass = aContact;
+		if (a->transform.GetCOM() != aContact)
+			a->transform.SetCOM(aContact);
+		if (b->transform.GetCOM() != aContact)
+			b->transform.SetCOM(aContact);
 		a->angularVelocity *= (1 - angularFriction) * dt;
 		b->angularVelocity *= (1 - angularFriction) * dt;
 	}

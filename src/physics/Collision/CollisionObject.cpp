@@ -6,27 +6,27 @@ namespace physics
 	CollisionObject::CollisionObject() noexcept
 	{
 		collider.reset(new BoxCollider());
-		centerOfMass = collider->GetCenter();
+		transform.SetCOM(collider->GetCenter());
 	}
 
 	CollisionObject::CollisionObject(const Collider& c, const Transform& t, const bool& isTrigger) noexcept
 	: isTrigger(isTrigger), collider(c.Clone()), transform(t)
 	{
-		centerOfMass = collider->GetCenter();
+		transform.SetCOM(collider->GetCenter());
 	}
 
 	CollisionObject::CollisionObject(const CollisionObject& c) noexcept
 	: isTrigger(c.isTrigger), onCollision(c.onCollision), 
 	collider(c.GetCollider().Clone()), transform(c.transform)
 	{
-		centerOfMass = collider->GetCenter();
+		transform.SetCOM(collider->GetCenter());
 	}
 
 	CollisionObject::CollisionObject(CollisionObject && c) noexcept
 	: isTrigger(c.isTrigger), onCollision(c.onCollision),
 	collider(c.collider.release()), transform(c.transform)
 	{
-		centerOfMass = collider->GetCenter();
+		transform.SetCOM(collider->GetCenter());
 	}
 
 	bool CollisionObject::operator!=(const CollisionObject& other) const noexcept
@@ -81,7 +81,7 @@ namespace physics
 
 	int CollisionObject::GetHash() const noexcept
 	{
-		std::string s = transform.position.ToString() + transform.centerOfMass.ToString();
+		std::string s = transform.GetPosition().ToString() + transform.GetPosition().ToString();
 		s = s + std::to_string(_isDynamic) + std::to_string(isTrigger);
 		int h = 0;
 		for (size_t i = 0; i < s.size(); i++)

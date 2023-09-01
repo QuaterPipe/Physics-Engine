@@ -2,6 +2,13 @@
 
 namespace geo
 {
+	i64 Abs(i64 x) noexcept
+	{
+		if (x < 0)
+			return -x;
+		else
+			return x;
+	}
 
 	f64 Abs(f64 x) noexcept
 	{
@@ -9,6 +16,105 @@ namespace geo
 			return -x;
 		else
 			return x;
+	}
+
+	Vector2 Centroid(const std::vector<geo::Vector2>& vertices) noexcept
+	{
+		Vector2 first = *vertices.begin();
+		Vector2 last = *(vertices.end() - 1);
+		Vector2* points = new Vector2[vertices.size() + 1];
+		for (size_t i = 0; i < vertices.size(); i++)
+			points[i] = vertices[i];
+		int ind = vertices.size();
+		int add = 0;
+		if (vertices.size())
+		{
+			if (first.x != last.x || first.y != last.y)
+			{
+				points[ind] = first;
+				add++;
+			}
+			f64 twiceArea = 0, x = 0, y = 0, f = 0;
+			Vector2 p1, p2;
+			// absolutely no clue what this does, it just works lol
+			for (size_t i = 0, j = (vertices.size() + add) - 1; i < (vertices.size() + add); j = i++)
+			{
+				p1 = points[i]; p2 = points[j];
+				f = (p1.y - first.y) * (p2.x - first.x) - (p2.y - first.y) * (p1.x - first.x);
+				twiceArea += f;
+				x += (p1.x + p2.x - 2 * first.x) * f;
+				y += (p1.y + p2.y - 2 * first.y) * f;
+			}
+			f = twiceArea * 3;
+			delete[] points;
+			return Vector2(x / f + first.x, y / f + first.y);
+		}
+		else
+		{
+			delete[] points;
+			return Vector2::Origin;
+		}
+	}
+
+
+	Vector2 Centroid(const Vector2* start, const Vector2* end) noexcept
+	{
+
+		Vector2 first = *start;
+		Vector2 last = *end;
+		size_t size = 0;
+		const Vector2* iter = start;
+		while (iter++ != end)
+			size++;
+		Vector2* points = new Vector2[size + 1];
+		if (size)
+		{
+			if (first.x != last.x || first.y != last.y)
+			{
+				points[size] = first;
+				size++;
+			}
+			f64 twiceArea = 0, x = 0, y = 0, f = 0;
+			Vector2 p1, p2;
+			// absolutely no clue what this does, it just works lol
+			for (size_t i = 0, j = size - 1; i < size; j = i++)
+			{
+				p1 = points[i]; p2 = points[j];
+				f = (p1.y - first.y) * (p2.x - first.x) - (p2.y - first.y) * (p1.x - first.x);
+				twiceArea += f;
+				x += (p1.x + p2.x - 2 * first.x) * f;
+				y += (p1.y + p2.y - 2 * first.y) * f;
+			}
+			f = twiceArea * 3;
+			delete[] points;
+			return Vector2(x / f + first.x, y / f + first.y);
+		}
+		else
+		{
+			delete[] points;
+			return Vector2::Origin;
+		}
+	}
+
+	i64 Clamp(i64 min, i64 max, i64 x) noexcept
+	{
+		if (x < min) return min;
+		if (x > max) return max;
+		return x;
+	}
+
+	f64 Clamp(f64 min, f64 max, f64 x) noexcept
+	{
+		if (x < min) return min;
+		if (x > max) return max;
+		return x;
+	}
+
+	u64 Clamp(u64 min, u64 max, u64 x) noexcept
+	{
+		if (x < min) return min;
+		if (x > max) return max;
+		return x;
 	}
 	
 	Line ClosestLine(std::vector<geo::Line> lines, Vector2 vector) noexcept
@@ -70,7 +176,7 @@ namespace geo
 
 	bool Equal(f64 a, f64 b) noexcept
 	{
-		return std::abs(a - b) <= EPSILON;
+		return fabs(a - b) <= EPSILON;
 	}
 
 	f64 FastSqrt(f64 x) noexcept
@@ -122,6 +228,14 @@ namespace geo
 		return a + (b - a) * t;
 	}
 
+	i64 Max(i64 a, i64 b) noexcept
+	{
+		if (a > b)
+			return a;
+		else
+			return b;
+	}
+
 	f64 Max(f64 a, f64 b) noexcept
 	{
 		if (a > b)
@@ -130,7 +244,31 @@ namespace geo
 			return b;
 	}
 
+	u64 Max(u64 a, u64 b) noexcept
+	{
+		if (a > b)
+			return a;
+		else
+			return b;
+	}
+
+	i64 Min(i64 a, i64 b) noexcept
+	{
+		if (a < b)
+			return a;
+		else
+			return b;
+	}
+
 	f64 Min(f64 a, f64 b) noexcept
+	{
+		if (a < b)
+			return a;
+		else
+			return b;
+	}
+
+	u64 Min(u64 a, u64 b) noexcept
 	{
 		if (a < b)
 			return a;
@@ -153,67 +291,5 @@ namespace geo
 	f64 Radians(f64 degrees) noexcept
 	{
 		return degrees * (M_PI / 180);
-	}
-
-	Vector2 Centroid(const Vector2* start, const Vector2* end) noexcept
-	{
-		
-		Vector2 first = *start;
-		Vector2 last = *end;
-		std::vector<Vector2> points;
-		points.insert(points.end(), start, end);
-		if (points.size())
-		{
-			if (first.x != last.x || first.y != last.y)
-			{
-				points.push_back(first);
-			}
-			f64 twiceArea = 0, x = 0, y = 0, f = 0;
-			Vector2 p1, p2;
-			// absolutely no clue what this does, it just works lol
-			for (size_t i = 0, j = points.size() - 1; i < points.size(); j=i++)
-			{
-				p1 = points[i]; p2 = points[j];
-				f = (p1.y - first.y) * (p2.x - first.x) - (p2.y - first.y) * (p1.x - first.x);
-				twiceArea += f;
-				x += (p1.x + p2.x - 2 * first.x) * f;
-				y += (p1.y + p2.y - 2 * first.y) * f;
-			}
-			f = twiceArea * 3;
-			return Vector2(x / f + first.x, y / f + first.y);
-		}
-		else
-			return Vector2::Origin;
-	}
-
-	Vector2 Centroid(const std::vector<geo::Vector2>& vertexes) noexcept
-	{
-		
-		Vector2 first = *vertexes.begin();
-		Vector2 last = *(vertexes.end() - 1);
-		std::vector<Vector2> points;
-		points.insert(points.end(), vertexes.begin(), vertexes.end());
-		if (points.size())
-		{
-			if (first.x != last.x || first.y != last.y)
-			{
-				points.push_back(first);
-			}
-			f64 twiceArea = 0, x = 0, y = 0, f = 0;
-			Vector2 p1, p2;
-			// absolutely no clue what this does, it just works lol
-			for (size_t i = 0, j = points.size() - 1; i < points.size(); j=i++)
-			{
-				p1 = points[i]; p2 = points[j];
-				f = (p1.y - first.y) * (p2.x - first.x) - (p2.y - first.y) * (p1.x - first.x);
-				twiceArea += f;
-				x += (p1.x + p2.x - 2 * first.x) * f;
-				y += (p1.y + p2.y - 2 * first.y) * f;
-			}
-			f = twiceArea * 3;
-			return Vector2(x / f + first.x, y / f + first.y);
-		}
-		else
-			return Vector2::Origin;
 	}
 }

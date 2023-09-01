@@ -17,7 +17,7 @@ namespace geo
 	{
 	}
 
-	Vector2::Vector2(const f64& x, const f64& y) noexcept
+	Vector2::Vector2(f64 x, f64 y) noexcept
 	: x(x), y(y)
 	{
 	}
@@ -31,7 +31,7 @@ namespace geo
 			return y;
 	}
 
-	const f64& Vector2::operator[](size_t index) const
+	f64 Vector2::operator[](size_t index) const
 	{
 		assert(index <= 1);
 		if (!index)
@@ -55,12 +55,12 @@ namespace geo
 		return x * v.y - y * v.x;
 	}
 
-	Vector2 Vector2::Cross(const Vector2& v, const f64& s) noexcept
+	Vector2 Vector2::Cross(const Vector2& v, f64 s) noexcept
 	{
 		return Vector2(s * v.y, -s * v.x);
 	}
 
-	Vector2 Vector2::Cross(const f64& s, const Vector2& v) noexcept
+	Vector2 Vector2::Cross(f64 s, const Vector2& v) noexcept
 	{
 		return Vector2(-s * v.y, s * v.x);
 	}
@@ -72,26 +72,26 @@ namespace geo
 
 	f64 Vector2::GetMagnitude() const noexcept
 	{
-		if (!fabs(x) && !fabs(y))
+		if (!x && !y)
 			return 0;
 		return sqrt(x * x + y * y);
 	}
 
 	f64 Vector2::GetMagnitudeSquared() const noexcept
 	{
-		if (!fabs(x) && !fabs(y))
+		if (!x && !y)
 			return 0;
 		return x * x + y * y;
 	}
 
 	f64 Vector2::GetMagnitudeQuick() const noexcept
 	{
-		if (!fabs(x) && !fabs(y))
+		if (!x && !y)
 			return 0;
 		return FastSqrt(x * x + y * y);
 	}
 
-	Vector2 Vector2::Lerp(const Vector2& other, const f64& t) const noexcept
+	Vector2 Vector2::Lerp(const Vector2& other, f64 t) const noexcept
 	{
 		return *this + (other - *this) * t;
 	}
@@ -112,22 +112,22 @@ namespace geo
 		return v;
 	}
 
-	Vector2 operator*(const f64 & d, const Vector2& v) noexcept
+	Vector2 operator*(f64 d, const Vector2& v) noexcept
 	{
 		return Vector2(d * v.x, d * v.y);
 	}
 
-	Vector2 operator+(const f64 & d, const Vector2& v) noexcept
+	Vector2 operator+(f64 d, const Vector2& v) noexcept
 	{
 		return Vector2(d + v.x, d + v.y);
 	}
 	
-	Vector2 operator-(const f64 & d, const Vector2& v) noexcept
+	Vector2 operator-(f64 d, const Vector2& v) noexcept
 	{
 		return Vector2(d - v.x, d - v.y);
 	}
 
-	Vector2 operator/(const f64 & d, const Vector2& v) noexcept
+	Vector2 operator/(f64 d, const Vector2& v) noexcept
 	{
 		return Vector2(d / v.x, d / v.y);
 	}
@@ -160,7 +160,7 @@ namespace geo
 		return result;
 	}
 
-	Vector2 Vector2::operator+(const f64& d) const noexcept
+	Vector2 Vector2::operator+(f64 d) const noexcept
 	{
 		Vector2 result(*this);
 		result.x += d;
@@ -174,7 +174,7 @@ namespace geo
 		y += v.y;
 	}
 
-	void Vector2::operator+=(const f64& d) noexcept
+	void Vector2::operator+=(f64 d) noexcept
 	{
 		x += d;
 		y += d;
@@ -188,7 +188,7 @@ namespace geo
 		return result;
 	}
 
-	Vector2 Vector2::operator-(const f64& d) const noexcept
+	Vector2 Vector2::operator-(f64 d) const noexcept
 	{
 		Vector2 result(*this);
 		result.x -= d;
@@ -202,7 +202,7 @@ namespace geo
 		y -= v.y;
 	}
 
-	void Vector2::operator-=(const f64& d) noexcept
+	void Vector2::operator-=(f64 d) noexcept
 	{
 		x -= d;
 		y -= d;
@@ -216,7 +216,7 @@ namespace geo
 		return result;
 	}
 
-	Vector2 Vector2::operator*(const f64& d) const noexcept
+	Vector2 Vector2::operator*(f64 d) const noexcept
 	{
 		Vector2 result(*this);
 		result.x *= d;
@@ -230,7 +230,7 @@ namespace geo
 		y *= v.y;
 	}
 
-	void Vector2::operator*=(const f64& d) noexcept
+	void Vector2::operator*=(f64 d) noexcept
 	{
 		x *= d;
 		y *= d;
@@ -244,7 +244,7 @@ namespace geo
 		return result;
 	}
 
-	Vector2 Vector2::operator/(const f64& d) const noexcept
+	Vector2 Vector2::operator/(f64 d) const noexcept
 	{
 		Vector2 result(*this);
 		result.x /= d;
@@ -258,7 +258,7 @@ namespace geo
 		y /= v.y;
 	}
 
-	void Vector2::operator/=(const f64& d) noexcept
+	void Vector2::operator/=(f64 d) noexcept
 	{
 		x /= d;
 		y /= d;
@@ -284,7 +284,7 @@ namespace geo
 		return Vector2(x, y);
 	}
 
-	void Vector2::Move(const f64& offsetX, const f64& offsetY) noexcept
+	void Vector2::Move(f64 offsetX, f64 offsetY) noexcept
 	{
 		this->x += offsetX;
 		this->y += offsetY;
@@ -334,7 +334,7 @@ namespace geo
 		*this = Reflection(normal);
 	}
 
-	void Vector2::Rotate(const Vector2& p, const f64& angle) noexcept
+	void Vector2::Rotate(const Vector2& p, f64 angle) noexcept
 	{
 		f64 currentAngle = GetAngle(p, *this);
 		f64 ang = angle;
@@ -347,7 +347,7 @@ namespace geo
 		this->y = v2.y;
 	}
 
-	void Vector2::Set(const f64& newX, const f64& newY) noexcept
+	void Vector2::Set(f64 newX, f64 newY) noexcept
 	{
 		this->x = newX;
 		this->y = newY;

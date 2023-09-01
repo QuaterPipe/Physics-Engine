@@ -8,7 +8,7 @@ void DynamicsTest()
 	CircleCollider c(5);
 	Transform ta;
 	Transform tb;
-	tb.position.Set(3, 0);
+	tb.SetPosition(3, 0);
 	Rigidbody a(c, ta);
 	Rigidbody b(c, tb);
 	b.velocity.Set(-0.1, 0);

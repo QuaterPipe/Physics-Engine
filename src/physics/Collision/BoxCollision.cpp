@@ -79,18 +79,16 @@ namespace physics::algo
 		CollisionPoints c;
 		if (!a || !b) {return c;}
         // is AABB
-        if (!ta.rotation.Angle() && !tb.rotation.Angle())
+        if (!ta.GetAngle() && !tb.GetAngle())
         {
             BoxCollider aCpy(*a);
             BoxCollider bCpy(*b);
-            aCpy.pos += ta.position;
-            bCpy.pos += tb.position;
-            aCpy.pos -= ta.centerOfMass;
-            bCpy.pos -= tb.centerOfMass;
-            aCpy.width *= ta.scale[0][0];
-            aCpy.height *= ta.scale[1][1];
-            bCpy.width *= tb.scale[0][0];
-            bCpy.height *= tb.scale[1][1];
+            aCpy.pos += ta.GetPosition();
+            bCpy.pos += tb.GetPosition();
+            aCpy.pos -= ta.GetCOM();
+            bCpy.pos -= tb.GetCOM();
+            aCpy.dimensions *= ta.GetScale();
+            bCpy.dimensions *= tb.GetScale();
             if (flipped)
             {
                 BoxCollider tmp = aCpy;

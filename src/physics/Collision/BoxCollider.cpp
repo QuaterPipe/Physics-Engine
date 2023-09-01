@@ -42,21 +42,14 @@ namespace physics
 
 	BoxCollider BoxCollider::BoundingBox(const Transform& t) const noexcept
 	{
-		PolygonCollider p(geo::Vector2(0, 0), pos, geo::Vector2(x + width, y), pos + dimensions, {geo::Vector2(x, y + height)});
+		PolygonCollider p(pos, geo::Vector2(x + width, y), pos + dimensions, {geo::Vector2(x, y + height)});
 		return p.BoundingBox(t);
 	}
 
 	bool BoxCollider::Contains(const geo::Vector2& point, const Transform& t) const noexcept
 	{
-		if (!t.GetAngle())
-		{
-			f64 posX = x + t.position.x;
-			f64 posY = y + t.position.y;
-			f64 sclW = x * t.scale[0][0];
-			f64 sclH = y * t.scale[1][1];
-			return posX <= point.x && point.x <= posX + sclW && posY <= point.y && point.y <= posY + sclH;
-		}
-		return PolygonCollider(*this).Contains(point, t);
+		geo::Vector2 pt = t.GetInverseTransform().TransformVector(point);
+		return x <= pt.x && pt.x <= x + width && y <= pt.y && pt.y <= y + height;
 	}
 
 

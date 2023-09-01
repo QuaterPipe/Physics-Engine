@@ -363,8 +363,8 @@ namespace physics
 		{
 			velocity += (force * _invMass) * (dt / 2.0);
 			angularVelocity += (angularForce * _invInertia) * (dt / 2.0);
-			position += velocity * dt;
-			rotation = geo::Matrix2(transform.GetAngle() + angularVelocity * dt);
+			transform.Translate(velocity * dt);
+			transform.SetRotation(geo::Matrix2(transform.GetAngle() + angularVelocity * dt));
 			angularForce = 0;
 			force.Set(0, 0);
 			ApplySpringForces(dt);
@@ -394,7 +394,7 @@ namespace physics
 				geo::Vector2 b = points[i][j + 1].position;
 				geo::Vector2 c = points[i + 1][j + 1].position;
 				geo::Vector2 d = points[i + 1][j].position;
-				PolygonCollider p(geo::Vector2(0, 0), a, b, c, {d});
+				PolygonCollider p(a, b, c, {d});
 				_colliders.push_back(p);
 			}
 		}

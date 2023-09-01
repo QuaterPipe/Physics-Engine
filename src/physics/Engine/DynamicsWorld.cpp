@@ -68,6 +68,26 @@ namespace physics
 		return _objects;
 	}
 
+	void DynamicsWorld::RemoveDynamicbody(Dynamicbody* dynamicbody) noexcept
+	{
+		for (auto p = _dynamicbodies.begin(); p != _dynamicbodies.end(); p++)
+		{
+			if (*p == dynamicbody)
+			{
+				_dynamicbodies.erase(p);
+				break;
+			}
+		}
+		for (auto p = _objects.begin(); p != _objects.end(); p++)
+		{
+			if (*p == dynamicbody)
+			{
+				_objects.erase(p);
+				return;
+			}
+		}
+	}
+
 	void DynamicsWorld::RemoveObject(CollisionObject* o) noexcept
 	{
 		for (auto p = _objects.begin(); p < _objects.end(); p++)	
@@ -75,14 +95,6 @@ namespace physics
 			if (*p == o)
 			{
 				_objects.erase(p);
-				return;
-			}
-		}
-		for (auto p = _dynamicbodies.begin(); p < _dynamicbodies.end(); p++)
-		{
-			if (*p == o)
-			{
-				_dynamicbodies.erase(p);
 				return;
 			}
 		}

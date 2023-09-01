@@ -1,6 +1,6 @@
 #include "../testing/Testing.hpp"
-int main(int argc, char** args)
+int main()
 {
-	EngineTest();
+	Demo();
 	return 0;
 }

@@ -54,6 +54,7 @@
     <ClCompile Include="src\physics\Engine\PositionalCorrectionSolver.cpp" />
     <ClCompile Include="src\physics\Engine\Time.cpp" />
     <ClCompile Include="testing\CollisionTesting.cpp" />
+    <ClCompile Include="testing\Demo.cpp" />
     <ClCompile Include="testing\DynamicsTesting.cpp" />
     <ClCompile Include="testing\EngineTesting.cpp" />
     <ClCompile Include="testing\IntegrationTesting.cpp" />

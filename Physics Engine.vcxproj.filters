@@ -177,6 +177,9 @@
     <ClCompile Include="testing\IntegrationTesting.cpp">
       <Filter>testing</Filter>
     </ClCompile>
+    <ClCompile Include="testing\Demo.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\sfml-graphics-d-2.dll">

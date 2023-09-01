@@ -32,14 +32,22 @@ using i64 = int64_t;
 
 namespace geo
 {
-	/// \brief returns the absolut value of x.
+	/// \brief returns the absolute value of x.
+	i64 Abs(i64 x) noexcept;
+	/// \brief returns the absolute value of x.
 	f64 Abs(f64 x) noexcept;
+	/// \brief clamps x between a min and max
+	i64 Clamp(i64 min, i64 max, i64 x) noexcept;
+	/// \brief clamps x between a min and max
+	f64 Clamp(f64 min, f64 max, f64 x) noexcept;
+	/// \brief clamps x between a min and max
+	u64 Clamp(u64 min, u64 max, u64 x) noexcept;
 	/// \brief returns the closest Line to the Vector2.
 	Line ClosestLine(std::vector<geo::Line> lines, Vector2 vector) noexcept;
 	/// \brief returns the calculated centroid of the given points.
 	Vector2 Centroid(const Vector2* start, const Vector2* end) noexcept;
 	/// \brief returns the calculated centroid of the given points.
-	Vector2 Centroid(const std::vector<geo::Vector2>& vertexes) noexcept;
+	Vector2 Centroid(const std::vector<geo::Vector2>& vertices) noexcept;
 	/// \brief Converts radians to degrees.
 	f64 Degrees(const f64 radians) noexcept;
 	/// \brief Gets the distance between two Vectors.
@@ -78,9 +86,17 @@ namespace geo
 	/// \brief Linear Interpolation between two values.
 	f64 Lerp(f64 a, f64 b, f64 t) noexcept;
 	/// \brief returns the maximum value.
+	i64 Max(i64 a, i64 b) noexcept;
+	/// \brief returns the maximum value.
 	f64 Max(f64 a, f64 b) noexcept;
 	/// \brief returns the minimum value.
+	u64 Max(u64 a, u64 b) noexcept;
+	/// \brief returns the maximum value.
+	i64 Min(i64 a, i64 b) noexcept;
+	/// \brief returns the minimum value.
 	f64 Min(f64 a, f64 b) noexcept;
+	/// \brief returns the minimum value.
+	u64 Min(u64 a, u64 b) noexcept;
 	/// \brief Returns the point of Intersect between two lines if they are intersecting.
 	Vector2 PointOfIntersect(const Line& la, const Line& lb, bool isInfLine = false) noexcept;
 	/// \brief converts degrees to radians

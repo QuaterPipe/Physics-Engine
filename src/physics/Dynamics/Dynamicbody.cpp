@@ -140,8 +140,8 @@ namespace physics
 	{
 		if (isStatic)
 			return;
-		position += velocity * dt;
-		rotation = geo::Matrix2(transform.GetAngle() + angularVelocity * dt);
+		transform.Translate(velocity * dt);
+		transform.SetRotation(geo::Matrix2(transform.GetAngle() + angularVelocity * dt));
 		IntegrateForces(dt);
 	}
 
