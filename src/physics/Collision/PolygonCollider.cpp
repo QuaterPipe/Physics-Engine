@@ -2,14 +2,14 @@
 namespace physics
 {
 	PolygonCollider::PolygonCollider(const BoxCollider& b) noexcept
-		: _pointCount(4), _center(b.pos + (b.dimensions / 2))
+		: _pointCount(4), _center(b.pos)
 	{
 		_points = new geo::Vector2[4];
 		_normals = new geo::Vector2[4];
-		_points[0] = b.pos;
-		_points[1] = geo::Vector2(b.x + b.width, b.y);
-		_points[2] = geo::Vector2(b.x + b.width, b.y + b.height);
-		_points[3] = geo::Vector2(b.x, b.y + b.height);
+		_points[0] = b.pos - (b.dimensions / 2);
+		_points[1] = geo::Vector2(b.x + (b.width / 2), b.y - (b.height / 2));
+		_points[2] = geo::Vector2(b.x + (b.width / 2), b.y + (b.height / 2));
+		_points[3] = geo::Vector2(b.x - (b.width / 2), b.y + (b.height / 2));
 		for (size_t i = 0; i < _pointCount; i++)
 		{
 			geo::Vector2 norm = _points[(i + 1) % _pointCount] - _points[i];

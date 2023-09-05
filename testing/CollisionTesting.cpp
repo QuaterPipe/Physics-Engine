@@ -50,6 +50,7 @@ void Render(sf::RenderWindow* win, int a, int b)
         r.setOutlineColor(sf::Color::White);
         r.setOutlineThickness(1);
         r.setPosition(250, 250);
+        r.setOrigin(25, 25);
         win->draw(r);
     }
     if (b == 2)
@@ -59,6 +60,7 @@ void Render(sf::RenderWindow* win, int a, int b)
         r.setOutlineColor(sf::Color::White);
         r.setOutlineThickness(1);
         r.setPosition(worldPos.x, worldPos.y);
+        r.setOrigin(25, 25);
         win->draw(r);
     }
     if (a > 2)
