@@ -32,7 +32,7 @@ namespace physics::algo
         if (a->GetPoints().size() < 3)
             return c;
         size_t aSize = a->GetPointCount();
-        geo::Vector2 aPoints[MAX_POLYGONCOLLIDER_SIZE];
+        geo::Vector2* aPoints = new geo::Vector2[aSize];
         for (size_t i = 0; i < aSize; i++)
             aPoints[i] = ta.TransformVector(a->GetPoint(i));
         geo::Vector2 bCenter = tb.TransformVector(b->center); // no other members of tb will affect b->center.
@@ -69,7 +69,10 @@ namespace physics::algo
             }
         }
         if (!b->Contains(closest, tb) && !centerInA)
+        {
+            delete[] aPoints;
             return c;
+        }
         if (centerInA || polyInB || closest != geo::Vector2::Infinity)
         {
             c.hasCollision = true;
@@ -89,6 +92,7 @@ namespace physics::algo
         }
         if (!flipped)
             c.normal = -c.normal;
+        delete[] aPoints;
         return c;
     }
 
@@ -129,8 +133,9 @@ namespace physics::algo
             return c;
         if (a->GetPointCount() < 3 || b->GetPointCount() < 3)
             return c;
-        geo::Vector2 aPoints[MAX_POLYGONCOLLIDER_SIZE], bPoints[MAX_POLYGONCOLLIDER_SIZE];
         size_t aSize = a->GetPointCount(), bSize = b->GetPointCount();
+        geo::Vector2* aPoints = new geo::Vector2[aSize];
+        geo::Vector2* bPoints = new geo::Vector2[bSize];
         for (size_t i = 0; i < aSize; i++)
             aPoints[i] = ta.TransformVector(a->GetPoint(i));
         for (size_t i = 0; i < bSize; i++)
@@ -146,12 +151,20 @@ namespace physics::algo
             geo::Vector2 ortho(-edge.y, edge.x);
             CollisionPoints clsn = SeparatingAxis(ortho, aPoints, bPoints, aSize, bSize);
             if (clsn.hasCollision == true)
+            {
+                delete[] aPoints;
+                delete[] bPoints;
                 return c;
+            }
             else
                 pushVectors.push_back(clsn.normal);
         }
         if (!pushVectors.size())
+        {
+            delete[] aPoints;
+            delete[] bPoints;
             return c;
+        }
         // collision with the smallest push vector.
         geo::Vector2 mpv = geo::Vector2::Infinity;
         for (const geo::Vector2& pv : pushVectors)
@@ -171,6 +184,8 @@ namespace physics::algo
         c.points = inter; 
         if (flipped)
             c.normal = -c.normal;
+        delete[] aPoints;
+        delete[] bPoints;
         return c;
     };
 

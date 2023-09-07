@@ -1,4 +1,5 @@
 #include "geometry/Math.hpp"
+#include <iostream>
 
 namespace geo
 {
@@ -57,43 +58,29 @@ namespace geo
 	}
 
 
-	Vector2 Centroid(const Vector2* start, const Vector2* end) noexcept
+	Vector2 Centroid(const Vector2* start, size_t size) noexcept
 	{
-
-		Vector2 first = *start;
-		Vector2 last = *end;
-		size_t size = 0;
-		const Vector2* iter = start;
-		while (iter++ != end)
-			size++;
-		Vector2* points = new Vector2[size + 1];
-		if (size)
+		Vector2 centroid;
+		f64 signedArea = 0.0;
+		Vector2 first, second;
+		f64 partialSignedArea;
+		size_t i;
+		for (i = 0; i < size - 1; i++)
 		{
-			if (first.x != last.x || first.y != last.y)
-			{
-				points[size] = first;
-				size++;
-			}
-			f64 twiceArea = 0, x = 0, y = 0, f = 0;
-			Vector2 p1, p2;
-			// absolutely no clue what this does, it just works lol
-			for (size_t i = 0, j = size - 1; i < size; j = i++)
-			{
-				p1 = points[i]; p2 = points[j];
-				f = (p1.y - first.y) * (p2.x - first.x) - (p2.y - first.y) * (p1.x - first.x);
-				twiceArea += f;
-				x += (p1.x + p2.x - 2 * first.x) * f;
-				y += (p1.y + p2.y - 2 * first.y) * f;
-			}
-			f = twiceArea * 3;
-			delete[] points;
-			return Vector2(x / f + first.x, y / f + first.y);
+			first = start[i];
+			second = start[i + 1];
+			partialSignedArea = first.Cross(second);
+			signedArea += partialSignedArea;
+			centroid += (first + second) * partialSignedArea;
 		}
-		else
-		{
-			delete[] points;
-			return Vector2::Origin;
-		}
+		first = start[i];
+		second = start[0];
+		partialSignedArea = first.Cross(second);
+		signedArea += partialSignedArea;
+		centroid += (first + second) * partialSignedArea;
+		signedArea *= 0.5;
+		centroid /= (6.0 * signedArea);
+		return centroid;
 	}
 
 	i64 Clamp(i64 min, i64 max, i64 x) noexcept

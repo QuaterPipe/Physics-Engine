@@ -65,7 +65,7 @@ void IntegrationTest()
 	std::cout << tmp << "\n";
 	tmp += t.GetPosition();
 	std::cout << tmp << "\n";
-	srand(time(0));
+	srand(time(NULL));
 	int tests = 1'000'000;
 	Matrix3 m = t.GetTransformationMatrix();
 	Timer tim;

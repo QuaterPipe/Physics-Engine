@@ -51,7 +51,7 @@ void onClsn(Collision& c, f64 dt)
 void CreatePoly(PolygonCollider* p, size_t count, size_t width)
 {
     *p = PolygonCollider(width, count);
-    std::vector v = p->GetPoints();
+    std::vector<Vector2> v = p->GetPoints();
     for (size_t i = 0; i < count; i++)
     {
         v[i].x += Random(-(width / 8.0), (width / 8.0));
@@ -74,7 +74,7 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
         obj.rigid->angularVelocity = rotVel;
         obj.rigid->SetMass(rad * 0.000005);
         obj.rigid->SetInertia(obj.rigid->GetMass() * 100);
-        obj.rigid->restitution = 0.7;
+        obj.rigid->restitution = 0.1;
         obj.rigid->kineticFriction = Random(0.6, 0.8);
         sf::CircleShape c;
         c.setRadius(rad);
@@ -87,12 +87,12 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
     {
         f64 e = Random(5, 80);
         PolygonCollider p(BoxCollider(e, e));
-        // CreatePoly(&p, Random(3, 7), e);
+        CreatePoly(&p, Random(3, 7), e);
         obj.rigid = new Rigidbody(p, t);
         obj.rigid->angularVelocity = rotVel;
         obj.rigid->SetMass(0.0005 * e);
         obj.rigid->SetInertia(obj.rigid->GetMass() * 10000);
-        obj.rigid->restitution = 0.7;
+        obj.rigid->restitution = 0.1;
         obj.rigid->kineticFriction = Random(0.6, 0.8);
         sf::ConvexShape c(p.GetPointCount());
         for (size_t i = 0; i < p.GetPointCount(); i++)
@@ -101,14 +101,10 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
         c.setFillColor(sf::Color::Transparent);
         c.setOutlineColor(sf::Color(Random(30, 255), Random(30, 255), Random(30, 255)));
         c.setOrigin(obj.rigid->transform.GetCOM().x, obj.rigid->transform.GetCOM().y);
-        std::cout << obj.rigid->transform.GetCOM() << "\n";
         obj.conv = c;
-        std::cout << "?\n";
     }
-    std::cout << objects.size() << "\n";
     objects.push_back(obj);
     d.AddDynamicbody(obj.rigid);
-    std::cout << objects.size() << "\n\n";
 }
 
 void RenderObjects()
@@ -122,7 +118,7 @@ void RenderObjects()
         }
         else
         {
-            obj.conv.setPosition(obj.rigid->transform.GetPosition().x, obj.rigid->transform.GetPosition().y);
+            obj.conv.setPosition(obj.rigid->transform.GetPosition().x + obj.rigid->transform.GetCOM().x, obj.rigid->transform.GetPosition().y + obj.rigid->transform.GetCOM().y);
             obj.conv.setRotation(geo::Degrees(obj.rigid->transform.GetAngle()));
             // std::cout << obj.conv.getPosition().x << ' ' << obj.conv.getPosition().y << "\n";
             win->draw(obj.conv);
@@ -167,23 +163,25 @@ void Demo()
     d.SetCollisionCallBack(onClsn, 0);
     Time::Tick();
     Object floor;
-    floor.rigid = new Rigidbody(BoxCollider(400, 30));
-    floor.rigid->transform.SetPosition(50, 20);
+    floor.rigid = new Rigidbody(PolygonCollider(BoxCollider(400, 30)));
+    floor.rigid->transform.SetPosition(250, 40);
     floor.rigid->isStatic = true;
     floor.rigid->restitution = 1;
     // floor.rigid->transform.SetRotation(geo::Radians(10));
     floor.t = Type::Poly;
     sf::ConvexShape c(4);
-    c.setPoint(0, sf::Vector2f(0, 0));
-    c.setPoint(1, sf::Vector2f(400, 0));
-    c.setPoint(2, sf::Vector2f(400, 30));
-    c.setPoint(3, sf::Vector2f(0, 30));
+    for (int i = 0; i < 4; i++)
+        c.setPoint(i, sf::Vector2f(floor.rigid->collider->GetPoints()[i].x, floor.rigid->collider->GetPoints()[i].y));
     c.setOutlineThickness(1);
     c.setFillColor(sf::Color::Transparent);
-    c.setPosition(250, 20);
+    c.setOrigin(floor.rigid->transform.GetCOM().x, floor.rigid->transform.GetCOM().y);
+    c.setPosition(250, 40);
     floor.conv = c;
     objects.push_back(floor);
     d.AddDynamicbody(floor.rigid);
+    for (int i = 0; i < 4; i++)
+        std::cout << floor.rigid->transform.TransformVector(floor.rigid->collider->GetPoints()[i])<< " ";
+    std::cout << "\n";
     Timer tm;
     while (window.isOpen())
     {
@@ -217,8 +215,8 @@ void Demo()
             }
         }
         Time::Tick();
-        d.Update(Time::deltaTime / 1000.0); // delta time is measured in seconds by the physics engine
-        std::cout << Time::deltaTime << '\n';
+        d.Update(1 / 60.0); // delta time is measured in seconds by the physics engine
+        // std::cout << Time::deltaTime << '\n';
         RenderObjects();
     }
 }

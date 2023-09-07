@@ -101,11 +101,11 @@ namespace physics
 
 	std::vector<geo::Vector2> BoxCollider::GetPoints(const Transform& t) const noexcept
 	{
-		std::vector<geo::Vector2> v;
-		v.push_back(t.TransformVector(pos));
-		v.push_back(t.TransformVector(geo::Vector2(x + width, y)));
-		v.push_back(t.TransformVector(pos + dimensions));
-		v.push_back(t.TransformVector(geo::Vector2(x, y + height)));
+		std::vector<geo::Vector2> v(4);
+		v[0] = t.TransformVector(pos - (dimensions / 2));
+		v[1] = t.TransformVector(geo::Vector2(x + (width / 2), y - (height / 2)));
+		v[2] = t.TransformVector(pos + (dimensions / 2));
+		v[3] = t.TransformVector(geo::Vector2(x - (width / 2), y + (height / 2)));
 		return v;
 	}
 

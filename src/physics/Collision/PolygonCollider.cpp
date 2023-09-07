@@ -8,10 +8,12 @@ namespace physics
 		_normals = new geo::Vector2[4];
 		_points[0] = b.pos - (b.dimensions / 2);
 		_points[1] = geo::Vector2(b.x + (b.width / 2), b.y - (b.height / 2));
-		_points[2] = geo::Vector2(b.x + (b.width / 2), b.y + (b.height / 2));
+		_points[2] = b.pos + (b.dimensions / 2);
 		_points[3] = geo::Vector2(b.x - (b.width / 2), b.y + (b.height / 2));
 		for (size_t i = 0; i < _pointCount; i++)
 		{
+			_min = _points[i] < _min ? _points[i] : _min;
+			_max = _points[i] > _max ? _points[i] : _max;
 			geo::Vector2 norm = _points[(i + 1) % _pointCount] - _points[i];
 			norm.Set(norm.y, -norm.x);
 			norm.Normalize();
@@ -44,18 +46,17 @@ namespace physics
 	}
 
 	PolygonCollider::PolygonCollider(f64 sideLength, unsigned long count) noexcept
-		: _pointCount(count), _center(0, 0)
+		: _pointCount(geo::Min(count, MAX_POLYGONCOLLIDER_SIZE)), _center(0, 0)
 	{
 		if (count < 3 || sideLength < EPSILON)
 			return;
-		_pointCount = geo::Min(_pointCount, MAX_POLYGONCOLLIDER_SIZE);
 		_points = new geo::Vector2[_pointCount];
 		_normals = new geo::Vector2[_pointCount];
 		f64 rotation = floor((_pointCount + 1) / 4) * (M_PI * 2) / _pointCount + M_PI / _pointCount - (M_PI / 2);
 		f64 angle = rotation;
 		geo::Vector2 current = geo::GetVectorOnCircle(geo::Vector2(0, 0), (sideLength * (1 / (sin((M_PI * 2) / _pointCount)))) / 2, rotation);
 		_points[0] = current;
-		for (ulong i = 1; i < _pointCount; i++)
+		for (size_t i = 1; i < _pointCount; i++)
 		{
 			angle += (M_PI * 2) / _pointCount;
 			angle = fmod(angle, M_PI * 2);
@@ -74,6 +75,7 @@ namespace physics
 	}
 
 	PolygonCollider::PolygonCollider() noexcept
+		: _pointCount(0)
 	{
 	}
 
@@ -102,7 +104,7 @@ namespace physics
 			norm.Normalize();
 			_normals[i] = norm;
 		}
-		_center = geo::Centroid(_points, _points + _pointCount);
+		_center = geo::Centroid(_points, _pointCount);
 	}
 
 	PolygonCollider::PolygonCollider(const std::vector<geo::Vector2>& points)
@@ -314,7 +316,7 @@ namespace physics
 			norm.Normalize();
 			_normals[i] = norm;
 		}
-		_center = geo::Centroid(_points, _points + _pointCount);
+		_center = geo::Centroid(_points, _pointCount);
 	}
 
 	void PolygonCollider::SetPoint(size_t index, const geo::Vector2& point) noexcept
@@ -332,7 +334,7 @@ namespace physics
 		norm.Set(norm.y, -norm.x);
 		norm.Normalize();
 		_normals[index] = norm;
-		_center = geo::Centroid(_points, _points + _pointCount);
+		_center = geo::Centroid(_points, _pointCount);
 	}
 
 	geo::Vector2 PolygonCollider::SupportPoint(geo::Vector2 direction) const noexcept

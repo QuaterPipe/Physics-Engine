@@ -45,7 +45,7 @@ namespace geo
 	/// \brief returns the closest Line to the Vector2.
 	Line ClosestLine(std::vector<geo::Line> lines, Vector2 vector) noexcept;
 	/// \brief returns the calculated centroid of the given points.
-	Vector2 Centroid(const Vector2* start, const Vector2* end) noexcept;
+	Vector2 Centroid(const Vector2* start, size_t size) noexcept;
 	/// \brief returns the calculated centroid of the given points.
 	Vector2 Centroid(const std::vector<geo::Vector2>& vertices) noexcept;
 	/// \brief Converts radians to degrees.
