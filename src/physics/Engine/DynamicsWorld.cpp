@@ -40,10 +40,12 @@ namespace physics
 	void DynamicsWorld::CheckCollisions(f64 dt) noexcept
 	{
 		_collisions.clear();
-		for (auto& a: _dynamicbodies)
+		for (int i = 0; i < _dynamicbodies.size(); i++)
 		{
-			for (auto& b: _dynamicbodies)
+			Dynamicbody* a = _dynamicbodies[i];
+			for (int j = i + 1; j < _dynamicbodies.size(); j++)
 			{
+				Dynamicbody* b = _dynamicbodies[j];
 				if (a == b)
 					continue;
 				if (a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform)))

@@ -14,7 +14,8 @@ namespace physics
 			geo::Matrix2 _scale = geo::Matrix2();
 			geo::Matrix2 _rotation = geo::Matrix2();
 			geo::Matrix3 _transformationMatrix = geo::Matrix3();
-	public:
+			geo::Matrix2 _rotxScale = geo::Matrix2();
+		public:
 			Transform() noexcept;
 			Transform(const Transform& transform) noexcept;
 			Transform(const geo::Vector2& position, const geo::Vector2& com, const geo::Vector2& scale, const geo::Matrix2& rotation) noexcept;

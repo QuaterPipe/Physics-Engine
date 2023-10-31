@@ -42,7 +42,7 @@ namespace geo
 
 	Vector2 Vector2::Abs() const noexcept
 	{
-		return Vector2(fabs(x), fabs(y));
+		return Vector2(geo::Abs(x), geo::Abs(y));
 	}
 
 	f64 Vector2::Angle(const Vector2& other) const noexcept

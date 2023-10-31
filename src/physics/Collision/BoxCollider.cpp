@@ -13,12 +13,12 @@ namespace physics
 	}
 
 	BoxCollider::BoxCollider(const geo::Vector2& pos, const geo::Vector2& dimensions) noexcept
-	: pos(pos), dimensions(dimensions.Abs())
+	: pos(pos), dimensions(dimensions)
 	{
 	}
 
 	BoxCollider::BoxCollider(const BoxCollider& b) noexcept
-	: pos(b.pos), dimensions(b.dimensions.Abs())
+	: pos(b.pos), dimensions(b.dimensions)
 	{
 	}
 

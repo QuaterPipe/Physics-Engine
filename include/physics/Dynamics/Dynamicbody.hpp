@@ -34,7 +34,6 @@ namespace physics
 			geo::Vector2 force = geo::Vector2(0, 0);
 			f64 angularVelocity = 0;
 			f64 angularForce = 0;
-			f64 torque = 0;
 			PhysicsMaterial physicsMaterial;
 			bool usesGravity = true;
 			bool isStatic = false;
@@ -96,7 +95,7 @@ namespace physics
 			f64 dampingFactor = 0.04;
 			SpringJoint(Dynamicbody* a, Dynamicbody* b, f64 length, f64 stiffness = 2, f64 dampingFactor = 0.2) noexcept;
 			f64 ForceExerting() const noexcept;
-			virtual void Update(f64 dt) noexcept override;		
+			virtual void Update(f64 dt) noexcept override;
 	};
 
 	struct HingeJoint : public Joint

@@ -66,8 +66,7 @@ namespace physics
 		 	force += Force;
 			if (contactPoint != geo::Vector2::Infinity && Force.GetMagnitudeQuick())
 			{
-				torque = (collider->GetCenter() + transform.GetCOM()).Cross(Force);
-				angularForce += torque;
+				angularForce += (transform.GetCOM()).Cross(Force);
 			}
 		}
 	}

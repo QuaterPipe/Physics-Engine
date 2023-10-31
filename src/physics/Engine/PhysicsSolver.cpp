@@ -38,7 +38,7 @@ namespace physics
 			Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
 			Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
 			if (!a || !b) return;
-			f64 e = std::min(a->restitution, b->restitution);
+			f64 e = geo::Min(a->restitution, b->restitution);
 			f64 sf = sqrt(SQRD(a->staticFriction) + SQRD(b->staticFriction));
 			f64 kf = sqrt(SQRD(a->kineticFriction) + SQRD(b->kineticFriction));
 			for (int i = 0; i < c.points.points.size(); i++)
@@ -47,35 +47,26 @@ namespace physics
 				geo::Vector2 rb = c.points.points[i] - (b->transform.GetPosition() + b->transform.GetCOM());
 				geo::Vector2 rv = b->velocity + geo::Vector2::Cross(b->angularVelocity, rb) -
 					a->velocity - geo::Vector2::Cross(a->angularVelocity, ra);
-				// if (rv.GetMagnitudeSquared() < (dt * gravity).GetMagnitudeSquared() + EPSILON)
-					// e = 0.0;
+				if (rv.GetMagnitudeQuick() < (dt * gravity).GetMagnitudeQuick() + EPSILON)
+					e = 0.0;
 			}
 			for (int i = 0; i < c.points.points.size(); i++)
 			{
 				geo::Vector2 ra = c.points.points[i] - (a->transform.GetPosition() + a->transform.GetCOM());
 				geo::Vector2 rb = c.points.points[i] - (b->transform.GetPosition() + b->transform.GetCOM());
-
 				geo::Vector2 rv = b->velocity + geo::Vector2::Cross(b->angularVelocity, rb) -
 					a->velocity - geo::Vector2::Cross(a->angularVelocity, ra);
-
 				f64 contactVel = rv.Dot(c.points.normal);
-				// std::cout << contactVel << '\n';
-
 				if (contactVel > 0)
 					break;
 				f64 raCrossN = ra.Cross(c.points.normal);
 				f64 rbCrossN = rb.Cross(c.points.normal);
-				// std::cout << "crosses: " << raCrossN << " " << rbCrossN << "\n";
 				f64 invMassSum = a->GetInvMass() + b->GetInvMass() + SQRD(raCrossN) * a->GetInvInertia() +
 					SQRD(rbCrossN) * b->GetInvInertia();
-				// std::cout << "mass: " << invMassSum;
-				// std::cout << " e: " << e << '\n';
 				f64 j = -(1.0 + e) * contactVel;
 				j /= invMassSum;
-				j /= (f64)c.points.points.size();
-
+				//j /= (f64)c.points.points.size();
 				geo::Vector2 impulse = c.points.normal * j;
-				// std::cout << "impulse: " << impulse << std::endl;
 				a->ApplyImpulse(-impulse, ra);
 				b->ApplyImpulse(impulse, rb);
 
@@ -87,7 +78,7 @@ namespace physics
 
 				f64 jt = -rv.Dot(t);
 				jt /= invMassSum;
-				jt /= (f64)c.points.points.size();
+				// jt /= (f64)c.points.points.size();
 
 				if (geo::Equal(jt, 0.0))
 					continue;

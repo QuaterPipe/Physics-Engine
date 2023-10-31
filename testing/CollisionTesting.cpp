@@ -51,6 +51,7 @@ void Render(sf::RenderWindow* win, int a, int b)
         r.setOutlineThickness(1);
         r.setPosition(250, 250);
         r.setOrigin(25, 25);
+        r.setRotation(geo::Degrees(rotA));
         win->draw(r);
     }
     if (b == 2)
@@ -61,6 +62,7 @@ void Render(sf::RenderWindow* win, int a, int b)
         r.setOutlineThickness(1);
         r.setPosition(worldPos.x, worldPos.y);
         r.setOrigin(25, 25);
+        r.setRotation(geo::Degrees(rotB));
         win->draw(r);
     }
     if (a > 2)
@@ -73,6 +75,7 @@ void Render(sf::RenderWindow* win, int a, int b)
         cvx.setOutlineColor(sf::Color::White);
         cvx.setOutlineThickness(1);
         cvx.setPosition(250, 250);
+        cvx.setRotation(Degrees(rotA));
         win->draw(cvx);
     }
     if (b > 2)
@@ -84,6 +87,7 @@ void Render(sf::RenderWindow* win, int a, int b)
         cvx.setFillColor(sf::Color::Transparent);
         cvx.setOutlineColor(sf::Color::White);
         cvx.setOutlineThickness(1);
+        cvx.setRotation(Degrees(rotB));
         win->draw(cvx);
     }
     sf::CircleShape c(3);

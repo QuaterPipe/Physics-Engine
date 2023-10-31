@@ -67,6 +67,7 @@ namespace physics
 
 	CollisionObject::~CollisionObject() noexcept
 	{
+		onCollision = nullptr;
 	}
 
 	bool CollisionObject::IsDynamic() const noexcept

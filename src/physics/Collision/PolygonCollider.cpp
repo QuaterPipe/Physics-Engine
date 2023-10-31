@@ -193,18 +193,42 @@ namespace physics
 		return result;
 	}
 
+	void PolygonCollider::ComputeMass(f64 density, f64* mass, f64* inertia) noexcept
+	{
+		geo::Vector2 c;
+		f64 area = 0.0;
+		f64 I = 0.0;
+		const f64 kInv3 = 1.0 / 3.0;
+		for (size_t i = 0; i < _pointCount; i++)
+		{
+			geo::Vector2 p1(_points[i]);
+			size_t i2 = i + 1 < _pointCount ? i + 1 : 0;
+			geo::Vector2 p2(_points[i]);
+			f64 D = p1.Cross(p2);
+			f64 triangleArea = 0.5 * D;
+			area += triangleArea;
+			c += triangleArea * kInv3 * (p1 + p2);
+			f64 intx2 = SQRD(p1.x) + p2.x * p1.x + SQRD(p2.x);
+			f64 inty2 = SQRD(p1.y) + p2.y * p1.y + SQRD(p2.y);
+			I += (0.25 * kInv3 * D) * (intx2 + inty2);
+		}
+		c *= 1.0 / area;
+		/*for (size_t i = 0; i < _pointCount; i++)
+			_points[i] -= c;*/
+		//_center.Set(0, 0);
+		*mass = density * area;
+		*inertia = I * density;
+	}
+
 	bool PolygonCollider::Contains(const geo::Vector2& point, const Transform& t) const noexcept
 	{
-		geo::Vector2 pt = t.GetInverseTransform().TransformVector(point);
-		if (!BoundingBox().Contains(pt))
-			return false;
-		f64 x = pt.x, y = pt.y;
+		f64 x = point.x, y = point.y;
 		bool inside = false;
 		geo::Vector2 p1, p2;
 		for (int i = 1; i <= _pointCount; i++)
 		{
-			p1 = _points[i % _pointCount];
-			p2 = _points[(i + 1) % _pointCount];
+			p1 = t.TransformVector(_points[i % _pointCount]);
+			p2 = t.TransformVector(_points[(i + 1) % _pointCount]);
 			if (y > std::min(p1.y, p2.y) && y <= std::max(p1.y, p2.y))
 			{
 				if (x <= std::max(p1.x, p2.x))

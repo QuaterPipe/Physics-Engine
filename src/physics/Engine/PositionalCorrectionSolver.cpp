@@ -11,7 +11,7 @@ namespace physics
 			Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
 			if (!a || !b) return;
 			const f64 k_slop = 0.05; // Penetration allowance
-			const f64 percent = 0.2; // Penetration percentage to correct
+			const f64 percent = 0.4; // Penetration percentage to correct
 			geo::Vector2 correction = (std::max(c.points.depth - k_slop, 0.0) / (a->GetInvMass() + b->GetInvMass())) * c.points.normal * percent;
 			if (!a->isStatic)
 				a->transform.Translate(-correction * a->GetInvMass());

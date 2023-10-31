@@ -69,12 +69,12 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
     t.SetRotation(Radians(Random(0, 360)));
     if (type == Type::Circ)
     {
-        f64 rad = rand() % 60 + 1;
+        f64 rad = Random(5, 80);
         obj.rigid = new Rigidbody(CircleCollider(rad), t);
         obj.rigid->angularVelocity = rotVel;
-        obj.rigid->SetMass(rad * 0.000005);
-        obj.rigid->SetInertia(obj.rigid->GetMass() * 100);
-        obj.rigid->restitution = 0.1;
+        obj.rigid->SetMass(rad);
+        obj.rigid->SetInertia(obj.rigid->GetMass() * 10000);
+        obj.rigid->restitution = 0.9;
         obj.rigid->kineticFriction = Random(0.6, 0.8);
         sf::CircleShape c;
         c.setRadius(rad);
@@ -87,12 +87,11 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
     {
         f64 e = Random(5, 80);
         PolygonCollider p(BoxCollider(e, e));
-        CreatePoly(&p, Random(3, 7), e);
         obj.rigid = new Rigidbody(p, t);
         obj.rigid->angularVelocity = rotVel;
-        obj.rigid->SetMass(0.0005 * e);
+        obj.rigid->SetMass(e);
         obj.rigid->SetInertia(obj.rigid->GetMass() * 10000);
-        obj.rigid->restitution = 0.1;
+        obj.rigid->restitution = 0.3;
         obj.rigid->kineticFriction = Random(0.6, 0.8);
         sf::ConvexShape c(p.GetPointCount());
         for (size_t i = 0; i < p.GetPointCount(); i++)
@@ -154,17 +153,17 @@ void Demo()
     srand(time(NULL));
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
-    sf::RenderWindow window(sf::VideoMode(500, 500), "Physics Engine Demo", sf::Style::Default, settings);
+    sf::RenderWindow window(sf::VideoMode(1000, 500), "Physics Engine Demo", sf::Style::Default, settings);
     win = &window;
     sf::View v = window.getView();
-    v.setSize(500, -500);
+    v.setSize(1000, -500);
     window.setView(v);
     d = DynamicsWorld();
     d.SetCollisionCallBack(onClsn, 0);
     Time::Tick();
     Object floor;
-    floor.rigid = new Rigidbody(PolygonCollider(BoxCollider(400, 30)));
-    floor.rigid->transform.SetPosition(250, 40);
+    floor.rigid = new Rigidbody(PolygonCollider(BoxCollider(800, 30)));
+    floor.rigid->transform.SetPosition(500, 40);
     floor.rigid->isStatic = true;
     floor.rigid->restitution = 1;
     // floor.rigid->transform.SetRotation(geo::Radians(10));
@@ -215,7 +214,7 @@ void Demo()
             }
         }
         Time::Tick();
-        d.Update(1 / 60.0); // delta time is measured in seconds by the physics engine
+        d.Update(1.0 / 100.0); // delta time is measured in seconds by the physics engine
         // std::cout << Time::deltaTime << '\n';
         RenderObjects();
     }
