@@ -30,6 +30,7 @@ namespace physics
 			void (*onCollision) (Collision&, f64) = nullptr;
 			std::unique_ptr<Collider> collider;
 			Transform transform;
+			int id = 0;
 			CollisionObject() noexcept;
 			CollisionObject(const Collider& c, const Transform& t = Transform(), const bool& isTrigger = false) noexcept;
 			CollisionObject(const CollisionObject& c) noexcept;

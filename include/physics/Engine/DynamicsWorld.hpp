@@ -4,6 +4,7 @@
 #include "physics/Dynamics/Rigidbody.hpp"
 #include "physics/Dynamics/Softbody.hpp"
 #include "physics/Dynamics/VelocityConstraint.hpp"
+#include "Quadtree.hpp"
 #include <algorithm>
 
 namespace physics
@@ -37,7 +38,8 @@ namespace physics
 			std::vector<Collision> _collisions;
 			std::vector<Solver*> _solvers;
 		public:
-			DynamicsWorld() noexcept;
+			Quadtree quadtree;
+			DynamicsWorld(BoxCollider area) noexcept;
 			void AddObject(CollisionObject* o) noexcept;
 			void AddDynamicbody(Dynamicbody* dynamicbody) noexcept;
 			void AddSolver(Solver* s) noexcept;

@@ -41,7 +41,7 @@ namespace physics
 	BoxCollider CircleCollider::BoundingBox(const Transform& t) const noexcept
 	{
 		geo::Vector2 c = t.TransformVector(center);
-		return BoxCollider(c - radius, geo::Vector2(radius * 2, radius * 2));
+		return BoxCollider(c, geo::Vector2(radius * 2, radius * 2));
 	}
 
 	bool CircleCollider::Contains(const geo::Vector2& point, const Transform& t) const noexcept

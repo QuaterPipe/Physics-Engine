@@ -18,7 +18,7 @@ namespace physics::algo
 
     std::vector<geo::Vector2> FindCollisionPoints(
         const geo::Vector2* a,
-        const geo::Vector2* b, size_t aSize, size_t bSize
+        const geo::Vector2* b, size_t aSize, size_t bSize, geo::Vector2& norm
     );
 
     bool VectorInPolygon(
@@ -47,9 +47,7 @@ namespace physics::algo
         geo::Vector2* projections = new geo::Vector2[aSize];
         size_t projInd = 0;
         for (size_t i = 0; i < aSize; i++)
-        {
             polyInB &= b->Contains(aPoints[i], tb);
-        }
         for (int i = 0; i < aSize; i++)
         {
             geo::Line l(aPoints[(i + 1) % aSize], aPoints[i]);
@@ -113,10 +111,10 @@ namespace physics::algo
         f64 x = b.x, y = b.y;
         bool inside = false;
         geo::Vector2 p1, p2;
-        for (int i = 1; i <= pointsSize; i++)
+        for (int i = 1; i < pointsSize; i++)
         {
-            p1 = points[i % pointsSize];
-            p2 = points[(i + 1) % pointsSize];
+            p1 = points[i - 1];
+            p2 = points[i];
             if (y > geo::Min(p1.y, p2.y) && y <= geo::Max(p1.y, p2.y))
             {
                 if (x <= geo::Max(p1.x, p2.x))
@@ -129,6 +127,20 @@ namespace physics::algo
                 }
             }
         }
+        p1 = points[pointsSize - 1];
+        p2 = points[0];
+        if (y > geo::Min(p1.y, p2.y) && y <= geo::Max(p1.y, p2.y))
+        {
+            if (x <= geo::Max(p1.x, p2.x))
+            {
+                f64 x_inter = (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+                if (p1.x == p2.x || x <= x_inter)
+                {
+                    inside = !inside;
+                }
+            }
+        }
+
         return inside;
     }
 
@@ -190,11 +202,11 @@ namespace physics::algo
         c.normal = -mpv.Normalized();
         if (!c.normal.GetMagnitudeSquared())
             c.normal.Set(1, 0);
-        c.depth = mpv.GetMagnitude();
-        std::vector<geo::Vector2> inter = FindCollisionPoints(aPoints, bPoints, aSize, bSize);
-        c.points = inter; 
         if (flipped)
             c.normal = -c.normal;
+        c.depth = mpv.GetMagnitude();
+        std::vector<geo::Vector2> inter = FindCollisionPoints(aPoints, bPoints, aSize, bSize, c.normal);
+        c.points = inter; 
         delete[] aPoints;
         delete[] bPoints;
         return c;
@@ -244,10 +256,25 @@ namespace physics::algo
         return c;
     }
 
+    geo::Vector2 SupportPoint(const geo::Vector2* points, size_t size, geo::Vector2 direction)
+    {
+        f64 bestProj = std::numeric_limits<f64>::min();
+        geo::Vector2 bestVertex(geo::Vector2::Infinity);
+        for (size_t i = 0; i < size; i++)
+        {
+            f64 proj = points[i].Dot(direction);
+            if (proj > bestProj)
+            {
+                bestVertex = points[i];
+                bestProj = proj;
+            }
+        }
+        return bestVertex;
+    }
 
     std::vector<geo::Vector2> FindCollisionPoints(
         const geo::Vector2* a,
-        const geo::Vector2* b, size_t aSize, size_t bSize
+        const geo::Vector2* b, size_t aSize, size_t bSize, geo::Vector2& norm
     )
     {
         std::vector<geo::Vector2> points;

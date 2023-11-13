@@ -16,7 +16,7 @@ void DynamicsTest()
 	std::cout << "depth: " << pts.depth << std::endl;
 	for (auto p : pts.points)
 		std::cout << "point: " << p << std::endl;
-	DynamicsWorld world;
+	DynamicsWorld world(BoxCollider(5000, 5000));
 	Rigidbody rc(c, CTrans);
 	rc.SetMass(1);
 	rc.SetInertia(1);
@@ -35,4 +35,23 @@ void DynamicsTest()
 	for (int i = 0; i < 100; i++)
 		world.Update(1.0 / 100.0);
 	std::cout << rc.velocity << std::endl;
+	auto _rect = BoxCollider(1000, 1000);
+	geo::Vector2 center = _rect.GetCenter();
+	f64 x = center.x;
+	f64 y = center.y;
+	f64 width = _rect.width * 0.5;
+	f64 height = _rect.height * 0.5;
+
+	f64 w = width * 0.5;
+	f64 h = height * 0.5;
+
+	BoxCollider SW(geo::Vector2(x - w, y - h), geo::Vector2(width, height));
+	BoxCollider SE(geo::Vector2(x + w, y - h), geo::Vector2(width, height));
+	BoxCollider NW(geo::Vector2(x - w, y + h), geo::Vector2(width, height));
+	BoxCollider NE(geo::Vector2(x + w, y + h), geo::Vector2(width, height));
+	std::cout << "Rect: " << _rect.pos << " " << _rect.dimensions << "\n";
+	std::cout << "SW: " << SW.pos << " " << SW.dimensions << "\n";
+	std::cout << "SE: " << SE.pos << " " << SE.dimensions << "\n";
+	std::cout << "NW: " << NW.pos << " " << NW.dimensions << "\n";
+	std::cout << "NE: " << NE.pos << " " << NE.dimensions << "\n";
 }

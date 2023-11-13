@@ -180,6 +180,9 @@
     <ClCompile Include="testing\Demo.cpp">
       <Filter>testing</Filter>
     </ClCompile>
+    <ClCompile Include="src\physics\Engine\Quadtree.cpp">
+      <Filter>src\physics\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\sfml-graphics-d-2.dll">
@@ -721,6 +724,9 @@
     </ClInclude>
     <ClInclude Include="testing\Testing.hpp">
       <Filter>testing</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Engine\Quadtree.hpp">
+      <Filter>include\physics\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

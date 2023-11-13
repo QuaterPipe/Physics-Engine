@@ -208,7 +208,7 @@ namespace physics
 
 	geo::Vector2 Transform::TransformVector(const geo::Vector2& v) const noexcept
 	{
-		geo::Vector2 result = _rotxScale * v;;
+		geo::Vector2 result = _rotxScale * v;
 		result.x += _transformationMatrix(0, 2);
 		result.y += _transformationMatrix(1, 2);
 		return result;

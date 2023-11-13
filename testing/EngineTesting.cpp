@@ -65,7 +65,7 @@ void EngineTest(void)
     sf::View v = window.getView();
     v.setSize(500, -500);
     window.setView(v);
-    DynamicsWorld d;
+    DynamicsWorld d(BoxCollider(1000, 1000));
     d.SetCollisionCallBack(onCollision, 0.16);
     rigidbodies[0] = Rigidbody(BoxCollider(500, 50), Transform(), false, PhysicsMaterial(), 1, false);
     rigidbodies[0].transform.SetPosition(0, 2);

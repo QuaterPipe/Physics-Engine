@@ -52,6 +52,7 @@
     <ClCompile Include="src\physics\Engine\DynamicsWorld.cpp" />
     <ClCompile Include="src\physics\Engine\PhysicsSolver.cpp" />
     <ClCompile Include="src\physics\Engine\PositionalCorrectionSolver.cpp" />
+    <ClCompile Include="src\physics\Engine\Quadtree.cpp" />
     <ClCompile Include="src\physics\Engine\Time.cpp" />
     <ClCompile Include="testing\CollisionTesting.cpp" />
     <ClCompile Include="testing\Demo.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="include\physics\Dynamics\VelocityConstraint.hpp" />
     <ClInclude Include="include\physics\Engine\ConstraintSolver.hpp" />
     <ClInclude Include="include\physics\Engine\DynamicsWorld.hpp" />
+    <ClInclude Include="include\physics\Engine\Quadtree.hpp" />
     <ClInclude Include="include\physics\Engine\Time.hpp" />
     <ClInclude Include="include\physics\Main.hpp" />
     <ClInclude Include="include\SFML\Audio.hpp" />

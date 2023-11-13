@@ -48,8 +48,7 @@ namespace physics
 	PolygonCollider::PolygonCollider(f64 sideLength, unsigned long count) noexcept
 		: _pointCount(geo::Min(count, MAX_POLYGONCOLLIDER_SIZE)), _center(0, 0)
 	{
-		if (count < 3 || sideLength < EPSILON)
-			return;
+		assert(count >= 3 && sideLength > EPSILON);
 		_points = new geo::Vector2[_pointCount];
 		_normals = new geo::Vector2[_pointCount];
 		f64 rotation = floor((_pointCount + 1) / 4) * (M_PI * 2) / _pointCount + M_PI / _pointCount - (M_PI / 2);
@@ -178,18 +177,18 @@ namespace physics
 		f64 miny = std::numeric_limits<f64>::max();
 		f64 maxx = std::numeric_limits<f64>::min();
 		f64 maxy = std::numeric_limits<f64>::min();
+		geo::Vector2 transCenter = t.TransformVector(_center);
 		for (size_t i = 0; i < _pointCount; i++)
 		{
-			geo::Vector2 p = _points[i];
-			geo::Vector2 tp = t.TransformVector(p);
+			geo::Vector2 tp = t.TransformVector(_points[i]);
 			minx = tp.x < minx ? tp.x : minx;
 			miny = tp.y < miny ? tp.y : miny;
 			maxx = tp.x > maxx ? tp.x : maxx;
 			maxy = tp.y > maxy ? tp.y : maxy;
 		}
 		BoxCollider result;
-		result.pos.Set(minx, miny);
 		result.dimensions.Set(maxx - minx, maxy - miny);
+		result.pos = geo::Vector2(minx, miny) + result.dimensions * 0.5;
 		return result;
 	}
 

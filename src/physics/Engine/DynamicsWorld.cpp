@@ -5,7 +5,8 @@
 
 namespace physics
 {
-	DynamicsWorld::DynamicsWorld() noexcept
+	DynamicsWorld::DynamicsWorld(BoxCollider area) noexcept
+		: quadtree(0, 10, 5, BoxCollider(area), &_objects)
 	{
 		_solvers.push_back(new PhysicsSolver());
 		_solvers.push_back(new PositionalCorrectionSolver());
@@ -40,25 +41,41 @@ namespace physics
 	void DynamicsWorld::CheckCollisions(f64 dt) noexcept
 	{
 		_collisions.clear();
-		for (int i = 0; i < _dynamicbodies.size(); i++)
+		
+		std::vector<std::vector<int>> container;
+		quadtree.Get(container);
+		for (size_t k = 0; k < container.size(); k++)
 		{
-			Dynamicbody* a = _dynamicbodies[i];
-			for (int j = i + 1; j < _dynamicbodies.size(); j++)
+			for (size_t i = 0; i < container[k].size(); i++)
 			{
-				Dynamicbody* b = _dynamicbodies[j];
-				if (a == b)
-					continue;
-				if (a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform)))
+				for (size_t j = i + 1; j < container[k].size(); j++)
 				{
-					CollisionPoints points = a->GetCollider().TestCollision(
-						a->transform, &b->GetCollider(), b->transform);
-					if (points.hasCollision)
+					CollisionObject* tmpA = _objects[container[k][i]];
+					Dynamicbody* a = nullptr;
+					if (tmpA->IsDynamic())
+						a = dynamic_cast<Dynamicbody*>(tmpA);
+					else
+						continue;
+					Dynamicbody* b = nullptr;
+					CollisionObject* tmpB = _objects[container[k][j]];
+					if (tmpB->IsDynamic())
+						b = dynamic_cast<Dynamicbody*>(tmpB);
+					else
+						continue;
+					if (!a || !b)
+						continue;
+					if (a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform)))
 					{
-						Collision c;
-						c.a = a;
-						c.b = b;
-						c.points = points;
-						_collisions.push_back(c);
+						CollisionPoints points = a->GetCollider().TestCollision(
+							a->transform, &b->GetCollider(), b->transform);
+						if (points.hasCollision)
+						{
+							Collision c;
+							c.a = a;
+							c.b = b;
+							c.points = points;
+							_collisions.push_back(c);
+						}
 					}
 				}
 			}
@@ -140,6 +157,7 @@ namespace physics
 		ApplyGravity(dt);
 		for (auto& db : _dynamicbodies)
 			db->Update(dt);
+		quadtree.Update();
 		CheckCollisions(dt);
 		SendCollisionCallBacks(dt);
 		_solvers[0]->Solve(_collisions, dt);
