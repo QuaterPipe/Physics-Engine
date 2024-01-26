@@ -118,6 +118,19 @@ namespace physics
 		subnodes[1].reset(nullptr);
 		subnodes[2].reset(nullptr);
 		subnodes[3].reset(nullptr);
+		f64 minx = DBL_MAX, miny = DBL_MAX, maxx = DBL_MIN, maxy = DBL_MIN;
+		for (size_t i = 0; i < objects->size(); i++)
+		{
+			Collider& c = (*objects)[i]->GetCollider();
+			BoxCollider bound = c.BoundingBox((*objects)[i]->transform);
+			geo::Vector2 minV = bound.Min();
+			geo::Vector2 maxV = bound.Max();
+			maxx = geo::Max(maxx, maxV.x);
+			maxy = geo::Max(maxy, maxV.y);
+			minx = geo::Min(minx, minV.x);
+			miny = geo::Min(miny, minV.y);
+		}
+		rect = BoxCollider(geo::Vector2((maxx - minx) * 0.5 + minx, (maxy - miny) * 0.5 + miny), geo::Vector2(maxx - minx, maxy - miny));
 		for (size_t i = 0; i < objects->size(); i++)
 			Insert(i);
 	}

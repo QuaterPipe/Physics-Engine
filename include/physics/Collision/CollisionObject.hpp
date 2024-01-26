@@ -8,11 +8,13 @@
 namespace physics
 {
 	struct CollisionObject;
-	struct Collision
+	struct CollisionManifold
 	{
 		CollisionObject* a = NULL;
 		CollisionObject* b = NULL;
-		CollisionPoints points;
+		//geo::Vector2* points = NULL;
+		Manifold points;
+		size_t size = 0;
 		// the normal impulse of the collision.
 		geo::Vector2 nImp;
 		// the friction(tangent) impulse of the collision.
@@ -27,7 +29,7 @@ namespace physics
 		public:
 			bool isTrigger = false;
 			bool isActive = true;
-			void (*onCollision) (Collision&, f64) = nullptr;
+			void (*onCollision) (CollisionManifold&, f64) = nullptr;
 			std::unique_ptr<Collider> collider;
 			Transform transform;
 			int id = 0;

@@ -3,67 +3,61 @@
 
 namespace physics::algo
 {
-	CollisionPoints AABBCollision(
+	Manifold AABBCollision(
 		const BoxCollider* a,
 		const BoxCollider* b
 	);
 
-	CollisionPoints PolygonCircleCollision(
+	Manifold PolygonCircleCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb, bool flipped = false
 	);
 
-	CollisionPoints PolygonBoxCollision(
+	Manifold PolygonBoxCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb, bool flipped = false
 	);
 
-	CollisionPoints PolygonMeshCollision(
+	Manifold PolygonMeshCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
 
 
-	CollisionPoints CircleCircleCollision(
+	Manifold CircleCircleCollision(
 		const CircleCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb, bool flipped = false
 	);
 
-	CollisionPoints CircleBoxCollision(
+	Manifold CircleBoxCollision(
 		const CircleCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb, bool flipped = false
 	);
 
-	CollisionPoints CircleMeshCollision(
+	Manifold CircleMeshCollision(
 		const CircleCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
 
-	CollisionPoints BoxMeshCollision(
+	Manifold BoxMeshCollision(
 		const BoxCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
 
-	CollisionPoints PolygonPolygonCollision(
+	Manifold PolygonPolygonCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const PolygonCollider* b, const Transform& tb, bool flipped = false
 	);
 
-	CollisionPoints BoxBoxCollision(
+	Manifold BoxBoxCollision(
 		const BoxCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb, bool flipped = false
 	);
 
-	CollisionPoints MeshMeshCollision(
+	Manifold MeshMeshCollision(
 		const MeshCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
-
-	bool VectorInCircle(const geo::Vector2& a, const CircleCollider* b,
-		const Transform& tb
-	);
-
-	i32 Clip(geo::Vector2 n, f64 c, geo::Vector2* face);
 
 	void FindIncidentFace(geo::Vector2* v, const PolygonCollider* refPoly,
 		const Transform& refTransform, const PolygonCollider* incPoly,
@@ -72,5 +66,10 @@ namespace physics::algo
 
 	f64 FindAxisLeastPenetration(size_t* faceIndex, const PolygonCollider* a,
 		const Transform& ta, const PolygonCollider* b, const Transform& tb
+	);
+
+	bool VectorInPolygon(
+		const geo::Vector2* points,
+		const geo::Vector2& b, size_t pointsSize
 	);
 }

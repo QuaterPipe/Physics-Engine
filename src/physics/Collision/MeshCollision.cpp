@@ -5,18 +5,18 @@
 
 namespace physics::algo
 {
-    CollisionPoints MeshMeshCollision(
+    Manifold MeshMeshCollision(
 		const MeshCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb, bool flipped
 	)
 	{
-        CollisionPoints c;
+        Manifold c;
         if (!a || !b)
             return c;
         f64 avg = 0;
         for (const Collider* ptr : b->colliders)
         {
-            CollisionPoints tmp = ptr->TestCollision(tb, a, ta);
+            Manifold tmp = ptr->TestCollision(tb, a, ta);
             if (tmp.hasCollision)
             {
                 avg += tmp.depth;
@@ -26,12 +26,15 @@ namespace physics::algo
                     c.depth = tmp.depth;
                     c.normal = -tmp.normal;
                 }
-                for (auto p : tmp.points)
-                    c.points.push_back(p);
+                for (size_t i = 0; i < tmp.pointCount; i++)
+                {
+                    if (c.pointCount < MAX_MANIFOLD_POINT_COUNT)
+                        c.points[c.pointCount++] = tmp.points[i];
+                }
             }
         }
         if (avg)
-            c.depth = avg / (f64)c.points.size();
+            c.depth = avg / (f64)c.pointCount;
         if (flipped)
             c.normal = -c.normal;
         return c;

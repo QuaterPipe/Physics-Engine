@@ -50,7 +50,7 @@ void Demo()
     floor.rigid->transform.SetPosition(WIN_WIDTH * 0.5, 40);
     floor.rigid->isStatic = true;
     floor.rigid->restitution = 1;
-    floor.rigid->transform.SetRotation(geo::Radians(0.0000000005));
+    floor.rigid->transform.SetRotation(geo::Radians(5));
     floor.t = Type::Poly;
     sf::ConvexShape c(4);
     for (int i = 0; i < 4; i++)
@@ -113,7 +113,7 @@ void Demo()
         d.Update(1.0 / 300.0);
         if (avgCounter == 999)
         {
-            std::cout << 1 / (frameAvg / 1000.0) << "          " << '\r';
+            //std::cout << 1 / (frameAvg / 1000.0) << "          " << '\r';
             avgCounter = 0;
             frameAvg = 0;
         }
@@ -122,8 +122,9 @@ void Demo()
             frameAvg += Time::deltaTime / 1000.0;
             avgCounter++;
         }
+        //std::cout << Time::deltaTime << "\r";
         renderAccumulator += Time::deltaTime * 0.001;
-        if (renderAccumulator >= 1.0 / 144.0)
+        if (renderAccumulator >= 1.0 / 30.0)
         {
             RenderObjects();
             renderAccumulator = 0;
@@ -141,7 +142,7 @@ f64 Random(f64 l, f64 h)
 }
 
 
-void onClsn(Collision& c, f64 dt)
+void onClsn(CollisionManifold& c, f64 dt)
 {
     sf::CircleShape circ(2);
     circ.setFillColor(sf::Color::Red);
@@ -163,8 +164,8 @@ void CreatePoly(PolygonCollider* p, size_t count, size_t width)
     std::vector<Vector2> v = p->GetPoints();
     for (size_t i = 0; i < count; i++)
     {
-        v[i].x += Random(-(width / 5.0), (width / 5.0));
-        v[i].y += Random(-(width / 5.0), (width / 5.0));
+        v[i].x += Random(-(width / 50.0), (width / 50.0));
+        v[i].y += Random(-(width / 50.0), (width / 50.0));
     }
     *p = PolygonCollider(v);
 }
@@ -194,9 +195,9 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
     }
     if (type == Type::Poly)
     {
-        f64 e = Random(5, 60);
+        f64 e = Random(3, 7);
         PolygonCollider p(BoxCollider(e * 10, e * 10));
-        CreatePoly(&p, e, 601 / e);
+        CreatePoly(&p, e, 150 / e);
         obj.rigid = new Rigidbody(p, t);
         obj.rigid->angularVelocity = rotVel;
         obj.rigid->SetMass(e);

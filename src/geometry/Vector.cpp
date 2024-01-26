@@ -85,6 +85,14 @@ namespace geo
 		f64 sum = 0;
 		for (f64 x: m_nums)
 			sum += x * x;
+		return FastSqrt(sum);
+	}
+
+	f64 Vector::GetMagnitudeExact() const noexcept
+	{
+		f64 sum = 0;
+		for (f64 x : m_nums)
+			sum += x * x;
 		return sqrt(sum);
 	}
 	
@@ -96,14 +104,6 @@ namespace geo
 		return sum;
 	}
 	
-	f64 Vector::GetMagnitudeQuick() const noexcept
-	{
-		f64 sum = 0;
-		for (f64 x: m_nums)
-			sum += x * x;
-		return FastSqrt(sum);
-	}
-	
 	Vector Vector::Lerp(const Vector& other, f64 t) const
 	{
 		assert(m_size == other.GetSize() && "Must have vector of equal size.");
@@ -112,9 +112,9 @@ namespace geo
 	
 	void Vector::Normalize() noexcept
 	{
-		f64 mag = GetMagnitude();
-		if (mag > 0.0000001)
-			*this = *this / mag;
+		f64 mag = GetMagnitudeSquared();
+		if (mag > SQRD(EPSILON))
+			*this = *this * FastInvSqrt(mag);
 		else
 			*this = Vector(m_size);
 	}

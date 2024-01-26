@@ -183,6 +183,9 @@
     <ClCompile Include="src\physics\Engine\Quadtree.cpp">
       <Filter>src\physics\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="testing\SoftobodyTesting.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\sfml-graphics-d-2.dll">
@@ -726,6 +729,12 @@
       <Filter>testing</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\Engine\Quadtree.hpp">
+      <Filter>include\physics\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\ForceGenerator.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Engine\Constraint.hpp">
       <Filter>include\physics\Engine</Filter>
     </ClInclude>
   </ItemGroup>

@@ -175,8 +175,8 @@ namespace physics
 	{
 		f64 minx = std::numeric_limits<f64>::max();
 		f64 miny = std::numeric_limits<f64>::max();
-		f64 maxx = std::numeric_limits<f64>::min();
-		f64 maxy = std::numeric_limits<f64>::min();
+		f64 maxx = -std::numeric_limits<f64>::max();
+		f64 maxy = -std::numeric_limits<f64>::max();
 		geo::Vector2 transCenter = t.TransformVector(_center);
 		for (size_t i = 0; i < _pointCount; i++)
 		{
@@ -360,7 +360,7 @@ namespace physics
 		_center = geo::Centroid(_points, _pointCount);
 	}
 
-	geo::Vector2 PolygonCollider::SupportPoint(geo::Vector2 direction) const noexcept
+	geo::Vector2 PolygonCollider::SupportPoint(const geo::Vector2& direction) const noexcept
 	{
 		f64 bestProj = std::numeric_limits<f64>::min();
 		geo::Vector2 bestVertex;

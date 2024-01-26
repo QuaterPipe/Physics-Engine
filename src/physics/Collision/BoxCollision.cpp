@@ -6,12 +6,12 @@
 namespace physics::algo
 {
 
-    CollisionPoints AABBCollision(
+    Manifold AABBCollision(
         const BoxCollider* a,
         const BoxCollider* b
     )
     {
-        CollisionPoints c;
+        Manifold c;
         c.hasCollision = false;
         if (!a || !b) { return c; }
         if (a->Overlaps(*b))
@@ -23,23 +23,25 @@ namespace physics::algo
                 c.normal.Set(-1, 0);
                 if (a->y <= b->y)
                 {
-                    c.points.push_back(geo::Vector2(a->x + (a->width / 2), a->y + (a->height / 2)));
-                    c.points.push_back(geo::Vector2(b->x - (b->width / 2), b->y - (b->height / 2)));
+                    c.points[0] = geo::Vector2(a->x + (a->width / 2), a->y + (a->height / 2));
+                    c.points[1] = geo::Vector2(b->x - (b->width / 2), b->y - (b->height / 2));
                     if (c.depth > (a->y + a->height) - b->y)
                     {
                         c.depth = (a->y + a->height) - b->y;
                         c.normal.Set(0, -1);
                     }
+                    c.pointCount = 2;
                 }
                 else if (a->y > b->y)
                 {
-                    c.points.push_back(geo::Vector2(a->x + (a->width / 2), a->y - (a->height / 2)));
-                    c.points.push_back(geo::Vector2(b->x - (b->width / 2), b->y + (b->height / 2)));
+                    c.points[0] = geo::Vector2(a->x + (a->width / 2), a->y - (a->height / 2));
+                    c.points[1] = geo::Vector2(b->x - (b->width / 2), b->y + (b->height / 2));
                     if (c.depth > ((b->y + b->height) - a->y))
                     {
                         c.depth = (b->y + b->height) - a->y;
                         c.normal.Set(0, 1);
                     }
+                    c.pointCount = 2;
                 }
 
             }
@@ -49,34 +51,36 @@ namespace physics::algo
                 c.normal.Set(1, 0);
                 if (a->y <= b->y)
                 {
-                    c.points.push_back(geo::Vector2(a->x - (a->width / 2), a->y + (a->height / 2)));
-                    c.points.push_back(geo::Vector2(b->x + (b->width / 2), b->y - (b->height / 2)));
+                    c.points[0] = geo::Vector2(a->x - (a->width / 2), a->y + (a->height / 2));
+                    c.points[1] = geo::Vector2(b->x + (b->width / 2), b->y - (b->height / 2));
                     if (c.depth > ((a->y + a->height) - b->y))
                     {
                         c.depth = ((a->y + a->height) - b->y);
                         c.normal.Set(0, -1);
                     }
+                    c.pointCount = 2;
                 }
                 else if (a->y > b->y)
                 {
-                    c.points.push_back(geo::Vector2(a->x - (a->width / 2), a->y - (a->height / 2)));
-                    c.points.push_back(geo::Vector2(b->x + (b->width / 2), b->y + (b->height / 2)));
+                    c.points[0] = geo::Vector2(a->x - (a->width / 2), a->y - (a->height / 2));
+                    c.points[1] = geo::Vector2(b->x + (b->width / 2), b->y + (b->height / 2));
                     if (c.depth > ((b->y + b->height) - a->y))
                     {
                         c.depth = ((b->y + b->height) - a->y);
                         c.normal.Set(0, 1);
                     }
+                    c.pointCount = 2;
                 }
             }
         }
         return c;
     }
-    CollisionPoints BoxBoxCollision(
+    Manifold BoxBoxCollision(
 		const BoxCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb, bool flipped
 	)
 	{
-		CollisionPoints c;
+		Manifold c;
 		if (!a || !b) {return c;}
         // is AABB
         if (!ta.GetAngle() && !tb.GetAngle())
@@ -102,18 +106,18 @@ namespace physics::algo
 		return PolygonPolygonCollision(&aa, ta, &bb, tb, flipped);
 	}
 
-	CollisionPoints BoxMeshCollision(
+	Manifold BoxMeshCollision(
 		const BoxCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb, bool flipped
 	)
 	{
-        CollisionPoints c;
+        Manifold c;
         if (!a || !b)
             return c;
         f64 avg = 0;
         for (const Collider* ptr : b->colliders)
         {
-            CollisionPoints tmp = ptr->TestCollision(tb, a, ta);
+            Manifold tmp = ptr->TestCollision(tb, a, ta);
             if (tmp.hasCollision)
             {
                 avg += tmp.depth;
@@ -123,12 +127,15 @@ namespace physics::algo
                     c.depth = tmp.depth;
                     c.normal = -tmp.normal;
                 }
-                for (auto p : tmp.points)
-                    c.points.push_back(p);
+                for (size_t i = 0; i < tmp.pointCount; i++)
+                {
+                    if (c.pointCount < MAX_MANIFOLD_POINT_COUNT)
+                        c.points[c.pointCount++] = tmp.points[i];
+                }
             }
         }
         if (avg)
-            c.depth = avg / (f64)c.points.size();
+            c.depth = avg / (f64)c.pointCount;
         if (flipped)
             c.normal = -c.normal;
         return c;

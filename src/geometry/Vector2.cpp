@@ -74,6 +74,13 @@ namespace geo
 	{
 		if (!x && !y)
 			return 0;
+		return FastSqrt(x * x + y * y);
+	}
+
+	f64 Vector2::GetMagnitudeExact() const noexcept
+	{
+		if (!x && !y)
+			return 0;
 		return sqrt(x * x + y * y);
 	}
 
@@ -84,13 +91,6 @@ namespace geo
 		return x * x + y * y;
 	}
 
-	f64 Vector2::GetMagnitudeQuick() const noexcept
-	{
-		if (!x && !y)
-			return 0;
-		return FastSqrt(x * x + y * y);
-	}
-
 	Vector2 Vector2::Lerp(const Vector2& other, f64 t) const noexcept
 	{
 		return *this + (other - *this) * t;
@@ -98,9 +98,9 @@ namespace geo
 
 	void Vector2::Normalize() noexcept
 	{
-		f64 mag = GetMagnitude();
-		if (mag > EPSILON)
-			*this = *this / mag;
+		f64 mag = GetMagnitudeSquared();
+		if (mag > SQRD(EPSILON))
+			*this = *this * FastInvSqrt(x * x + y * y);
 		else
 			*this = Vector2(0, 0);
 	}
@@ -139,7 +139,7 @@ namespace geo
 
 	Vector2 Vector2::operator+() const noexcept
 	{
-		return Vector2(+x, +y);
+		return Vector2(x, y);
 	}
 
 	bool Vector2::operator==(const Vector2 &v) const noexcept
@@ -154,7 +154,7 @@ namespace geo
 
 	Vector2 Vector2::operator+(const Vector2& v) const noexcept
 	{
-		Vector2 result(*this);
+		Vector2 result(x, y);
 		result.x += v.x;
 		result.y += v.y;
 		return result;
@@ -162,7 +162,7 @@ namespace geo
 
 	Vector2 Vector2::operator+(f64 d) const noexcept
 	{
-		Vector2 result(*this);
+		Vector2 result(x, y);
 		result.x += d;
 		result.y += d;
 		return result;
@@ -182,7 +182,7 @@ namespace geo
 
 	Vector2 Vector2::operator-(const Vector2& v) const noexcept
 	{
-		Vector2 result(*this);
+		Vector2 result(x, y);
 		result.x -= v.x;
 		result.y -= v.y;
 		return result;
@@ -190,7 +190,7 @@ namespace geo
 
 	Vector2 Vector2::operator-(f64 d) const noexcept
 	{
-		Vector2 result(*this);
+		Vector2 result(x, y);
 		result.x -= d;
 		result.y -= d;
 		return result;
@@ -210,7 +210,7 @@ namespace geo
 
 	Vector2 Vector2::operator*(const Vector2& v) const noexcept
 	{
-		Vector2 result(*this);
+		Vector2 result(x, y);
 		result.x *= v.x;
 		result.y *= v.y;
 		return result;
@@ -218,7 +218,7 @@ namespace geo
 
 	Vector2 Vector2::operator*(f64 d) const noexcept
 	{
-		Vector2 result(*this);
+		Vector2 result(x, y);
 		result.x *= d;
 		result.y *= d;
 		return result;
@@ -238,7 +238,7 @@ namespace geo
 
 	Vector2 Vector2::operator/(const Vector2& v) const noexcept
 	{
-		Vector2 result(*this);
+		Vector2 result(x, y);
 		result.x /= v.x;
 		result.y /= v.y;
 		return result;
@@ -246,7 +246,7 @@ namespace geo
 
 	Vector2 Vector2::operator/(f64 d) const noexcept
 	{
-		Vector2 result(*this);
+		Vector2 result(x, y);
 		result.x /= d;
 		result.y /= d;
 		return result;

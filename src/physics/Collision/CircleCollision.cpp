@@ -5,12 +5,12 @@
 
 namespace physics::algo
 {
-    CollisionPoints CircleCircleCollision(
+    Manifold CircleCircleCollision(
 		const CircleCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb, bool flipped
 	)
 	{
-		CollisionPoints c;
+		Manifold c;
 		c.hasCollision = false;
 		if (!a || !b) {return c;}
 		const geo::Vector2 ACenter = ta.TransformVector(a->center);
@@ -21,46 +21,46 @@ namespace physics::algo
 		const f64 bRadius = b->radius * geo::Max(tb.GetScale().x, tb.GetScale().y);
 		if (SQRD(aRadius + bRadius) >= r)
 		{
-			c.points.reserve(2);
-			geo::Line l(ACenter, BCenter);
-			geo::Vector2 ca = l.GetVectorAlongLine(aRadius);
-			geo::Vector2 cb = l.GetVectorAlongLine(bRadius, false);
+			f64 d = geo::FastSqrt(r);
+			geo::Vector2 ca = ACenter.Lerp(BCenter, aRadius / d);
+			geo::Vector2 cb = BCenter.Lerp(ACenter, bRadius / d);
 			c.depth = ca != cb ? geo::Distance(ca, cb) : std::max(aRadius, bRadius);
 			c.normal = ca != cb ? ca - cb : geo::Vector2(0, 1);
 			c.normal.Normalize();
-			c.points.push_back(ca);
-			c.points.push_back(cb);
+			c.points[0] = ca;
+			c.points[1] = cb;
 			c.hasCollision = true;
+			c.pointCount = 2;
 			if (flipped)
 				c.normal = -c.normal;
 		}
 		return c;
 	}
 
-	CollisionPoints CircleBoxCollision(
+	Manifold CircleBoxCollision(
 		const CircleCollider* a, const Transform& ta,
 		const BoxCollider* b, const Transform& tb, bool flipped
 	)
 	{
-		CollisionPoints c;
+		Manifold c;
 		if (!a || !b ) {return c;}
 		//easier to  collision points as a PolygonCollider
 		PolygonCollider bb = PolygonCollider(*b);
 		return PolygonCircleCollision(&bb, tb, a, ta, !flipped);
 	}
 
-	CollisionPoints CircleMeshCollision(
+	Manifold CircleMeshCollision(
 		const CircleCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb, bool flipped
 	)
 	{
-		CollisionPoints c;
+		Manifold c;
 		if (!a || !b)
 			return c;
 		f64 avg = 0;
 		for (const Collider* ptr : b->colliders)
 		{
-			CollisionPoints tmp = ptr->TestCollision(tb, a, ta);
+			Manifold tmp = ptr->TestCollision(tb, a, ta);
 			if (tmp.hasCollision)
 			{
 				avg += tmp.depth;
@@ -70,12 +70,15 @@ namespace physics::algo
 					c.depth = tmp.depth;
 					c.normal = -tmp.normal;
 				}
-				for (auto p : tmp.points)
-					c.points.push_back(p);
+				for (size_t i = 0 ; i < tmp.pointCount; i++)
+				{
+					if (c.pointCount < MAX_MANIFOLD_POINT_COUNT)
+						c.points[c.pointCount++] = tmp.points[i];
+				}
 			}
 		}
 		if (avg)
-			c.depth = avg / (f64)c.points.size();
+			c.depth = avg / (f64)c.pointCount;
 		if (flipped)
 			c.normal = -c.normal;
 		return c;

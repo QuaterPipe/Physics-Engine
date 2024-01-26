@@ -6,7 +6,7 @@ using namespace physics;
 Rigidbody rigidbodies[10];
 sf::RenderWindow* w = NULL;
 
-void onCollision(Collision& c, f64 dt)
+void onCollision(CollisionManifold& c, f64 dt)
 {
     sf::CircleShape circ(2);
     circ.setFillColor(sf::Color::Red);

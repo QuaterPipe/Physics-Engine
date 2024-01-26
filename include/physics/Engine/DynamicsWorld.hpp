@@ -12,30 +12,30 @@ namespace physics
 	class Solver
 	{
 		public:
-			virtual void Solve(std::vector<Collision>& collisions, f64 dt) noexcept = 0;
+			virtual void Solve(std::vector<CollisionManifold>& collisions, f64 dt) noexcept = 0;
 			geo::Vector2 gravity = geo::Vector2(0, 9.81);
 	};
 
 	class PhysicsSolver : public Solver
 	{
 		public:
-			void Solve(std::vector<Collision>& collisions, f64 dt) noexcept override;
+			void Solve(std::vector<CollisionManifold>& collisions, f64 dt) noexcept override;
 	};
 
 	class PositionalCorrectionSolver : public Solver
 	{
 		public:
-			void Solve(std::vector<Collision>& collision, f64 dt) noexcept override;
+			void Solve(std::vector<CollisionManifold>& collision, f64 dt) noexcept override;
 	};
 	
 	class DynamicsWorld
 	{
 		protected:
-			std::function<void(Collision&, f64)> _onCollision;
+			std::function<void(CollisionManifold&, f64)> _onCollision;
 			geo::Vector2 _gravity = geo::Vector2(0, -9.81);
 			std::vector<CollisionObject*> _objects;
 			std::vector<Dynamicbody*> _dynamicbodies;
-			std::vector<Collision> _collisions;
+			std::vector<CollisionManifold> _collisions;
 			std::vector<Solver*> _solvers;
 		public:
 			Quadtree quadtree;
@@ -52,7 +52,7 @@ namespace physics
 			void RemoveSolver(Solver* s) noexcept;
 			void ResolveConstraints(f64 dt) noexcept;
 			void SendCollisionCallBacks(f64 dt) noexcept;
-			void SetCollisionCallBack(const std::function<void(Collision&, f64)>& callback, f64 dt) noexcept;
+			void SetCollisionCallBack(const std::function<void(CollisionManifold&, f64)>& callback, f64 dt) noexcept;
 			void Update(f64 dt) noexcept;
 	};
 }

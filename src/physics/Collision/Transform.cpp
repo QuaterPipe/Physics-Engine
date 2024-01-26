@@ -214,7 +214,7 @@ namespace physics
 		return result;
 	}
 
-	void Transform::SymplecticEulerIntegrate(f64* _position, f64* velocity, f64* acceleration, f64 dt)
+	void Transform::SymplecticEulerIntegrate(f64* _position, f64* velocity, f64* acceleration, f64 dt) noexcept
 	{
 		*velocity += *acceleration * dt;
 		*_position += *velocity * dt;
@@ -244,7 +244,7 @@ namespace physics
 	}
 
 	void Integrate(State& state,
-		f64 dt, f64 acceleration)
+		f64 dt, f64 acceleration) noexcept
 	{
 		Derivative a, b, c, d;
 
@@ -263,7 +263,7 @@ namespace physics
 		state.v = state.v + dvdt * dt;
 	}
 
-	void Transform::RK4Integrate(f64* _position, f64* velocity, f64* acceleration, f64 dt)
+	void Transform::RK4Integrate(f64* _position, f64* velocity, f64* acceleration, f64 dt) noexcept
 	{
 		State s;
 		s.x = *_position;

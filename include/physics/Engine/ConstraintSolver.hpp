@@ -1,3 +1,4 @@
+#pragma once
 #include "physics/Dynamics/Constraint.hpp"
 namespace physics
 {

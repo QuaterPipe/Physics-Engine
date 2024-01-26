@@ -2,9 +2,9 @@
 
 namespace physics
 {
-	void PositionalCorrectionSolver::Solve(std::vector<Collision>& collisions, f64 dt) noexcept
+	void PositionalCorrectionSolver::Solve(std::vector<CollisionManifold>& collisions, f64 dt) noexcept
 	{
-		for (Collision& c : collisions)
+		for (CollisionManifold& c : collisions)
 		{
 			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
 			Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);

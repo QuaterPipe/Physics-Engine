@@ -1,50 +1,114 @@
 #include "physics/Collision/Algo.hpp"
 #include <iostream>
 #define MAX std::numeric_limits<f64>::max()
-#define MIN std::numeric_limits<f64>::min()
+#define MIN -MAX
 
 namespace physics::algo
 {
-    struct SATCheck
+
+    bool BiasGreaterThan(f64 a, f64 b)
     {
-        bool failed;
-        geo::Vector2 normal;
-    };
+        const f64 k_biasRelative = 0.95;
+        const f64 k_biasAbsolute = 0.01;
+        return a >= b * k_biasRelative + a * k_biasAbsolute;
+    }
 
-    SATCheck SeparatingAxis(
-        const geo::Vector2& orthogonal, const geo::Vector2* a,
-        const geo::Vector2* b, size_t aSize, size_t bSize
-    );
+    int Clip(const geo::Vector2& n, f64 c, geo::Vector2* face)
+    {
+        size_t sp = 0;
+        geo::Vector2 out[2] = {
+            face[0],
+            face[1]
+        };
+        f64 d1 = n.Dot(face[0]) - c;
+        f64 d2 = n.Dot(face[1]) - c;
+        if (d1 <= 0.0) out[sp++] = face[0];
+        if (d2 <= 0.0) out[sp++] = face[1];
+        if (d1 * d2 < 0.0)
+        {
+            f64 alpha = d1 / (d1 - d2);
+            out[sp] = face[0] + alpha * (face[1] - face[0]);
+            sp++;
+        }
+        face[0] = out[0];
+        assert(sp != 3);
+        return sp;
+        face[1] = out[1];
+    }
 
-    std::vector<geo::Vector2> FindCollisionPoints(
-        const geo::Vector2* a,
-        const geo::Vector2* b, size_t aSize, size_t bSize, geo::Vector2& norm
-    );
+    f64 FindAxisLeastPenetration(size_t* faceIndex, const PolygonCollider* a, const Transform& ta, const PolygonCollider* b, const Transform& tb)
+    {
+        f64 bestDistance = MIN;
+        size_t bestIndex;
+        geo::Matrix2 aRot = ta.GetRotation();
+        geo::Matrix2 bRot = tb.GetRotation();
+        geo::Matrix2 bRotxScale = bRot * geo::Matrix2(tb.GetScale().x, 0, 0, tb.GetScale().y);
+        geo::Matrix2 binvRotxScale = bRotxScale.GetTranspose();
+        geo::Matrix3 bTransformMatrix = tb.GetTransformationMatrix();
+        for (size_t i = 0; i < a->GetPointCount(); i++)
+        {
+            geo::Vector2 n = a->GetNormal(i);
+            geo::Vector2 nw = aRot * n;
+            geo::Matrix2 buT = bRot.GetTranspose();
+            n = buT * nw;
+            geo::Vector2 s = b->SupportPoint(-n);
+            geo::Vector2 v = a->GetPoint(i);
+            v = ta.TransformVector(v);
+            v.x -= bTransformMatrix(0, 2);
+            v.y -= bTransformMatrix(1, 2);
+            v = binvRotxScale * v;
+            f64 d = n.Dot(s - v);
+            if (d > bestDistance)
+            {
+                bestDistance = d;
+                bestIndex = i;
+            }
+        }
+        *faceIndex = bestIndex;
+        return bestDistance;
+    }
 
-    bool VectorInPolygon(
-        const geo::Vector2* points,
-        const geo::Vector2& b, size_t pointsSize
-    );
+    void FindIncidentFace(geo::Vector2* v, const PolygonCollider* refPoly, const Transform& refTransform, const PolygonCollider* incPoly, const Transform& incTransform, size_t referenceIndex)
+    {
+        geo::Vector2 referenceNormal = refPoly->GetNormal(referenceIndex);
+        referenceNormal = refTransform.GetRotation() * referenceNormal;
+        referenceNormal = incTransform.GetRotation().GetTranspose() * referenceNormal;
+        size_t incidentFace = 0;
+        f64 minDot = MAX;
+        for (size_t i = 0; i < incPoly->GetPointCount(); i++)
+        {
+            f64 dot = referenceNormal.Dot(incPoly->GetNormal(i));
+            if (dot < minDot)
+            {
+                minDot = dot;
+                incidentFace = i;
+            }
+        }
+        v[0] = incTransform.TransformVector(incPoly->GetPoint(incidentFace));
+        incidentFace = incidentFace + 1 >= (size_t)incPoly->GetPointCount() ? 0 : incidentFace + 1;
+        v[1] = incTransform.TransformVector(incPoly->GetPoint(incidentFace));
 
-    CollisionPoints PolygonCircleCollision(
+    }
+
+    Manifold PolygonCircleCollision(
         const PolygonCollider* a, const Transform& ta,
         const CircleCollider* b, const Transform& tb, bool flipped
     )
     {
-        CollisionPoints c;
+        Manifold c;
         c.hasCollision = false;
         if (!a || !b)
             return c;
         if (a->GetPointCount() < 3)
             return c;
         size_t aSize = a->GetPointCount();
-        geo::Vector2* aPoints = new geo::Vector2[aSize];
+        geo::Vector2 aPoints[MAX_POLYGONCOLLIDER_SIZE];
         for (size_t i = 0; i < aSize; i++)
             aPoints[i] = ta.TransformVector(a->GetPoint(i));
         geo::Vector2 bCenter = tb.TransformVector(b->center);
         f64 bRadius = b->radius * geo::Max(tb.GetScale().x, tb.GetScale().y);
         bool centerInA = VectorInPolygon(aPoints, bCenter, aSize), polyInB = true;
-        geo::Vector2* projections = new geo::Vector2[aSize];
+        geo::Vector2 projections[MAX_POLYGONCOLLIDER_SIZE];
         size_t projInd = 0;
         for (size_t i = 0; i < aSize; i++)
             polyInB &= b->Contains(aPoints[i], tb);
@@ -75,14 +139,11 @@ namespace physics::algo
         }
         if (!b->Contains(closest, tb) && !centerInA)
         {
-            delete[] aPoints;
-            delete[] projections;
             return c;
         }
         if (centerInA || polyInB || closest != geo::Vector2::Infinity)
         {
             c.hasCollision = true;
-            c.points.resize(2);
             c.points[0] = closest;
             c.depth = (geo::Distance(bCenter, closest)) + bRadius;
             if (centerInA)
@@ -99,8 +160,7 @@ namespace physics::algo
         }
         if (!flipped)
             c.normal = -c.normal;
-        delete[] aPoints;
-        delete[] projections;
+        c.pointCount = 2;
         return c;
     }
 
@@ -144,98 +204,128 @@ namespace physics::algo
         return inside;
     }
 
-    CollisionPoints PolygonPolygonCollision(
-            const PolygonCollider* a, const Transform& ta,
-            const PolygonCollider* b, const Transform& tb, bool flipped
+    Manifold PolygonPolygonCollision(
+        const PolygonCollider* a, const Transform& ta,
+        const PolygonCollider* b, const Transform& tb, bool flipped
     )
     {
-        CollisionPoints c;
+        Manifold c;
         c.hasCollision = false;
         if (!a || !b)
             return c;
         if (a->GetPointCount() < 3 || b->GetPointCount() < 3)
             return c;
         size_t aSize = a->GetPointCount(), bSize = b->GetPointCount();
-        geo::Vector2* aPoints = new geo::Vector2[aSize];
-        geo::Vector2* bPoints = new geo::Vector2[bSize];
+        geo::Vector2 aPoints [MAX_POLYGONCOLLIDER_SIZE];
+        geo::Vector2 bPoints[MAX_POLYGONCOLLIDER_SIZE];
         for (size_t i = 0; i < aSize; i++)
             aPoints[i] = ta.TransformVector(a->GetPoint(i));
         for (size_t i = 0; i < bSize; i++)
             bPoints[i] = tb.TransformVector(b->GetPoint(i));
-        std::vector<geo::Vector2> pushVectors;
-        pushVectors.reserve(aSize + bSize);
-        for (size_t i = 0; i < aSize + bSize; i++)
-        {
-            geo::Vector2 edge;
-            if (i < aSize)
-                edge = aPoints[(i + 1) % aSize] - aPoints[i];
-            else
-                edge = bPoints[(i - aSize + 1) % bSize] - bPoints[i - aSize];
-            geo::Vector2 ortho(-edge.y, edge.x);
-            SATCheck check = SeparatingAxis(ortho, aPoints, bPoints, aSize, bSize);
-            if (check.failed == true)
-            {
-                delete[] aPoints;
-                delete[] bPoints;
-                return c;
-            }
-            else
-                pushVectors.push_back(check.normal);
-        }
-        if (!pushVectors.size())
-        {
-            delete[] aPoints;
-            delete[] bPoints;
+        size_t contactCount = 0;
+        size_t faceA;
+        f64 penetrationA = FindAxisLeastPenetration(&faceA, a, ta, b, tb);
+        if (penetrationA >= 0.0)
             return c;
-        }
-        // collision with the smallest push vector.
-        geo::Vector2 mpv = geo::Vector2::Infinity;
-        for (const geo::Vector2& pv : pushVectors)
+        size_t faceB;
+        f64 penetrationB = FindAxisLeastPenetration(&faceB, b, tb, a, ta);
+        if (penetrationB >= 0.0)
+            return c;
+        size_t referenceIndex;
+        bool flip;
+        const PolygonCollider* refPoly;
+        const PolygonCollider* incPoly;
+        Transform refTransform;
+        Transform incTransform;
+        if (BiasGreaterThan(penetrationA, penetrationB))
         {
-            if (mpv.Dot(mpv) > pv.Dot(pv))
-                mpv = pv;
+            refPoly = a;
+            refTransform = ta;
+            incPoly = b;
+            incTransform = tb;
+            referenceIndex = faceA;
+            flip = false;
         }
-        geo::Vector2 d = tb.TransformVector(b->GetCenter()) - ta.TransformVector(a->GetCenter());
-        if (d.Dot(mpv) > 0)
-            mpv = -mpv;
+
+        else
+        {
+            refPoly = b;
+            refTransform = tb;
+            incPoly = a;
+            incTransform = ta;
+            referenceIndex = faceB;
+            flip = true;
+        }
+
+        geo::Vector2 incidentFace[2];
+        FindIncidentFace(incidentFace, refPoly, refTransform, incPoly, incTransform, referenceIndex);
+        geo::Vector2 v1 = refPoly->GetPoint(referenceIndex);
+        referenceIndex = referenceIndex + 1 == refPoly->GetPointCount() ? 0 : referenceIndex + 1;
+        geo::Vector2 v2 = refPoly->GetPoint(referenceIndex);
+        v1 = refTransform.TransformVector(v1);
+        v2 = refTransform.TransformVector(v2);
+        geo::Vector2 sidePlaneNormal = (v2 - v1);
+        sidePlaneNormal.Normalize();
+        geo::Vector2 refFaceNormal(sidePlaneNormal.y, -sidePlaneNormal.x);
+        f64 refC = refFaceNormal.Dot(v1);
+        f64 negSide = -sidePlaneNormal.Dot(v1);
+        f64 posSide = sidePlaneNormal.Dot(v2);
+        if (Clip(-sidePlaneNormal, negSide, (geo::Vector2*)incidentFace) < 2)
+            return c;
+        if (Clip(sidePlaneNormal, posSide, (geo::Vector2*)incidentFace) < 2)
+            return c;
+        c.normal = flip ? -refFaceNormal : refFaceNormal;
+        size_t cp = 0;
+        f64 separation = refFaceNormal.Dot(incidentFace[0]) - refC;
+        if (separation <= 0.0)
+        {
+            c.points[cp] = incidentFace[0];
+            c.depth = -separation;
+            ++cp;
+        }
+        else
+            c.depth = 0;
+
+        separation = refFaceNormal.Dot(incidentFace[1]) - refC;
+        if (separation <= 0.0)
+        {
+            c.points[cp] = incidentFace[1];
+            c.depth += -separation;
+            ++cp;
+            c.depth /= (f64)cp;
+        }
+
+        c.pointCount = cp;
         c.hasCollision = true;
-        c.normal = -mpv.Normalized();
-        if (!c.normal.GetMagnitudeSquared())
-            c.normal.Set(1, 0);
         if (flipped)
             c.normal = -c.normal;
-        c.depth = mpv.GetMagnitude();
-        std::vector<geo::Vector2> inter = FindCollisionPoints(aPoints, bPoints, aSize, bSize, c.normal);
-        c.points = inter; 
-        delete[] aPoints;
-        delete[] bPoints;
         return c;
     };
 
-    CollisionPoints PolygonBoxCollision(
+    Manifold PolygonBoxCollision(
         const PolygonCollider* a, const Transform& ta,
         const BoxCollider* b, const Transform& tb, bool flipped
     )
     {
-        CollisionPoints c;
+        Manifold c;
         if (!a || !b)
             return c;
         PolygonCollider bb = PolygonCollider(*b);
         return PolygonPolygonCollision(a, ta, &bb, tb, flipped);
     }
 
-    CollisionPoints PolygonMeshCollision(
+    Manifold PolygonMeshCollision(
         const PolygonCollider* a, const Transform& ta,
         const MeshCollider* b, const Transform& tb, bool flipped
     )
     {
-        CollisionPoints c;
+        Manifold c;
         if (!a || !b)
             return c;
         f64 avg = 0;
-        for (const Collider* ptr: b->colliders)
+        for (const Collider* ptr : b->colliders)
         {
-            CollisionPoints tmp = ptr->TestCollision(tb, a, ta);
+            Manifold tmp = ptr->TestCollision(tb, a, ta);
             if (tmp.hasCollision)
             {
                 avg += tmp.depth;
@@ -245,83 +335,17 @@ namespace physics::algo
                     c.depth = tmp.depth;
                     c.normal = -tmp.normal;
                 }
-                for (auto p: tmp.points)
-                    c.points.push_back(p);
+                for (size_t i = 0; i < tmp.pointCount; i++)
+                {
+                    if (c.pointCount < MAX_MANIFOLD_POINT_COUNT)
+                        c.points[c.pointCount++] = tmp.points[i];
+                }
             }
         }
         if (avg)
-            c.depth = avg / (f64)c.points.size();
+            c.depth = avg / (f64)c.pointCount;
         if (flipped)
             c.normal = -c.normal;
         return c;
-    }
-
-    geo::Vector2 SupportPoint(const geo::Vector2* points, size_t size, geo::Vector2 direction)
-    {
-        f64 bestProj = std::numeric_limits<f64>::min();
-        geo::Vector2 bestVertex(geo::Vector2::Infinity);
-        for (size_t i = 0; i < size; i++)
-        {
-            f64 proj = points[i].Dot(direction);
-            if (proj > bestProj)
-            {
-                bestVertex = points[i];
-                bestProj = proj;
-            }
-        }
-        return bestVertex;
-    }
-
-    std::vector<geo::Vector2> FindCollisionPoints(
-        const geo::Vector2* a,
-        const geo::Vector2* b, size_t aSize, size_t bSize, geo::Vector2& norm
-    )
-    {
-        std::vector<geo::Vector2> points;
-        points.reserve(geo::Min(aSize, bSize));
-        for (size_t i = 0; i < aSize; i++)
-        {
-            if (VectorInPolygon(b, a[i], bSize))
-                points.push_back(a[i]);
-        }
-        for (size_t i = 0; i < bSize; i++)
-        {
-            if (VectorInPolygon(a, b[i], aSize))
-                points.push_back(b[i]);
-        }
-        return points;
-    }
-
-    SATCheck SeparatingAxis(
-        const geo::Vector2& orthogonal, const geo::Vector2* a,
-        const geo::Vector2* b, size_t aSize, size_t bSize
-    )
-    {
-        SATCheck s;
-        s.failed = false;
-        f64 minA = MAX, maxA = MIN;
-        f64 minB = MAX, maxB = MIN;
-        for (size_t i = 0; i < aSize; i++)
-        {
-            f64 projection = a[i].Dot(orthogonal);
-            minA = geo::Min(minA, projection);
-            maxA = geo::Max(maxA, projection);
-        }
-        for (size_t i = 0; i < bSize; i++)
-        {
-            f64 projection = b[i].Dot(orthogonal);
-            minB = geo::Min(minB, projection);
-            maxB = geo::Max(maxB, projection);
-        }
-        if (maxA >= minB && maxB >= minA)
-        {
-            f64 d = geo::Min(maxB - minA, maxA - minB);
-            f64 e = d / orthogonal.Dot(orthogonal) + EPSILON;
-            geo::Vector2 pv = e * orthogonal;
-            s.normal = pv;
-            return s;
-        }
-        s.failed = true;
-        return s;
     }
 }

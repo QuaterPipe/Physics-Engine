@@ -84,6 +84,8 @@ void Render(sf::RenderWindow* win, int a, int b)
         sf::ConvexShape cvx(pts.size());
         for (int i = 0; i < pts.size(); i++)
             cvx.setPoint(i, sf::Vector2f(pts[i].x, pts[i].y));
+        //cvx.setOrigin(0, 0);
+        //cvx.setPosition(worldPos.x, worldPos.y);
         cvx.setFillColor(sf::Color::Transparent);
         cvx.setOutlineColor(sf::Color::White);
         cvx.setOutlineThickness(1);
@@ -95,7 +97,7 @@ void Render(sf::RenderWindow* win, int a, int b)
     Transform tA;
     tA.SetPosition(Vector2(250, 250));
     tA.SetRotation(rotA);
-    CollisionPoints result = cldA[a]->TestCollision(tA, cldB[b], tB);
+    Manifold result = cldA[a]->TestCollision(tA, cldB[b], tB);
     for (auto p : result.points)
     {
         sf::Vertex line[2] = {

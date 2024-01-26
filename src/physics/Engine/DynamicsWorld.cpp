@@ -6,7 +6,7 @@
 namespace physics
 {
 	DynamicsWorld::DynamicsWorld(BoxCollider area) noexcept
-		: quadtree(0, 10, 5, BoxCollider(area), &_objects)
+		: quadtree(0, 8, 3, BoxCollider(area), &_objects)
 	{
 		_solvers.push_back(new PhysicsSolver());
 		_solvers.push_back(new PositionalCorrectionSolver());
@@ -41,7 +41,6 @@ namespace physics
 	void DynamicsWorld::CheckCollisions(f64 dt) noexcept
 	{
 		_collisions.clear();
-		
 		std::vector<std::vector<int>> container;
 		quadtree.Get(container);
 		for (size_t k = 0; k < container.size(); k++)
@@ -64,13 +63,13 @@ namespace physics
 						continue;
 					if (!a || !b)
 						continue;
-					if (a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform)))
+					if (true /*a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform))*/)
 					{
-						CollisionPoints points = a->GetCollider().TestCollision(
+						Manifold points = a->GetCollider().TestCollision(
 							a->transform, &b->GetCollider(), b->transform);
 						if (points.hasCollision)
 						{
-							Collision c;
+							CollisionManifold c;
 							c.a = a;
 							c.b = b;
 							c.points = points;
@@ -131,14 +130,14 @@ namespace physics
 		}
 	}
 	
-	void DynamicsWorld::SetCollisionCallBack(const std::function<void(Collision&, f64)>& callback, f64 dt) noexcept
+	void DynamicsWorld::SetCollisionCallBack(const std::function<void(CollisionManifold&, f64)>& callback, f64 dt) noexcept
 	{
 		_onCollision = callback;
 	}
 
 	void DynamicsWorld::SendCollisionCallBacks(f64 dt) noexcept
 	{
-		for (Collision& c: _collisions)
+		for (CollisionManifold& c: _collisions)
 		{
 			if (_onCollision) _onCollision(c, dt);
 			if (c.a->onCollision) c.a->onCollision(c, dt);

@@ -1,6 +1,6 @@
 #pragma once
 #include "BoxCollider.hpp"
-#define MAX_POLYGONCOLLIDER_SIZE 10000ULL
+#define MAX_POLYGONCOLLIDER_SIZE 100ULL
 
 
 namespace physics
@@ -47,24 +47,24 @@ namespace physics
 			void Release() noexcept;
 			void Set(const std::vector<geo::Vector2>& points);
 			void SetPoint(size_t index, const geo::Vector2& point) noexcept;
-			geo::Vector2 SupportPoint(geo::Vector2 direction) const noexcept;
-			virtual CollisionPoints TestCollision(
+			geo::Vector2 SupportPoint(const geo::Vector2& direction) const noexcept;
+			virtual Manifold TestCollision(
 				const Transform& transform,
 				const Collider* collider,
 				const Transform& colliderTransform) const noexcept override;
-			virtual CollisionPoints TestCollision(
+			virtual Manifold TestCollision(
 				const Transform& transform,
 				const CircleCollider* collider,
 				const Transform& colliderTransform) const noexcept override;
-			virtual CollisionPoints TestCollision(
+			virtual Manifold TestCollision(
 				const Transform& transform,
 				const PolygonCollider* collider,
 				const Transform& colliderTransform) const noexcept override;
-			virtual CollisionPoints TestCollision(
+			virtual Manifold TestCollision(
 				const Transform& transform,
 				const BoxCollider* collider,
 				const Transform& colliderTransform) const noexcept override;
-			virtual CollisionPoints TestCollision(
+			virtual Manifold TestCollision(
 				const Transform& transform,
 				const MeshCollider* collider,
 				const Transform& colliderTransform) const noexcept override;

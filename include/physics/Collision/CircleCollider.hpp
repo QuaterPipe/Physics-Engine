@@ -23,23 +23,23 @@ namespace physics
 			geo::Vector2 Max() const noexcept override;
 			geo::Vector2 Min() const noexcept override;
 			virtual std::vector<geo::Vector2> GetPoints(const Transform& t = Transform()) const noexcept override;
-			virtual CollisionPoints TestCollision(
+			virtual Manifold TestCollision(
 				const Transform& transform,
 				const Collider* collider,
 				const Transform& colliderTransform) const noexcept override;
-			virtual CollisionPoints TestCollision(
+			virtual Manifold TestCollision(
 				const Transform& transform,
 				const CircleCollider* collider,
 				const Transform& colliderTransform) const noexcept override;
-			virtual CollisionPoints TestCollision(
+			virtual Manifold TestCollision(
 				const Transform& transform,
 				const PolygonCollider* collider,
 				const Transform& colliderTransform) const noexcept override;
-			virtual CollisionPoints TestCollision(
+			virtual Manifold TestCollision(
 				const Transform& transform,
 				const BoxCollider* collider,
 				const Transform& colliderTransform) const noexcept override;
-			virtual CollisionPoints TestCollision(
+			virtual Manifold TestCollision(
 				const Transform& transform,
 				const MeshCollider* collider,
 				const Transform& colliderTransform) const noexcept override;

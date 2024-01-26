@@ -30,9 +30,9 @@ namespace physics
 		return x;
 	}
 	
-	void PhysicsSolver::Solve(std::vector<Collision>& collisions, f64 dt) noexcept
+	void PhysicsSolver::Solve(std::vector<CollisionManifold>& collisions, f64 dt) noexcept
 	{
-		for (Collision& c: collisions)
+		for (CollisionManifold& c: collisions)
 		{
 			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
 			Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
@@ -41,16 +41,16 @@ namespace physics
 			f64 e = geo::Min(a->restitution, b->restitution);
 			f64 sf = sqrt(SQRD(a->staticFriction) + SQRD(b->staticFriction));
 			f64 kf = sqrt(SQRD(a->kineticFriction) + SQRD(b->kineticFriction));
-			for (int i = 0; i < c.points.points.size(); i++)
+			for (int i = 0; i < c.points.pointCount; i++)
 			{
 				geo::Vector2 ra = c.points.points[i] - (a->transform.GetPosition() + a->transform.GetCOM());
 				geo::Vector2 rb = c.points.points[i] - (b->transform.GetPosition() + b->transform.GetCOM());
 				geo::Vector2 rv = b->velocity + geo::Vector2::Cross(b->angularVelocity, rb) -
 					a->velocity - geo::Vector2::Cross(a->angularVelocity, ra);
-				if (rv.GetMagnitudeQuick() < (dt * gravity).GetMagnitudeQuick() + EPSILON)
+				if (rv.GetMagnitudeExact() < (dt * gravity).GetMagnitudeExact() + EPSILON)
 					e = 0.0;
 			}
-			for (int i = 0; i < c.points.points.size(); i++)
+			for (int i = 0; i < c.points.pointCount; i++)
 			{
 				geo::Vector2 ra = c.points.points[i] - (a->transform.GetPosition() + a->transform.GetCOM());
 				geo::Vector2 rb = c.points.points[i] - (b->transform.GetPosition() + b->transform.GetCOM());

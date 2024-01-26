@@ -142,6 +142,15 @@ namespace geo
 		return sqrt(dis);
 	}
 
+	f64 Distance(const Vector& a, const Vector& b) noexcept
+	{
+		assert(a.GetSize() == b.GetSize());
+		f64 dis = 0;
+		for (size_t i = 0; i < a.GetSize(); i++)
+			dis += SQRD(b[i] - a[i]);
+		return sqrt(dis);
+	}
+
 	f64 DistanceSquared(const Vector2& a, const Vector2& b) noexcept
 	{
 		f64 dis = (SQRD(b.x - a.x) + SQRD(b.y - a.y));
@@ -157,7 +166,16 @@ namespace geo
 	f64 DistanceSquared(const Vector3& a, const Vector3& b) noexcept
 	{
 		f64 dis = (SQRD(b.x - a.x) + SQRD(b.y - a.y) + SQRD(b.z - a.z));
-		if (dis < 0) {dis *= -1;}
+		return dis;
+	}
+	
+
+	f64 DistanceSquared(const Vector& a, const Vector& b) noexcept
+	{
+		assert(a.GetSize() == b.GetSize());
+		f64 dis = 0;
+		for (size_t i = 0; i < a.GetSize(); i++)
+			dis += SQRD(b[i] - a[i]);
 		return dis;
 	}
 
@@ -166,12 +184,22 @@ namespace geo
 		return fabs(a - b) <= EPSILON;
 	}
 
+	f64 FastInvSqrt(f64 x) noexcept
+	{
+		f64 y = x;
+		const f64 x2 = y * 0.5;
+		std::int64_t i = *(std::int64_t*)&y;
+		i = 0x5fe6eb50c7b537a9 - (i >> 1);
+		y = *(f64*) &i;
+		y = y * (1.5 - (x2 * y * y));
+		y = y * (1.5 - (x2 * y * y));
+		return y;
+	}
+
 	f64 FastSqrt(f64 x) noexcept
 	{
-		f32 n = (f32)x;
-	   	static union{int i; float f;} u;
-	   	u.i = 0x5F375A86 - (*(int*)&n >> 1);
-	   	return (f64)((int(3) - n * u.f * u.f) * n * u.f * 0.5f);
+		f64 y = FastInvSqrt(x);
+		return y * x;
 	}
 
 	f64 GetAngle(const Vector2 &a, const Vector2 &b, const Vector2 &c) noexcept

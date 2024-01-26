@@ -3,6 +3,22 @@
 #include <iostream>
 namespace physics
 {
+
+	/*CollisionManifold::CollisionManifold() noexcept
+	{
+	}
+
+	CollisionManifold::CollisionManifold(size_t pointCount) noexcept
+		: size(pointCount)
+	{
+		points = new geo::Vector2[pointCount];
+	}
+
+	CollisionManifold::~CollisionManifold() noexcept
+	{
+		delete[] points;
+	}*/
+
 	CollisionObject::CollisionObject() noexcept
 	{
 		collider.reset(new BoxCollider());

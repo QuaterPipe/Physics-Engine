@@ -59,6 +59,7 @@
     <ClCompile Include="testing\DynamicsTesting.cpp" />
     <ClCompile Include="testing\EngineTesting.cpp" />
     <ClCompile Include="testing\IntegrationTesting.cpp" />
+    <ClCompile Include="testing\SoftobodyTesting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
@@ -138,10 +139,12 @@
     <ClInclude Include="include\physics\Dynamics\AllConstraints.hpp" />
     <ClInclude Include="include\physics\Dynamics\Constraint.hpp" />
     <ClInclude Include="include\physics\Dynamics\Dynamicbody.hpp" />
+    <ClInclude Include="include\physics\Dynamics\ForceGenerator.hpp" />
     <ClInclude Include="include\physics\Dynamics\Rigidbody.hpp" />
     <ClInclude Include="include\physics\Dynamics\SocketConstraint.hpp" />
     <ClInclude Include="include\physics\Dynamics\Softbody.hpp" />
     <ClInclude Include="include\physics\Dynamics\VelocityConstraint.hpp" />
+    <ClInclude Include="include\physics\Engine\Constraint.hpp" />
     <ClInclude Include="include\physics\Engine\ConstraintSolver.hpp" />
     <ClInclude Include="include\physics\Engine\DynamicsWorld.hpp" />
     <ClInclude Include="include\physics\Engine\Quadtree.hpp" />
@@ -307,6 +310,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)/include;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);lib;</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -337,12 +342,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
+      <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>lib;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -374,6 +383,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

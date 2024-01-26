@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <cstdint>
+#include <cfloat>
 #include <functional>
 #include "Curve.hpp"
 #include "Vector.hpp"
@@ -56,20 +57,23 @@ namespace geo
 	f64 Distance(const Line& a, const Vector2& b) noexcept;
 	/// \brief Gets the distance between two Vector3s.
 	f64 Distance(const Vector3& a, const Vector3& b) noexcept;
-	/// \brief Gets the distance between two Vectors squared. It does not
-	/// use sqrt at all.
+	/// \brief Gets the euclidean distance between two Vectors.
+	f64 Distance(const Vector& a, const Vector& b) noexcept;
+	/// \brief Gets the distance between two Vectors squared.
 	f64 DistanceSquared(const Vector2& a, const Vector2& b) noexcept;
-	/// \brief Gets the distance between a Line and a Vector2 squared. It does not
-	/// use sqrt at all.
+	/// \brief Gets the distance between a Line and a Vector2 squared.
 	f64 DistanceSquared(const Line& a, const Vector2& b) noexcept;
-	/// \brief Gets the distance between two Vector3s squared. It does not
-	/// use sqrt at all.
+	/// \brief Gets the distance between two Vector3s squared.
 	f64 DistanceSquared(const Vector3& a, const Vector3& b) noexcept;
+	/// \brief Gets the euclidean distance between two Vectors.
+	f64 DistanceSquared(const Vector& a, const Vector& b) noexcept;
 	/// \brief Gets the minimum distance between a line and a Vector.
 	f64 Distance(const Line& a, const Vector2& b) noexcept;
 	/// \brief Checks if two values equal within epsilon range.
 	bool Equal(f64 a, f64 b) noexcept;
-	/// \brief Fast way to get sqrt, not as accurate as sqrt().
+	/// \brief Quake 3 inverse square root
+	f64 FastInvSqrt(f64 x) noexcept;
+	/// \brief Quake 3 square roo
 	f64 FastSqrt(f64 x) noexcept;
 	/// \brief Gets the angle between three Vectors.
 	f64 GetAngle(const Vector2& a, const Vector2& b, const Vector2& c) noexcept;

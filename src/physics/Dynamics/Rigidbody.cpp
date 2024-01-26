@@ -64,7 +64,7 @@ namespace physics
 		if (!isStatic && !isKinematic)
 		{
 		 	force += Force;
-			if (contactPoint != geo::Vector2::Infinity && Force.GetMagnitudeQuick())
+			if (contactPoint != geo::Vector2::Infinity && Force.GetMagnitudeExact())
 			{
 				angularForce += (transform.GetCOM()).Cross(Force);
 			}
@@ -76,7 +76,7 @@ namespace physics
 		if (!isStatic && !isKinematic)
 		{
 			velocity += _invMass * impulse;
-			if (contactVec != geo::Vector2::Infinity && impulse.GetMagnitudeQuick())
+			if (contactVec != geo::Vector2::Infinity && impulse.GetMagnitudeExact())
 				angularVelocity += _invInertia * contactVec.Cross(impulse);
 		}
 	}

@@ -39,10 +39,10 @@ namespace geo
 			f64 Dot(const Vector2& v) const noexcept;
 			/// \brief Returns the magnitude of the Vector.
 			f64 GetMagnitude() const noexcept;
+			/// \brief Returns the magnitude of the Vector and using sqrt().
+			f64 GetMagnitudeExact() const noexcept;
 			/// \brief Returns the squared magnitude of the Vector.
 			f64 GetMagnitudeSquared() const noexcept;
-			/// \brief Returns the magnitude of the Vector and using FastSqrt().
-			f64 GetMagnitudeQuick() const noexcept;
 			/// \brief Linearly interpolates a point with the other Vector.
 			Vector2 Lerp(const Vector2& other, f64 t) const noexcept;
 			/// \brief Offsets the Vector's x & y coordinates.
@@ -118,8 +118,8 @@ namespace geo
 			f64 operator[](size_t index) const;
 			/// \brief Returns the magnitude of the Vector3.
 			f64 GetMagnitude() const noexcept;
-			/// \brief Returns the magnitude of the Vector3 using FastSqrt().
-			f64 GetMagnitudeQuick() const noexcept;
+			/// \brief Returns the magnitude of the Vector3 using sqrt().
+			f64 GetMagnitudeExact() const noexcept;
 			/// \brief Returns the squared magnitude of the Vector3.
 			f64 GetMagnitudeSquared() const noexcept;
 			/// \brief Linearly interpolates a point with the other Vector3.
@@ -195,10 +195,10 @@ namespace geo
 			f64 Dot(const Vector& v) const;
 			/// \brief Returns the magnitude of the Vector.
 			f64 GetMagnitude() const noexcept;
+			/// \brief Returns the magnitude of the Vector using sqrt().
+			f64 GetMagnitudeExact() const noexcept;
 			/// \brief Returns the squared magnitude of the Vector.
 			f64 GetMagnitudeSquared() const noexcept;
-			/// \brief Returns the magnitude of the Vector and using FastSqrt().
-			f64 GetMagnitudeQuick() const noexcept;
 			/// \brief Linearly interpolates a point with the other Vector.
 			Vector Lerp(const Vector& other, f64 t) const;
 			/// \brief Set's the Vector's magnitude to one.

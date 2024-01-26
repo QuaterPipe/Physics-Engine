@@ -63,6 +63,13 @@ namespace geo
 	{
 		if (!x && !y && !z)
 			return 0;
+		return FastSqrt(x * x + y * y + z * z);
+	}
+
+	f64 Vector3::GetMagnitudeExact() const noexcept
+	{
+		if (!x && !y && !z)
+			return 0;
 		return sqrt(x * x + y * y + z * z);
 	}
 
@@ -73,13 +80,6 @@ namespace geo
 		return x * x + y * y + z * z;
 	}
 
-	f64 Vector3::GetMagnitudeQuick() const noexcept
-	{
-		if (!x && !y && !z)
-			return 0;
-		return FastSqrt(x * x + y * y + z * z);
-	}
-
 	Vector3 Vector3::Lerp(const Vector3& other, f64 t) const noexcept
 	{
 		return *this + (other - *this) * t;
@@ -87,9 +87,9 @@ namespace geo
 
 	void Vector3::Normalize() noexcept
 	{
-		f64 mag = GetMagnitude();
-		if (mag > EPSILON)
-			*this = *this / mag;
+		f64 mag = GetMagnitudeSquared();
+		if (mag > SQRD(EPSILON))
+			*this = *this * FastInvSqrt(mag);
 		else
 			*this = Vector3(0, 0, 0);
 	}
@@ -143,7 +143,7 @@ namespace geo
 
 	Vector3 Vector3::operator+(const Vector3& v) const noexcept
 	{
-		Vector3 result(*this);
+		Vector3 result(x, y, z);
 		result.x += v.x;
 		result.y += v.y;
 		result.z += v.z;
@@ -152,7 +152,7 @@ namespace geo
 
 	Vector3 Vector3::operator+(f64 d) const noexcept
 	{
-		Vector3 result(*this);
+		Vector3 result(x, y, z);
 		result.x += d;
 		result.y += d;
 		result.z += d;
@@ -175,7 +175,7 @@ namespace geo
 
 	Vector3 Vector3::operator-(const Vector3& v) const noexcept
 	{
-		Vector3 result(*this);
+		Vector3 result(x, y, z);
 		result.x -= v.x;
 		result.y -= v.y;
 		result.z -= v.z;
@@ -184,7 +184,7 @@ namespace geo
 
 	Vector3 Vector3::operator-(f64 d) const noexcept
 	{
-		Vector3 result(*this);
+		Vector3 result(x, y, z);
 		result.x -= d;
 		result.y -= d;
 		result.z -= d;
@@ -207,7 +207,7 @@ namespace geo
 
 	Vector3 Vector3::operator*(const Vector3& v) const noexcept
 	{
-		Vector3 result(*this);
+		Vector3 result(x, y, z);
 		result.x *= v.x;
 		result.y *= v.y;
 		result.z *= v.z;
@@ -216,7 +216,7 @@ namespace geo
 
 	Vector3 Vector3::operator*(f64 d) const noexcept
 	{
-		Vector3 result(*this);
+		Vector3 result(x, y, z);
 		result.x *= d;
 		result.y *= d;
 		result.z *= d;
@@ -239,7 +239,7 @@ namespace geo
 
 	Vector3 Vector3::operator/(const Vector3& v) const noexcept
 	{
-		Vector3 result(*this);
+		Vector3 result(x, y, z);
 		result.x /= v.x;
 		result.y /= v.y;
 		result.z /= v.z;
@@ -248,7 +248,7 @@ namespace geo
 
 	Vector3 Vector3::operator/(f64 d) const noexcept
 	{
-		Vector3 result(*this);
+		Vector3 result(x, y, z);
 		result.x /= d;
 		result.y /= d;
 		result.z /= d;

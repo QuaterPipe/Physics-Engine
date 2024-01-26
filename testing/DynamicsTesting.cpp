@@ -10,7 +10,7 @@ void DynamicsTest()
 	Transform CTrans;
 	Transform BTrans;
 	CTrans.SetPosition(0, 10);
-	CollisionPoints pts = c.TestCollision(CTrans, &b, BTrans);
+	Manifold pts = c.TestCollision(CTrans, &b, BTrans);
 	std::cout << "hasCollision: " << pts.hasCollision << std::endl;
 	std::cout << "normal: " << pts.normal << std::endl;
 	std::cout << "depth: " << pts.depth << std::endl;
