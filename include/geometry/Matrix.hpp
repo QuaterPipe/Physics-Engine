@@ -73,7 +73,7 @@ namespace geo
 			Vector operator*(const Vector& v) const;
 			Matrix operator*(const Matrix& other) const;
 			Matrix& operator*=(const Matrix& other);
-			i32 GetDeterminant() const;
+			f64 GetDeterminant() const;
 			size_t GetHeight() const noexcept;
 			size_t GetWidth() const noexcept;
 			Matrix GetTranspose() const;

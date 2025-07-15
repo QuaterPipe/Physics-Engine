@@ -5,6 +5,7 @@
 #include <cmath>
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
+#define RT2 1.414213562373095
 #endif
 #include <sstream>
 #include <string>
@@ -43,6 +44,8 @@ namespace geo
 			f64 GetMagnitudeExact() const noexcept;
 			/// \brief Returns the squared magnitude of the Vector.
 			f64 GetMagnitudeSquared() const noexcept;
+			/// \brief Returns the perpendicular vector
+			Vector2 GetPerpendicular() const noexcept;
 			/// \brief Linearly interpolates a point with the other Vector.
 			Vector2 Lerp(const Vector2& other, f64 t) const noexcept;
 			/// \brief Offsets the Vector's x & y coordinates.

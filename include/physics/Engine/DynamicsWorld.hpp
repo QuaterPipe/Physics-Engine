@@ -3,7 +3,6 @@
 #include "physics/Collision/Collision.hpp"
 #include "physics/Dynamics/Rigidbody.hpp"
 #include "physics/Dynamics/Softbody.hpp"
-#include "physics/Dynamics/VelocityConstraint.hpp"
 #include "Quadtree.hpp"
 #include <algorithm>
 

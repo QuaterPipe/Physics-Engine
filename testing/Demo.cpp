@@ -4,6 +4,7 @@
 #include "Testing.hpp"
 #define WIN_WIDTH 1000
 #define WIN_HEIGHT 500
+#define PHYSICS_HERTZ 200.0
 using namespace geo;
 using namespace physics;
 
@@ -50,7 +51,7 @@ void Demo()
     floor.rigid->transform.SetPosition(WIN_WIDTH * 0.5, 40);
     floor.rigid->isStatic = true;
     floor.rigid->restitution = 1;
-    floor.rigid->transform.SetRotation(geo::Radians(5));
+    floor.rigid->transform.SetRotation(geo::Radians(15));
     floor.t = Type::Poly;
     sf::ConvexShape c(4);
     for (int i = 0; i < 4; i++)
@@ -65,7 +66,6 @@ void Demo()
     Timer tm;
     f64 accumulator = 0;
     f64 renderAccumulator = 0;
-    f64 delta = 50.0 / 1000.0;
     while (window.isOpen())
     {
         sf::Event e;
@@ -88,7 +88,7 @@ void Demo()
                     f64 x = tm.deltaTime < 1000 ? 0 : 1000 - tm.deltaTime;
                     for (int i = 0; i < 5; i++)
                     {
-                        sf::Vector2f vec(worldPos.x + Random(-15, 15), worldPos.y + Random(-15, 15));
+                        sf::Vector2f vec(worldPos.x + Random(-250, 250), worldPos.y + Random(-290, 290));
                         CreateObject(Type::Circ, vec, x * 0.1);
                     }
                 }
@@ -110,24 +110,17 @@ void Demo()
             }
         }
         Time::Tick();
-        d.Update(1.0 / 300.0);
-        if (avgCounter == 999)
+        accumulator += Time::deltaTime * 0.001;
+        if (accumulator >= 1.0 / PHYSICS_HERTZ)
         {
-            //std::cout << 1 / (frameAvg / 1000.0) << "          " << '\r';
-            avgCounter = 0;
-            frameAvg = 0;
+            d.Update(1.0 / PHYSICS_HERTZ);
+            accumulator -= 1.0 / PHYSICS_HERTZ;
         }
-        else
-        {
-            frameAvg += Time::deltaTime / 1000.0;
-            avgCounter++;
-        }
-        //std::cout << Time::deltaTime << "\r";
         renderAccumulator += Time::deltaTime * 0.001;
-        if (renderAccumulator >= 1.0 / 30.0)
+        if (renderAccumulator >= 1.0 / 60.0)
         {
             RenderObjects();
-            renderAccumulator = 0;
+            renderAccumulator -= 1.0 / 60.0;
         }
     }
 }
@@ -182,10 +175,8 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
         f64 rad = Random(5, 10);
         obj.rigid = new Rigidbody(CircleCollider(rad), t);
         obj.rigid->angularVelocity = rotVel;
-        obj.rigid->SetMass(rad);
-        obj.rigid->SetInertia(obj.rigid->GetMass() * 10000);
-        obj.rigid->restitution = 0.1;
-        obj.rigid->kineticFriction = Random(0.6, 0.8);
+        obj.rigid->SetMass(rad * 0.000001);
+        obj.rigid->SetInertia(obj.rigid->GetMass());
         sf::CircleShape c;
         c.setRadius(rad);
         c.setOutlineThickness(1);
@@ -200,10 +191,8 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
         CreatePoly(&p, e, 150 / e);
         obj.rigid = new Rigidbody(p, t);
         obj.rigid->angularVelocity = rotVel;
-        obj.rigid->SetMass(e);
-        obj.rigid->SetInertia(obj.rigid->GetMass() * 30000);
-        obj.rigid->restitution = 0.1;
-        obj.rigid->kineticFriction = Random(0.6, 0.8);
+        obj.rigid->SetMass(e * 0.000001);
+        obj.rigid->SetInertia(obj.rigid->GetMass());
         sf::ConvexShape c(p.GetPointCount());
         for (size_t i = 0; i < p.GetPointCount(); i++)
             c.setPoint(i, sf::Vector2f(p.GetPoint(i).x, p.GetPoint(i).y));

@@ -1,26 +1,57 @@
 #pragma once
 #include "geometry/main.hpp"
+#include "Dynamicbody.hpp"
 namespace physics
-{	
-	struct Dynamicbody;
+{
 	struct Constraint
 	{
-		Dynamicbody* a;
-		Dynamicbody* b;
-		struct Output
-		{
-			geo::Matrix K; // J * M^-1 * J^T 
-			geo::Matrix J;
-			geo::Vector low;
-			geo::Vector high;
-			geo::Vector rhs; // -(J * (v + M^-1 * Fext * dt) + b)
-			geo::Vector B; // bias
-			geo::Vector Q;
-			geo::Vector lambda;
+		Dynamicbody* a = nullptr;
+		Dynamicbody* b = nullptr;
+		virtual void UpdateConstraint(f64 dt) noexcept = 0;
+	};
 
-		};
-		virtual Output Calculate(f64 dt) = 0;
-		size_t constraintLength = 1;
-		Output lastFrame;
+	struct AnchorConstraint : public Constraint
+	{
+		geo::Vector2 anchorPoint;
+		geo::Vector2 pointOnBody;
+		AnchorConstraint(Dynamicbody* a, geo::Vector2 anchorPoint, geo::Vector2 pointOnBody) noexcept;
+		void UpdateConstraint(f64 dt) noexcept override;
+	};
+
+	struct AngleConstraint : public Constraint
+	{
+		f64 angle;
+		AngleConstraint(Dynamicbody* a, Dynamicbody* b, f64 angle) noexcept;
+		void UpdateConstraint(f64 dt) noexcept override;
+	};
+
+	struct DistanceConstraint : public Constraint
+	{
+		f64 distance;
+		DistanceConstraint(Dynamicbody* a, Dynamicbody* b, f64 distance) noexcept;
+		void UpdateConstraint(f64 dt) noexcept override;
+	};
+
+	struct HingeConstraint : public Constraint
+	{
+		geo::Vector2 aHingePoint;
+		geo::Vector2 bHingePoint;
+		HingeConstraint(Dynamicbody* a, Dynamicbody* b, geo::Vector2 AHingePoint, geo::Vector2 BHinglePoint) noexcept;
+		void UpdateConstraint(f64 dt) noexcept override;
+	};
+
+	struct RopeConstraint : public Constraint
+	{
+		f64 maxDistance;
+		RopeConstraint(Dynamicbody* a, Dynamicbody* b, f64 maxDistance) noexcept;
+		void UpdateConstraint(f64 dt) noexcept override;
+	};
+
+	struct SliderConstraint : public Constraint
+	{
+		geo::Vector2 direction;
+		geo::Vector2 origin;
+		SliderConstraint(Dynamicbody* a) noexcept;
+		void UpdateConstraint(f64 dt) noexcept override;
 	};
 }

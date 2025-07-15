@@ -9,7 +9,9 @@ namespace physics
 			typedef std::chrono::high_resolution_clock clock;
 		public:
 			static inline std::chrono::time_point<clock> time = clock::now();
+			/// Time since last Tick in Milliseconds
 			static inline double deltaTime = -1;
+			///  Time since last Tick in Microseconds
 			static inline double microDeltaTime = -1;
 			static void Tick();
 	};

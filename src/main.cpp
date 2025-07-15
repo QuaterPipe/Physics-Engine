@@ -1,6 +1,6 @@
 #include "../testing/Testing.hpp"
 int main()
 {
-	Demo();
+	PressurebodyTest();
 	return 0;
 }

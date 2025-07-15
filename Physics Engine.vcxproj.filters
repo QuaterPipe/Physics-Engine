@@ -117,9 +117,6 @@
     <ClCompile Include="src\physics\Dynamics\Softbody.cpp">
       <Filter>src\physics\Dynamics</Filter>
     </ClCompile>
-    <ClCompile Include="src\physics\Dynamics\VelocityConstraint.cpp">
-      <Filter>src\physics\Dynamics</Filter>
-    </ClCompile>
     <ClCompile Include="src\physics\Engine\ConstraintSolver.cpp">
       <Filter>src\physics\Engine</Filter>
     </ClCompile>
@@ -183,8 +180,26 @@
     <ClCompile Include="src\physics\Engine\Quadtree.cpp">
       <Filter>src\physics\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="testing\SoftobodyTesting.cpp">
+    <ClCompile Include="testing\SoftbodyTesting.cpp">
       <Filter>testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Dynamics\Integration.cpp">
+      <Filter>src\physics\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Dynamics\Spring.cpp">
+      <Filter>src\physics\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Dynamics\Pressurebody.cpp">
+      <Filter>src\physics\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="testing\SpringTesting.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
+    <ClCompile Include="testing\PressurebodyTesting.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Dynamics\Constraint.cpp">
+      <Filter>src\physics\Dynamics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -392,9 +407,6 @@
     <ClInclude Include="include\physics\Collision\Transform.hpp">
       <Filter>include\physics\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="include\physics\Dynamics\AllConstraints.hpp">
-      <Filter>include\physics\Dynamics</Filter>
-    </ClInclude>
     <ClInclude Include="include\physics\Dynamics\Constraint.hpp">
       <Filter>include\physics\Dynamics</Filter>
     </ClInclude>
@@ -408,9 +420,6 @@
       <Filter>include\physics\Dynamics</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\Dynamics\Softbody.hpp">
-      <Filter>include\physics\Dynamics</Filter>
-    </ClInclude>
-    <ClInclude Include="include\physics\Dynamics\VelocityConstraint.hpp">
       <Filter>include\physics\Dynamics</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\Engine\ConstraintSolver.hpp">
@@ -736,6 +745,18 @@
     </ClInclude>
     <ClInclude Include="include\physics\Engine\Constraint.hpp">
       <Filter>include\physics\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\Integration.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Collision\PointArrayCollider.hpp">
+      <Filter>include\physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\Spring.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\Pressurebody.hpp">
+      <Filter>include\physics\Dynamics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -29,7 +29,6 @@ namespace physics
 			geo::Vector2 Max() const noexcept override;
 			geo::Vector2 Min() const noexcept override;
 			bool Overlaps(const BoxCollider& b) const noexcept;
-			sf::RectangleShape ToShape() const noexcept;
 			virtual Manifold TestCollision(
 				const Transform& transform,
 				const Collider* collider,

@@ -73,7 +73,7 @@ namespace geo
 	bool Equal(f64 a, f64 b) noexcept;
 	/// \brief Quake 3 inverse square root
 	f64 FastInvSqrt(f64 x) noexcept;
-	/// \brief Quake 3 square roo
+	/// \brief Quake 3 square root
 	f64 FastSqrt(f64 x) noexcept;
 	/// \brief Gets the angle between three Vectors.
 	f64 GetAngle(const Vector2& a, const Vector2& b, const Vector2& c) noexcept;
@@ -87,6 +87,8 @@ namespace geo
 	f64 GetSlope(const Vector2& a, const Vector2& b) noexcept;
 	/// \brief Checks if two lines are intersecting are not.
 	bool Intersecting(const Line& a, const Line& b, bool isInfLine = false) noexcept;
+	/// \brief Checks if the two vectors are counterclockwise
+	bool IsCCW(const Vector2& a, const Vector2& b) noexcept;
 	/// \brief Linear Interpolation between two values.
 	f64 Lerp(f64 a, f64 b, f64 t) noexcept;
 	/// \brief returns the maximum value.

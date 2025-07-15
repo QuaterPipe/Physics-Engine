@@ -7,16 +7,20 @@ namespace geo
 	}
 
 	Matrix::Matrix() noexcept
+		: _height(0), _width(0)
 	{
 	}
 
 	Matrix::Matrix(Matrix && mat) noexcept
 	{
 		array = mat.array;
+		_width = mat._width;
+		_height = mat._height;
 		mat.array = NULL;
 	}
 
 	Matrix::Matrix(const Matrix& mat) noexcept
+		: _width(mat._width), _height(mat._height)
 	{
 		array = new f64[mat._height * mat._width];
 		for (size_t i = 0; i < mat._width * mat._height; i++)
@@ -57,8 +61,7 @@ namespace geo
 		array = new f64[other.GetWidth() * other.GetHeight()];
 		_width = other.GetWidth();
 		_height = other.GetHeight();
-		for (size_t i = 0; i < _height * _width; i++)
-			array[i] = other.array[i];
+		std::memcpy(array, other.array, sizeof(f64) * _width * _height);
 		return *this;
 	}
 
@@ -72,15 +75,15 @@ namespace geo
 		return x;
 	}
 
-	i32 Matrix::GetDeterminant() const
+	f64 Matrix::GetDeterminant() const
 	{
 		assert(_width == _height && "Cannot find determinant of non-square matrix.");
 		if (!_width)
 			return 0;
 		if (_width == 1)
-			return (i32)(*this)(0, 0);
+			return (*this)(0, 0);
 		if (_width == 2)
-			return (i32)(*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0);
+			return (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0);
 		i32 dimension = (i32)_width;
 		f64 result = 0;
 		i32 sign = 1;
@@ -102,7 +105,7 @@ namespace geo
 			result = result + sign * (*this)(0, 1) * subMatrix.GetDeterminant();
 			sign = -sign;
 		}
-		return (i32)result;
+		return result;
 	}
 
 	Matrix Matrix::GetTranspose() const

@@ -34,10 +34,12 @@ namespace physics
 	{
 		for (CollisionManifold& c: collisions)
 		{
-			if (!c.a->IsDynamic() || !c.b->IsDynamic()) continue;
+			if (!c.a->IsDynamic() || !c.b->IsDynamic())
+				continue;
 			Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
 			Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
-			if (!a || !b) return;
+			if (!a || !b)
+				return;
 			f64 e = geo::Min(a->restitution, b->restitution);
 			f64 sf = sqrt(SQRD(a->staticFriction) + SQRD(b->staticFriction));
 			f64 kf = sqrt(SQRD(a->kineticFriction) + SQRD(b->kineticFriction));

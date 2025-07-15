@@ -8,4 +8,6 @@ void Demo();
 void DynamicsTest();
 void EngineTest();
 void IntegrationTest();
+void PressurebodyTest();
 void SoftbodyTest();
+void SpringTest();

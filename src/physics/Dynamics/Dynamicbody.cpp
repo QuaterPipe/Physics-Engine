@@ -23,6 +23,10 @@ namespace physics
 			restitution != other.restitution;
 	}
 
+	RK4State::RK4State()
+	{
+	}
+
 	Dynamicbody::Dynamicbody() noexcept
 	: CollisionObject()
 	{
@@ -41,16 +45,18 @@ namespace physics
 
 	Dynamicbody::Dynamicbody(const Dynamicbody& d) noexcept
 	: CollisionObject(d), _mass(d.GetMass()), _inertia(d.GetInertia()), gravity(d.gravity), velocity(d.velocity), drag(d.drag),
-		force(d.force), angularVelocity(d.angularVelocity), angularForce(d.angularForce), physicsMaterial(d.physicsMaterial), usesGravity(d.usesGravity), isStatic(d.isStatic)
+		force(d.force), angularVelocity(d.angularVelocity), angularForce(d.angularForce), physicsMaterial(d.physicsMaterial),
+		usesGravity(d.usesGravity), isStatic(d.isStatic), appliedForce(d.appliedForce), appliedAngularForce(d.appliedAngularForce)
 	{
 		_isDynamic = true;
 		_invMass = _mass ? 1 / _mass : 0;
 	}
 
-	Dynamicbody::Dynamicbody(Dynamicbody && d) noexcept
-	: CollisionObject((CollisionObject &&)d), _mass(d.GetMass()), _inertia(d.GetInertia()),
+	Dynamicbody::Dynamicbody(Dynamicbody&& d) noexcept
+		: CollisionObject((CollisionObject&&)d), _mass(d.GetMass()), _inertia(d.GetInertia()),
 		gravity(d.gravity), velocity(d.velocity), drag(d.drag), force(d.force), angularVelocity(d.angularVelocity),
-		angularForce(d.angularForce), physicsMaterial(d.physicsMaterial), usesGravity(d.usesGravity), isStatic(d.isStatic)
+		angularForce(d.angularForce), physicsMaterial(d.physicsMaterial), usesGravity(d.usesGravity), isStatic(d.isStatic),
+		appliedForce(d.appliedForce), appliedAngularForce(d.appliedAngularForce)
 	{
 		_isDynamic = true;
 		_invMass = _mass ? 1 / _mass : 0;
@@ -71,6 +77,8 @@ namespace physics
 		angularForce = d.angularForce;
 		isStatic = d.isStatic;
 		force = d.force;
+		appliedForce = d.appliedForce;
+		appliedAngularForce = d.appliedAngularForce;
 		return *this;
 	}
 
@@ -83,7 +91,8 @@ namespace physics
 			_inertia == o.GetInertia() && physicsMaterial == o.physicsMaterial &&
 			usesGravity == o.usesGravity && gravity == o.gravity && velocity == o.velocity &&
 			drag == o.drag && angularVelocity == o.angularVelocity && angularForce == o.angularForce &&
-			isStatic == o.isStatic && force == o.force;
+			isStatic == o.isStatic && force == o.force && appliedForce == o.appliedForce &&
+			appliedAngularForce == o.appliedAngularForce;
 	}
 
 	bool Dynamicbody::operator!=(const CollisionObject& other) const noexcept
@@ -95,7 +104,8 @@ namespace physics
 			_inertia != o.GetInertia() || physicsMaterial != o.physicsMaterial ||
 			usesGravity != o.usesGravity || gravity != o.gravity || velocity != o.velocity ||
 			drag != o.drag || angularVelocity != o.angularVelocity || angularForce != o.angularForce ||
-			isStatic != o.isStatic || force != o.force;
+			isStatic != o.isStatic || force != o.force || appliedForce != o.appliedForce ||
+			appliedAngularForce != o.appliedAngularForce;
 	}
 
 	void Dynamicbody::AddConstraint(Constraint* constraint) noexcept
@@ -127,24 +137,6 @@ namespace physics
 		return _mass;
 	}
 
-	
-	void Dynamicbody::IntegrateForces(f64 dt) noexcept
-	{
-		if (isStatic)
-			return;
-		velocity += (force * _invMass + gravity) * (dt / 2.0);
-  		angularVelocity += 0 * angularForce * _invInertia * (dt / 2.0);
-	}
-
-	void Dynamicbody::IntegrateVelocity(f64 dt) noexcept
-	{
-		if (isStatic)
-			return;
-		transform.Translate(velocity * dt);
-		transform.SetRotation(geo::Matrix2(transform.GetAngle() + angularVelocity * dt));
-		IntegrateForces(dt);
-	}
-
 	void Dynamicbody::RemoveConstraint(Constraint* constraint) noexcept
 	{
 		for (auto p = constraints.begin(); p < constraints.end(); p++)
@@ -167,11 +159,5 @@ namespace physics
 	{
 		_mass = mass;
 		_invMass = mass ? 1 / mass : 0;
-	}
-
-	void Dynamicbody::Update(f64 dt) noexcept
-	{
-		for (Joint* j: joints)
-			j->Update(dt);
 	}
 }

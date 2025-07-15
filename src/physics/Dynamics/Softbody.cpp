@@ -1,244 +1,141 @@
 #include "physics/Dynamics/Softbody.hpp"
 #include <iostream>
+const f64 root2 = sqrt(2);
 
 namespace physics
 {
-	f64 Spring::ForceExerting() const noexcept
-	{
-		f64 Fs = (geo::Distance(a->position, b->position) - restingLength) * stiffness;
-		f64 Fd = (b->position - a->position).Normalized().Dot(b->velocity - a->velocity) * dampingFactor;
-		return Fs + Fd;
-	}
-
-	bool Spring::operator==(const Spring& other) const noexcept
-	{
-		return restingLength == other.restingLength && dampingFactor == other.dampingFactor &&
-			stiffness == other.stiffness;
-	}
-
-	bool Spring::operator!=(const Spring& other) const noexcept
-	{
-		return restingLength != other.restingLength || dampingFactor != other.dampingFactor ||
-			stiffness != other.stiffness;
-	}
-
-	MassPoint::MassPoint()
-	{
-	}
-
-	MassPoint::MassPoint(geo::Vector2 position, geo::Vector2 velocity, geo::Vector2 force, f64 invMass, f64 radius) noexcept
-	: position(position), velocity(velocity), force(force), radius(radius), invMass(invMass)
-	{
-	}
-
-	bool MassPoint::operator==(const MassPoint& other) const noexcept
-	{
-		return position == other.position && velocity == other.velocity &&
-			force == other.force && invMass == other.invMass && radius == other.radius;
-	}
-	
-	bool MassPoint::operator!=(const MassPoint& other) const noexcept
-	{
-		return position != other.position || velocity != other.velocity ||
-			force != other.force || invMass != other.invMass || radius != other.radius;
-	}
-	
-
 	Softbody::Softbody() noexcept
-	: Dynamicbody(), width(0), height(0), radiusPerPoint(1)
+	: Dynamicbody(), radiusPerPoint(DEFAULT_POINTMASS_RADIUS)
 	{
 	}
 
 	Softbody::Softbody(const Softbody& s) noexcept
-	: Dynamicbody((const Dynamicbody&) s),
-	width(s.width), height(s.height), radiusPerPoint(s.radiusPerPoint)
+	: Dynamicbody((const Dynamicbody&) s), _originalShape(s.GetOriginalShape()),
+	radiusPerPoint(s.radiusPerPoint), shapeMatchingOn(s.shapeMatchingOn), points(s.points), springs(s.springs)
 	{
-		_isDynamic = true;
-		for (auto vec: s.points)
-		{
-			points.push_back(vec);
-		}
-		for (int i = 0; i < height; i++)
-		{
-			for (int j = 0; j < width; j++)
-			{
-				Spring spr = s.springs.size() ? s.springs[0] : Spring();
-				spr.a = &points.at(i).at(j);
-				if (i)
-				{
-					spr.b = &points.at(i - 1).at(j);
-					springs.push_back(spr);
-				}
-				if (j != width - 1)
-				{
-					spr.b = &points.at(i).at(j + 1);
-					springs.push_back(spr);
-				}
-				spr.restingLength = (sqrt(2) * spr.restingLength);
-				if (i + 1 < height && j + 1 < width)
-				{
-					spr.b = &points.at(i + 1).at(j + 1);
-					springs.push_back(spr);
-				}
-				if (i - 1 >= 0 && j + 1 < width)
-				{
-					spr.b = &points.at(i - 1).at(j + 1);
-					springs.push_back(spr);
-				}
-			}
-		}
 	}
 
 	Softbody::Softbody(Softbody && s) noexcept
-	: Dynamicbody((Dynamicbody &&) s), points(s.points), springs(s.springs),
-	width(s.width), height(s.height), radiusPerPoint(s.radiusPerPoint)
+	: Dynamicbody((Dynamicbody &&) s), _originalShape(s.GetOriginalShape()), points(s.points), springs(s.springs),
+	radiusPerPoint(s.radiusPerPoint), shapeMatchingOn(s.shapeMatchingOn)
 	{
+
 	}
 
-	Softbody::Softbody(const Transform& t, int width, int height, const Spring& spring, const f64& spacing,
+	Softbody::Softbody(const Transform& t, size_t width, size_t height, const PointMassSpring& referenceSpring, const PointMassSpring& shapeSpring,
 		const f64& radiusPerPoint, const f64& invMassPerPoint) noexcept
-	: Dynamicbody(BoxCollider(), t, false), width(width), height(height), radiusPerPoint(radiusPerPoint)
+	: Dynamicbody(BoxCollider(), t, false), radiusPerPoint(radiusPerPoint), pointCount(width * height), shapeSpring(shapeSpring)
 	{
-		geo::Vector2 vec(0, height * spacing);
-		for (int i = 0; i < height; i++)
+		const f64 spacing = referenceSpring.restingLength;
+		geo::Vector2 vec(width * spacing * -0.5, height * spacing * 0.5);
+		for (size_t i = 0; i < height; i++)
 		{
-			std::vector<MassPoint> arr;
-			for (int j = 0; j < width; j++)
+			std::vector<PointMass> arr;
+			for (size_t j = 0; j < width; j++)
 			{
-				MassPoint m;
+				PointMass m;
 				m.position = vec;
 				m.invMass = invMassPerPoint;
 				m.radius = radiusPerPoint;
-				arr.push_back(m);
+				points.push_back(m);
 				vec.x += spacing;
 			}
-			points.push_back(arr);
-			vec.x = 0;
+			vec.x = width * spacing * -0.5;
 			vec.y -= spacing;
 		}
 		for (int i = 0; i < height; i++)
 		{
 			for (int j = 0; j < width; j++)
 			{
-				Spring s;
-				s.stiffness = spring.stiffness;
+				PointMassSpring s;
+				s.stiffness = referenceSpring.stiffness;
 				s.restingLength = spacing;
-				s.dampingFactor = spring.dampingFactor;
-				s.a = &points.at(i).at(j);
+				s.dampingFactor = referenceSpring.dampingFactor;
+				s.a = &points.at(i * width + j);
+				s.aIndex = i * width + j;
 				if (i)
 				{
-					s.b = &points.at(i - 1).at(j);
+					s.b = &points.at((i - 1) * width + j);
+					s.bIndex = (i - 1) * width + j;
+					points.at(s.aIndex).AddSpring(s, true);
+					points.at(s.bIndex).AddSpring(s, false);
 					springs.push_back(s);
 				}
 				if (j != width - 1)
 				{
-					s.b = &points.at(i).at(j + 1);
+					s.b = &points.at(i * width + j + 1);
+					s.bIndex = i * width + j + 1;
+					points.at(s.aIndex).AddSpring(s, true);
+					points.at(s.bIndex).AddSpring(s, false);
 					springs.push_back(s);
 				}
 				s.restingLength = (sqrt(2) * spacing);
 				if (i + 1 < height && j + 1 < width)
 				{
-					s.b = &points.at(i + 1).at(j + 1);
+					s.b = &points.at((i + 1) * width + j + 1);
+					s.bIndex = (i + 1) * width + j + 1;
+					points.at(s.aIndex).AddSpring(s, true);
+					points.at(s.bIndex).AddSpring(s, false);
 					springs.push_back(s);
 				}
 				if (i - 1 >= 0 && j + 1 < width)
 				{
-					s.b = &points.at(i - 1).at(j + 1);
+					s.b = &points.at((i - 1) * width + j + 1);
+					s.bIndex = (i - 1) * width + j + 1;
+					points.at(s.aIndex).AddSpring(s, true);
+					points.at(s.bIndex).AddSpring(s, false);
 					springs.push_back(s);
 				}
 			}
 		}
-		MeshCollider m;
-		for (int i = 0; i < height - 1; i++)
+		UpdateTransform();
+		_originalShape = points;
+		for (size_t i = 0; i < pointCount; i++)
 		{
-			for (int j = 0; j < width - 1; j++)
-			{
-				geo::Vector2 a = points[i][j].position;
-				geo::Vector2 b = points[i][j + 1].position;
-				geo::Vector2 c = points[i + 1][j + 1].position;
-				geo::Vector2 d = points[i + 1][j].position;
-				PolygonCollider p(a, b, c, {d});
-				_colliders.push_back(p);
-			}
+			PointMassSpring s = shapeSpring;
+			s.a = &points[i];
+			s.b = &_originalShape[i];
+			points[i].AddCorrectionSpring(s, true);
+			points[i].correctionOn = shapeMatchingOn;
 		}
-		for (size_t i = 0; i < _colliders.size(); i++)
-		{
-			m.colliders.push_back(&_colliders.at(i));
-		}
-		SetCollider(m);
+		_pointStates = std::vector<RK4State>(pointCount);
 	}
 
 	Softbody& Softbody::operator=(const Softbody& s) noexcept
 	{
 		Dynamicbody::operator=((const Dynamicbody&) s);
+		pointCount = s.pointCount;
+		_originalShape = s.GetOriginalShape();
+		shapeMatchingOn = s.shapeMatchingOn;
 		radiusPerPoint = s.radiusPerPoint;
 		points = s.points;
-		for (int i = 0; i < height; i++)
+		springs = s.springs;
+		shapeSpring = s.shapeSpring;
+		for (size_t i = 0; i < pointCount; i++)
 		{
-			for (int j = 0; j < width; j++)
-			{
-				Spring spr = s.springs.size() ? s.springs[0] : Spring();
-				spr.a = &points.at(i).at(j);
-				if (i)
-				{
-					spr.b = &points.at(i - 1).at(j);
-					springs.push_back(spr);
-				}
-				if (j != width - 1)
-				{
-					spr.b = &points.at(i).at(j + 1);
-					springs.push_back(spr);
-				}
-				spr.restingLength = (sqrt(2) * spr.restingLength);
-				if (i + 1 < height && j + 1 < width)
-				{
-					spr.b = &points.at(i + 1).at(j + 1);
-					springs.push_back(spr);
-				}
-				if (i - 1 >= 0 && j + 1 < width)
-				{
-					spr.b = &points.at(i - 1).at(j + 1);
-					springs.push_back(spr);
-				}
-			}
+			springs[i].a = &points[springs[i].aIndex];
+			springs[i].b = &points[springs[i].bIndex];
 		}
+		_pointStates = std::vector<RK4State>(pointCount);
 		return *this;
 	}
 
 	Softbody& Softbody::operator=(Softbody && s) noexcept
 	{
 		Dynamicbody::operator=((Dynamicbody &&)s);
+		pointCount = s.pointCount;
+		_originalShape = s.GetOriginalShape();
+		shapeMatchingOn = s.shapeMatchingOn;
 		radiusPerPoint = s.radiusPerPoint;
 		points = s.points;
-		for (int i = 0; i < height; i++)
+		springs = s.springs;
+		shapeSpring = s.shapeSpring;
+		for (size_t i = 0; i < pointCount; i++)
 		{
-			for (int j = 0; j < width; j++)
-			{
-				Spring spr = s.springs.size() ? s.springs[0] : Spring();
-				spr.a = &points.at(i).at(j);
-				if (i)
-				{
-					spr.b = &points.at(i - 1).at(j);
-					springs.push_back(spr);
-				}
-				if (j != width - 1)
-				{
-					spr.b = &points.at(i).at(j + 1);
-					springs.push_back(spr);
-				}
-				spr.restingLength = (sqrt(2) * spr.restingLength);
-				if (i + 1 < height && j + 1 < width)
-				{
-					spr.b = &points.at(i + 1).at(j + 1);
-					springs.push_back(spr);
-				}
-				if (i - 1 >= 0 && j + 1 < width)
-				{
-					spr.b = &points.at(i - 1).at(j + 1);
-					springs.push_back(spr);
-				}
-			}
+			springs[i].a = &points[springs[i].aIndex];
+			springs[i].b = &points[springs[i].bIndex];
 		}
+		_pointStates = std::vector<RK4State>(pointCount);
 		return *this;
 	}
 
@@ -248,8 +145,8 @@ namespace physics
 			return false;
 		auto o = dynamic_cast<const Softbody&>(other);
 		return Dynamicbody::operator==((const Dynamicbody&)other) && (o.points == this->points) && 
-			(o.springs == this->springs) && (o.width == this->width) &&
-			(o.height == this->height) && (o.usesGravity == this->usesGravity);
+			(o.springs == this->springs) && (o.usesGravity == this->usesGravity) && (o.shapeMatchingOn == this->shapeMatchingOn)
+			&& (o.GetOriginalShape() == _originalShape);
 	}
 
 	bool Softbody::operator!=(const CollisionObject& other) const noexcept
@@ -258,43 +155,28 @@ namespace physics
 			return true;
 		auto o = dynamic_cast<const Softbody&>(other);
 		return Dynamicbody::operator!=(other) || (o.points != this->points) || 
-			(o.springs != this->springs) || (o.width != this->width) ||
-			(o.height != this->height) || (o.usesGravity != this->usesGravity);
-	}
-
-	void Softbody::ApplySpringForces(f64 dt) noexcept
-	{
-		for (Spring& s: springs)
-		{
-			s.a->force += s.ForceExerting() * (s.b->position - s.a->position).Normalized() * dt;
-			s.b->force += s.ForceExerting() * (s.a->position - s.b->position).Normalized() * dt;	
-			if ((s.a->force * s.a->invMass).GetMagnitudeSquared() > SQRD(EPSILON) ||( s.b->force * s.b->invMass).GetMagnitudeSquared() > SQRD(EPSILON))
-				pointsChanged = true;
-		}
+			(o.springs != this->springs) || (o.usesGravity != this->usesGravity) || (o.shapeMatchingOn != this->shapeMatchingOn)
+			|| (o.GetOriginalShape() != _originalShape);
 	}
 
 	void Softbody::ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2& contactVec) noexcept
 	{
 		if (contactVec == geo::Vector2::Infinity)
 		{
-			for (auto& vec: points)
+			for (auto& m: points)
 			{
-				for (MassPoint& m: vec)
-					m.velocity += impulse * m.invMass;
+				m.velocity += impulse * m.invMass;
 			}
 		}
 		else
 		{
-			for (auto& vec: points)
+			for (auto& m: points)
 			{
-				for (MassPoint& m: vec)
+				if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
 				{
-					if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
-					{
-						m.velocity += impulse * m.invMass;
-						pointsChanged = true;
-						return;
-					}
+					m.velocity += impulse * m.invMass;
+					_pointsChanged = true;
+					return;
 				}
 			}
 		}
@@ -304,24 +186,20 @@ namespace physics
 	{
 		if (contactVec == geo::Vector2::Infinity)
 		{
-			for (auto& vec: points)
+			for (auto& m: points)
 			{
-				for (MassPoint& m: vec)
-					m.force += force;
+				m.force += force;
 			}
 		}
 		else
 		{
-			for (auto& vec: points)
+			for (auto& m: points)
 			{
-				for (MassPoint& m: vec)
+				if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
 				{
-					if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
-					{
-						m.force += force;
-						pointsChanged = true;
-						return;
-					}
+					m.force += force;
+					_pointsChanged = true;
+					return;
 				}
 			}
 		}
@@ -329,12 +207,12 @@ namespace physics
 
 	void Softbody::ApplyAngularForce(f64 force) noexcept
 	{
-		angularForce += force;
+		appliedAngularForce += force;
 	}
 
 	void Softbody::ApplyAngularImpulse(f64 force) noexcept
 	{
-		angularVelocity += force;
+		angularVelocity += force * _invInertia;
 	}
 
 	CollisionObject* Softbody::Clone() const noexcept
@@ -342,14 +220,47 @@ namespace physics
 		return (CollisionObject*)new Softbody(*this);
 	}
 
+	f64 Softbody::ComputeAngularForce(f64 orient, f64 angVelocity) const noexcept
+	{
+		return appliedAngularForce;
+	}
+
+
+	geo::Vector2 Softbody::ComputeForce(const geo::Vector2& position, const geo::Vector2& velocity) const noexcept
+	{
+		return appliedForce + (usesGravity ? gravity : geo::Vector2(0 ,0));
+	}
+
+
+	void Softbody::DerivePositionAndAngle() noexcept
+	{
+		derivedPos.Set(0, 0);
+		for (size_t i = 0; i < pointCount; i++)
+		{
+			derivedPos += points[i].position;
+			derivedVel += points[i].velocity;
+		}
+		derivedPos /= pointCount;
+		f64 a = 0, b = 0;
+		for (size_t i = 0; i < pointCount; i++)
+		{
+			geo::Vector2 q0 = _originalShape[i].position - _originalCenter;
+			geo::Vector2 q = points[i].position - derivedPos;
+			a += q.Dot(q0);
+			b += q0.Cross(q);
+		}
+		derivedAngle = atan2(b, a);
+
+	}
+
 	void Softbody::FixCollapsing() noexcept
 	{
-		for (Spring& s: springs)
+		for (PointMassSpring& s: springs)
 		{
-			f64 dis = geo::Distance(s.a->position, s.b->position);
+			f64 dis = geo::DistanceSquared(s.a->position, s.b->position);
 			if (!dis)
 				continue;
-			if (dis < s.a->radius + s.b->radius)
+			if (dis < SQRD(s.a->radius + s.b->radius))
 			{
 				s.a->position += (s.b->position - s.a->position).Normalized() * ((s.a->radius + s.b->radius) - dis);
 				s.a->velocity.Reflect((s.b->position - s.a->position).Normalized());
@@ -357,52 +268,105 @@ namespace physics
 		}
 	}
 
-	void Softbody::Update(f64 dt) noexcept
+	PointMass* Softbody::GetClosestMassPoint(const geo::Vector2& point) const noexcept
+	{
+		PointMass* closest = nullptr;
+		f64 closestDis = std::numeric_limits<f64>::infinity();
+		for (auto& m : points)
+		{
+			const f64 dis = geo::DistanceSquared(m.position + transform.GetPosition(), point);
+			if (dis < closestDis)
+			{
+				closest = const_cast<PointMass*>(&m);
+				closestDis = dis;
+				if (closestDis <= EPSILON)
+					return closest;
+			}
+		}
+		return closest;
+	}
+
+	const std::vector<PointMass>& Softbody::GetOriginalShape() const noexcept
+	{
+		return _originalShape;
+	}
+
+	void Softbody::Update(f64 dt, int RK4Step) noexcept
 	{
 		if (!isStatic)
 		{
-			velocity += (force * _invMass) * (dt / 2.0);
-			angularVelocity += (angularForce * _invInertia) * (dt / 2.0);
-			transform.Translate(velocity * dt);
-			transform.SetRotation(geo::Matrix2(transform.GetAngle() + angularVelocity * dt));
-			angularForce = 0;
-			force.Set(0, 0);
-			ApplySpringForces(dt);
-			for (std::vector<MassPoint>& mVec: points)
+			switch (RK4Step)
 			{
-				for (MassPoint& m: mVec)
-				{
-					m.velocity += m.force * m.invMass * dt;
-					m.position += m.velocity * dt;
-					m.force.Set(0, 0);
-				}
+				case 0:
+					for (size_t i = 0; i < pointCount; i++)
+					{
+						_pointStates[i].a1 = points[i].ComputeForce(points[i].position, points[i].velocity);
+						_pointStates[i].k1X = points[i].velocity;
+						_pointStates[i].k1V = _pointStates[i].a1;
+					}
+					break;
+				case 1:
+					for (size_t i = 0; i < pointCount; i++)
+					{
+						_pointStates[i].tmpX = points[i].position + 0.5 * dt * _pointStates[i].k1X;
+						_pointStates[i].tmpV = points[i].velocity + 0.5 * dt * _pointStates[i].k1V;
+						_pointStates[i].a2 = points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
+						_pointStates[i].k2X = _pointStates[i].tmpV;
+						_pointStates[i].k2V = _pointStates[i].a2;
+					}
+					break;
+				case 2:
+					for (size_t i = 0; i < pointCount; i++)
+					{
+						_pointStates[i].tmpX = points[i].position + 0.5 * dt * _pointStates[i].k2X;
+						_pointStates[i].tmpV = points[i].velocity + 0.5 * dt * _pointStates[i].k2V;
+						_pointStates[i].a3 = points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
+						_pointStates[i].k3X = _pointStates[i].tmpV;
+						_pointStates[i].k3V = _pointStates[i].a3;
+					}
+					break;
+				case 3:
+					for (size_t i = 0; i < pointCount; i++)
+					{
+						_pointStates[i].tmpX = points[i].position + dt * _pointStates[i].k3X;
+						_pointStates[i].tmpV = points[i].velocity + dt * _pointStates[i].k3V;
+						_pointStates[i].a4 = points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
+						_pointStates[i].k4X = _pointStates[i].tmpV;
+						_pointStates[i].k4V = _pointStates[i].a4;
+
+						points[i].position += (dt / 6.0) * (_pointStates[i].k1X + 2 * _pointStates[i].k2X + 2 * _pointStates[i].k3X + _pointStates[i].k4X);
+						points[i].velocity += (dt / 6.0) * (_pointStates[i].k1V + 2 * _pointStates[i].k2V + 2 * _pointStates[i].k3V + _pointStates[i].k4V);
+						points[i].force.Set(0, 0);
+					}
+					DerivePositionAndAngle();
+					UpdateTransform();
+					if (_pointsChanged)
+						UpdateCollider();
+					FixCollapsing();
+					break;
+				default:
+					break;
 			}
-			if (pointsChanged)
-				UpdateCollider();
 		}
 	}
 
 	void Softbody::UpdateCollider() noexcept
 	{
-		MeshCollider m;
-		_colliders.clear();
-		for (int i = 0; i < height - 1; i++)
+	}
+
+	void Softbody::UpdateTransform() noexcept
+	{
+		geo::Vector2 locAvg = transform.GetPosition() * pointCount;
+		for (size_t i = 0; i < pointCount; i++)
 		{
-			for (int j = 0; j < width - 1; j++)
-			{
-				geo::Vector2 a = points[i][j].position;
-				geo::Vector2 b = points[i][j + 1].position;
-				geo::Vector2 c = points[i + 1][j + 1].position;
-				geo::Vector2 d = points[i + 1][j].position;
-				PolygonCollider p(a, b, c, {d});
-				_colliders.push_back(p);
-			}
+			locAvg += points[i].position;
 		}
-		for (size_t i = 0; i < _colliders.size(); i++)
+		locAvg /= pointCount;
+		geo::Vector2 diff = locAvg - transform.GetPosition();
+		for (size_t i = 0; i < pointCount; i++)
 		{
-			m.colliders.push_back(&_colliders.at(i));
+			points[i].position -= diff;
 		}
-		SetCollider(m);
-		pointsChanged = false;
+		transform.SetPosition(locAvg);
 	}
 }

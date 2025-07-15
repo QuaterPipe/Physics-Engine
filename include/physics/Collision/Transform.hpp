@@ -45,8 +45,6 @@ namespace physics
 			void Scale(f64 xScale, f64 yScale) noexcept;
 			void Translate(geo::Vector2 offset) noexcept;
 			geo::Vector2 TransformVector(const geo::Vector2& v) const noexcept;
-			static void RK4Integrate(f64* position, f64* velocity, f64* acceleration, f64 dt) noexcept;
-			static void SymplecticEulerIntegrate(f64* position, f64* velocity, f64* acceleration, f64 dt) noexcept;
 			bool IsUnitTransform() const noexcept;
 	};
 }

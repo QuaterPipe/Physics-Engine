@@ -32,7 +32,8 @@ namespace physics
 		{
 			_min = _points[i] < _min ? _points[i] : _min;
 			_max = _points[i] > _max ? _points[i] : _max;
-			geo::Vector2 norm = _points[(i + 1) % _pointCount] - _points[i];
+			size_t ind = i == _pointCount - 1 ? 0 : i + 1;
+			geo::Vector2 norm = _points[ind] - _points[i];
 			norm.Set(norm.y, -norm.x);
 			norm.Normalize();
 			_normals[i] = norm;
@@ -45,7 +46,7 @@ namespace physics
 		p.Release();
 	}
 
-	PolygonCollider::PolygonCollider(f64 sideLength, unsigned long count) noexcept
+	PolygonCollider::PolygonCollider(f64 sideLength, size_t count) noexcept
 		: _pointCount(geo::Min(count, MAX_POLYGONCOLLIDER_SIZE)), _center(0, 0)
 	{
 		assert(count >= 3 && sideLength > EPSILON);
@@ -66,7 +67,8 @@ namespace physics
 		{
 			_min = _points[i] < _min ? _points[i] : _min;
 			_max = _points[i] > _max ? _points[i] : _max;
-			geo::Vector2 norm = _points[(i + 1) % _pointCount] - _points[i];
+			size_t ind = i == _pointCount - 1 ? 0 : i + 1;
+			geo::Vector2 norm = _points[ind] - _points[i];
 			norm.Set(norm.y, -norm.x);
 			norm.Normalize();
 			_normals[i] = norm;
@@ -98,7 +100,8 @@ namespace physics
 		{
 			_min = _points[i] < _min ? _points[i] : _min;
 			_max = _points[i] > _max ? _points[i] : _max;
-			geo::Vector2 norm = _points[(i + 1) % _pointCount] - _points[i];
+			size_t ind = i == _pointCount - 1 ? 0 : i + 1;
+			geo::Vector2 norm = _points[ind] - _points[i];
 			norm.Set(norm.y, -norm.x);
 			norm.Normalize();
 			_normals[i] = norm;
@@ -151,7 +154,8 @@ namespace physics
 		{
 			_min = _points[i] < _min ? _points[i] : _min;
 			_max = _points[i] > _max ? _points[i] : _max;
-			geo::Vector2 norm = _points[(i + 1) % _pointCount] - _points[i];
+			size_t ind = i == _pointCount - 1 ? 0 : i + 1;
+			geo::Vector2 norm = _points[ind] - _points[i];
 			norm.Set(norm.y, -norm.x);
 			norm.Normalize();
 			_normals[i] = norm;
@@ -192,7 +196,7 @@ namespace physics
 		return result;
 	}
 
-	void PolygonCollider::ComputeMass(f64 density, f64* mass, f64* inertia) noexcept
+	void PolygonCollider::ComputeMass(f64 density, f64* mass, f64* inertia) const noexcept
 	{
 		geo::Vector2 c;
 		f64 area = 0.0;
@@ -202,7 +206,7 @@ namespace physics
 		{
 			geo::Vector2 p1(_points[i]);
 			size_t i2 = i + 1 < _pointCount ? i + 1 : 0;
-			geo::Vector2 p2(_points[i]);
+			geo::Vector2 p2(_points[i2]);
 			f64 D = p1.Cross(p2);
 			f64 triangleArea = 0.5 * D;
 			area += triangleArea;
@@ -261,9 +265,9 @@ namespace physics
 
 	std::vector<geo::Vector2> PolygonCollider::GetNormals() const noexcept
 	{
-		std::vector<geo::Vector2> v;
+		std::vector<geo::Vector2> v(_pointCount);
 		for (int i = 0; i < _pointCount; i++)
-			v.push_back(_normals[i]);
+			v[i] = _normals[i];
 		return v;
 	}
 
@@ -334,7 +338,8 @@ namespace physics
 		}
 		for (size_t i = 0; i < _pointCount; i++)
 		{
-			geo::Vector2 norm = _points[(i + 1) % _pointCount] - _points[i];
+			size_t ind = i == _pointCount - 1 ? 0 : i + 1;
+			geo::Vector2 norm = _points[ind] - _points[i];
 			norm.Set(norm.y, -norm.x);
 			norm.Normalize();
 			_normals[i] = norm;

@@ -214,65 +214,6 @@ namespace physics
 		return result;
 	}
 
-	void Transform::SymplecticEulerIntegrate(f64* _position, f64* velocity, f64* acceleration, f64 dt) noexcept
-	{
-		*velocity += *acceleration * dt;
-		*_position += *velocity * dt;
-	}
-
-	struct State
-	{
-		f64 x, v;
-	};
-
-	struct Derivative
-	{
-		f64 dx, dv;
-	};
-	
-	Derivative Evaluate(State initial, f64 dt, Derivative d, f64 acceleration)
-	{
-
-		State state;
-		state.x = initial.x + d.dx * dt;
-		state.v = initial.v + d.dv * dt;
-
-		Derivative output;
-		output.dx = state.v;
-		output.dv = acceleration;
-		return output;
-	}
-
-	void Integrate(State& state,
-		f64 dt, f64 acceleration) noexcept
-	{
-		Derivative a, b, c, d;
-
-		a = Evaluate(state, 0.0, Derivative(), acceleration);
-		b = Evaluate(state, dt * 0.5, a, acceleration);
-		c = Evaluate(state, dt * 0.5, b, acceleration);
-		d = Evaluate(state, dt, c, acceleration);
-
-		float dxdt = 1.0 / 6.0 *
-			(a.dx + 2.0 * (b.dx + c.dx) + d.dx);
-
-		float dvdt = 1.0 / 6.0 *
-			(a.dv + 2.0 * (b.dv + c.dv) + d.dv);
-
-		state.x = state.x + dxdt * dt;
-		state.v = state.v + dvdt * dt;
-	}
-
-	void Transform::RK4Integrate(f64* _position, f64* velocity, f64* acceleration, f64 dt) noexcept
-	{
-		State s;
-		s.x = *_position;
-		s.v = *velocity;
-		Integrate(s, dt, *acceleration);
-		*_position = s.x;
-		*velocity = s.v;
-	}
-
 	bool Transform::IsUnitTransform() const noexcept
 	{
 		return _position == geo::Vector2::Origin && _centerOfMass == geo::Vector2::Origin && !_rotation.Angle() &&

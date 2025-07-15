@@ -47,7 +47,7 @@ namespace geo
 
 	f64 Vector2::Angle(const Vector2& other) const noexcept
 	{
-		return acos(Dot(other) / (GetMagnitude() * other.GetMagnitude()));
+		return atan2(Cross(other), Dot(other));
 	}
 
 	f64 Vector2::Cross(const Vector2& v) const noexcept
@@ -89,6 +89,11 @@ namespace geo
 		if (!x && !y)
 			return 0;
 		return x * x + y * y;
+	}
+
+	Vector2 Vector2::GetPerpendicular() const noexcept
+	{
+		return Vector2(-y, x);
 	}
 
 	Vector2 Vector2::Lerp(const Vector2& other, f64 t) const noexcept

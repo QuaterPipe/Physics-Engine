@@ -72,8 +72,8 @@ namespace physics
 
 	std::vector<geo::Vector2> CircleCollider::GetPoints(const Transform& t) const noexcept
 	{
-		std::vector<geo::Vector2> v;
-		v.push_back(t.TransformVector(center));
+		std::vector<geo::Vector2> v(1);
+		v[0] = t.TransformVector(center);
 		return v;
 	}
 	

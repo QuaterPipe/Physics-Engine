@@ -6,7 +6,6 @@
 namespace physics
 {
 	
-	//0x04
 	struct PolygonCollider : public Collider
 	{
 		private:
@@ -22,13 +21,13 @@ namespace physics
 			PolygonCollider(const BoxCollider& b) noexcept;
 			PolygonCollider(const PolygonCollider& p) noexcept;
 			PolygonCollider(PolygonCollider&& p) noexcept;
-			PolygonCollider(f64 sideLength, unsigned long count=3) noexcept;
+			PolygonCollider(f64 sideLength, size_t count=3) noexcept;
 			PolygonCollider(const geo::Vector2& a, const geo::Vector2& b, const geo::Vector2& c, std::initializer_list<geo::Vector2> extra={}) noexcept;
 			PolygonCollider(const std::vector<geo::Vector2>& points);
 			~PolygonCollider() noexcept;
 			virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept override;
 			Collider* Clone() const noexcept override;
-			void ComputeMass(f64 density, f64* mass, f64* inertia) noexcept;
+			void ComputeMass(f64 density, f64* mass, f64* inertia) const noexcept;
 			virtual bool Contains(const geo::Vector2& point, const Transform& t = Transform()) const noexcept override;
 			virtual geo::Vector2 GetCenter() const noexcept override;
 			bool operator==(const Collider& c) const noexcept override;

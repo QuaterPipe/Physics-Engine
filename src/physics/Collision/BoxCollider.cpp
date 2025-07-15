@@ -110,7 +110,7 @@ namespace physics
 		std::vector<geo::Vector2> v(4);
 		v[0] = t.TransformVector(pos - (dimensions * 0.5));
 		v[1] = t.TransformVector(geo::Vector2(x + (width * 0.5), y - (height * 0.5)));
-		v[2] = t.TransformVector(pos + (dimensions / 2));
+		v[2] = t.TransformVector(pos + (dimensions * 0.5));
 		v[3] = t.TransformVector(geo::Vector2(x - (width * 0.5), y + (height * 0.5)));
 		return v;
 	}

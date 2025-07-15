@@ -147,15 +147,14 @@ namespace physics
 
 	void DynamicsWorld::IntegrateObjects(f64 dt) noexcept
 	{
-		for (auto& db: _dynamicbodies)
-			db->IntegrateVelocity(dt);
 	}
 	
 	void DynamicsWorld::Update(f64 dt) noexcept
 	{
 		ApplyGravity(dt);
-		for (auto& db : _dynamicbodies)
-			db->Update(dt);
+		for (int i = 0; i < 4; i++)
+			for (auto& db : _dynamicbodies)
+				db->Update(dt, i);
 		quadtree.Update();
 		CheckCollisions(dt);
 		SendCollisionCallBacks(dt);

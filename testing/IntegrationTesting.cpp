@@ -12,8 +12,8 @@ void IntegrationTest()
 	f64 dt = 0.1;
 	for (int i = 0; i < 1.0 / dt; i++)
 	{
-		Transform::SymplecticEulerIntegrate(&Ax, &Av, &Aa, dt);
-		Transform::RK4Integrate(&Bx, &Bv, &Ba, dt);
+		SymplecticEulerIntegrate(&Ax, &Av, &Aa, dt);
+		//RK4Integrate(&Bx, &Bv, &Ba, dt);
 		std::cout << "A pos: " << Ax << " B pos: " << Bx << "  A vel: " << Av << " B vel: " << Bv << "\n";
 	}
 

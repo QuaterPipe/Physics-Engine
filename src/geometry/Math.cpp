@@ -26,7 +26,7 @@ namespace geo
 		Vector2* points = new Vector2[vertices.size() + 1];
 		for (size_t i = 0; i < vertices.size(); i++)
 			points[i] = vertices[i];
-		int ind = vertices.size();
+		size_t ind = vertices.size();
 		int add = 0;
 		if (vertices.size())
 		{
@@ -236,6 +236,11 @@ namespace geo
 	bool Intersecting(const Line& a, const Line& b, bool isInfLine) noexcept
 	{
 		return PointOfIntersect(a, b, isInfLine) != Vector2::Infinity;
+	}
+
+	bool IsCCW(const Vector2& a, const Vector2& b) noexcept
+	{
+		return b.Dot(a.GetPerpendicular()) >= 0;
 	}
 
 	f64 Lerp(f64 a, f64 b, f64 t) noexcept

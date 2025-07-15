@@ -43,11 +43,14 @@
     <ClCompile Include="src\physics\Collision\PolygonCollider.cpp" />
     <ClCompile Include="src\physics\Collision\PolygonCollision.cpp" />
     <ClCompile Include="src\physics\Collision\Transform.cpp" />
+    <ClCompile Include="src\physics\Dynamics\Constraint.cpp" />
     <ClCompile Include="src\physics\Dynamics\Dynamicbody.cpp" />
+    <ClCompile Include="src\physics\Dynamics\Integration.cpp" />
     <ClCompile Include="src\physics\Dynamics\Joint.cpp" />
+    <ClCompile Include="src\physics\Dynamics\Pressurebody.cpp" />
     <ClCompile Include="src\physics\Dynamics\Rigidbody.cpp" />
     <ClCompile Include="src\physics\Dynamics\Softbody.cpp" />
-    <ClCompile Include="src\physics\Dynamics\VelocityConstraint.cpp" />
+    <ClCompile Include="src\physics\Dynamics\Spring.cpp" />
     <ClCompile Include="src\physics\Engine\ConstraintSolver.cpp" />
     <ClCompile Include="src\physics\Engine\DynamicsWorld.cpp" />
     <ClCompile Include="src\physics\Engine\PhysicsSolver.cpp" />
@@ -59,7 +62,9 @@
     <ClCompile Include="testing\DynamicsTesting.cpp" />
     <ClCompile Include="testing\EngineTesting.cpp" />
     <ClCompile Include="testing\IntegrationTesting.cpp" />
-    <ClCompile Include="testing\SoftobodyTesting.cpp" />
+    <ClCompile Include="testing\PressurebodyTesting.cpp" />
+    <ClCompile Include="testing\SoftbodyTesting.cpp" />
+    <ClCompile Include="testing\SpringTesting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
@@ -134,16 +139,18 @@
     <ClInclude Include="include\physics\Collision\Collision.hpp" />
     <ClInclude Include="include\physics\Collision\CollisionObject.hpp" />
     <ClInclude Include="include\physics\Collision\MeshCollider.hpp" />
+    <ClInclude Include="include\physics\Collision\PointArrayCollider.hpp" />
     <ClInclude Include="include\physics\Collision\PolygonCollider.hpp" />
     <ClInclude Include="include\physics\Collision\Transform.hpp" />
-    <ClInclude Include="include\physics\Dynamics\AllConstraints.hpp" />
     <ClInclude Include="include\physics\Dynamics\Constraint.hpp" />
     <ClInclude Include="include\physics\Dynamics\Dynamicbody.hpp" />
     <ClInclude Include="include\physics\Dynamics\ForceGenerator.hpp" />
+    <ClInclude Include="include\physics\Dynamics\Integration.hpp" />
+    <ClInclude Include="include\physics\Dynamics\Pressurebody.hpp" />
     <ClInclude Include="include\physics\Dynamics\Rigidbody.hpp" />
     <ClInclude Include="include\physics\Dynamics\SocketConstraint.hpp" />
     <ClInclude Include="include\physics\Dynamics\Softbody.hpp" />
-    <ClInclude Include="include\physics\Dynamics\VelocityConstraint.hpp" />
+    <ClInclude Include="include\physics\Dynamics\Spring.hpp" />
     <ClInclude Include="include\physics\Engine\Constraint.hpp" />
     <ClInclude Include="include\physics\Engine\ConstraintSolver.hpp" />
     <ClInclude Include="include\physics\Engine\DynamicsWorld.hpp" />

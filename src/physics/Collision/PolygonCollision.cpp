@@ -15,7 +15,7 @@ namespace physics::algo
 
     int Clip(const geo::Vector2& n, f64 c, geo::Vector2* face)
     {
-        size_t sp = 0;
+        int sp = 0;
         geo::Vector2 out[2] = {
             face[0],
             face[1]
@@ -31,15 +31,15 @@ namespace physics::algo
             sp++;
         }
         face[0] = out[0];
+        face[1] = out[1];
         assert(sp != 3);
         return sp;
-        face[1] = out[1];
     }
 
     f64 FindAxisLeastPenetration(size_t* faceIndex, const PolygonCollider* a, const Transform& ta, const PolygonCollider* b, const Transform& tb)
     {
         f64 bestDistance = MIN;
-        size_t bestIndex;
+        size_t bestIndex = 0;
         geo::Matrix2 aRot = ta.GetRotation();
         geo::Matrix2 bRot = tb.GetRotation();
         geo::Matrix2 bRotxScale = bRot * geo::Matrix2(tb.GetScale().x, 0, 0, tb.GetScale().y);
@@ -222,7 +222,6 @@ namespace physics::algo
             aPoints[i] = ta.TransformVector(a->GetPoint(i));
         for (size_t i = 0; i < bSize; i++)
             bPoints[i] = tb.TransformVector(b->GetPoint(i));
-        size_t contactCount = 0;
         size_t faceA;
         f64 penetrationA = FindAxisLeastPenetration(&faceA, a, ta, b, tb);
         if (penetrationA >= 0.0)

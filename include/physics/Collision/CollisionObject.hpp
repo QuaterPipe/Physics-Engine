@@ -1,5 +1,4 @@
 #pragma once
-#include "physics/Dynamics/VelocityConstraint.hpp"
 #include "Collider.hpp"
 #include "physics/Engine/Time.hpp"
 #include <functional>
@@ -7,7 +6,7 @@
 
 namespace physics
 {
-	struct CollisionObject;
+	class CollisionObject;
 	struct CollisionManifold
 	{
 		CollisionObject* a = NULL;
@@ -22,7 +21,7 @@ namespace physics
 		bool persistent = false;
 	};
 
-	struct CollisionObject
+	class CollisionObject
 	{
 		protected:
 			bool _isDynamic = false;
