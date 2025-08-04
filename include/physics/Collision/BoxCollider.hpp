@@ -7,27 +7,27 @@ namespace physics
 	struct BoxCollider : public Collider
 	{
 		public:
-			geo::Vector2 pos;
-			geo::Vector2 dimensions;
+			Vector2 pos;
+			Vector2 dimensions;
 			f64& x = pos.x;
 			f64& y = pos.y;
 			f64& width = dimensions.x;
 			f64& height = dimensions.y;
 			BoxCollider() noexcept;
 			BoxCollider(const f64& width, const f64& height) noexcept;
-			BoxCollider(const geo::Vector2& pos, const geo::Vector2& dimensions) noexcept;
+			BoxCollider(const Vector2& pos, const Vector2& dimensions) noexcept;
 			BoxCollider(const BoxCollider& b) noexcept;
 			~BoxCollider() noexcept;
 			BoxCollider& operator=(const BoxCollider& b);
 			bool operator==(const Collider& b) const noexcept override;
 			bool operator!=(const Collider& b) const noexcept override;
 			virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept override;
-			virtual bool Contains(const geo::Vector2& point, const Transform& t = Transform()) const noexcept override;
+			virtual bool Contains(const Vector2& point, const Transform& t = Transform()) const noexcept override;
 			Collider* Clone() const noexcept override;
-			virtual geo::Vector2 GetCenter() const noexcept override;
-			virtual std::vector<geo::Vector2> GetPoints(const Transform& t = Transform()) const noexcept override;
-			geo::Vector2 Max() const noexcept override;
-			geo::Vector2 Min() const noexcept override;
+			virtual Vector2 GetCenter() const noexcept override;
+			virtual std::vector<Vector2> GetPoints(const Transform& t = Transform()) const noexcept override;
+			Vector2 Max() const noexcept override;
+			Vector2 Min() const noexcept override;
 			bool Overlaps(const BoxCollider& b) const noexcept;
 			virtual Manifold TestCollision(
 				const Transform& transform,

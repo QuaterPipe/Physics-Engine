@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Testing.hpp"
-using namespace geo;
 using namespace physics;
 
 #define WIN_WIDTH 1000
@@ -22,26 +21,26 @@ void ConstraintTest()
     anchor.transform.SetPosition(500, 250);
     Rigidbody top(BoxCollider(10, 90));
     top.transform.SetPosition(500, 250);
-    top.transform.SetRotation(geo::Matrix2(geo::Radians(-0.00)));
+    top.transform.SetRotation(Matrix2(Radians(-0.00)));
     Rigidbody bottom(BoxCollider(10, 90));
-    bottom.transform.SetRotation(geo::Matrix2(geo::Radians(1)));
+    bottom.transform.SetRotation(Matrix2(Radians(1)));
     bottom.transform.SetPosition(500, 180);
     Rigidbody b2(BoxCollider(10, 90));
     b2.transform.SetPosition(500, 100);
     Rigidbody b3(BoxCollider(10, 90));
     b3.transform.SetPosition(500, 20);
     //b3.gravity.Set(0, -9000);
-    DistanceConstraint constraint2(&anchor, &top, 0, geo::Vector2(0, 0), geo::Vector2(0, 45));
+    DistanceConstraint constraint2(&anchor, &top, 0, Vector2(0, 0), Vector2(0, 45));
    
-    DistanceConstraint constraint(&top, &bottom, 0, geo::Vector2(0, -40), geo::Vector2(0, 40));
+    DistanceConstraint constraint(&top, &bottom, 0, Vector2(0, -40), Vector2(0, 40));
     
-    DistanceConstraint constraint3(&bottom, &b2, 0, geo::Vector2(0, -40), geo::Vector2(0, 40));
+    DistanceConstraint constraint3(&bottom, &b2, 0, Vector2(0, -40), Vector2(0, 40));
     
-    DistanceConstraint constraint4(&b2, &b3, 0, geo::Vector2(0, -40), geo::Vector2(0, 40));
+    DistanceConstraint constraint4(&b2, &b3, 0, Vector2(0, -40), Vector2(0, 40));
     constraint.biasFactor = constraint2.biasFactor = constraint3.biasFactor = constraint4.biasFactor = 0.01;
     constraint.dampingFactor = constraint2.dampingFactor = constraint3.dampingFactor = constraint4.dampingFactor = 0.01;
-    SliderConstraint slider(&top, geo::Vector2(0, 0), geo::Vector2(1, 1), geo::Vector2(500, 250));
-    slider.angleOffset = geo::Radians(90);
+    SliderConstraint slider(&top, Vector2(0, 0), Vector2(1, 1), Vector2(500, 250));
+    slider.angleOffset = Radians(90);
     slider.biasFactor = 0.01;
     DynamicsWorld world(BoxCollider(Vector2(WIN_WIDTH * 0.5, WIN_HEIGHT * 0.5), Vector2(WIN_WIDTH, WIN_HEIGHT)));
     world.AddDynamicbody(&top);
@@ -61,6 +60,11 @@ void ConstraintTest()
     while (window.isOpen())
     {
         f64 tke = top.KineticEnergy() + bottom.KineticEnergy() + b2.KineticEnergy() + b3.KineticEnergy();
+        f64 tpe = (205 - top.transform.GetPosition().y) * top.GetMass() * top.gravity.y;
+        tpe += (125 - bottom.transform.GetPosition().y) * bottom.GetMass() * bottom.gravity.y;
+        tpe += (45 - b2.transform.GetPosition().y) * b2.GetMass() * b2.gravity.y;
+        tpe += (-35 - b3.transform.GetPosition().y) * b3.GetMass() * b3.gravity.y;
+        std::cout << tke + tpe << "\n";
         sf::Event e;
         while (window.pollEvent(e))
         {
@@ -70,11 +74,11 @@ void ConstraintTest()
             {
                 if (e.key.code == sf::Keyboard::Space)
                 {
-                    top.ApplyImpulse(geo::Vector2(-3, 2), geo::Vector2(10, 10));
+                    top.ApplyImpulse(Vector2(-3, 2), Vector2(10, 10));
                 }
                 if (e.key.code == sf::Keyboard::D)
                 {
-                    top.ApplyImpulse(geo::Vector2(10, 0));
+                    top.ApplyImpulse(Vector2(10, 0));
                 }
                 if (e.key.code == sf::Keyboard::R)
                 {
@@ -89,22 +93,22 @@ void ConstraintTest()
         rect.setOutlineThickness(2);
 
         rect.setPosition(top.transform.GetPosition().x, top.transform.GetPosition().y);
-        rect.setRotation(geo::Degrees(top.transform.GetAngle()));
+        rect.setRotation(Degrees(top.transform.GetAngle()));
         win->draw(rect);
 
         rect.setPosition(bottom.transform.GetPosition().x, bottom.transform.GetPosition().y);
-        rect.setRotation(geo::Degrees(bottom.transform.GetAngle()));
+        rect.setRotation(Degrees(bottom.transform.GetAngle()));
         win->draw(rect);
 
         rect.setPosition(b2.transform.GetPosition().x, b2.transform.GetPosition().y);
-        rect.setRotation(geo::Degrees(b2.transform.GetAngle()));
+        rect.setRotation(Degrees(b2.transform.GetAngle()));
         win->draw(rect);
 
         rect.setPosition(b3.transform.GetPosition().x, b3.transform.GetPosition().y);
-        rect.setRotation(geo::Degrees(b3.transform.GetAngle()));
+        rect.setRotation(Degrees(b3.transform.GetAngle()));
         win->draw(rect);
 
-        geo::Vector2 v = top.transform.TransformVector(geo::Vector2(0, 10));
+        Vector2 v = top.transform.TransformVector(Vector2(0, 10));
         sf::CircleShape c(2);
         c.setPosition(500, 250);
         c.setOrigin(2, 2);

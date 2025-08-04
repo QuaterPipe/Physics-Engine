@@ -15,12 +15,12 @@ namespace physics
 			bool operator==(const Collider& c) const noexcept override;
 			bool operator!=(const Collider& c) const noexcept override;
 			virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept override;
-			virtual bool Contains(const geo::Vector2& point, const Transform& t = Transform()) const noexcept override;
+			virtual bool Contains(const Vector2& point, const Transform& t = Transform()) const noexcept override;
 			Collider* Clone() const noexcept override;
-			virtual geo::Vector2 GetCenter() const noexcept override;
-			geo::Vector2 Max() const noexcept override;
-			geo::Vector2 Min() const noexcept override;
-			virtual std::vector<geo::Vector2> GetPoints(const Transform& t = Transform()) const noexcept override;
+			virtual Vector2 GetCenter() const noexcept override;
+			Vector2 Max() const noexcept override;
+			Vector2 Min() const noexcept override;
+			virtual std::vector<Vector2> GetPoints(const Transform& t = Transform()) const noexcept override;
 			virtual Manifold TestCollision(
 				const Transform& transform,
 				const Collider* collider,

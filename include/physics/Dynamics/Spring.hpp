@@ -1,5 +1,5 @@
 #pragma once
-#include "geometry/Vector.hpp"
+#include "physics/Geometry/Vector.hpp"
 #include "Integration.hpp"
 #define DEFAULT_POINTMASS_RADIUS 0.01
 namespace physics
@@ -23,8 +23,8 @@ namespace physics
 		size_t bIndex = 0;
 		f64 CalculateForce() const noexcept;
 		void ApplyForces() const noexcept;
-		geo::Vector2 GetAForceVector(geo::Vector2 aPosition, geo::Vector2 aVelocity) const noexcept;
-		geo::Vector2 GetBForceVector(geo::Vector2 bPosition, geo::Vector2 bVelocity) const noexcept;
+		Vector2 GetAForceVector(Vector2 aPosition, Vector2 aVelocity) const noexcept;
+		Vector2 GetBForceVector(Vector2 bPosition, Vector2 bVelocity) const noexcept;
 		f64 PotentialEnergy() const noexcept;
 		bool operator==(const PointMassSpring& other) const noexcept;
 		bool operator!=(const PointMassSpring& other) const noexcept;
@@ -33,19 +33,19 @@ namespace physics
 	struct PointMass : public ForceComputer
 	{
 		public:
-			geo::Vector2 position;
-			geo::Vector2 velocity;
-			geo::Vector2 force;
+			Vector2 position;
+			Vector2 velocity;
+			Vector2 force;
 			f64 radius = DEFAULT_POINTMASS_RADIUS;
 			f64 invMass = 1;
 			bool correctionOn = false;
 			PointMass();
-			PointMass(geo::Vector2 position, geo::Vector2 velocity, geo::Vector2 force, f64 invMass, f64 radius = 1) noexcept;
+			PointMass(Vector2 position, Vector2 velocity, Vector2 force, f64 invMass, f64 radius = 1) noexcept;
 			bool operator==(const PointMass& other) const noexcept;
 			bool operator!=(const PointMass& other) const noexcept;
 			void AddSpring(const PointMassSpring& spring, bool isA) noexcept;
 			void AddCorrectionSpring(const PointMassSpring& spring, bool isA) noexcept;
-			geo::Vector2 ComputeForce(const geo::Vector2& Position, const geo::Vector2& Velocity) const noexcept override;
+			Vector2 ComputeForce(const Vector2& Position, const Vector2& Velocity) const noexcept override;
 			f64 KineticEnergy() const noexcept;
 			bool RemoveSpring(const PointMassSpring& spring) noexcept;
 			bool RemoveCorrectionSpring(const PointMassSpring& spring) noexcept;

@@ -12,7 +12,7 @@ namespace physics
 	{
 	}
 
-	BoxCollider::BoxCollider(const geo::Vector2& pos, const geo::Vector2& dimensions) noexcept
+	BoxCollider::BoxCollider(const Vector2& pos, const Vector2& dimensions) noexcept
 	: pos(pos), dimensions(dimensions)
 	{
 	}
@@ -46,9 +46,9 @@ namespace physics
 		return p.BoundingBox(t);
 	}
 
-	bool BoxCollider::Contains(const geo::Vector2& point, const Transform& t) const noexcept
+	bool BoxCollider::Contains(const Vector2& point, const Transform& t) const noexcept
 	{
-		geo::Vector2 pt = t.GetInverseTransform().TransformVector(point);
+		Vector2 pt = t.GetInverseTransform().TransformVector(point);
 		return x <= pt.x && pt.x <= x + width && y <= pt.y && pt.y <= y + height;
 	}
 
@@ -62,8 +62,8 @@ namespace physics
 	{
 		if (*this != b)
 		{
-			pos = geo::Vector2(b.pos);
-			dimensions = geo::Vector2(b.dimensions);
+			pos = Vector2(b.pos);
+			dimensions = Vector2(b.dimensions);
 			x = pos.x;
 			y = pos.y;
 			width = dimensions.x;
@@ -72,17 +72,17 @@ namespace physics
 		return *this;
 	}
 	
-	geo::Vector2 BoxCollider::GetCenter() const noexcept
+	Vector2 BoxCollider::GetCenter() const noexcept
 	{
 		return pos;
 	}
 
-	geo::Vector2 BoxCollider::Max() const noexcept
+	Vector2 BoxCollider::Max() const noexcept
 	{
 		return pos + (dimensions * 0.5);
 	}
 
-	geo::Vector2 BoxCollider::Min() const noexcept
+	Vector2 BoxCollider::Min() const noexcept
 	{
 		return pos - (dimensions * 0.5);
 	}
@@ -105,13 +105,13 @@ namespace physics
 		return xOverlaps && yOverlaps;
 	}
 
-	std::vector<geo::Vector2> BoxCollider::GetPoints(const Transform& t) const noexcept
+	std::vector<Vector2> BoxCollider::GetPoints(const Transform& t) const noexcept
 	{
-		std::vector<geo::Vector2> v(4);
+		std::vector<Vector2> v(4);
 		v[0] = t.TransformVector(pos - (dimensions * 0.5));
-		v[1] = t.TransformVector(geo::Vector2(x + (width * 0.5), y - (height * 0.5)));
+		v[1] = t.TransformVector(Vector2(x + (width * 0.5), y - (height * 0.5)));
 		v[2] = t.TransformVector(pos + (dimensions * 0.5));
-		v[3] = t.TransformVector(geo::Vector2(x - (width * 0.5), y + (height * 0.5)));
+		v[3] = t.TransformVector(Vector2(x - (width * 0.5), y + (height * 0.5)));
 		return v;
 	}
 

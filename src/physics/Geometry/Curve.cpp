@@ -1,6 +1,6 @@
-#include "geometry/Curve.hpp"
+#include "physics/Geometry/Curve.hpp"
 
-namespace geo
+namespace physics
 {
 	Curve::Curve() noexcept
 	{

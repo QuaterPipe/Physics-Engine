@@ -11,13 +11,13 @@ namespace physics
 	{
 		CollisionObject* a = NULL;
 		CollisionObject* b = NULL;
-		//geo::Vector2* points = NULL;
+		//Vector2* points = NULL;
 		Manifold points;
 		size_t size = 0;
 		// the normal impulse of the collision.
-		geo::Vector2 nImp;
+		Vector2 nImp;
 		// the friction(tangent) impulse of the collision.
-		geo::Vector2 tImp;
+		Vector2 tImp;
 		bool persistent = false;
 	};
 

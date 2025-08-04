@@ -8,16 +8,16 @@ namespace physics
 	}
 
 	Pressurebody::Pressurebody(f64 pressure, f64 radius, size_t pointCount, f64 mass, const PointMassSpring& sideSpring) noexcept
-		: _pressureScalar(pressure), _radius(radius), _pointCount(pointCount), _pointStates(pointCount, RK4State()), _pressureForces(pointCount, geo::Vector2::Origin)
+		: _pressureScalar(pressure), _radius(radius), _pointCount(pointCount), _pointStates(pointCount, RK4State()), _pressureForces(pointCount, Vector2::Origin)
 	{
 		this->_mass = mass;
 		this->_invMass = 1 / mass;
 		if (pointCount < 3)
 			return;
 		f64 invMassPerPoint = ((f64)pointCount) / mass;
-		geo::Vector2 dir(0, 1);
+		Vector2 dir(0, 1);
 		const f64 rot = (2 * M_PI) / pointCount;
-		geo::Vector2 sum(0, 0);
+		Vector2 sum(0, 0);
 		for (size_t i = 0; i < _pointCount; i++)
 		{
 			PointMass m;
@@ -25,7 +25,7 @@ namespace physics
 			sum += m.position;
 			m.invMass = invMassPerPoint;
 			_points.push_back(m);
-			dir.Rotate(geo::Vector2::Origin, rot);
+			dir.Rotate(Vector2::Origin, rot);
 		}
 		f64 dist = (_points[0].position - _points[1].position).GetMagnitude();
 		for (size_t i = 0; i < _pointCount; i++)
@@ -38,7 +38,7 @@ namespace physics
 			_points[(i + 1) % _pointCount].AddSpring(s, false);
 			_springs.push_back(s);
 		}
-		f64 dis = geo::Distance(_points[0].position, _points[1].position);
+		f64 dis = Distance(_points[0].position, _points[1].position);
 		std::cout << "dis: " << dis << "\n";
 		collider = std::unique_ptr<PolygonCollider>(new PolygonCollider(dis, pointCount));
 	}
@@ -116,16 +116,16 @@ namespace physics
 	void Pressurebody::_UpdatePressureForces(int rk4step) noexcept
 	{
 		f64 volume = GetVolume(rk4step);
-		for (geo::Vector2& p : _pressureForces)
+		for (Vector2& p : _pressureForces)
 			p.Set(0, 0);
 		if (!rk4step)
 		{
 			for (size_t i = 0; i < _pointCount; i++)
 			{
-				geo::Vector2 a = _points[i].position;
-				geo::Vector2 b = _points[(i + 1) % _pointCount].position;
-				f64 dis = geo::Distance(a, b);
-				geo::Vector2 norm(-(a.y - b.y) / dis, (a.x - b.x) / dis);
+				Vector2 a = _points[i].position;
+				Vector2 b = _points[(i + 1) % _pointCount].position;
+				f64 dis = Distance(a, b);
+				Vector2 norm(-(a.y - b.y) / dis, (a.x - b.x) / dis);
 				f64 pressurev = dis * _pressureScalar * (1.0 / volume);
 				_pressureForces[i] += norm * pressurev * _points[i].invMass * 0.5;
 				_pressureForces[(i + 1) % _pointCount] += norm * pressurev * _points[(i + 1) % _pointCount].invMass * 0.5;
@@ -135,11 +135,11 @@ namespace physics
 		{
 			for (size_t i = 0; i < _pointCount; i++)
 			{
-				geo::Vector2 a = _pointStates[i].tmpX;
-				geo::Vector2 b = _pointStates[(i + 1) % _pointCount].tmpX;
-				geo::Vector2 n1 = a - _points[i == 0 ? _pointCount - 1 : i - 1].position;
-				f64 dis = geo::Distance(a, b);
-				geo::Vector2 norm(-(a.y - b.y) / dis, (a.x - b.x) / dis);
+				Vector2 a = _pointStates[i].tmpX;
+				Vector2 b = _pointStates[(i + 1) % _pointCount].tmpX;
+				Vector2 n1 = a - _points[i == 0 ? _pointCount - 1 : i - 1].position;
+				f64 dis = Distance(a, b);
+				Vector2 norm(-(a.y - b.y) / dis, (a.x - b.x) / dis);
 				f64 pressurev = dis * _pressureScalar * (1.0 / volume);
 				_pressureForces[i] += norm * pressurev * _points[i].invMass * 0.5;
 				_pressureForces[(i + 1) % _pointCount] += norm * pressurev * _points[(i + 1) % _pointCount].invMass * 0.5;
@@ -158,9 +158,9 @@ namespace physics
 		angularVelocity += impulse;
 	}
 
-	void Pressurebody::ApplyForce(const geo::Vector2& Force, const geo::Vector2& contactPoint) noexcept
+	void Pressurebody::ApplyForce(const Vector2& Force, const Vector2& contactPoint) noexcept
 	{
-		if (contactPoint == geo::Vector2::Infinity)
+		if (contactPoint == Vector2::Infinity)
 		{
 			for (auto& m : _points)
 				m.force += Force;
@@ -169,7 +169,7 @@ namespace physics
 		{
 			for (auto& m : _points)
 			{
-				if (geo::DistanceSquared(transform.TransformVector(m.position), contactPoint) <= SQRD(EPSILON))
+				if (DistanceSquared(transform.TransformVector(m.position), contactPoint) <= SQRD(EPSILON))
 				{	
 					m.force += Force;
 					return;
@@ -178,9 +178,9 @@ namespace physics
 		}
 	}
 
-	void Pressurebody::ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2 & contactVec) noexcept
+	void Pressurebody::ApplyImpulse(const Vector2& impulse, const Vector2 & contactVec) noexcept
 	{
-		if (contactVec == geo::Vector2::Infinity)
+		if (contactVec == Vector2::Infinity)
 		{
 			for (auto& m : _points)
 				m.velocity += impulse* m.invMass;
@@ -189,7 +189,7 @@ namespace physics
 		{
 			for (auto& m : _points)
 			{
-				if (geo::DistanceSquared(m.position, contactVec) <= SQRD(EPSILON))
+				if (DistanceSquared(m.position, contactVec) <= SQRD(EPSILON))
 				{
 					m.velocity += impulse * m.invMass;
 					return;
@@ -203,15 +203,15 @@ namespace physics
 		return new Pressurebody(*this);
 	}
 
-	geo::Vector2 Pressurebody::ComputeForce(const geo::Vector2& position, const geo::Vector2& Velocity) const noexcept
+	Vector2 Pressurebody::ComputeForce(const Vector2& position, const Vector2& Velocity) const noexcept
 	{
-		return geo::Vector2(0, 0);
+		return Vector2(0, 0);
 	}
 
 	void Pressurebody::DerivePositionAndAngle() noexcept
 	{
-		geo::Vector2 derivedPos(0, 0);
-		geo::Vector2 derivedVel(0, 0);
+		Vector2 derivedPos(0, 0);
+		Vector2 derivedVel(0, 0);
 		for (size_t i = 0; i < _pointCount; i++)
 		{
 			derivedPos += _points[i].position;
@@ -263,8 +263,8 @@ namespace physics
 			default:
 				for (int i = 0; i < _pointCount; i++)
 				{
-					geo::Vector2 a = _pointStates[i].tmpX;
-					geo::Vector2 b = _pointStates[(i + 1) % _pointCount].tmpX;
+					Vector2 a = _pointStates[i].tmpX;
+					Vector2 b = _pointStates[(i + 1) % _pointCount].tmpX;
 					volume += (a.x * b.y) - (b.x * a.y);
 				}
 				return volume;
@@ -293,7 +293,7 @@ namespace physics
 			}
 			/*std::cout << _pointStates[0].a1 << "\n_";
 			std::cout << _points[0].ComputeForce(_points[0].position, _points[0].velocity)<<"\n=";
-			std::cout << geo::GetAngle(_springs[0].a->position, _springs[0].b->position) << "\n";*/
+			std::cout << GetAngle(_springs[0].a->position, _springs[0].b->position) << "\n";*/
 		}
 		else if (rk4step == 1)
 		{
@@ -357,23 +357,23 @@ namespace physics
 
 	void Pressurebody::UpdateTransform() noexcept
 	{
-		geo::Vector2 com(0, 0);
+		Vector2 com(0, 0);
 		for (PointMass m : _points)
 			com += m.position;
 		com /= _pointCount;
-		geo::Vector2 diff = transform.GetPosition() - com;
+		Vector2 diff = transform.GetPosition() - com;
 		for (PointMass& m : _points)
 			m.position += diff;
 		transform.Translate(-diff);
 	}
 
-	void Pressurebody::Translate(geo::Vector2 offset, geo::Vector2* points, size_t ptCount) noexcept
+	void Pressurebody::Translate(Vector2 offset, Vector2* points, size_t ptCount) noexcept
 	{
 		for (size_t i = 0; i < ptCount; i++)
 		{
 			for (auto& m : _points)
 			{
-				if (geo::DistanceSquared(transform.TransformVector(m.position), points[i]) <= SQRD(EPSILON))
+				if (DistanceSquared(transform.TransformVector(m.position), points[i]) <= SQRD(EPSILON))
 				{
 					m.position += offset;
 					return;

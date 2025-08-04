@@ -1,7 +1,7 @@
-#include "geometry/Vector.hpp"
-#include "geometry/Math.hpp"
+#include "physics/Geometry/Vector.hpp"
+#include "physics/Geometry/Math.hpp"
 
-namespace geo
+namespace physics
 {
     const Vector3 Vector3::Origin = Vector3(0, 0, 0);
 	const Vector3 Vector3::Infinity = Vector3(std::numeric_limits<f64>::infinity(), std::numeric_limits<f64>::infinity(), std::numeric_limits<f64>::infinity());

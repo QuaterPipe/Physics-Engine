@@ -16,9 +16,6 @@
     <Filter Include="src\physics\Engine">
       <UniqueIdentifier>{cbd3a899-c431-4e73-a311-7d8db27d1403}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\geometry">
-      <UniqueIdentifier>{55e40b9e-1727-4619-bc4b-714f9536a989}</UniqueIdentifier>
-    </Filter>
     <Filter Include="bin">
       <UniqueIdentifier>{0057b636-4a1a-4692-a45a-0704528786f2}</UniqueIdentifier>
     </Filter>
@@ -30,9 +27,6 @@
     </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{25e73383-44d8-411b-b415-e59f98c33fa7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\geometry">
-      <UniqueIdentifier>{00cdc3d3-4378-48a6-8856-103589b2785e}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\physics">
       <UniqueIdentifier>{f7967f7a-02e5-4d19-85c9-456e056a653f}</UniqueIdentifier>
@@ -66,6 +60,12 @@
     </Filter>
     <Filter Include="testing">
       <UniqueIdentifier>{047f0429-5745-4165-b9fb-aa343ecb3b0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\physics\Geometry">
+      <UniqueIdentifier>{00cdc3d3-4378-48a6-8856-103589b2785e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\physics\Geometry">
+      <UniqueIdentifier>{55e40b9e-1727-4619-bc4b-714f9536a989}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -129,33 +129,6 @@
     <ClCompile Include="src\physics\Engine\Time.cpp">
       <Filter>src\physics\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\geometry\Curve.cpp">
-      <Filter>src\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\geometry\Line.cpp">
-      <Filter>src\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\geometry\Math.cpp">
-      <Filter>src\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\geometry\Matrix.cpp">
-      <Filter>src\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\geometry\Matrix2.cpp">
-      <Filter>src\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\geometry\Matrix3.cpp">
-      <Filter>src\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\geometry\Vector.cpp">
-      <Filter>src\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\geometry\Vector2.cpp">
-      <Filter>src\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="src\geometry\Vector3.cpp">
-      <Filter>src\geometry</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -204,8 +177,35 @@
     <ClCompile Include="testing\ConstraintTesting.cpp">
       <Filter>testing</Filter>
     </ClCompile>
-    <ClCompile Include="src\geometry\Span.cpp">
-      <Filter>src\geometry</Filter>
+    <ClCompile Include="src\physics\Geometry\Curve.cpp">
+      <Filter>src\physics\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Geometry\Line.cpp">
+      <Filter>src\physics\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Geometry\Math.cpp">
+      <Filter>src\physics\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Geometry\Matrix.cpp">
+      <Filter>src\physics\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Geometry\Matrix2.cpp">
+      <Filter>src\physics\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Geometry\Matrix3.cpp">
+      <Filter>src\physics\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Geometry\Span.cpp">
+      <Filter>src\physics\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Geometry\Vector.cpp">
+      <Filter>src\physics\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Geometry\Vector2.cpp">
+      <Filter>src\physics\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Geometry\Vector3.cpp">
+      <Filter>src\physics\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,9 +244,6 @@
     </None>
     <None Include=".gitignore" />
     <None Include="README.md" />
-    <None Include="include\geometry\Math.inl">
-      <Filter>include\geometry</Filter>
-    </None>
     <None Include="include\SFML\Audio\SoundFileFactory.inl">
       <Filter>include\SFML\Audio</Filter>
     </None>
@@ -273,6 +270,9 @@
     </None>
     <None Include="include\SFML\System\Vector3.inl">
       <Filter>include\SFML\System</Filter>
+    </None>
+    <None Include="include\physics\Geometry\Math.inl">
+      <Filter>include\physics\Geometry</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -365,24 +365,6 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\geometry\Curve.hpp">
-      <Filter>include\geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="include\geometry\Line.hpp">
-      <Filter>include\geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="include\geometry\main.hpp">
-      <Filter>include\geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="include\geometry\Math.hpp">
-      <Filter>include\geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="include\geometry\Matrix.hpp">
-      <Filter>include\geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="include\geometry\Vector.hpp">
-      <Filter>include\geometry</Filter>
-    </ClInclude>
     <ClInclude Include="include\physics\Collision\Algo.hpp">
       <Filter>include\physics\Collision</Filter>
     </ClInclude>
@@ -761,8 +743,26 @@
     <ClInclude Include="include\physics\Dynamics\Pressurebody.hpp">
       <Filter>include\physics\Dynamics</Filter>
     </ClInclude>
-    <ClInclude Include="include\geometry\Span.hpp">
-      <Filter>include\geometry</Filter>
+    <ClInclude Include="include\physics\Geometry\Matrix.hpp">
+      <Filter>include\physics\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Geometry\Span.hpp">
+      <Filter>include\physics\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Geometry\Vector.hpp">
+      <Filter>include\physics\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Geometry\Curve.hpp">
+      <Filter>include\physics\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Geometry\Line.hpp">
+      <Filter>include\physics\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Geometry\main.hpp">
+      <Filter>include\physics\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Geometry\Math.hpp">
+      <Filter>include\physics\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

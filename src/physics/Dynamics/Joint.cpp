@@ -11,9 +11,9 @@ namespace physics
 
 	void DistanceJoint::Update(f64 dt) noexcept
 	{
-		if (geo::DistanceSquared(a->transform.GetPosition() + a->transform.GetCOM(), b->transform.GetPosition() + b->transform.GetCOM()) < SQRD(length))
+		if (DistanceSquared(a->transform.GetPosition() + a->transform.GetCOM(), b->transform.GetPosition() + b->transform.GetCOM()) < SQRD(length))
 		{
-	 		f64 dis = geo::Distance(a->transform.GetPosition() + a->transform.GetCOM(), b->transform.GetPosition() + b->transform.GetCOM()) - length;
+	 		f64 dis = Distance(a->transform.GetPosition() + a->transform.GetCOM(), b->transform.GetPosition() + b->transform.GetCOM()) - length;
 			a->transform.Translate(dis * (a->GetMass() / (a->GetMass() + b->GetMass())) * ((b->transform.GetPosition() + b->transform.GetCOM()) - (a->transform.GetPosition() + a->transform.GetCOM())).Normalized());
 			b->transform.Translate(dis * (b->GetMass() / (a->GetMass() + b->GetMass())) * ((a->transform.GetPosition() + a->transform.GetCOM()) - (b->transform.GetPosition() + b->transform.GetCOM())).Normalized());
 		}

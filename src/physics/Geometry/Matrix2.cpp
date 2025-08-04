@@ -1,5 +1,5 @@
-#include "geometry/Matrix.hpp"
-namespace geo
+#include "physics/Geometry/Matrix.hpp"
+namespace physics
 {
     Matrix2::Matrix2() noexcept
 	{

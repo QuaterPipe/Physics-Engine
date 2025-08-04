@@ -11,7 +11,7 @@ namespace physics
 	CollisionManifold::CollisionManifold(size_t pointCount) noexcept
 		: size(pointCount)
 	{
-		points = new geo::Vector2[pointCount];
+		points = new Vector2[pointCount];
 	}
 
 	CollisionManifold::~CollisionManifold() noexcept

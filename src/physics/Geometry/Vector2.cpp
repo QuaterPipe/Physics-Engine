@@ -1,6 +1,6 @@
-#include "geometry/main.hpp"
+#include "physics/Geometry/main.hpp"
 
-namespace geo
+namespace physics
 {
     const Vector2 Vector2::Origin = Vector2(0, 0);
 	const Vector2 Vector2::Infinity = Vector2(std::numeric_limits<f64>::infinity(), std::numeric_limits<f64>::infinity());
@@ -42,7 +42,7 @@ namespace geo
 
 	Vector2 Vector2::Abs() const noexcept
 	{
-		return Vector2(geo::Abs(x), geo::Abs(y));
+		return Vector2(physics::Abs(x), physics::Abs(y));
 	}
 
 	f64 Vector2::Angle(const Vector2& other) const noexcept

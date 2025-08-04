@@ -5,7 +5,6 @@
 #define WIN_WIDTH 1000
 #define WIN_HEIGHT 500
 #define PHYSICS_HERTZ 200.0
-using namespace geo;
 using namespace physics;
 
 enum class Type
@@ -56,7 +55,7 @@ void Demo()
     floor.rigid->restitution = 1;
     floor.rigid->staticFriction = 0.8;
     floor.rigid->kineticFriction = 0.6;
-    floor.rigid->transform.SetRotation(geo::Radians(0));
+    floor.rigid->transform.SetRotation(Radians(0));
     floor.t = Type::Poly;
     sf::ConvexShape c(4);
     for (int i = 0; i < 4; i++)
@@ -272,7 +271,7 @@ void RenderObjects()
         else if (obj.t == Type::Poly)
         {
             obj.conv.setPosition(obj.rigid->transform.GetPosition().x + obj.rigid->transform.GetCOM().x, obj.rigid->transform.GetPosition().y + obj.rigid->transform.GetCOM().y);
-            obj.conv.setRotation(geo::Degrees(obj.rigid->transform.GetAngle()));
+            obj.conv.setRotation(Degrees(obj.rigid->transform.GetAngle()));
             // std::cout << obj.conv.getPosition().x << ' ' << obj.conv.getPosition().y << "\n";
             win->draw(obj.conv);
         }

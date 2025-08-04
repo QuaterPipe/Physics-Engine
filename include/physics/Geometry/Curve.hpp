@@ -1,7 +1,7 @@
 #pragma once
 #include <algorithm>
 #include "Vector.hpp"
-namespace geo
+namespace physics
 {
 	// \brief A cubic bezier curve.
 	struct Curve

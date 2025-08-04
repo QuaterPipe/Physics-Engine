@@ -12,7 +12,7 @@ namespace physics
 	{
 		public:
 			virtual void Solve(std::vector<CollisionManifold>& collisions, f64 dt) noexcept = 0;
-			geo::Vector2 gravity = geo::Vector2(0, 9.81);
+			Vector2 gravity = Vector2(0, 9.81);
 	};
 
 	class PhysicsSolver : public Solver
@@ -31,7 +31,7 @@ namespace physics
 	{
 		protected:
 			std::function<void(CollisionManifold&, f64)> _onCollision;
-			geo::Vector2 _gravity = geo::Vector2(0, -9.81);
+			Vector2 _gravity = Vector2(0, -9.81);
 			std::vector<Constraint*> _constraints;
 			std::vector<CollisionObject*> _objects;
 			std::vector<Dynamicbody*> _dynamicbodies;

@@ -52,7 +52,7 @@ namespace physics
 	}
 
 	Dynamicbody::Dynamicbody(const Collider& c, const Transform& t, bool isTrigger, const PhysicsMaterial& p,
-		f64 mass, bool usesGravity, const geo::Vector2& drag) noexcept
+		f64 mass, bool usesGravity, const Vector2& drag) noexcept
 	: CollisionObject(c, t, isTrigger),  _mass(mass), drag(drag), physicsMaterial(p), usesGravity(usesGravity)
 	{
 		_isDynamic = true;
@@ -194,7 +194,7 @@ namespace physics
 		_invMass = mass ? 1 / mass : 0;
 	}
 
-	void Dynamicbody::Translate(geo::Vector2 offset, geo::Vector2* point, size_t ptCount) noexcept
+	void Dynamicbody::Translate(Vector2 offset, Vector2* point, size_t ptCount) noexcept
 	{
 		transform.Translate(offset);
 	}

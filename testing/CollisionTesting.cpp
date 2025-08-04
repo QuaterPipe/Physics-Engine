@@ -3,7 +3,6 @@
 #include <random>
 #include <chrono>
 #include <thread>
-using namespace geo;
 using namespace physics;
 Collider* cldA[6];
 Collider* cldB[6];
@@ -51,7 +50,7 @@ void Render(sf::RenderWindow* win, int a, int b)
         r.setOutlineThickness(1);
         r.setPosition(250, 250);
         r.setOrigin(25, 25);
-        r.setRotation(geo::Degrees(rotA));
+        r.setRotation(Degrees(rotA));
         win->draw(r);
     }
     if (b == 2)
@@ -62,12 +61,12 @@ void Render(sf::RenderWindow* win, int a, int b)
         r.setOutlineThickness(1);
         r.setPosition(worldPos.x, worldPos.y);
         r.setOrigin(25, 25);
-        r.setRotation(geo::Degrees(rotB));
+        r.setRotation(Degrees(rotB));
         win->draw(r);
     }
     if (a > 2)
     {
-        std::vector<geo::Vector2> pts = ((PolygonCollider*)cldA[a])->GetPoints();
+        std::vector<Vector2> pts = ((PolygonCollider*)cldA[a])->GetPoints();
         sf::ConvexShape cvx(pts.size());
         for (int i = 0; i < pts.size(); i++)
             cvx.setPoint(i, sf::Vector2f(pts[i].x, pts[i].y));
@@ -80,7 +79,7 @@ void Render(sf::RenderWindow* win, int a, int b)
     }
     if (b > 2)
     {
-        std::vector<geo::Vector2> pts = ((PolygonCollider*)cldB[b])->GetPoints(tB);
+        std::vector<Vector2> pts = ((PolygonCollider*)cldB[b])->GetPoints(tB);
         sf::ConvexShape cvx(pts.size());
         for (int i = 0; i < pts.size(); i++)
             cvx.setPoint(i, sf::Vector2f(pts[i].x, pts[i].y));
@@ -114,7 +113,7 @@ void Render2(sf::RenderWindow* window)
 {
     auto p = PolygonCollider(1000 / size, size);
     Transform tt;
-    tt.SetPosition(geo::Vector2(250, 250));
+    tt.SetPosition(Vector2(250, 250));
     sf::ConvexShape cvx(size);
     for (int i = 0; i < size; i++)
         cvx.setPoint(i, sf::Vector2f(p.GetPoint(i).x, p.GetPoint(i).y));

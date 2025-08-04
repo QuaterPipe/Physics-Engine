@@ -13,7 +13,7 @@
 #include <vector>
 typedef double f64;
 typedef float f32;
-namespace geo
+namespace physics
 {
 	class Line;
 	struct Vector2

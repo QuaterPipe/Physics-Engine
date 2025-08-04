@@ -1,6 +1,5 @@
 #include "Testing.hpp"
 #include <iostream>
-using namespace geo;
 using namespace physics;
 
 void DynamicsTest()
@@ -21,7 +20,7 @@ void DynamicsTest()
 	rc.SetMass(1);
 	rc.SetInertia(1);
 	rc.restitution = 0;
-	rc.velocity += geo::Vector2(0, -1);
+	rc.velocity += Vector2(0, -1);
 	rc.angularVelocity += 0.1;
 	rc.staticFriction = 0;
 	rc.kineticFriction = 0;
@@ -36,7 +35,7 @@ void DynamicsTest()
 		world.Update(1.0 / 100.0);
 	std::cout << rc.velocity << std::endl;
 	auto _rect = BoxCollider(1000, 1000);
-	geo::Vector2 center = _rect.GetCenter();
+	Vector2 center = _rect.GetCenter();
 	f64 x = center.x;
 	f64 y = center.y;
 	f64 width = _rect.width * 0.5;
@@ -45,10 +44,10 @@ void DynamicsTest()
 	f64 w = width * 0.5;
 	f64 h = height * 0.5;
 
-	BoxCollider SW(geo::Vector2(x - w, y - h), geo::Vector2(width, height));
-	BoxCollider SE(geo::Vector2(x + w, y - h), geo::Vector2(width, height));
-	BoxCollider NW(geo::Vector2(x - w, y + h), geo::Vector2(width, height));
-	BoxCollider NE(geo::Vector2(x + w, y + h), geo::Vector2(width, height));
+	BoxCollider SW(Vector2(x - w, y - h), Vector2(width, height));
+	BoxCollider SE(Vector2(x + w, y - h), Vector2(width, height));
+	BoxCollider NW(Vector2(x - w, y + h), Vector2(width, height));
+	BoxCollider NE(Vector2(x + w, y + h), Vector2(width, height));
 	std::cout << "Rect: " << _rect.pos << " " << _rect.dimensions << "\n";
 	std::cout << "SW: " << SW.pos << " " << SW.dimensions << "\n";
 	std::cout << "SE: " << SE.pos << " " << SE.dimensions << "\n";

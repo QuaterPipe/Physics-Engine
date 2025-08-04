@@ -13,10 +13,10 @@ namespace physics::algo
         return a >= b * k_biasRelative + a * k_biasAbsolute;
     }
 
-    int Clip(const geo::Vector2& n, f64 c, geo::Vector2* face)
+    int Clip(const Vector2& n, f64 c, Vector2* face)
     {
         int sp = 0;
-        geo::Vector2 out[2] = {
+        Vector2 out[2] = {
             face[0],
             face[1]
         };
@@ -40,19 +40,19 @@ namespace physics::algo
     {
         f64 bestDistance = MIN;
         size_t bestIndex = 0;
-        geo::Matrix2 aRot = ta.GetRotation();
-        geo::Matrix2 bRot = tb.GetRotation();
-        geo::Matrix2 bRotxScale = bRot * geo::Matrix2(tb.GetScale().x, 0, 0, tb.GetScale().y);
-        geo::Matrix2 binvRotxScale = bRotxScale.GetTranspose();
-        geo::Matrix3 bTransformMatrix = tb.GetTransformationMatrix();
+        Matrix2 aRot = ta.GetRotation();
+        Matrix2 bRot = tb.GetRotation();
+        Matrix2 bRotxScale = bRot * Matrix2(tb.GetScale().x, 0, 0, tb.GetScale().y);
+        Matrix2 binvRotxScale = bRotxScale.GetTranspose();
+        Matrix3 bTransformMatrix = tb.GetTransformationMatrix();
         for (size_t i = 0; i < a->GetPointCount(); i++)
         {
-            geo::Vector2 n = a->GetNormal(i);
-            geo::Vector2 nw = aRot * n;
-            geo::Matrix2 buT = bRot.GetTranspose();
+            Vector2 n = a->GetNormal(i);
+            Vector2 nw = aRot * n;
+            Matrix2 buT = bRot.GetTranspose();
             n = buT * nw;
-            geo::Vector2 s = b->SupportPoint(-n);
-            geo::Vector2 v = a->GetPoint(i);
+            Vector2 s = b->SupportPoint(-n);
+            Vector2 v = a->GetPoint(i);
             v = ta.TransformVector(v);
             v.x -= bTransformMatrix(0, 2);
             v.y -= bTransformMatrix(1, 2);
@@ -68,9 +68,9 @@ namespace physics::algo
         return bestDistance;
     }
 
-    void FindIncidentFace(geo::Vector2* v, const PolygonCollider* refPoly, const Transform& refTransform, const PolygonCollider* incPoly, const Transform& incTransform, size_t referenceIndex)
+    void FindIncidentFace(Vector2* v, const PolygonCollider* refPoly, const Transform& refTransform, const PolygonCollider* incPoly, const Transform& incTransform, size_t referenceIndex)
     {
-        geo::Vector2 referenceNormal = refPoly->GetNormal(referenceIndex);
+        Vector2 referenceNormal = refPoly->GetNormal(referenceIndex);
         referenceNormal = refTransform.GetRotation() * referenceNormal;
         referenceNormal = incTransform.GetRotation().GetTranspose() * referenceNormal;
         size_t incidentFace = 0;
@@ -102,38 +102,38 @@ namespace physics::algo
         if (a->GetPointCount() < 3)
             return c;
         size_t aSize = a->GetPointCount();
-        geo::Vector2 aPoints[MAX_POLYGONCOLLIDER_SIZE];
+        Vector2 aPoints[MAX_POLYGONCOLLIDER_SIZE];
         for (size_t i = 0; i < aSize; i++)
             aPoints[i] = ta.TransformVector(a->GetPoint(i));
-        geo::Vector2 bCenter = tb.TransformVector(b->center);
-        f64 bRadius = b->radius * geo::Max(tb.GetScale().x, tb.GetScale().y);
+        Vector2 bCenter = tb.TransformVector(b->center);
+        f64 bRadius = b->radius * Max(tb.GetScale().x, tb.GetScale().y);
         bool centerInA = VectorInPolygon(aPoints, bCenter, aSize), polyInB = true;
-        geo::Vector2 projections[MAX_POLYGONCOLLIDER_SIZE];
+        Vector2 projections[MAX_POLYGONCOLLIDER_SIZE];
         size_t projInd = 0;
         for (size_t i = 0; i < aSize; i++)
             polyInB &= b->Contains(aPoints[i], tb);
         for (int i = 0; i < aSize; i++)
         {
-            geo::Line l(aPoints[(i + 1) % aSize], aPoints[i]);
-            geo::Vector2 proj = geo::Vector2::Projection(bCenter, l);
+            Line l(aPoints[(i + 1) % aSize], aPoints[i]);
+            Vector2 proj = Vector2::Projection(bCenter, l);
             if (l.VectorIsOnLine(proj))
                 projections[projInd++] = proj;
         }
-        geo::Vector2 closest = geo::Vector2::Infinity;
+        Vector2 closest = Vector2::Infinity;
         f64 minDis = std::numeric_limits<f64>::infinity();
         for (size_t i = 0; i < aSize; i++)
         {
-            if (geo::DistanceSquared(bCenter, aPoints[i]) < minDis)
+            if (DistanceSquared(bCenter, aPoints[i]) < minDis)
             {
-                minDis = geo::DistanceSquared(bCenter, aPoints[i]);
+                minDis = DistanceSquared(bCenter, aPoints[i]);
                 closest = aPoints[i];
             }
         }
         for (size_t i = 0; i < projInd; i++)
         {
-            if (geo::DistanceSquared(bCenter, projections[i]) < minDis && projections[i] != bCenter)
+            if (DistanceSquared(bCenter, projections[i]) < minDis && projections[i] != bCenter)
             {
-                minDis = geo::DistanceSquared(bCenter, projections[i]);
+                minDis = DistanceSquared(bCenter, projections[i]);
                 closest = projections[i];
             }
         }
@@ -141,11 +141,11 @@ namespace physics::algo
         {
             return c;
         }
-        if (centerInA || polyInB || closest != geo::Vector2::Infinity)
+        if (centerInA || polyInB || closest != Vector2::Infinity)
         {
             c.hasCollision = true;
             c.points[0] = closest;
-            c.depth = (geo::Distance(bCenter, closest)) + bRadius;
+            c.depth = (Distance(bCenter, closest)) + bRadius;
             if (centerInA)
             {
                 c.normal = -(closest - bCenter).Normalized();
@@ -155,7 +155,7 @@ namespace physics::algo
             {
                 c.normal = (closest - bCenter).Normalized();
                 c.points[1] = c.normal * bRadius + bCenter;
-                c.depth = bRadius - geo::Distance(bCenter, closest);
+                c.depth = bRadius - Distance(bCenter, closest);
             }
         }
         if (!flipped)
@@ -165,19 +165,19 @@ namespace physics::algo
     }
 
     bool VectorInPolygon(
-        const geo::Vector2* points,
-        const geo::Vector2& b, size_t pointsSize)
+        const Vector2* points,
+        const Vector2& b, size_t pointsSize)
     {
         f64 x = b.x, y = b.y;
         bool inside = false;
-        geo::Vector2 p1, p2;
+        Vector2 p1, p2;
         for (int i = 1; i < pointsSize; i++)
         {
             p1 = points[i - 1];
             p2 = points[i];
-            if (y > geo::Min(p1.y, p2.y) && y <= geo::Max(p1.y, p2.y))
+            if (y > Min(p1.y, p2.y) && y <= Max(p1.y, p2.y))
             {
-                if (x <= geo::Max(p1.x, p2.x))
+                if (x <= Max(p1.x, p2.x))
                 {
                     f64 x_inter = (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
                     if (p1.x == p2.x || x <= x_inter)
@@ -189,9 +189,9 @@ namespace physics::algo
         }
         p1 = points[pointsSize - 1];
         p2 = points[0];
-        if (y > geo::Min(p1.y, p2.y) && y <= geo::Max(p1.y, p2.y))
+        if (y > Min(p1.y, p2.y) && y <= Max(p1.y, p2.y))
         {
-            if (x <= geo::Max(p1.x, p2.x))
+            if (x <= Max(p1.x, p2.x))
             {
                 f64 x_inter = (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
                 if (p1.x == p2.x || x <= x_inter)
@@ -216,8 +216,8 @@ namespace physics::algo
         if (a->GetPointCount() < 3 || b->GetPointCount() < 3)
             return c;
         size_t aSize = a->GetPointCount(), bSize = b->GetPointCount();
-        geo::Vector2 aPoints [MAX_POLYGONCOLLIDER_SIZE];
-        geo::Vector2 bPoints[MAX_POLYGONCOLLIDER_SIZE];
+        Vector2 aPoints [MAX_POLYGONCOLLIDER_SIZE];
+        Vector2 bPoints[MAX_POLYGONCOLLIDER_SIZE];
         for (size_t i = 0; i < aSize; i++)
             aPoints[i] = ta.TransformVector(a->GetPoint(i));
         for (size_t i = 0; i < bSize; i++)
@@ -256,22 +256,22 @@ namespace physics::algo
             flip = true;
         }
 
-        geo::Vector2 incidentFace[2];
+        Vector2 incidentFace[2];
         FindIncidentFace(incidentFace, refPoly, refTransform, incPoly, incTransform, referenceIndex);
-        geo::Vector2 v1 = refPoly->GetPoint(referenceIndex);
+        Vector2 v1 = refPoly->GetPoint(referenceIndex);
         referenceIndex = referenceIndex + 1 == refPoly->GetPointCount() ? 0 : referenceIndex + 1;
-        geo::Vector2 v2 = refPoly->GetPoint(referenceIndex);
+        Vector2 v2 = refPoly->GetPoint(referenceIndex);
         v1 = refTransform.TransformVector(v1);
         v2 = refTransform.TransformVector(v2);
-        geo::Vector2 sidePlaneNormal = (v2 - v1);
+        Vector2 sidePlaneNormal = (v2 - v1);
         sidePlaneNormal.Normalize();
-        geo::Vector2 refFaceNormal(sidePlaneNormal.y, -sidePlaneNormal.x);
+        Vector2 refFaceNormal(sidePlaneNormal.y, -sidePlaneNormal.x);
         f64 refC = refFaceNormal.Dot(v1);
         f64 negSide = -sidePlaneNormal.Dot(v1);
         f64 posSide = sidePlaneNormal.Dot(v2);
-        if (Clip(-sidePlaneNormal, negSide, (geo::Vector2*)incidentFace) < 2)
+        if (Clip(-sidePlaneNormal, negSide, (Vector2*)incidentFace) < 2)
             return c;
-        if (Clip(sidePlaneNormal, posSide, (geo::Vector2*)incidentFace) < 2)
+        if (Clip(sidePlaneNormal, posSide, (Vector2*)incidentFace) < 2)
             return c;
         c.normal = flip ? -refFaceNormal : refFaceNormal;
         size_t cp = 0;

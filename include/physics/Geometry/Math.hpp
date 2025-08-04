@@ -26,12 +26,12 @@ using i64 = int64_t;
 	(X) * (X) * (X) \
 )
 #define EPSILON 10e-8
-#define V3_EPSILON geo::Vector3(EPSILON, EPSILON, EPSILON)
-#define V2_EPSILON geo::Vector2(EPSILON, EPSILON)
-#define V_EPSILON(X) geo::Vector(X, EPSILON)
+#define V3_EPSILON Vector3(EPSILON, EPSILON, EPSILON)
+#define V2_EPSILON Vector2(EPSILON, EPSILON)
+#define V_EPSILON(X) Vector(X, EPSILON)
 #define BIT(x) (1 << x)
 
-namespace geo
+namespace physics
 {
 	/// \brief returns the absolute value of x.
 	i64 Abs(i64 x) noexcept;
@@ -44,11 +44,11 @@ namespace geo
 	/// \brief clamps x between a min and max
 	u64 Clamp(u64 min, u64 max, u64 x) noexcept;
 	/// \brief returns the closest Line to the Vector2.
-	Line ClosestLine(std::vector<geo::Line> lines, Vector2 vector) noexcept;
+	Line ClosestLine(std::vector<Line> lines, Vector2 vector) noexcept;
 	/// \brief returns the calculated centroid of the given points.
 	Vector2 Centroid(const Vector2* start, size_t size) noexcept;
 	/// \brief returns the calculated centroid of the given points.
-	Vector2 Centroid(const std::vector<geo::Vector2>& vertices) noexcept;
+	Vector2 Centroid(const std::vector<Vector2>& vertices) noexcept;
 	/// \brief Converts radians to degrees.
 	f64 Degrees(const f64 radians) noexcept;
 	/// \brief Gets the distance between two Vectors.

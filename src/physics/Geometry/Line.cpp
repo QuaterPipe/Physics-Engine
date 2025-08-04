@@ -1,8 +1,8 @@
-#include "geometry/Math.hpp"
-#include "geometry/Line.hpp"
+#include "physics/Geometry/Math.hpp"
+#include "physics/Geometry/Line.hpp"
 #include <iostream>
 
-namespace geo
+namespace physics
 {
 	Line::Line() noexcept
 	{

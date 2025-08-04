@@ -71,19 +71,19 @@ namespace physics
 		return result;
 	}
 
-	geo::Vector2 MeshCollider::GetCenter() const noexcept
+	Vector2 MeshCollider::GetCenter() const noexcept
 	{
-		std::vector<geo::Vector2> coms;
+		std::vector<Vector2> coms;
 		for (Collider* c : colliders)
 		{
 			coms.push_back(c->GetCenter());
 		}
-		return geo::Centroid(coms);
+		return Centroid(coms);
 	}
 
-	std::vector<geo::Vector2> MeshCollider::GetPoints(const Transform& t) const noexcept
+	std::vector<Vector2> MeshCollider::GetPoints(const Transform& t) const noexcept
 	{
-		std::vector<geo::Vector2> v;
+		std::vector<Vector2> v;
 		for (Collider* c : colliders)
 		{
 			auto p = c->GetPoints(t);
@@ -92,7 +92,7 @@ namespace physics
 		return v;
 	}
 
-	bool MeshCollider::Contains(const geo::Vector2& point, const Transform& t) const noexcept
+	bool MeshCollider::Contains(const Vector2& point, const Transform& t) const noexcept
 	{
 		for (Collider* c : colliders)
 		{
@@ -107,9 +107,9 @@ namespace physics
 		return (Collider*)new MeshCollider(*this);
 	}
 
-	geo::Vector2 MeshCollider::Max() const noexcept
+	Vector2 MeshCollider::Max() const noexcept
 	{
-		std::vector<geo::Vector2> maxes;
+		std::vector<Vector2> maxes;
 		for (auto& c : this->colliders)
 		{
 			maxes.push_back(c->Max());
@@ -117,9 +117,9 @@ namespace physics
 		return *std::max(maxes.begin(), maxes.end());
 	}
 
-	geo::Vector2 MeshCollider::Min() const noexcept
+	Vector2 MeshCollider::Min() const noexcept
 	{
-		std::vector<geo::Vector2> mins;
+		std::vector<Vector2> mins;
 		for (auto& c : this->colliders)
 		{
 			mins.push_back(c->Min());

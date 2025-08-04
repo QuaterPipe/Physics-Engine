@@ -91,7 +91,7 @@ namespace physics
 
 	void Quadtree::Split() noexcept
 	{
-		geo::Vector2 center = rect.GetCenter();
+		Vector2 center = rect.GetCenter();
 		f64 x = center.x;
 		f64 y = center.y;
 		f64 width = rect.width * 0.5;
@@ -100,10 +100,10 @@ namespace physics
 		f64 w = width * 0.5;
 		f64 h = height * 0.5;
 
-		BoxCollider SW(geo::Vector2(x - w, y - h), geo::Vector2(width, height));
-		BoxCollider SE(geo::Vector2(x + w, y - h), geo::Vector2(width, height));
-		BoxCollider NW(geo::Vector2(x - w, y + h), geo::Vector2(width, height));
-		BoxCollider NE(geo::Vector2(x + w, y + h), geo::Vector2(width, height));
+		BoxCollider SW(Vector2(x - w, y - h), Vector2(width, height));
+		BoxCollider SE(Vector2(x + w, y - h), Vector2(width, height));
+		BoxCollider NW(Vector2(x - w, y + h), Vector2(width, height));
+		BoxCollider NE(Vector2(x + w, y + h), Vector2(width, height));
 		subnodes[0] = std::make_unique<Quadtree>(level + 1, capacity, maxDepth, SW, objects);
 		subnodes[1] = std::make_unique<Quadtree>(level + 1, capacity, maxDepth, SE, objects);
 		subnodes[2] = std::make_unique<Quadtree>(level + 1, capacity, maxDepth, NW, objects);
@@ -123,14 +123,14 @@ namespace physics
 		{
 			Collider& c = (*objects)[i]->GetCollider();
 			BoxCollider bound = c.BoundingBox((*objects)[i]->transform);
-			geo::Vector2 minV = bound.Min();
-			geo::Vector2 maxV = bound.Max();
-			maxx = geo::Max(maxx, maxV.x);
-			maxy = geo::Max(maxy, maxV.y);
-			minx = geo::Min(minx, minV.x);
-			miny = geo::Min(miny, minV.y);
+			Vector2 minV = bound.Min();
+			Vector2 maxV = bound.Max();
+			maxx = Max(maxx, maxV.x);
+			maxy = Max(maxy, maxV.y);
+			minx = Min(minx, minV.x);
+			miny = Min(miny, minV.y);
 		}
-		rect = BoxCollider(geo::Vector2((maxx - minx) * 0.5 + minx, (maxy - miny) * 0.5 + miny), geo::Vector2(maxx - minx, maxy - miny));
+		rect = BoxCollider(Vector2((maxx - minx) * 0.5 + minx, (maxy - miny) * 0.5 + miny), Vector2(maxx - minx, maxy - miny));
 		for (size_t i = 0; i < objects->size(); i++)
 			Insert(i);
 	}

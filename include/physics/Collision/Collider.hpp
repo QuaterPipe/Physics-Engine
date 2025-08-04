@@ -1,5 +1,5 @@
 #pragma once
-#include "geometry/main.hpp"
+#include "physics/Geometry/main.hpp"
 #include "SFML/Graphics.hpp"
 #include "Transform.hpp"
 #define MAX_MANIFOLD_POINT_COUNT 5
@@ -16,11 +16,11 @@ namespace physics
 	struct Manifold
 	{
 		//the points where the two objects touch
-		geo::Vector2 points[MAX_MANIFOLD_POINT_COUNT];
+		Vector2 points[MAX_MANIFOLD_POINT_COUNT];
 		// the amount of points in the manifold
 		size_t pointCount = 0;
 		// the normal direction
-		geo::Vector2 normal;
+		Vector2 normal;
 		// The distance between the two most shallow points.
 		f64 depth = 0;
 		bool hasCollision = false;
@@ -40,11 +40,11 @@ namespace physics
 		virtual Collider* Clone() const noexcept;
 		virtual ~Collider() noexcept;
 		virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept = 0;
-		virtual bool Contains(const geo::Vector2& point, const Transform& t = Transform()) const noexcept = 0;
-		virtual geo::Vector2 GetCenter() const noexcept = 0;
-		virtual std::vector<geo::Vector2> GetPoints(const Transform& t = Transform()) const noexcept = 0;
-		virtual geo::Vector2 Max() const noexcept = 0;
-		virtual geo::Vector2 Min() const noexcept = 0;
+		virtual bool Contains(const Vector2& point, const Transform& t = Transform()) const noexcept = 0;
+		virtual Vector2 GetCenter() const noexcept = 0;
+		virtual std::vector<Vector2> GetPoints(const Transform& t = Transform()) const noexcept = 0;
+		virtual Vector2 Max() const noexcept = 0;
+		virtual Vector2 Min() const noexcept = 0;
 		virtual bool operator==(const Collider& c) const noexcept = 0;
 		virtual bool operator!=(const Collider& c) const noexcept = 0;
 		virtual Manifold TestCollision(

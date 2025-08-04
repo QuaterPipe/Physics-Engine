@@ -27,7 +27,7 @@ namespace physics
 	: Dynamicbody(BoxCollider(), t, false), radiusPerPoint(radiusPerPoint), pointCount(width * height), shapeSpring(shapeSpring)
 	{
 		const f64 spacing = referenceSpring.restingLength;
-		geo::Vector2 vec(width * spacing * -0.5, height * spacing * 0.5);
+		Vector2 vec(width * spacing * -0.5, height * spacing * 0.5);
 		for (size_t i = 0; i < height; i++)
 		{
 			std::vector<PointMass> arr;
@@ -159,9 +159,9 @@ namespace physics
 			|| (o.GetOriginalShape() != _originalShape);
 	}
 
-	void Softbody::ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2& contactVec) noexcept
+	void Softbody::ApplyImpulse(const Vector2& impulse, const Vector2& contactVec) noexcept
 	{
-		if (contactVec == geo::Vector2::Infinity)
+		if (contactVec == Vector2::Infinity)
 		{
 			for (auto& m: points)
 			{
@@ -172,7 +172,7 @@ namespace physics
 		{
 			for (auto& m: points)
 			{
-				if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
+				if (DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
 				{
 					m.velocity += impulse * m.invMass;
 					_pointsChanged = true;
@@ -182,9 +182,9 @@ namespace physics
 		}
 	}
 
-	void Softbody::ApplyForce(const geo::Vector2& force, const geo::Vector2& contactVec) noexcept
+	void Softbody::ApplyForce(const Vector2& force, const Vector2& contactVec) noexcept
 	{
-		if (contactVec == geo::Vector2::Infinity)
+		if (contactVec == Vector2::Infinity)
 		{
 			for (auto& m: points)
 			{
@@ -195,7 +195,7 @@ namespace physics
 		{
 			for (auto& m: points)
 			{
-				if (geo::DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
+				if (DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
 				{
 					m.force += force;
 					_pointsChanged = true;
@@ -226,9 +226,9 @@ namespace physics
 	}
 
 
-	geo::Vector2 Softbody::ComputeForce(const geo::Vector2& position, const geo::Vector2& velocity) const noexcept
+	Vector2 Softbody::ComputeForce(const Vector2& position, const Vector2& velocity) const noexcept
 	{
-		return appliedForce + (usesGravity ? gravity : geo::Vector2(0 ,0));
+		return appliedForce + (usesGravity ? gravity : Vector2(0 ,0));
 	}
 
 
@@ -244,8 +244,8 @@ namespace physics
 		f64 a = 0, b = 0;
 		for (size_t i = 0; i < pointCount; i++)
 		{
-			geo::Vector2 q0 = _originalShape[i].position - _originalCenter;
-			geo::Vector2 q = points[i].position - derivedPos;
+			Vector2 q0 = _originalShape[i].position - _originalCenter;
+			Vector2 q = points[i].position - derivedPos;
 			a += q.Dot(q0);
 			b += q0.Cross(q);
 		}
@@ -257,7 +257,7 @@ namespace physics
 	{
 		for (PointMassSpring& s: springs)
 		{
-			f64 dis = geo::DistanceSquared(s.a->position, s.b->position);
+			f64 dis = DistanceSquared(s.a->position, s.b->position);
 			if (!dis)
 				continue;
 			if (dis < SQRD(s.a->radius + s.b->radius))
@@ -268,13 +268,13 @@ namespace physics
 		}
 	}
 
-	PointMass* Softbody::GetClosestMassPoint(const geo::Vector2& point) const noexcept
+	PointMass* Softbody::GetClosestMassPoint(const Vector2& point) const noexcept
 	{
 		PointMass* closest = nullptr;
 		f64 closestDis = std::numeric_limits<f64>::infinity();
 		for (auto& m : points)
 		{
-			const f64 dis = geo::DistanceSquared(m.position + transform.GetPosition(), point);
+			const f64 dis = DistanceSquared(m.position + transform.GetPosition(), point);
 			if (dis < closestDis)
 			{
 				closest = const_cast<PointMass*>(&m);
@@ -389,13 +389,13 @@ namespace physics
 
 	void Softbody::UpdateTransform() noexcept
 	{
-		geo::Vector2 locAvg = transform.GetPosition() * pointCount;
+		Vector2 locAvg = transform.GetPosition() * pointCount;
 		for (size_t i = 0; i < pointCount; i++)
 		{
 			locAvg += points[i].position;
 		}
 		locAvg /= pointCount;
-		geo::Vector2 diff = locAvg - transform.GetPosition();
+		Vector2 diff = locAvg - transform.GetPosition();
 		for (size_t i = 0; i < pointCount; i++)
 		{
 			points[i].position -= diff;

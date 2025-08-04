@@ -40,15 +40,15 @@ namespace physics
 		*velocity = *velocity + (dt / 6.0) * (k1V + 2 * k2V + 2 * k3V + k4V);
 	}
 
-	void RK4Integrate(geo::Vector2* position, geo::Vector2* velocity, f64 dt, geo::Vector2(*computeForce)(geo::Vector2, geo::Vector2)) noexcept
+	void RK4Integrate(Vector2* position, Vector2* velocity, f64 dt, Vector2(*computeForce)(Vector2, Vector2)) noexcept
 	{
 		if (!position || !velocity)
 			return;
-		geo::Vector2 k1X, k2X, k3X, k4X;
-		geo::Vector2 k1V, k2V, k3V, k4V;
-		geo::Vector2 a1, a2, a3, a4;
-		geo::Vector2 x2, x3, x4;
-		geo::Vector2 v2, v3, v4;
+		Vector2 k1X, k2X, k3X, k4X;
+		Vector2 k1V, k2V, k3V, k4V;
+		Vector2 a1, a2, a3, a4;
+		Vector2 x2, x3, x4;
+		Vector2 v2, v3, v4;
 		a1 = computeForce(*position, *velocity);
 		k1X = a1;
 		k1V = *velocity;
@@ -77,15 +77,15 @@ namespace physics
 		*velocity = *velocity + (dt / 6.0) * (k1V + 2 * k2V + 2 * k3V + k4V);
 	}
 
-	void RK4Integrate(geo::Vector2* position, geo::Vector2* velocity, f64 dt, const ForceComputer& accel) noexcept
+	void RK4Integrate(Vector2* position, Vector2* velocity, f64 dt, const ForceComputer& accel) noexcept
 	{
 		if (!position || !velocity)
 			return;
-			geo::Vector2 k1X, k2X, k3X, k4X;
-			geo::Vector2 k1V, k2V, k3V, k4V;
-			geo::Vector2 a1, a2, a3, a4;
-			geo::Vector2 x2, x3, x4;
-			geo::Vector2 v2, v3, v4;
+			Vector2 k1X, k2X, k3X, k4X;
+			Vector2 k1V, k2V, k3V, k4V;
+			Vector2 a1, a2, a3, a4;
+			Vector2 x2, x3, x4;
+			Vector2 v2, v3, v4;
 		
 		//k1
 		a1 = accel.ComputeForce(*position, *velocity);
@@ -126,7 +126,7 @@ namespace physics
 	}
 
 
-	void SymplecticEulerIntegrate(geo::Vector2* position, geo::Vector2* velocity, geo::Vector2* acceleration, f64 dt) noexcept
+	void SymplecticEulerIntegrate(Vector2* position, Vector2* velocity, Vector2* acceleration, f64 dt) noexcept
 	{
 		if (!position || !velocity || !acceleration)
 			return;

@@ -1,7 +1,7 @@
-#include "geometry/Span.hpp"
-#include "geometry/Math.hpp"
+#include "physics/Geometry/Span.hpp"
+#include "physics/Geometry/Math.hpp"
 
-namespace geo
+namespace physics
 {
 	Span::Span() noexcept
 		: min(-std::numeric_limits<f64>::infinity()), max(std::numeric_limits<f64>::infinity())

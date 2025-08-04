@@ -3,7 +3,6 @@
 #include <ctime>
 #include <iostream>
 using namespace physics;
-using namespace geo;
 
 void IntegrationTest()
 {
@@ -41,7 +40,7 @@ void IntegrationTest()
 	Vector3 v3(31, 3113, 1);
 	v3 = t.GetTransformationMatrix() * v3;
 	std::cout << "answer: " << v3 << "\n";
-	geo::Vector2 tmp = v;
+	Vector2 tmp = v;
 	std::cout << tmp << "\n";
 	tmp = t.GetRotation() * tmp;
 	std::cout << tmp << "\n";
@@ -57,7 +56,7 @@ void IntegrationTest()
 	std::cout << tmp << "\n";
 	tmp -= t.GetCOM();
 	std::cout << tmp << "\n";
-	tmp.Rotate(geo::Vector2(0, 0), t.GetAngle());
+	tmp.Rotate(Vector2(0, 0), t.GetAngle());
 	std::cout << tmp << "\n";
 	tmp += t.GetCOM();
 	std::cout << tmp << "\n";

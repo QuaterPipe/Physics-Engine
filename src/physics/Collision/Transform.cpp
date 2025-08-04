@@ -14,7 +14,7 @@ namespace physics
 	{
 	}
 
-	Transform::Transform(const geo::Vector2& position, const geo::Vector2& com, const geo::Vector2& scale, const geo::Matrix2& rotation) noexcept
+	Transform::Transform(const Vector2& position, const Vector2& com, const Vector2& scale, const Matrix2& rotation) noexcept
 		: _position(position), _centerOfMass(com), _scale(scale.x, 0, 0, scale.y), _rotation(rotation), _transformationMatrix(_rotation * _scale), _rotxScale(_rotation * _scale)
 	{
 		_transformationMatrix(0, 2) = (_centerOfMass.x - _rotation(0, 0) * _centerOfMass.x - _rotation(0, 1) * _centerOfMass.y) + _position.x;
@@ -22,7 +22,7 @@ namespace physics
 	}
 
 
-	Transform::Transform(const geo::Vector2& position, const geo::Vector2& com, const geo::Vector2& scale, f64 rotation) noexcept
+	Transform::Transform(const Vector2& position, const Vector2& com, const Vector2& scale, f64 rotation) noexcept
 		: _position(position), _centerOfMass(com), _scale(scale.x, 0, 0, scale.y), _rotation(rotation), _transformationMatrix(_rotation * _scale), _rotxScale(_rotation * _scale)
 	{
 		_transformationMatrix(0, 2) = (_centerOfMass.x - _rotation(0, 0) * _centerOfMass.x - _rotation(0, 1) * _centerOfMass.y) + _position.x;
@@ -80,34 +80,34 @@ namespace physics
 		return  _rotation.Angle();
 	}
 
-	geo::Vector2 Transform::GetCOM() const noexcept
+	Vector2 Transform::GetCOM() const noexcept
 	{
 		return _centerOfMass;
 	}
 
 	Transform Transform::GetInverseTransform() const noexcept
 	{
-		return Transform(-_position, -_centerOfMass, geo::Vector2(1.0 / _scale(0, 0), 1.0 / _scale(1, 1)), -_rotation.Angle());
+		return Transform(-_position, -_centerOfMass, Vector2(1.0 / _scale(0, 0), 1.0 / _scale(1, 1)), -_rotation.Angle());
 	}
 
-	geo::Vector2 Transform::GetPosition() const noexcept
+	Vector2 Transform::GetPosition() const noexcept
 	{
 		return _position;
 	}
 
-	geo::Matrix2 Transform::GetRotation() const noexcept
+	Matrix2 Transform::GetRotation() const noexcept
 	{
 		return _rotation;
 	}
 
-	/*geo::Vector2 Transform::GetScale() const noexcept
+	/*Vector2 Transform::GetScale() const noexcept
 	{
-		return geo::Vector2(_scale(0, 0), _scale(1, 1));
+		return Vector2(_scale(0, 0), _scale(1, 1));
 	}*/
 
 	void Transform::Rotate(f64 theta) noexcept
 	{
-		_rotation = _rotation * geo::Matrix2(theta);
+		_rotation = _rotation * Matrix2(theta);
 		_rotxScale = _rotation * _scale;
 		_transformationMatrix(0, 0) = _rotxScale(0, 0);
 		_transformationMatrix(0, 1) = _rotxScale(0, 1);
@@ -117,7 +117,7 @@ namespace physics
 
 	void Transform::SetAngle(f64 theta) noexcept
 	{
-		_rotation = geo::Matrix2(theta);
+		_rotation = Matrix2(theta);
 		_rotxScale = _rotation * _scale;
 		_transformationMatrix(0, 0) = _rotxScale(0, 0);
 		_transformationMatrix(0, 1) = _rotxScale(0, 1);
@@ -125,7 +125,7 @@ namespace physics
 		_transformationMatrix(1, 1) = _rotxScale(1, 1);
 	}
 
-	void Transform::SetCOM(const geo::Vector2& com) noexcept
+	void Transform::SetCOM(const Vector2& com) noexcept
 	{
 		_centerOfMass = com;
 		_transformationMatrix(0, 2) = (_centerOfMass.x - _rotation(0, 0) * _centerOfMass.x - _rotation(0, 1) * _centerOfMass.y) + _position.x;
@@ -139,7 +139,7 @@ namespace physics
 		_transformationMatrix(1, 2) = (_centerOfMass.y - _rotation(1, 0) * _centerOfMass.x - _rotation(1, 1) * _centerOfMass.y) + _position.y;
 	}
 
-	void Transform::SetPosition(const geo::Vector2& position) noexcept
+	void Transform::SetPosition(const Vector2& position) noexcept
 	{
 		_position = position;
 		_transformationMatrix(0, 2) = (_centerOfMass.x - _rotation(0, 0) * _centerOfMass.x - _rotation(0, 1) * _centerOfMass.y) + _position.x;
@@ -153,7 +153,7 @@ namespace physics
 		_transformationMatrix(1, 2) = _centerOfMass.y - _rotation(1, 0) * _centerOfMass.x - _rotation(1, 1) * _centerOfMass.y + _position.y;
 	}
 
-	void Transform::SetRotation(const geo::Matrix2& rotation) noexcept
+	void Transform::SetRotation(const Matrix2& rotation) noexcept
 	{
 		_rotation = rotation;
 		_rotxScale = _rotation * _scale;
@@ -163,7 +163,7 @@ namespace physics
 		_transformationMatrix(1, 1) = _rotxScale(1, 1);
 	}
 
-	void Transform::SetScale(const geo::Vector2& scale) noexcept
+	void Transform::SetScale(const Vector2& scale) noexcept
 	{
 		_scale(0, 0) = scale.x;
 		_scale(1, 1) = scale.y;
@@ -196,19 +196,19 @@ namespace physics
 		_transformationMatrix(1, 1) = _rotxScale(1, 1);
 	}
 
-	void Transform::Translate(geo::Vector2 offset) noexcept
+	void Transform::Translate(Vector2 offset) noexcept
 	{
 		SetPosition(_position + offset);
 	}
 
-	geo::Matrix3 Transform::GetTransformationMatrix() const noexcept
+	Matrix3 Transform::GetTransformationMatrix() const noexcept
 	{
 		return _transformationMatrix;
 	}
 
-	/*geo::Vector2 Transform::TransformVector(const geo::Vector2& v) const noexcept
+	/*Vector2 Transform::TransformVector(const Vector2& v) const noexcept
 	{
-		geo::Vector2 result = _rotxScale * v;
+		Vector2 result = _rotxScale * v;
 		result.x += _transformationMatrix(0, 2);
 		result.y += _transformationMatrix(1, 2);
 		return result;
@@ -216,7 +216,7 @@ namespace physics
 
 	bool Transform::IsUnitTransform() const noexcept
 	{
-		return _position == geo::Vector2::Origin && _centerOfMass == geo::Vector2::Origin && !_rotation.Angle() &&
+		return _position == Vector2::Origin && _centerOfMass == Vector2::Origin && !_rotation.Angle() &&
 			_scale(0, 0) == 1 && _scale(1, 1) == 1 && !_scale(0, 1) && _scale(1, 0);
 	}
 }

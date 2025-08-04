@@ -10,7 +10,7 @@ namespace physics
 	}
 
 	Rigidbody::Rigidbody(const Collider& c, const Transform& t, const bool& isTrigger, const PhysicsMaterial& p,
-		const f64& mass, bool usesGravity, const geo::Vector2& drag) noexcept
+		const f64& mass, bool usesGravity, const Vector2& drag) noexcept
 	: Dynamicbody(c, t, isTrigger, p, mass, usesGravity, drag)
 	{
 	}
@@ -67,24 +67,24 @@ namespace physics
 		angularVelocity += force;
 	}
 
-	void Rigidbody::ApplyForce(const geo::Vector2& Force, const geo::Vector2& contactPoint) noexcept
+	void Rigidbody::ApplyForce(const Vector2& Force, const Vector2& contactPoint) noexcept
 	{
 		if (!isStatic && !isKinematic)
 		{
 		 	force += Force;
-			if (contactPoint != geo::Vector2::Infinity && Force.GetMagnitudeExact())
+			if (contactPoint != Vector2::Infinity && Force.GetMagnitudeExact())
 			{
 				angularForce += (transform.GetCOM()).Cross(Force);
 			}
 		}
 	}
 
-	void Rigidbody::ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2& contactVec) noexcept
+	void Rigidbody::ApplyImpulse(const Vector2& impulse, const Vector2& contactVec) noexcept
 	{
 		if (!isStatic && !isKinematic)
 		{
 			velocity += _invMass * impulse;
-			if (contactVec != geo::Vector2::Infinity && impulse.GetMagnitudeExact())
+			if (contactVec != Vector2::Infinity && impulse.GetMagnitudeExact())
 				angularVelocity += _invInertia * contactVec.Cross(impulse);
 		}
 	}
@@ -94,9 +94,9 @@ namespace physics
 		return appliedAngularForce;
 	}
 
-	geo::Vector2 Rigidbody::ComputeForce(const geo::Vector2& position, const geo::Vector2 &velocity) const noexcept
+	Vector2 Rigidbody::ComputeForce(const Vector2& position, const Vector2 &velocity) const noexcept
 	{
-		return appliedForce + (usesGravity ? gravity : geo::Vector2(0, 0));
+		return appliedForce + (usesGravity ? gravity : Vector2(0, 0));
 	}
 
 	CollisionObject* Rigidbody::Clone() const noexcept
@@ -107,14 +107,14 @@ namespace physics
 	void Rigidbody::Move(f64 offsetX, f64 offsetY) noexcept
 	{
 		if (isKinematic)
-			transform.Translate(geo::Vector2(offsetX, offsetY));
+			transform.Translate(Vector2(offsetX, offsetY));
 	}
 
 	void Rigidbody::Update(f64 dt, int RK4Step) noexcept
 	{
 		if (!isKinematic && !isStatic)
 		{
-			geo::Vector2 position = transform.GetPosition();
+			Vector2 position = transform.GetPosition();
 			f64 orient = transform.GetAngle();
 			switch (RK4Step)
 			{

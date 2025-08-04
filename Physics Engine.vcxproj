@@ -19,18 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\geometry\Curve.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\geometry\Line.cpp" />
-    <ClCompile Include="src\geometry\Math.cpp" />
-    <ClCompile Include="src\geometry\Matrix.cpp" />
-    <ClCompile Include="src\geometry\Matrix2.cpp" />
-    <ClCompile Include="src\geometry\Matrix3.cpp" />
-    <ClCompile Include="src\geometry\Span.cpp" />
-    <ClCompile Include="src\geometry\Vector.cpp" />
-    <ClCompile Include="src\geometry\Vector2.cpp" />
-    <ClCompile Include="src\geometry\Vector3.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\physics\Collision\BoxCollider.cpp" />
     <ClCompile Include="src\physics\Collision\BoxCollision.cpp" />
@@ -58,6 +46,16 @@
     <ClCompile Include="src\physics\Engine\PositionalCorrectionSolver.cpp" />
     <ClCompile Include="src\physics\Engine\Quadtree.cpp" />
     <ClCompile Include="src\physics\Engine\Time.cpp" />
+    <ClCompile Include="src\physics\Geometry\Curve.cpp" />
+    <ClCompile Include="src\physics\Geometry\Line.cpp" />
+    <ClCompile Include="src\physics\Geometry\Math.cpp" />
+    <ClCompile Include="src\physics\Geometry\Matrix.cpp" />
+    <ClCompile Include="src\physics\Geometry\Matrix2.cpp" />
+    <ClCompile Include="src\physics\Geometry\Matrix3.cpp" />
+    <ClCompile Include="src\physics\Geometry\Span.cpp" />
+    <ClCompile Include="src\physics\Geometry\Vector.cpp" />
+    <ClCompile Include="src\physics\Geometry\Vector2.cpp" />
+    <ClCompile Include="src\physics\Geometry\Vector3.cpp" />
     <ClCompile Include="testing\CollisionTesting.cpp" />
     <ClCompile Include="testing\ConstraintTesting.cpp" />
     <ClCompile Include="testing\Demo.cpp" />
@@ -70,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="include\geometry\Math.inl" />
+    <None Include="include\physics\Geometry\Math.inl" />
     <None Include="include\SFML\Audio\SoundFileFactory.inl" />
     <None Include="include\SFML\Graphics\Glsl.inl" />
     <None Include="include\SFML\Graphics\Rect.inl" />
@@ -125,13 +123,6 @@
     <Library Include="lib\SFML\vorbisfile.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\geometry\Curve.hpp" />
-    <ClInclude Include="include\geometry\Line.hpp" />
-    <ClInclude Include="include\geometry\main.hpp" />
-    <ClInclude Include="include\geometry\Math.hpp" />
-    <ClInclude Include="include\geometry\Matrix.hpp" />
-    <ClInclude Include="include\geometry\Span.hpp" />
-    <ClInclude Include="include\geometry\Vector.hpp" />
     <ClInclude Include="include\physics\Collision\Algo.hpp" />
     <ClInclude Include="include\physics\Collision\BoxCollider.hpp" />
     <ClInclude Include="include\physics\Collision\CircleCollider.hpp" />
@@ -156,6 +147,13 @@
     <ClInclude Include="include\physics\Engine\DynamicsWorld.hpp" />
     <ClInclude Include="include\physics\Engine\Quadtree.hpp" />
     <ClInclude Include="include\physics\Engine\Time.hpp" />
+    <ClInclude Include="include\physics\Geometry\Curve.hpp" />
+    <ClInclude Include="include\physics\Geometry\Line.hpp" />
+    <ClInclude Include="include\physics\Geometry\main.hpp" />
+    <ClInclude Include="include\physics\Geometry\Math.hpp" />
+    <ClInclude Include="include\physics\Geometry\Matrix.hpp" />
+    <ClInclude Include="include\physics\Geometry\Span.hpp" />
+    <ClInclude Include="include\physics\Geometry\Vector.hpp" />
     <ClInclude Include="include\physics\Main.hpp" />
     <ClInclude Include="include\SFML\Audio.hpp" />
     <ClInclude Include="include\SFML\Audio\AlResource.hpp" />

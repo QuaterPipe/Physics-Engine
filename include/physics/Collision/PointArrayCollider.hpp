@@ -6,6 +6,6 @@ namespace physics
 	{
 		private:
 		public:
-			std::vector<geo::Vector2> points;
+			std::vector<Vector2> points;
 	};
 }

@@ -2,8 +2,8 @@
 #include "physics/Dynamics/Constraint.hpp"
 namespace physics
 {
-	geo::Vector ProjectedGaussianEliminationSolve(geo::Matrix matrix, geo::Vector right, f64 relaxation,
-		i32 iterations, geo::Vector lo, geo::Vector hi);
+	Vector ProjectedGaussianEliminationSolve(Matrix matrix, Vector right, f64 relaxation,
+		i32 iterations, Vector lo, Vector hi);
 
 	class ConstraintSolver
 	{
@@ -24,9 +24,9 @@ namespace physics
 			struct IntermediateValues
 			{
 				BlockSparseMatrix K;
-				geo::Vector right;
-				geo::Vector lo;
-				geo::Vector high;
+				Vector right;
+				Vector lo;
+				Vector high;
 				f64 dt;
 			};
 	};

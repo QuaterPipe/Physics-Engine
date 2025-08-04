@@ -23,8 +23,8 @@ namespace physics::algo
                 c.normal.Set(-1, 0);
                 if (a->y <= b->y)
                 {
-                    c.points[0] = geo::Vector2(a->x + (a->width / 2), a->y + (a->height / 2));
-                    c.points[1] = geo::Vector2(b->x - (b->width / 2), b->y - (b->height / 2));
+                    c.points[0] = Vector2(a->x + (a->width / 2), a->y + (a->height / 2));
+                    c.points[1] = Vector2(b->x - (b->width / 2), b->y - (b->height / 2));
                     if (c.depth > (a->y + a->height) - b->y)
                     {
                         c.depth = (a->y + a->height) - b->y;
@@ -34,8 +34,8 @@ namespace physics::algo
                 }
                 else if (a->y > b->y)
                 {
-                    c.points[0] = geo::Vector2(a->x + (a->width / 2), a->y - (a->height / 2));
-                    c.points[1] = geo::Vector2(b->x - (b->width / 2), b->y + (b->height / 2));
+                    c.points[0] = Vector2(a->x + (a->width / 2), a->y - (a->height / 2));
+                    c.points[1] = Vector2(b->x - (b->width / 2), b->y + (b->height / 2));
                     if (c.depth > ((b->y + b->height) - a->y))
                     {
                         c.depth = (b->y + b->height) - a->y;
@@ -51,8 +51,8 @@ namespace physics::algo
                 c.normal.Set(1, 0);
                 if (a->y <= b->y)
                 {
-                    c.points[0] = geo::Vector2(a->x - (a->width / 2), a->y + (a->height / 2));
-                    c.points[1] = geo::Vector2(b->x + (b->width / 2), b->y - (b->height / 2));
+                    c.points[0] = Vector2(a->x - (a->width / 2), a->y + (a->height / 2));
+                    c.points[1] = Vector2(b->x + (b->width / 2), b->y - (b->height / 2));
                     if (c.depth > ((a->y + a->height) - b->y))
                     {
                         c.depth = ((a->y + a->height) - b->y);
@@ -62,8 +62,8 @@ namespace physics::algo
                 }
                 else if (a->y > b->y)
                 {
-                    c.points[0] = geo::Vector2(a->x - (a->width / 2), a->y - (a->height / 2));
-                    c.points[1] = geo::Vector2(b->x + (b->width / 2), b->y + (b->height / 2));
+                    c.points[0] = Vector2(a->x - (a->width / 2), a->y - (a->height / 2));
+                    c.points[1] = Vector2(b->x + (b->width / 2), b->y + (b->height / 2));
                     if (c.depth > ((b->y + b->height) - a->y))
                     {
                         c.depth = ((b->y + b->height) - a->y);

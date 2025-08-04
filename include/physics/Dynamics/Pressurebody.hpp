@@ -12,7 +12,7 @@ namespace physics
 			size_t _pointCount = 0;
 			std::vector<PointMass> _points;
 			std::vector<PointMassSpring> _springs;
-			std::vector<geo::Vector2> _pressureForces;
+			std::vector<Vector2> _pressureForces;
 			std::vector<RK4State> _pointStates;
 			void _UpdatePressureForces(int rk4step) noexcept;
 		public:
@@ -26,10 +26,10 @@ namespace physics
 			bool operator!=(const CollisionObject& other) const noexcept override;
 			void ApplyAngularForce(f64 Force) noexcept override;
 			void ApplyAngularImpulse(f64 impulse) noexcept override;
-			void ApplyForce(const geo::Vector2& Force, const geo::Vector2& contactPoint = geo::Vector2::Infinity) noexcept override;
-			void ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2& contactVec = geo::Vector2::Infinity) noexcept override;
+			void ApplyForce(const Vector2& Force, const Vector2& contactPoint = Vector2::Infinity) noexcept override;
+			void ApplyImpulse(const Vector2& impulse, const Vector2& contactVec = Vector2::Infinity) noexcept override;
 			CollisionObject* Clone() const noexcept override;
-			geo::Vector2 ComputeForce(const geo::Vector2& position, const geo::Vector2& Velocity) const noexcept override;
+			Vector2 ComputeForce(const Vector2& position, const Vector2& Velocity) const noexcept override;
 			void DerivePositionAndAngle() noexcept;
 			f64 GetRadius() const noexcept;
 			const std::vector<PointMass>& GetPoints() const noexcept;
@@ -40,6 +40,6 @@ namespace physics
 			void Update(f64 dt, int rk4step) noexcept override;
 			void UpdateCollider() noexcept;
 			void UpdateTransform() noexcept;
-			virtual void Translate(geo::Vector2 offset, geo::Vector2* points, size_t ptCount) noexcept override;
+			virtual void Translate(Vector2 offset, Vector2* points, size_t ptCount) noexcept override;
 	};
 }

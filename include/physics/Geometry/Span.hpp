@@ -1,6 +1,6 @@
 #pragma once
 typedef double f64;
-namespace geo
+namespace physics
 {
 	struct Span
 	{

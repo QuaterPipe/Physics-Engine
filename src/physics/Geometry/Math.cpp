@@ -1,7 +1,7 @@
-#include "geometry/Math.hpp"
+#include "physics/Geometry/Math.hpp"
 #include <iostream>
 
-namespace geo
+namespace physics
 {
 	i64 Abs(i64 x) noexcept
 	{
@@ -19,7 +19,7 @@ namespace geo
 			return x;
 	}
 
-	Vector2 Centroid(const std::vector<geo::Vector2>& vertices) noexcept
+	Vector2 Centroid(const std::vector<Vector2>& vertices) noexcept
 	{
 		Vector2 first = *vertices.begin();
 		Vector2 last = *(vertices.end() - 1);
@@ -104,7 +104,7 @@ namespace geo
 		return x;
 	}
 	
-	Line ClosestLine(std::vector<geo::Line> lines, Vector2 vector) noexcept
+	Line ClosestLine(std::vector<Line> lines, Vector2 vector) noexcept
 	{
 		Line closestLine = Line();
 		f64 minDis = std::numeric_limits<f64>::infinity();
@@ -298,7 +298,7 @@ namespace geo
 
 	Vector2 PointOfIntersect(const Line& la, const Line& lb, bool isInfLine) noexcept
 	{
-		const geo::Vector2& A = la.a, & B = la.b, & C = lb.a, & D = lb.b;
+		const Vector2& A = la.a, & B = la.b, & C = lb.a, & D = lb.b;
 		const f64 top = (D.x - C.x) * (A.y - C.y) - (D.y - C.y) * (A.x - C.x);
 		const f64 bottom = (D.y - C.y) * (B.x - A.x) - (D.x - C.x) * (B.y - A.y);
 		const f64 t = top / bottom;

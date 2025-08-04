@@ -1,7 +1,6 @@
 #include "Testing.hpp"
 #include <iostream>
 #include <thread>
-using namespace geo;
 using namespace physics;
 Rigidbody rigidbodies[10];
 sf::RenderWindow* w = NULL;
@@ -40,7 +39,7 @@ void Render(void)
     {
         /*rect.setPosition(rigidbodies[i].position.x + 25, rigidbodies[i].position.y + 25);
         Vector2 ang = GetVectorOnCircle(rigidbodies[i].position, 50, rigidbodies[i].rotation.Angle());
-        rect.setRotation(geo::Degrees(rigidbodies[i].rotation.Angle()));
+        rect.setRotation(Degrees(rigidbodies[i].rotation.Angle()));
         sf::Vertex line[2] = {
             sf::Vertex(sf::Vector2f(rigidbodies[i].position.x, rigidbodies[i].position.y)),
             sf::Vertex(sf::Vector2f(ang.x, ang.y))

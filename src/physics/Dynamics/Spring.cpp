@@ -1,6 +1,6 @@
 #include "physics/Dynamics/Spring.hpp"
-#include "geometry/Math.hpp"
-#include "geometry/Vector.hpp"
+#include "physics/Geometry/Math.hpp"
+#include "physics/Geometry/Vector.hpp"
 #include <iostream>
 
 namespace physics
@@ -21,8 +21,8 @@ namespace physics
 	f64 PointMassSpring::CalculateForce() const noexcept
 	{
 		if (!a || !b)
-			return geo::Vector2::Infinity.x;
-		f64 dist = geo::Distance(a->position, b->position);
+			return Vector2::Infinity.x;
+		f64 dist = Distance(a->position, b->position);
 		if (dist == 0)
 			return 0;
 		f64 Fs = (dist - restingLength) * stiffness;
@@ -51,29 +51,29 @@ namespace physics
 		b->force += force * (a->position - b->position).Normalized();
 	}
 
-	geo::Vector2 PointMassSpring::GetAForceVector(geo::Vector2 aPosition, geo::Vector2 aVelocity) const noexcept
+	Vector2 PointMassSpring::GetAForceVector(Vector2 aPosition, Vector2 aVelocity) const noexcept
 	{
 		if (!a || !b)
-			return geo::Vector2::Infinity;
-		geo::Vector2 delta = b->position - a->position;
+			return Vector2::Infinity;
+		Vector2 delta = b->position - a->position;
 		f64 dist = delta.GetMagnitudeExact();
 		if (dist == 0.0)
-			return geo::Vector2(0, 0);
-		geo::Vector2 dir = delta / dist;
+			return Vector2(0, 0);
+		Vector2 dir = delta / dist;
 		f64 Fs = (dist - restingLength) * stiffness;
 		f64 Fd = -dir.Dot(b->velocity - aVelocity) * dampingFactor;
 		return (Fs - Fd) * dir;
 	}
 
-	geo::Vector2 PointMassSpring::GetBForceVector(geo::Vector2 bPosition, geo::Vector2 bVelocity) const noexcept
+	Vector2 PointMassSpring::GetBForceVector(Vector2 bPosition, Vector2 bVelocity) const noexcept
 	{
 		if (!a || !b)
-			return geo::Vector2::Infinity;
-		geo::Vector2 delta = a->position - bPosition;
+			return Vector2::Infinity;
+		Vector2 delta = a->position - bPosition;
 		f64 dist = delta.GetMagnitudeExact();
 		if (dist == 0.0)
-			return geo::Vector2(0, 0);
-		geo::Vector2 dir = delta / dist;
+			return Vector2(0, 0);
+		Vector2 dir = delta / dist;
 		f64 Fs = (dist - restingLength) * stiffness;
 		f64 Fd = -dir.Dot(a->velocity - bVelocity) * dampingFactor;
 		return (Fs - Fd) * dir;
@@ -82,7 +82,7 @@ namespace physics
 	f64 PointMassSpring::PotentialEnergy() const noexcept
 	{
 		if (!a || !b)
-			return geo::Vector2::Infinity.x;
+			return Vector2::Infinity.x;
 		f64 stretch = (b->position - a->position).GetMagnitudeExact() - restingLength;
 		return 0.5 * stiffness * SQRD(stretch);
 	}
@@ -91,7 +91,7 @@ namespace physics
 	{
 	}
 
-	PointMass::PointMass(geo::Vector2 position, geo::Vector2 velocity, geo::Vector2 force, f64 invMass, f64 radius) noexcept
+	PointMass::PointMass(Vector2 position, Vector2 velocity, Vector2 force, f64 invMass, f64 radius) noexcept
 		: position(position), velocity(velocity), force(force), radius(radius), invMass(invMass)
 	{
 	}
@@ -110,9 +110,9 @@ namespace physics
 			correctionOn != other.correctionOn;
 	}
 
-	geo::Vector2 PointMass::ComputeForce(const geo::Vector2& Position, const geo::Vector2& Velocity) const noexcept
+	Vector2 PointMass::ComputeForce(const Vector2& Position, const Vector2& Velocity) const noexcept
 	{
-		geo::Vector2 accel(0, 0);
+		Vector2 accel(0, 0);
 		for (size_t i = 0; i < springs.size(); i++)
 			accel += springInfo[i] ? springs[i].GetAForceVector(Position, Velocity) : springs[i].GetBForceVector(Position, Velocity);
 		if (correctionOn)

@@ -1,8 +1,8 @@
-#include "geometry/Math.hpp"
-#include "geometry/Line.hpp"
-#include "geometry/Vector.hpp"
+#include "physics/Geometry/Math.hpp"
+#include "physics/Geometry/Line.hpp"
+#include "physics/Geometry/Vector.hpp"
 
-namespace geo
+namespace physics
 {
 	Vector::Vector() noexcept
 	{
@@ -379,24 +379,4 @@ namespace geo
 		return os << v.ToString();
 	}
 
-}
-
-geo::Vector2 sin(const geo::Vector2& v)
-{
-	return geo::Vector2(sin(v.x), sin(v.y));
-}
-
-geo::Vector2 cos(const geo::Vector2& v)
-{
-	return geo::Vector2(cos(v.x), cos(v.y));
-}
-
-geo::Vector2 tan(const geo::Vector2& v)
-{
-	return geo::Vector2(tan(v.x), tan(v.y));
-}
-
-geo::Vector2 abs(const geo::Vector2& v)
-{
-	return geo::Vector2(fabs(v.x), fabs(v.y));
 }

@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Testing.hpp"
-using namespace geo;
 using namespace physics;
 
 #define WIN_WIDTH 1000

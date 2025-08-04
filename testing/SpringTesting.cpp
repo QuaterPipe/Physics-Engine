@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Testing.hpp"
-using namespace geo;
 using namespace physics;
 
 #define WIN_WIDTH 1000
@@ -136,8 +135,8 @@ void SpringTest()
         std::cout << massB.ComputeForce(massB.position, massB.velocity)<<" " << (massA.position - massB.position).GetMagnitudeExact()<< std::endl;
         std::cout << massB.velocity << std::endl;
         std::cout << "------------------------------------------------------------------" << std::endl;
-        //massA.force += geo::Vector2(0, -9.81);
-        //massB.force += geo::Vector2(0, -9.81);
+        //massA.force += Vector2(0, -9.81);
+        //massB.force += Vector2(0, -9.81);
         tm.Stop();
         for (int i = 0; i < 4; i++)
         {

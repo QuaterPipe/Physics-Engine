@@ -1,7 +1,7 @@
 #pragma once
 #include <cstring>
 #include "Math.hpp"
-namespace geo
+namespace physics
 {
 	/// \brief A 2x2 Matrix struct
 	struct Matrix2

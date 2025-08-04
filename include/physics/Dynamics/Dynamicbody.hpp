@@ -15,10 +15,10 @@ namespace physics
 
 	struct RK4State
 	{
-		geo::Vector2 k1X, k2X, k3X, k4X;
-		geo::Vector2 k1V, k2V, k3V, k4V;
-		geo::Vector2 a1, a2, a3, a4;
-		geo::Vector2 tmpX, tmpV;
+		Vector2 k1X, k2X, k3X, k4X;
+		Vector2 k1V, k2V, k3V, k4V;
+		Vector2 a1, a2, a3, a4;
+		Vector2 tmpX, tmpV;
 
 		RK4State();
 		void Reset() noexcept;
@@ -48,11 +48,11 @@ namespace physics
 			f64 _inertia = 1000;
 			f64 _invInertia = 0.001;
 		public:
-			geo::Vector2 gravity = geo::Vector2(0, -9.81);
-			geo::Vector2 velocity = geo::Vector2(0, 0);
-			geo::Vector2 force = geo::Vector2(0, 0);
-			geo::Vector2 appliedForce = geo::Vector2(0, 0);
-			geo::Vector2 drag = geo::Vector2(0.1, 0.1);
+			Vector2 gravity = Vector2(0, -9.81);
+			Vector2 velocity = Vector2(0, 0);
+			Vector2 force = Vector2(0, 0);
+			Vector2 appliedForce = Vector2(0, 0);
+			Vector2 drag = Vector2(0.1, 0.1);
 			f64 angularVelocity = 0;
 			f64 angularForce = 0;
 			f64 appliedAngularForce = 0;
@@ -69,7 +69,7 @@ namespace physics
 			Dynamicbody() noexcept;
 			Dynamicbody(const Collider& c, const Transform& t = Transform(), bool isTrigger = false,
 			const PhysicsMaterial& p = PhysicsMaterial(), f64 mass = 1000, bool usesGravity = true,
-			const geo::Vector2& drag = geo::Vector2(0.1, 0.1)) noexcept;
+			const Vector2& drag = Vector2(0.1, 0.1)) noexcept;
 			Dynamicbody(const Dynamicbody& d) noexcept;
 			Dynamicbody(Dynamicbody && d) noexcept;
 			virtual bool operator==(const CollisionObject& c) const noexcept override;
@@ -78,9 +78,9 @@ namespace physics
 			void AddConstraint(Constraint* constraint) noexcept;
 			virtual void ApplyAngularForce(f64 force) noexcept = 0;
 			virtual void ApplyAngularImpulse(f64 force) noexcept = 0;
-			virtual void ApplyForce(const geo::Vector2& Force, const geo::Vector2& contactPoint = geo::Vector2::Infinity) noexcept = 0;
-			virtual void ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2& contactVec = geo::Vector2::Infinity) noexcept = 0;
-			virtual geo::Vector2 ComputeForce(const geo::Vector2& position, const geo::Vector2& velocity) const noexcept = 0;
+			virtual void ApplyForce(const Vector2& Force, const Vector2& contactPoint = Vector2::Infinity) noexcept = 0;
+			virtual void ApplyImpulse(const Vector2& impulse, const Vector2& contactVec = Vector2::Infinity) noexcept = 0;
+			virtual Vector2 ComputeForce(const Vector2& position, const Vector2& velocity) const noexcept = 0;
 			f64 GetInertia() const noexcept;
 			f64 GetInvInertia() const noexcept;
 			f64 GetMass() const noexcept;
@@ -91,7 +91,7 @@ namespace physics
 			void SetInertia(f64 inertia) noexcept;
 			void SetMass(f64 mass) noexcept;
 			virtual void Update(f64 dt, int rk4step) noexcept = 0;
-			virtual void Translate(geo::Vector2 offset, geo::Vector2* points, size_t ptCount) noexcept;
+			virtual void Translate(Vector2 offset, Vector2* points, size_t ptCount) noexcept;
 	};
 
 	struct Joint
@@ -99,9 +99,9 @@ namespace physics
 		public:
 			Dynamicbody* a = NULL;
 			Dynamicbody* b = NULL;
-			geo::Vector2 aContact;
-			geo::Vector2 bContact;
-			geo::Vector2 maxForce = geo::Vector2::Infinity;
+			Vector2 aContact;
+			Vector2 bContact;
+			Vector2 maxForce = Vector2::Infinity;
 			bool aAndBCollide = false;
 			virtual void Update(f64 dt) noexcept = 0;
 	};

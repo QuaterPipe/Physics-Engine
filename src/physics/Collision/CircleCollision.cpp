@@ -13,19 +13,19 @@ namespace physics::algo
 		Manifold c;
 		c.hasCollision = false;
 		if (!a || !b) {return c;}
-		const geo::Vector2 ACenter = ta.TransformVector(a->center);
-		const geo::Vector2 BCenter = tb.TransformVector(b->center);
-		const f64 r = geo::DistanceSquared(ACenter, BCenter);
+		const Vector2 ACenter = ta.TransformVector(a->center);
+		const Vector2 BCenter = tb.TransformVector(b->center);
+		const f64 r = DistanceSquared(ACenter, BCenter);
 		// If the sum of their radii is greater than or equal to the distance between their centers
-		const f64 aRadius = a->radius * geo::Max(ta.GetScale().x, ta.GetScale().y);
-		const f64 bRadius = b->radius * geo::Max(tb.GetScale().x, tb.GetScale().y);
+		const f64 aRadius = a->radius * Max(ta.GetScale().x, ta.GetScale().y);
+		const f64 bRadius = b->radius * Max(tb.GetScale().x, tb.GetScale().y);
 		if (SQRD(aRadius + bRadius) >= r)
 		{
-			f64 d = geo::FastSqrt(r);
-			geo::Vector2 ca = ACenter.Lerp(BCenter, aRadius / d);
-			geo::Vector2 cb = BCenter.Lerp(ACenter, bRadius / d);
-			c.depth = ca != cb ? geo::Distance(ca, cb) : std::max(aRadius, bRadius);
-			c.normal = ca != cb ? ca - cb : geo::Vector2(0, 1);
+			f64 d = FastSqrt(r);
+			Vector2 ca = ACenter.Lerp(BCenter, aRadius / d);
+			Vector2 cb = BCenter.Lerp(ACenter, bRadius / d);
+			c.depth = ca != cb ? Distance(ca, cb) : std::max(aRadius, bRadius);
+			c.normal = ca != cb ? ca - cb : Vector2(0, 1);
 			c.normal.Normalize();
 			c.points[0] = ca;
 			c.points[1] = cb;

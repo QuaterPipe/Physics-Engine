@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Testing.hpp"
-using namespace geo;
 using namespace physics;
 
 #define WIN_WIDTH 1000
@@ -40,7 +39,7 @@ void SoftbodyTest()
             {
                 lock = true;
                 sf::Vector2f worldPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-                geo::Vector2 vec(worldPos.x, worldPos.y);
+                Vector2 vec(worldPos.x, worldPos.y);
                 mPoint = softbody.GetClosestMassPoint(vec);
             }
             if (e.type == sf::Event::MouseButtonReleased)
@@ -58,7 +57,7 @@ void SoftbodyTest()
         if (lock)
         {
             sf::Vector2f worldPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-            geo::Vector2 vec(worldPos.x, worldPos.y);
+            Vector2 vec(worldPos.x, worldPos.y);
             if (mPoint)
             {
                 mPoint->position = vec - softbody.transform.GetPosition();
@@ -73,8 +72,8 @@ void SoftbodyTest()
         for (auto& spr : softbody.springs)
         {
             PE += spr.PotentialEnergy();
-            geo::Vector2 a = softbody.transform.TransformVector(spr.a->position);
-            geo::Vector2 b = softbody.transform.TransformVector(spr.b->position);
+            Vector2 a = softbody.transform.TransformVector(spr.a->position);
+            Vector2 b = softbody.transform.TransformVector(spr.b->position);
             sf::Vertex line[2] = {
             sf::Vertex(sf::Vector2f(a.x, a.y), sf::Color::White),
             sf::Vertex(sf::Vector2f(b.x, b.y), sf::Color::White)
@@ -89,8 +88,8 @@ void SoftbodyTest()
             ogToWorld.SetAngle(softbody.derivedAngle);
             for (auto& spr : softbody.springs)
             {
-                geo::Vector2 tmpA = ogToWorld.TransformVector(softbody._originalShape[spr.aIndex].position);
-                geo::Vector2 tmpB = ogToWorld.TransformVector(softbody._originalShape[spr.bIndex].position);
+                Vector2 tmpA = ogToWorld.TransformVector(softbody._originalShape[spr.aIndex].position);
+                Vector2 tmpB = ogToWorld.TransformVector(softbody._originalShape[spr.bIndex].position);
                 sf::Vertex line[2] = {
                 sf::Vertex(sf::Vector2f(tmpA.x + softbody.transform.GetPosition().x, tmpA.y + softbody.transform.GetPosition().y), sf::Color::Red),
                 sf::Vertex(sf::Vector2f(tmpB.x + softbody.transform.GetPosition().x, tmpB.y + softbody.transform.GetPosition().y), sf::Color::Red)

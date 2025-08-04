@@ -59,7 +59,7 @@ namespace physics::algo
 		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
 
-	void FindIncidentFace(geo::Vector2* v, const PolygonCollider* refPoly,
+	void FindIncidentFace(Vector2* v, const PolygonCollider* refPoly,
 		const Transform& refTransform, const PolygonCollider* incPoly,
 		const Transform& incTransform, size_t refIndex
 	);
@@ -69,7 +69,7 @@ namespace physics::algo
 	);
 
 	bool VectorInPolygon(
-		const geo::Vector2* points,
-		const geo::Vector2& b, size_t pointsSize
+		const Vector2* points,
+		const Vector2& b, size_t pointsSize
 	);
 }

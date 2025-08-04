@@ -47,7 +47,7 @@ namespace physics
 		{
 			if (!db->usesGravity)
 				continue;
-			db->ApplyForce(db->gravity);
+			db->velocity += db->gravity * dt;
 		}
 	}
 
