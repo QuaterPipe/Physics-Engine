@@ -27,6 +27,24 @@ namespace physics
 	{
 	}
 
+	void RK4State::Reset() noexcept
+	{
+		k1X.Set(0, 0);
+		k2X.Set(0, 0);
+		k3X.Set(0, 0);
+		k4X.Set(0, 0);
+		k1V.Set(0, 0);
+		k2V.Set(0, 0);
+		k3V.Set(0, 0);
+		k4V.Set(0, 0);
+		a1.Set(0, 0);
+		a2.Set(0, 0);
+		a3.Set(0, 0);
+		a4.Set(0, 0);
+		tmpX.Set(0, 0);
+		tmpV.Set(0, 0);
+	}
+
 	Dynamicbody::Dynamicbody() noexcept
 	: CollisionObject()
 	{
@@ -46,7 +64,8 @@ namespace physics
 	Dynamicbody::Dynamicbody(const Dynamicbody& d) noexcept
 	: CollisionObject(d), _mass(d.GetMass()), _inertia(d.GetInertia()), gravity(d.gravity), velocity(d.velocity), drag(d.drag),
 		force(d.force), angularVelocity(d.angularVelocity), angularForce(d.angularForce), physicsMaterial(d.physicsMaterial),
-		usesGravity(d.usesGravity), isStatic(d.isStatic), appliedForce(d.appliedForce), appliedAngularForce(d.appliedAngularForce)
+		usesGravity(d.usesGravity), isStatic(d.isStatic), appliedForce(d.appliedForce), appliedAngularForce(d.appliedAngularForce),
+		posState(d.posState), angleState(d.angleState)
 	{
 		_isDynamic = true;
 		_invMass = _mass ? 1 / _mass : 0;
@@ -56,7 +75,8 @@ namespace physics
 		: CollisionObject((CollisionObject&&)d), _mass(d.GetMass()), _inertia(d.GetInertia()),
 		gravity(d.gravity), velocity(d.velocity), drag(d.drag), force(d.force), angularVelocity(d.angularVelocity),
 		angularForce(d.angularForce), physicsMaterial(d.physicsMaterial), usesGravity(d.usesGravity), isStatic(d.isStatic),
-		appliedForce(d.appliedForce), appliedAngularForce(d.appliedAngularForce)
+		appliedForce(d.appliedForce), appliedAngularForce(d.appliedAngularForce), angleState(d.angleState),
+		posState(d.posState)
 	{
 		_isDynamic = true;
 		_invMass = _mass ? 1 / _mass : 0;
@@ -79,6 +99,8 @@ namespace physics
 		force = d.force;
 		appliedForce = d.appliedForce;
 		appliedAngularForce = d.appliedAngularForce;
+		posState = d.posState;
+		angleState = d.angleState;
 		return *this;
 	}
 
@@ -137,6 +159,17 @@ namespace physics
 		return _mass;
 	}
 
+	f64 Dynamicbody::KineticEnergy() const noexcept
+	{
+		return 0.5 * _mass * velocity.GetMagnitudeSquared() + 0.5 * _inertia * SQRD(angularVelocity);
+	}
+
+	f64 Dynamicbody::MassScaler() const noexcept
+	{
+		return 1.0;
+	}
+
+
 	void Dynamicbody::RemoveConstraint(Constraint* constraint) noexcept
 	{
 		for (auto p = constraints.begin(); p < constraints.end(); p++)
@@ -160,4 +193,10 @@ namespace physics
 		_mass = mass;
 		_invMass = mass ? 1 / mass : 0;
 	}
+
+	void Dynamicbody::Translate(geo::Vector2 offset, geo::Vector2* point, size_t ptCount) noexcept
+	{
+		transform.Translate(offset);
+	}
+
 }

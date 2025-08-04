@@ -9,10 +9,10 @@ namespace physics
 		public:
 			geo::Vector2 pos;
 			geo::Vector2 dimensions;
-			double& x = pos.x;
-			double& y = pos.y;
-			double& width = dimensions.x;
-			double& height = dimensions.y;
+			f64& x = pos.x;
+			f64& y = pos.y;
+			f64& width = dimensions.x;
+			f64& height = dimensions.y;
 			BoxCollider() noexcept;
 			BoxCollider(const f64& width, const f64& height) noexcept;
 			BoxCollider(const geo::Vector2& pos, const geo::Vector2& dimensions) noexcept;

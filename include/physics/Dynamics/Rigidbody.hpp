@@ -9,9 +9,6 @@ namespace physics
 
 	class Rigidbody : public Dynamicbody
 	{
-		private:
-			RK4State _state;
-			RK4State _angState;
 		public:
 			bool isKinematic = false;
 			Rigidbody() noexcept;

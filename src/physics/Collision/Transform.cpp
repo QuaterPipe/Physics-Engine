@@ -100,10 +100,10 @@ namespace physics
 		return _rotation;
 	}
 
-	geo::Vector2 Transform::GetScale() const noexcept
+	/*geo::Vector2 Transform::GetScale() const noexcept
 	{
 		return geo::Vector2(_scale(0, 0), _scale(1, 1));
-	}
+	}*/
 
 	void Transform::Rotate(f64 theta) noexcept
 	{
@@ -206,13 +206,13 @@ namespace physics
 		return _transformationMatrix;
 	}
 
-	geo::Vector2 Transform::TransformVector(const geo::Vector2& v) const noexcept
+	/*geo::Vector2 Transform::TransformVector(const geo::Vector2& v) const noexcept
 	{
 		geo::Vector2 result = _rotxScale * v;
 		result.x += _transformationMatrix(0, 2);
 		result.y += _transformationMatrix(1, 2);
 		return result;
-	}
+	}*/
 
 	bool Transform::IsUnitTransform() const noexcept
 	{

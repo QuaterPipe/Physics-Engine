@@ -8,7 +8,7 @@ void Sort(T* array, size_t low, size_t high, std::function<int(T&, T&)>& compare
 		*a = *b;
 		*b = t;
 	};
-	auto partition = [=](T* array, size_t low, size_t high) -> double{
+	auto partition = [=](T* array, size_t low, size_t high) -> f64{
 		T pivot = array[high];
 		size_t i = low - 1;
 		for (size_t j = low; j <= high - 1; j++)

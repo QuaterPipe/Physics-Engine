@@ -17,8 +17,8 @@ void PressurebodyTest()
     v.setSize(WIN_WIDTH, -WIN_HEIGHT);
     window.setView(v);
     PointMassSpring spr;
-    spr.stiffness = 1000;
-    spr.dampingFactor = 900;
+    spr.stiffness = 200;
+    spr.dampingFactor = 180;
     spr.restingLength = 40;
     Pressurebody p(1000, 50, 12, 10, spr);
     p.transform.SetPosition(250, 100);
@@ -45,7 +45,6 @@ void PressurebodyTest()
         }
         for (auto s : p.GetSprings())
         {
-
             sf::Vertex line[2] = {
                 sf::Vertex(sf::Vector2f(s.a->position.x + p.transform.GetPosition().x, s.a->position.y + p.transform.GetPosition().y), sf::Color::White),
                 sf::Vertex(sf::Vector2f(s.b->position.x + p.transform.GetPosition().x, s.b->position.y + p.transform.GetPosition().y), sf::Color::White)
@@ -55,14 +54,14 @@ void PressurebodyTest()
         f64 PE = 0;
         for (PointMassSpring sr : p.GetSprings())
             PE += sr.PotentialEnergy();
-        //std::cout << "KE: " << KE << " PE: " << PE << "\nTE: " << (KE + PE) << "--------------------------------------\n";
-        std::cout << p.GetVolume()<<" \ntm: ";
+        std::cout << "KE: " << KE << " PE: " << PE << "\nTE: " << (KE + PE) << "--------------------------------------\n";
+        //std::cout << p.GetVolume()<<" \ntm: ";
         tm.Stop();
         for (int i = 0; i < 4; i++)
         {
-            p.Update(0.001, i);
+            p.Update(1.0 / 200.0, i);
         }
-        std::cout << tm.deltaTime << "\n";
+        //std::cout << tm.deltaTime << "\n";
         tm.Start();
         win->display();
         win->clear();

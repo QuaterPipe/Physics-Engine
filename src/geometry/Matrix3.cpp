@@ -134,7 +134,7 @@ namespace geo
 		Matrix3 c;
 		const Matrix3& a = *this;
 		const Matrix3& b = other;
-		double m[24];
+		f64 m[24];
 		m[1 ]= (a(0, 0) + a(0, 1) + a(0, 2) - a(1, 0) - a(1, 1) - a(2, 1) - a(2, 2)) * b(1, 1);
 		m[2 ]= (a(0, 0) - a(1, 0)) * (-b(0, 1) + b(1, 1));
 		m[3 ]= a(1, 1) * (-b(0, 0) + b(0, 1) + b(1, 0) - b(1, 1) - b(1, 2) - b(2, 0) + b(2, 2));

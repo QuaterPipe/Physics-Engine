@@ -10,8 +10,20 @@ namespace geo
 		Matrix2() noexcept;
 		Matrix2(f64 radians) noexcept;
 		Matrix2(f64 a, f64 b, f64 c, f64 d) noexcept;
-		f64& operator()(size_t i, size_t j);
-		const f64& operator()(size_t i, size_t j) const;
+		//f64& operator()(size_t i, size_t j);
+		//const f64& operator()(size_t i, size_t j) const;
+		
+		inline f64& operator()(size_t i, size_t j)
+		{
+			assert(i < 2 && j < 2);
+			return arr[i * 2 + j];
+		}
+
+		inline const f64& operator()(size_t i, size_t j) const
+		{
+			assert(i < 2 && j < 2);
+			return arr[i * 2 + j];
+		}
 		f64 Angle() const noexcept;
 		/// \brief Returns the determinant of the matrix.
 		f64 GetDeterminant() const noexcept;
@@ -26,8 +38,23 @@ namespace geo
 		Matrix2& operator=(const Matrix2& other) noexcept;
 		bool operator==(const Matrix2& other) const noexcept;
 		bool operator!=(const Matrix2& other) const noexcept;
-		Vector2 operator*(const Vector2& v) const noexcept;
-		Matrix2 operator*(const Matrix2& m) const noexcept;
+		inline Vector2 operator*(const Vector2& v) const noexcept
+		{
+			return Vector2(arr[0] * v.x + arr[1] * v.y, arr[2] * v.x + arr[3] * v.y);
+		}
+		inline Matrix2 operator*(const Matrix2& other) const noexcept
+		{
+			Matrix2 c;
+			const Matrix2& a = *this;
+			const Matrix2& b = other;
+			c(0, 0) = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0);
+			c(0, 1) = a(0, 0) * b(0, 1) + a(0, 1) * b(1, 1);
+			c(1, 0) = a(1, 0) * b(0, 0) + a(1, 1) * b(1, 0);
+			c(1, 1) = a(1, 0) * b(0, 1) + a(1, 1) * b(1, 1);
+			return c;
+		}
+		//Vector2 operator*(const Vector2& v) const noexcept;
+		//Matrix2 operator*(const Matrix2& m) const noexcept;
 		Matrix2& operator*=(const Matrix2& other) noexcept;
 	};
 

@@ -41,6 +41,7 @@ namespace physics
 			virtual ~CollisionObject() noexcept;
 			virtual CollisionObject* Clone() const noexcept;
 			virtual CollisionObject& operator=(const CollisionObject& other) noexcept;
+			virtual CollisionObject& operator=(CollisionObject&& other) noexcept;
 			virtual bool IsDynamic() const noexcept;
 			Collider& GetCollider() const noexcept;
 			int GetHash() const noexcept;

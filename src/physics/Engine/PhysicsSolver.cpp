@@ -63,7 +63,7 @@ namespace physics
 					break;
 				f64 raCrossN = ra.Cross(c.points.normal);
 				f64 rbCrossN = rb.Cross(c.points.normal);
-				f64 invMassSum = a->GetInvMass() + b->GetInvMass() + SQRD(raCrossN) * a->GetInvInertia() +
+				f64 invMassSum = a->GetInvMass() * a->MassScaler() + b->GetInvMass() * b->MassScaler() + SQRD(raCrossN) * a->GetInvInertia() +
 					SQRD(rbCrossN) * b->GetInvInertia();
 				f64 j = -(1.0 + e) * contactVel;
 				j /= invMassSum;

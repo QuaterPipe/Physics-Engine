@@ -87,7 +87,7 @@ namespace physics
 		return pos - (dimensions * 0.5);
 	}
 
-	inline bool numInRange(double value, double minVal, double maxVal)
+	inline bool numInRange(f64 value, f64 minVal, f64 maxVal)
 	{
 		return (value >= minVal) && (value <= maxVal);
 	}

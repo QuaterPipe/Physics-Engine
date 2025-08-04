@@ -42,6 +42,7 @@ namespace physics
 			void FixCollapsing() noexcept;
 			PointMass* GetClosestMassPoint(const geo::Vector2& point) const noexcept;
 			const std::vector<PointMass>& GetOriginalShape() const noexcept;
+			f64 MassScaler() const noexcept override;
 			void Update(f64 dt, int rk4step) noexcept override;
 			void UpdateCollider() noexcept;
 			void UpdateTransform() noexcept;

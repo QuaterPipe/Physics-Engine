@@ -6,26 +6,39 @@
 namespace physics
 {
 	DynamicsWorld::DynamicsWorld(BoxCollider area) noexcept
-		: quadtree(0, 8, 3, BoxCollider(area), &_objects)
+		: quadtree(0, 8, 10, BoxCollider(area), &_objects)
 	{
 		_solvers.push_back(new PhysicsSolver());
 		_solvers.push_back(new PositionalCorrectionSolver());
 	}
 
+	void DynamicsWorld::AddConstraint(Constraint* c) noexcept
+	{
+		if (!c)
+			return;
+		_constraints.push_back(c);
+	}
+
+	void DynamicsWorld::AddDynamicbody(Dynamicbody* dynamicbody) noexcept
+	{
+		if (!dynamicbody)
+			return;
+		_dynamicbodies.push_back(dynamicbody);
+		_objects.push_back(dynamicbody);
+	}
+
 	void DynamicsWorld::AddObject(CollisionObject* o) noexcept
 	{
+		if (!o)
+			return;
 		_objects.push_back(o);
 	}
 
 	void DynamicsWorld::AddSolver(Solver* s) noexcept
 	{
+		if (!s)
+			return;
 		_solvers.push_back(s);
-	}
-
-	void DynamicsWorld::AddDynamicbody(Dynamicbody* dynamicbody) noexcept
-	{
-		_dynamicbodies.push_back(dynamicbody);
-		_objects.push_back(dynamicbody);
 	}
 
 	void DynamicsWorld::ApplyGravity(f64 dt) noexcept
@@ -63,7 +76,9 @@ namespace physics
 						continue;
 					if (!a || !b)
 						continue;
-					if (true /*a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform))*/)
+					if (!a->isActive || !b->isActive);
+						continue;
+					if (a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform)))
 					{
 						Manifold points = a->GetCollider().TestCollision(
 							a->transform, &b->GetCollider(), b->transform);
@@ -86,8 +101,25 @@ namespace physics
 		return _objects;
 	}
 
+	void DynamicsWorld::RemoveConstraint(Constraint* c) noexcept
+	{
+		if (!c)
+			return;
+		for (size_t i = 0; i < _constraints.size(); i++)
+		{
+			if (_constraints[i] == c)
+			{
+				_constraints.erase(_constraints.begin() + i);
+				return;
+			}
+
+		}
+	}
+
 	void DynamicsWorld::RemoveDynamicbody(Dynamicbody* dynamicbody) noexcept
 	{
+		if (!dynamicbody)
+			return;
 		for (auto p = _dynamicbodies.begin(); p != _dynamicbodies.end(); p++)
 		{
 			if (*p == dynamicbody)
@@ -108,6 +140,8 @@ namespace physics
 
 	void DynamicsWorld::RemoveObject(CollisionObject* o) noexcept
 	{
+		if (!o)
+			return;
 		for (auto p = _objects.begin(); p < _objects.end(); p++)	
 		{
 			if (*p == o)
@@ -120,6 +154,8 @@ namespace physics
 
 	void DynamicsWorld::RemoveSolver(Solver* s) noexcept
 	{
+		if (!s)
+			return;
 		for (auto p = _solvers.begin(); p < _solvers.end(); p++)
 		{
 			if (*p == s)
@@ -144,13 +180,10 @@ namespace physics
 			if (c.b->onCollision) c.b->onCollision(c, dt);
 		}
 	}
-
-	void DynamicsWorld::IntegrateObjects(f64 dt) noexcept
-	{
-	}
 	
 	void DynamicsWorld::Update(f64 dt) noexcept
 	{
+		
 		ApplyGravity(dt);
 		for (int i = 0; i < 4; i++)
 			for (auto& db : _dynamicbodies)
@@ -158,6 +191,23 @@ namespace physics
 		quadtree.Update();
 		CheckCollisions(dt);
 		SendCollisionCallBacks(dt);
+
+		for (Constraint* c : _constraints)
+		{
+			c->WarmStart();
+			c->Reset();
+		}
+		f64 constraintDt = dt / constraintIterationCount;
+		for (int j = 0; j < constraintIterationCount; j++)
+		{
+			for (Constraint* c : _constraints)
+				c->UpdateConstraint(constraintDt);
+		}
+		for (int j = 0; j < 4; j++)
+		{
+			for (Constraint* c : _constraints)
+				c->CorrectPosition();
+		}
 		_solvers[0]->Solve(_collisions, dt);
 		_solvers[1]->Solve(_collisions, dt);
 	}

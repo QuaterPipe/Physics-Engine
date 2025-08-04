@@ -21,9 +21,23 @@ namespace geo
 		public:
 			f64 x;
 			f64 y;
-			Vector2() noexcept;
-			Vector2(const Vector2& v) noexcept;
-			Vector2(f64 x, f64 y) noexcept;
+			inline Vector2() noexcept
+				: x(0), y(0)
+			{
+			}
+
+			inline Vector2(const Vector2& v) noexcept
+				: x(v.x), y(v.y)
+			{
+			}
+
+			inline Vector2(f64 x, f64 y) noexcept
+				: x(x), y(y)
+			{
+			}
+			//Vector2() noexcept;
+			//Vector2(const Vector2& v) noexcept;
+			//Vector2(f64 x, f64 y) noexcept;
 			f64& operator[](size_t index);
 			f64 operator[](size_t index) const;
 			/// \brief returns the positive x & y values of *this vector

@@ -7,7 +7,7 @@ namespace geo
 	const Vector2 Vector2::iHat = Vector2(1, 0);
 	const Vector2 Vector2::jHat = Vector2(0, 1);
 
-	Vector2::Vector2() noexcept
+	/*Vector2::Vector2() noexcept
 	: x(0), y(0)
 	{
 	}
@@ -20,7 +20,7 @@ namespace geo
 	Vector2::Vector2(f64 x, f64 y) noexcept
 	: x(x), y(y)
 	{
-	}
+	}*/
 
 	f64& Vector2::operator[](size_t index)
 	{

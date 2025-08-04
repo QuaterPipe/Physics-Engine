@@ -25,8 +25,9 @@ namespace physics
 			std::chrono::time_point<clock> stop;
 			double deltaTime = -1;
 			double microDeltaTime = -1;
+			void Reset();
 			void Start();
 			void Stop();
-			void Reset();
+			void Tick();
 	};
 }

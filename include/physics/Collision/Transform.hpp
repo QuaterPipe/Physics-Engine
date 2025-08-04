@@ -31,7 +31,11 @@ namespace physics
 			Transform GetInverseTransform() const noexcept;
 			geo::Vector2 GetPosition() const noexcept;
 			geo::Matrix2 GetRotation() const noexcept;
-			geo::Vector2 GetScale() const noexcept;
+			inline geo::Vector2 GetScale() const noexcept
+			{
+				return geo::Vector2(_scale(0, 0), _scale(1, 1));
+			}
+			//geo::Vector2 GetScale() const noexcept;
 			geo::Matrix3 GetTransformationMatrix() const noexcept;
 			void Rotate(f64 theta) noexcept;
 			void SetAngle(f64 theta) noexcept;
@@ -44,7 +48,14 @@ namespace physics
 			void SetScale(f64 xScale, f64 yScale) noexcept;
 			void Scale(f64 xScale, f64 yScale) noexcept;
 			void Translate(geo::Vector2 offset) noexcept;
-			geo::Vector2 TransformVector(const geo::Vector2& v) const noexcept;
+			//geo::Vector2 TransformVector(const geo::Vector2& v) const noexcept;
+			inline geo::Vector2 TransformVector(const geo::Vector2& v) const noexcept
+			{
+				geo::Vector2 result = _rotxScale * v;
+				result.x += _transformationMatrix(0, 2);
+				result.y += _transformationMatrix(1, 2);
+				return result;
+			}
 			bool IsUnitTransform() const noexcept;
 	};
 }

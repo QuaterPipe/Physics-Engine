@@ -291,6 +291,12 @@ namespace physics
 		return _originalShape;
 	}
 
+	f64 Softbody::MassScaler() const noexcept
+	{
+		return pointCount;
+	}
+
+
 	void Softbody::Update(f64 dt, int RK4Step) noexcept
 	{
 		if (!isStatic)
@@ -298,12 +304,19 @@ namespace physics
 			switch (RK4Step)
 			{
 				case 0:
+					posState.Reset();
 					for (size_t i = 0; i < pointCount; i++)
 					{
 						_pointStates[i].a1 = points[i].ComputeForce(points[i].position, points[i].velocity);
 						_pointStates[i].k1X = points[i].velocity;
 						_pointStates[i].k1V = _pointStates[i].a1;
+						posState.a1 += _pointStates[i].a1;
+						posState.k1X += _pointStates[i].k1X;
+						posState.k1V += _pointStates[i].k1V;
 					}
+					posState.a1 /= pointCount;
+					posState.k1X /= pointCount;
+					posState.k1V /= pointCount;
 					break;
 				case 1:
 					for (size_t i = 0; i < pointCount; i++)
@@ -313,7 +326,17 @@ namespace physics
 						_pointStates[i].a2 = points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
 						_pointStates[i].k2X = _pointStates[i].tmpV;
 						_pointStates[i].k2V = _pointStates[i].a2;
+						posState.a2 += _pointStates[i].a2;
+						posState.k2X += _pointStates[i].k2X;
+						posState.k2V += _pointStates[i].k2V;
+						posState.tmpX += _pointStates[i].tmpX;
+						posState.tmpV += _pointStates[i].tmpV;
 					}
+					posState.a1 /= pointCount;
+					posState.k1X /= pointCount;
+					posState.k1V /= pointCount;
+					posState.tmpX /= pointCount;
+					posState.tmpV /= pointCount;
 					break;
 				case 2:
 					for (size_t i = 0; i < pointCount; i++)
@@ -323,7 +346,17 @@ namespace physics
 						_pointStates[i].a3 = points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
 						_pointStates[i].k3X = _pointStates[i].tmpV;
 						_pointStates[i].k3V = _pointStates[i].a3;
+						posState.a3 += _pointStates[i].a3;
+						posState.k3X += _pointStates[i].k3X;
+						posState.k3V += _pointStates[i].k3V;
+						posState.tmpX += _pointStates[i].tmpX;
+						posState.tmpV += _pointStates[i].tmpV;
 					}
+					posState.a1 /= pointCount;
+					posState.k1X /= pointCount;
+					posState.k1V /= pointCount;
+					posState.tmpX /= pointCount;
+					posState.tmpV /= pointCount;
 					break;
 				case 3:
 					for (size_t i = 0; i < pointCount; i++)

@@ -14,7 +14,6 @@ namespace physics
 			std::vector<PointMassSpring> _springs;
 			std::vector<geo::Vector2> _pressureForces;
 			std::vector<RK4State> _pointStates;
-			PolygonCollider _collider;
 			void _UpdatePressureForces(int rk4step) noexcept;
 		public:
 			Pressurebody() noexcept;
@@ -31,13 +30,16 @@ namespace physics
 			void ApplyImpulse(const geo::Vector2& impulse, const geo::Vector2& contactVec = geo::Vector2::Infinity) noexcept override;
 			CollisionObject* Clone() const noexcept override;
 			geo::Vector2 ComputeForce(const geo::Vector2& position, const geo::Vector2& Velocity) const noexcept override;
+			void DerivePositionAndAngle() noexcept;
 			f64 GetRadius() const noexcept;
 			const std::vector<PointMass>& GetPoints() const noexcept;
 			f64 GetPressureScalar() const noexcept;
 			const std::vector<PointMassSpring>& GetSprings() const noexcept;
 			f64 GetVolume(int rk4step = -1) const noexcept;
+			f64 MassScaler() const noexcept override;
 			void Update(f64 dt, int rk4step) noexcept override;
 			void UpdateCollider() noexcept;
 			void UpdateTransform() noexcept;
+			virtual void Translate(geo::Vector2 offset, geo::Vector2* points, size_t ptCount) noexcept override;
 	};
 }

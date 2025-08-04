@@ -27,6 +27,7 @@
     <ClCompile Include="src\geometry\Matrix.cpp" />
     <ClCompile Include="src\geometry\Matrix2.cpp" />
     <ClCompile Include="src\geometry\Matrix3.cpp" />
+    <ClCompile Include="src\geometry\Span.cpp" />
     <ClCompile Include="src\geometry\Vector.cpp" />
     <ClCompile Include="src\geometry\Vector2.cpp" />
     <ClCompile Include="src\geometry\Vector3.cpp" />
@@ -58,6 +59,7 @@
     <ClCompile Include="src\physics\Engine\Quadtree.cpp" />
     <ClCompile Include="src\physics\Engine\Time.cpp" />
     <ClCompile Include="testing\CollisionTesting.cpp" />
+    <ClCompile Include="testing\ConstraintTesting.cpp" />
     <ClCompile Include="testing\Demo.cpp" />
     <ClCompile Include="testing\DynamicsTesting.cpp" />
     <ClCompile Include="testing\EngineTesting.cpp" />
@@ -123,14 +125,12 @@
     <Library Include="lib\SFML\vorbisfile.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="notes.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="include\geometry\Curve.hpp" />
     <ClInclude Include="include\geometry\Line.hpp" />
     <ClInclude Include="include\geometry\main.hpp" />
     <ClInclude Include="include\geometry\Math.hpp" />
     <ClInclude Include="include\geometry\Matrix.hpp" />
+    <ClInclude Include="include\geometry\Span.hpp" />
     <ClInclude Include="include\geometry\Vector.hpp" />
     <ClInclude Include="include\physics\Collision\Algo.hpp" />
     <ClInclude Include="include\physics\Collision\BoxCollider.hpp" />
@@ -258,6 +258,9 @@
     <ClInclude Include="include\SFML\Window\WindowHandle.hpp" />
     <ClInclude Include="include\SFML\Window\WindowStyle.hpp" />
     <ClInclude Include="testing\Testing.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

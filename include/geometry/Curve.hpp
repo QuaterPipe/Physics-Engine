@@ -15,8 +15,8 @@ namespace geo
 			Curve() noexcept;
 			Curve(const Vector2& a, const Vector2& b,	const Vector2& c, const Vector2& d, const f64& t) noexcept;
 			// \brief Returns a Vector on the curve based on the T-Value given
-			Vector2 GetPoint(const f64& tValue = std::numeric_limits<double>::infinity()) const noexcept;
+			Vector2 GetPoint(const f64& tValue = std::numeric_limits<f64>::infinity()) const noexcept;
 			// \brief Returns the derivative of the curve.
-			Vector2 Derivative(const f64& tValue = std::numeric_limits<double>::infinity()) const noexcept;
+			Vector2 Derivative(const f64& tValue = std::numeric_limits<f64>::infinity()) const noexcept;
 	};
 }

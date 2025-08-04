@@ -201,6 +201,12 @@
     <ClCompile Include="src\physics\Dynamics\Constraint.cpp">
       <Filter>src\physics\Dynamics</Filter>
     </ClCompile>
+    <ClCompile Include="testing\ConstraintTesting.cpp">
+      <Filter>testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\Span.cpp">
+      <Filter>src\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\sfml-graphics-d-2.dll">
@@ -357,9 +363,6 @@
     <Library Include="lib\SFML\sfml-system-s.lib">
       <Filter>lib\SFML</Filter>
     </Library>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="notes.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\geometry\Curve.hpp">
@@ -758,5 +761,11 @@
     <ClInclude Include="include\physics\Dynamics\Pressurebody.hpp">
       <Filter>include\physics\Dynamics</Filter>
     </ClInclude>
+    <ClInclude Include="include\geometry\Span.hpp">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.txt" />
   </ItemGroup>
 </Project>

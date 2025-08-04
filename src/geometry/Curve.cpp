@@ -22,7 +22,7 @@ namespace geo
 
 	Vector2 Curve::GetPoint(const f64& tValue) const noexcept
 	{
-		if (tValue == std::numeric_limits<double>::infinity())
+		if (tValue == std::numeric_limits<f64>::infinity())
 		{
 			return a.Lerp(b, t).Lerp(b.Lerp(c, t), t).Lerp(b.Lerp(c, t).Lerp(c.Lerp(d, t), t), t);
 		}
@@ -31,7 +31,7 @@ namespace geo
 
 	Vector2 Curve::Derivative(const f64& tValue) const noexcept
 	{
-		if (tValue == std::numeric_limits<double>::infinity())
+		if (tValue == std::numeric_limits<f64>::infinity())
 		{
 			Vector2 deriv = a * (-3 * (t * t) + 6 * t - 3) + 
 				b * (9 * (t * t) -12 * t + 3) +

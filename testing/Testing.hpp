@@ -4,6 +4,7 @@
 #include "SFML/Main.hpp"
 
 void CollisionTest();
+void ConstraintTest();
 void Demo();
 void DynamicsTest();
 void EngineTest();

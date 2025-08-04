@@ -9,6 +9,12 @@ namespace physics
 		time = clock::now();
 	}
 
+	void Timer::Reset()
+	{
+		microDeltaTime = -1;
+		deltaTime = 1;
+	}
+
 	void Timer::Start()
 	{
 		start = clock::now();
@@ -23,9 +29,11 @@ namespace physics
 		deltaTime = microDeltaTime * 0.001;
 	}
 
-	void Timer::Reset()
+	void Timer::Tick()
 	{
-		microDeltaTime = -1;
-		deltaTime = 1;
+		stop = clock::now();
+		microDeltaTime = (double)std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+		deltaTime = microDeltaTime * 0.001;
+		start = clock::now();
 	}
 }

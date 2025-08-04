@@ -21,6 +21,7 @@ namespace physics
 		geo::Vector2 tmpX, tmpV;
 
 		RK4State();
+		void Reset() noexcept;
 	};
 
 	struct Joint;
@@ -49,9 +50,9 @@ namespace physics
 		public:
 			geo::Vector2 gravity = geo::Vector2(0, -9.81);
 			geo::Vector2 velocity = geo::Vector2(0, 0);
-			geo::Vector2 drag = geo::Vector2(0.1, 0.1);
 			geo::Vector2 force = geo::Vector2(0, 0);
 			geo::Vector2 appliedForce = geo::Vector2(0, 0);
+			geo::Vector2 drag = geo::Vector2(0.1, 0.1);
 			f64 angularVelocity = 0;
 			f64 angularForce = 0;
 			f64 appliedAngularForce = 0;
@@ -59,9 +60,11 @@ namespace physics
 			bool usesGravity = true;
 			bool isStatic = false;
 			bool hadCollisionLastFrame = false;
-			double& staticFriction = physicsMaterial.staticFriction;
-			double& kineticFriction = physicsMaterial.kineticFriction;
-			double& restitution = physicsMaterial.restitution;
+			f64& staticFriction = physicsMaterial.staticFriction;
+			f64& kineticFriction = physicsMaterial.kineticFriction;
+			f64& restitution = physicsMaterial.restitution;
+			RK4State posState;
+			RK4State angleState;
 			std::vector<Constraint*> constraints;
 			Dynamicbody() noexcept;
 			Dynamicbody(const Collider& c, const Transform& t = Transform(), bool isTrigger = false,
@@ -82,10 +85,13 @@ namespace physics
 			f64 GetInvInertia() const noexcept;
 			f64 GetMass() const noexcept;
 			f64 GetInvMass() const noexcept;
-			void RemoveConstraint(Constraint* constrainat) noexcept;
+			f64 KineticEnergy() const noexcept;
+			virtual f64 MassScaler() const noexcept;
+			void RemoveConstraint(Constraint* constraint) noexcept;
 			void SetInertia(f64 inertia) noexcept;
 			void SetMass(f64 mass) noexcept;
 			virtual void Update(f64 dt, int rk4step) noexcept = 0;
+			virtual void Translate(geo::Vector2 offset, geo::Vector2* points, size_t ptCount) noexcept;
 	};
 
 	struct Joint

@@ -76,6 +76,18 @@ namespace physics
 		return *this;
 	}
 
+	CollisionObject& CollisionObject::operator=(CollisionObject&& other) noexcept
+	{
+		if ((*this)!=(other))
+		{
+			transform = other.transform;
+			collider.reset(other.collider.release());
+			isTrigger = other.isTrigger;
+			onCollision = other.onCollision;
+		}
+		return *this;
+	}
+
 	CollisionObject* CollisionObject::Clone() const noexcept
 	{
 		return new CollisionObject(*this);

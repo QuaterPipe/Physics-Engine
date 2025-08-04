@@ -52,8 +52,8 @@ namespace geo
 
 	Line Line::GetPerpendicular() const noexcept
 	{
-		double xdif = b.x - a.x;
-		double ydif = b.y - a.y;
+		f64 xdif = b.x - a.x;
+		f64 ydif = b.y - a.y;
 		return Line(Vector2(b.x - ydif / 2, b.y + xdif / 2), Vector2(b.x + ydif / 2, b.y - xdif / 2));
 	}
 

@@ -119,76 +119,69 @@ namespace physics
 			switch (RK4Step)
 			{
 				case 0:
-					_state.a1 = ComputeForce(position, velocity);
-					_state.k1X = velocity;
-					_state.k1V = _state.a1;
+					posState.a1 = ComputeForce(position, velocity);
+					posState.k1X = velocity;
+					posState.k1V = posState.a1;
 
-					_angState.a1.x = ComputeAngularForce(orient, angularVelocity);
-					_angState.k1X.x = angularVelocity;
-					_angState.k1V = _angState.a1;
+					angleState.a1.x = ComputeAngularForce(orient, angularVelocity);
+					angleState.k1X.x = angularVelocity;
+					angleState.k1V = angleState.a1;
 					break;
 				case 1:
-					_state.tmpX = position + 0.5 * dt * _state.k1X;
-					_state.tmpV = velocity + 0.5 * dt * _state.k1V;
-					_state.a2 = ComputeForce(_state.tmpX, _state.tmpV);
-					_state.k2X = _state.tmpV;
-					_state.k2V = _state.a2;
+					posState.tmpX = position + 0.5 * dt * posState.k1X;
+					posState.tmpV = velocity + 0.5 * dt * posState.k1V;
+					posState.a2 = ComputeForce(posState.tmpX, posState.tmpV);
+					posState.k2X = posState.tmpV;
+					posState.k2V = posState.a2;
 
-					_angState.tmpX = orient + 0.5 * dt * _angState.k1X;
-					_angState.tmpV = angularVelocity + 0.5 * dt * _angState.k1V;
-					_angState.a2.x = ComputeAngularForce(_angState.tmpX.x, _angState.tmpV.x);
-					_angState.k2X = _angState.tmpV;
-					_angState.k2V = _angState.a2;
+					angleState.tmpX = orient + 0.5 * dt * angleState.k1X;
+					angleState.tmpV = angularVelocity + 0.5 * dt * angleState.k1V;
+					angleState.a2.x = ComputeAngularForce(angleState.tmpX.x, angleState.tmpV.x);
+					angleState.k2X = angleState.tmpV;
+					angleState.k2V = angleState.a2;
 					break;
 				case 2:
-					_state.tmpX = position + 0.5 * dt * _state.k2X;
-					_state.tmpV = velocity + 0.5 * dt * _state.k2V;
-					_state.a3 = ComputeForce(_state.tmpX, _state.tmpV);
-					_state.k3X = _state.tmpV;
-					_state.k3V = _state.a3;
+					posState.tmpX = position + 0.5 * dt * posState.k2X;
+					posState.tmpV = velocity + 0.5 * dt * posState.k2V;
+					posState.a3 = ComputeForce(posState.tmpX, posState.tmpV);
+					posState.k3X = posState.tmpV;
+					posState.k3V = posState.a3;
 
-					_angState.tmpX = orient + 0.5 * dt * _angState.k2X;
-					_angState.tmpV = angularVelocity + 0.5 * dt * _angState.k2V;
-					_angState.a3.x = ComputeAngularForce(_angState.tmpX.x, _angState.tmpV.x);
-					_angState.k3X = _angState.tmpV;
-					_angState.k3V = _angState.a3;
+					angleState.tmpX = orient + 0.5 * dt * angleState.k2X;
+					angleState.tmpV = angularVelocity + 0.5 * dt * angleState.k2V;
+					angleState.a3.x = ComputeAngularForce(angleState.tmpX.x, angleState.tmpV.x);
+					angleState.k3X = angleState.tmpV;
+					angleState.k3V = angleState.a3;
 					break;
 				case 3:
-					_state.tmpX = position + dt * _state.k3X;
-					_state.tmpV = velocity + dt * _state.k3V;
-					_state.a4 = ComputeForce(_state.tmpX, _state.tmpV);
-					_state.k4X = _state.tmpV;
-					_state.k4V = _state.a4;
+					posState.tmpX = position + dt * posState.k3X;
+					posState.tmpV = velocity + dt * posState.k3V;
+					posState.a4 = ComputeForce(posState.tmpX, posState.tmpV);
+					posState.k4X = posState.tmpV;
+					posState.k4V = posState.a4;
 
-					_angState.tmpX = orient + dt * _angState.k3X;
-					_angState.tmpV = angularVelocity + dt * _angState.k3V;
-					_angState.a4.x = ComputeAngularForce(_angState.tmpX.x, _angState.tmpV.x);
-					_angState.k4X = _angState.tmpV;
-					_angState.k4V = _angState.a4;
+					angleState.tmpX = orient + dt * angleState.k3X;
+					angleState.tmpV = angularVelocity + dt * angleState.k3V;
+					angleState.a4.x = ComputeAngularForce(angleState.tmpX.x, angleState.tmpV.x);
+					angleState.k4X = angleState.tmpV;
+					angleState.k4V = angleState.a4;
 
-					position = position + (dt / 6.0) * (_state.k1X + 2 * _state.k2X + 2 * _state.k3X + _state.k4X);
-					velocity = velocity + (dt / 6.0) * (_state.k1V + 2 * _state.k2V + 2 * _state.k3V + _state.k4V);
+					position = position + (dt / 6.0) * (posState.k1X + 2 * posState.k2X + 2 * posState.k3X + posState.k4X);
+					velocity = velocity + (dt / 6.0) * (posState.k1V + 2 * posState.k2V + 2 * posState.k3V + posState.k4V);
 
-					orient = orient + (dt / 6.0) * (_angState.k1X.x + 2 * _angState.k2X.x + 2 * _angState.k3X.x + _angState.k4X.x);
-					angularVelocity = angularVelocity + (dt / 6.0) * (_angState.k1V.x + 2 * _angState.k2V.x + 2 * _angState.k3V.x + _angState.k4V.x);
+					orient = orient + (dt / 6.0) * (angleState.k1X.x + 2 * angleState.k2X.x + 2 * angleState.k3X.x + angleState.k4X.x);
+					angularVelocity = angularVelocity + (dt / 6.0) * (angleState.k1V.x + 2 * angleState.k2V.x + 2 * angleState.k3V.x + angleState.k4V.x);
 					
 					transform.SetPosition(position);
 					transform.SetAngle(orient);
 					appliedAngularForce = 0;
-					appliedForce = geo::Vector2(0, 0);
+					appliedForce.Set(0, 0);
+					force.Set(0, 0);
+					angularForce = 0;
 					break;
 				default:
 					break;
 			}
-			/*geo::Vector2 position = transform.GetPosition();
-			SymplecticEulerIntegrate(&position.x, &velocity.x, &force.x, dt);
-			SymplecticEulerIntegrate(&position.y, &velocity.y, &force.y, dt);
-			f64 ang = transform.GetAngle();
-			SymplecticEulerIntegrate(&ang, &angularVelocity, &angularForce, dt);
-			transform.SetAngle(ang);
-			transform.SetPosition(position);
-			angularForce = 0;
-			force.Set(0, 0);*/
 		}
 	}
 
