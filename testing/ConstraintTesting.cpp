@@ -59,12 +59,6 @@ void ConstraintTest()
     timer.Tick();
     while (window.isOpen())
     {
-        f64 tke = top.KineticEnergy() + bottom.KineticEnergy() + b2.KineticEnergy() + b3.KineticEnergy();
-        f64 tpe = (205 - top.transform.GetPosition().y) * top.GetMass() * top.gravity.y;
-        tpe += (125 - bottom.transform.GetPosition().y) * bottom.GetMass() * bottom.gravity.y;
-        tpe += (45 - b2.transform.GetPosition().y) * b2.GetMass() * b2.gravity.y;
-        tpe += (-35 - b3.transform.GetPosition().y) * b3.GetMass() * b3.gravity.y;
-        std::cout << tke + tpe << "\n";
         sf::Event e;
         while (window.pollEvent(e))
         {

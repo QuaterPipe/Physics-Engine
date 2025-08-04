@@ -203,11 +203,6 @@ namespace physics
 			for (Constraint* c : _constraints)
 				c->UpdateConstraint(constraintDt);
 		}
-		for (int j = 0; j < 4; j++)
-		{
-			for (Constraint* c : _constraints)
-				c->CorrectPosition();
-		}
 		_solvers[0]->Solve(_collisions, dt);
 		_solvers[1]->Solve(_collisions, dt);
 	}

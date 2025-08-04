@@ -16,22 +16,18 @@ namespace physics
 		a = A;
 	}
 
-	void AnchorConstraint::CorrectPosition() noexcept
-	{
-
-	}
-
 	void AnchorConstraint::UpdateConstraint(f64 dt) noexcept
 	{
 		if (!a)
 			return;
-		Vector2 relativePos = a->transform.TransformVector(anchor) - position;
+		Vector2 anchA = a->transform.TransformVector(anchor);
+		Vector2 relativePos = anchA - position;
 		f64 curDis = relativePos.GetMagnitude();
 		f64 offset = -curDis;
 		if (fabs(offset) >= 0)
 		{
 			Vector2 offsetDir = relativePos / curDis;
-			Vector2 ra = a->transform.TransformVector(anchor) - a->transform.GetPosition();
+			Vector2 ra = anchA - (a->transform.GetPosition() + a->transform.GetCOM());
 			Vector2 relativeVel = a->velocity + Vector2::Cross(a->angularVelocity, ra);
 			f64 constraintMass = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(offsetDir));
 			if (constraintMass > EPSILON)
@@ -49,13 +45,16 @@ namespace physics
 
 	void AnchorConstraint::WarmStart() noexcept
 	{
-		Vector2 relativePos = a->transform.TransformVector(anchor) - position;
+		if (!a)
+			return;
+		Vector2 anchA = a->transform.TransformVector(anchor);
+		Vector2 relativePos = anchA - position;
 		f64 curDis = relativePos.GetMagnitude();
 		f64 offset = -curDis;
 		if (fabs(offset) < EPSILON)
 			return;
 		Vector2 offsetDir = relativePos / curDis;
-		Vector2 ra = a->transform.TransformVector(anchor) - a->transform.GetPosition();
+		Vector2 ra = anchA - (a->transform.GetPosition() + a->transform.GetCOM());
 		f64 constraintMass = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(offsetDir));
 		if (constraintMass < EPSILON)
 			return;
@@ -69,13 +68,10 @@ namespace physics
 		b = B;
 	}
 
-	void AngleConstraint::CorrectPosition() noexcept
-	{
-
-	}
-
 	void AngleConstraint::UpdateConstraint(f64 dt) noexcept
 	{
+		if (!a)
+			return;
 		f64 relAngVel = a->angularVelocity - b->angularVelocity;
 		f64 rotOffset = a->transform.GetAngle() - b->transform.GetAngle();
 		f64 bias = -(biasFactor / dt) * rotOffset;
@@ -101,24 +97,20 @@ namespace physics
 		b = B;
 	}
 
-	void DistanceConstraint::CorrectPosition() noexcept
-	{	
-		if (!a || !b)
-			return;
-	}
-
 	void DistanceConstraint::UpdateConstraint(f64 dt) noexcept
 	{
 		if (!a || !b)
 			return;
-		Vector2 relativePos = a->transform.TransformVector(AAnchor) - b->transform.TransformVector(BAnchor);
+		Vector2 anchA = a->transform.TransformVector(AAnchor);
+		Vector2 anchB = b->transform.TransformVector(BAnchor);
+		Vector2 relativePos = anchA - anchB;
 		f64 curDis = relativePos.GetMagnitude();
 		f64 offset = distance - curDis;
 		if (fabs(offset) >= 0)
 		{
 			Vector2 offsetDir = relativePos / curDis;
-			Vector2 ra = a->transform.TransformVector(AAnchor) - a->transform.GetPosition();
-			Vector2 rb = b->transform.TransformVector(BAnchor) - b->transform.GetPosition();
+			Vector2 ra = anchA - (a->transform.GetPosition() + a->transform.GetCOM());
+			Vector2 rb = anchB - (b->transform.GetPosition() + b->transform.GetCOM());
 			Vector2 relativeVel = a->velocity + Vector2::Cross(a->angularVelocity, ra) -
 				b->velocity - Vector2::Cross(b->angularVelocity, rb);
 			f64 termA = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(offsetDir));
@@ -141,14 +133,18 @@ namespace physics
 
 	void DistanceConstraint::WarmStart() noexcept
 	{
-		Vector2 relativePos = a->transform.TransformVector(AAnchor) - b->transform.TransformVector(BAnchor);
+		if (!a || !b)
+			return;
+		Vector2 anchA = a->transform.TransformVector(AAnchor);
+		Vector2 anchB = b->transform.TransformVector(BAnchor);
+		Vector2 relativePos = anchA - anchB;
 		f64 curDis = relativePos.GetMagnitude();
 		f64 offset = distance - curDis;
 		if (fabs(offset) < EPSILON)
 			return;
 		Vector2 offsetDir = relativePos / curDis;
-		Vector2 ra = a->transform.TransformVector(AAnchor) - a->transform.GetPosition();
-		Vector2 rb = b->transform.TransformVector(BAnchor) - b->transform.GetPosition();
+		Vector2 ra = anchA - (a->transform.GetPosition() + a->transform.GetCOM());
+		Vector2 rb = anchB - (b->transform.GetPosition() + b->transform.GetCOM());
 		
 		f64 termA = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(offsetDir));
 		f64 termB = b->GetInvMass() + b->GetInvInertia() * SQRD(rb.Cross(offsetDir));
@@ -167,19 +163,82 @@ namespace physics
 
 	}
 
-	void HingeConstraint::CorrectPosition() noexcept
-	{
-
-	}
-
 	void HingeConstraint::UpdateConstraint(f64 dt) noexcept
 	{
+		if (!a || !b)
+			return;
+		Vector2 aHinge = a->transform.TransformVector(aHingePoint);
+		Vector2 bHinge = b->transform.TransformVector(bHingePoint);
+		Vector2 relativePos = aHinge - bHinge;
+		f64 curDis = relativePos.GetMagnitude();
+		f64 offset = -curDis;
+		if (fabs(offset) >= 0)
+		{
+			Vector2 offsetDir = relativePos / curDis;
+			Vector2 ra = aHinge - (a->transform.GetPosition() + a->transform.GetCOM());
+			Vector2 rb = bHinge - (b->transform.GetPosition() + b->transform.GetCOM());
+			Vector2 relativeVel = a->velocity + Vector2::Cross(a->angularVelocity, ra) -
+				b->velocity - Vector2::Cross(b->angularVelocity, rb);
+			f64 termA = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(offsetDir));
+			f64 termB = b->GetInvMass() + b->GetInvInertia() * SQRD(rb.Cross(offsetDir));
+
+			f64 constraintMass = termA + termB;
+			if (constraintMass > EPSILON)
+			{
+				f64 vDot = relativeVel.Dot(offsetDir) * (1 - dampingFactor);
+				f64 bias = -(biasFactor / dt) * offset;
+				f64 lambda = -(vDot + bias) / constraintMass;
+				f64 oldLambda = accumulatedLambda;
+				accumulatedLambda += lambda;
+				lambda = accumulatedLambda - oldLambda;
+				a->ApplyImpulse(offsetDir * lambda, ra);
+				b->ApplyImpulse(-offsetDir * lambda, rb);
+				if (rotationLock)
+				{
+					f64 relAngVel = a->angularVelocity - b->angularVelocity;
+					f64 rotOffset = angleOffset - (a->transform.GetAngle() - b->transform.GetAngle());
+					f64 bias = -(biasFactor / dt) * rotOffset;
+					f64 constraintMass = a->GetInvInertia() + b->GetInvInertia();
+
+					f64 angLambda = -(relAngVel + bias) / constraintMass;
+					f64 oldAngLambda = accumulatedAngularLambda;
+					accumulatedAngularLambda += angLambda;
+					angLambda = accumulatedAngularLambda - oldAngLambda;
+					a->angularVelocity += angLambda * a->GetInvInertia();
+					b->angularVelocity -= angLambda * b->GetInvInertia();
+				}
+			}
+		}
 	}
 
 
 	void HingeConstraint::WarmStart() noexcept
 	{
+		if (!a || !b)
+			return;
+		Vector2 aHinge = a->transform.TransformVector(aHingePoint);
+		Vector2 bHinge = b->transform.TransformVector(bHingePoint);
+		Vector2 relativePos = aHinge - bHinge;
+		f64 curDis = relativePos.GetMagnitude();
+		f64 offset = -curDis;
+		if (fabs(offset) < EPSILON)
+			return;
+		Vector2 offsetDir = relativePos / curDis;
+		Vector2 ra = aHinge - (a->transform.GetPosition() + a->transform.GetCOM()));
+		Vector2 rb = bHinge - (b->transform.GetPosition() + b->transform.GetCOM());
 
+		f64 termA = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(offsetDir));
+		f64 termB = b->GetInvMass() + b->GetInvInertia() * SQRD(rb.Cross(offsetDir));
+		f64 constraintMass = termA + termB;
+		if (constraintMass < EPSILON)
+			return;
+		a->ApplyImpulse(offsetDir * accumulatedLambda, ra);
+		b->ApplyImpulse(-offsetDir * accumulatedLambda, rb);
+		if (rotationLock)
+		{
+			a->angularVelocity += accumulatedAngularLambda * a->GetInvInertia();
+			b->angularVelocity -= accumulatedAngularLambda * b->GetInvInertia();
+		}
 	}
 
 	RopeConstraint::RopeConstraint(Dynamicbody* A, Dynamicbody* B, const Span& bounds, const Vector2& AAnchor, const Vector2& BAnchor) noexcept
@@ -189,15 +248,13 @@ namespace physics
 		b = B;
 	}
 
-	void RopeConstraint::CorrectPosition() noexcept
-	{
-	}
-
 	void RopeConstraint::UpdateConstraint(f64 dt) noexcept
 	{
 		if (!a || !b)
 			return;
-		Vector2 relativePos = a->transform.TransformVector(AAnchor) - b->transform.TransformVector(BAnchor);
+		Vector2 anchA = a->transform.TransformVector(AAnchor);
+		Vector2 anchB = b->transform.TransformVector(BAnchor);
+		Vector2 relativePos = anchA - anchB;
 		f64 curDis = relativePos.GetMagnitude();
 		if (bounds.min <= curDis && curDis <= bounds.max)
 			return;
@@ -209,8 +266,8 @@ namespace physics
 		if (fabs(offset) >= 0)
 		{
 			Vector2 offsetDir = relativePos / curDis;
-			Vector2 ra = a->transform.TransformVector(AAnchor) - a->transform.GetPosition();
-			Vector2 rb = b->transform.TransformVector(BAnchor) - b->transform.GetPosition();
+			Vector2 ra = anchA - (a->transform.GetPosition() + a->transform.GetCOM());
+			Vector2 rb = anchB - (b->transform.GetPosition() + b->transform.GetCOM());
 			Vector2 relativeVel = a->velocity + Vector2::Cross(a->angularVelocity, ra) -
 				b->velocity - Vector2::Cross(b->angularVelocity, rb);
 			f64 termA = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(offsetDir));
@@ -234,6 +291,8 @@ namespace physics
 
 	void RopeConstraint::WarmStart() noexcept
 	{
+		if (!a || !b)
+			return;
 		Vector2 relativePos = a->transform.TransformVector(AAnchor) - b->transform.TransformVector(BAnchor);
 		f64 curDis = relativePos.GetMagnitude();
 		if (bounds.min <= curDis && curDis <= bounds.max)
@@ -244,8 +303,8 @@ namespace physics
 		if (curDis > bounds.max)
 			offset = bounds.max - curDis;
 		Vector2 offsetDir = relativePos / curDis;
-		Vector2 ra = a->transform.TransformVector(AAnchor) - a->transform.GetPosition();
-		Vector2 rb = b->transform.TransformVector(BAnchor) - b->transform.GetPosition();
+		Vector2 ra = a->transform.TransformVector(AAnchor) - (a->transform.GetPosition() + a->transform.GetCOM());
+		Vector2 rb = b->transform.TransformVector(BAnchor) - (b->transform.GetPosition() + b->transform.GetCOM());
 
 		f64 termA = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(offsetDir));
 		f64 termB = b->GetInvMass() + b->GetInvInertia() * SQRD(rb.Cross(offsetDir));
@@ -262,16 +321,12 @@ namespace physics
 		a = A;
 	}
 
-	void SliderConstraint::CorrectPosition() noexcept
-	{
-
-	}
-
 	void SliderConstraint::UpdateConstraint(f64 dt) noexcept
 	{
+		if (!a)
+			return;
 		Vector2 worldAnchor = a->transform.TransformVector(anchor);
-
-		Vector2 ra = worldAnchor - a->transform.GetPosition();
+		Vector2 ra = worldAnchor - (a->transform.GetPosition() + a->transform.GetCOM());
 		Vector2 normal(-direction.y, direction.x);
 		Vector2 relativeVel = a->velocity + Vector2::Cross(a->angularVelocity, ra);
 		f64 constraintMass = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(normal));
@@ -306,7 +361,8 @@ namespace physics
 
 	void SliderConstraint::WarmStart() noexcept
 	{
-		return;
+		if (!a)
+			return;
 		Vector2 worldAnchor = a->transform.TransformVector(anchor);
 		Vector2 ra = worldAnchor - a->transform.GetPosition();
 		Vector2 normal(-direction.y, direction.x);
@@ -317,5 +373,75 @@ namespace physics
 		a->ApplyImpulse(normal * accumulatedLambda, ra);
 		if (rotationLock)
 			a->angularVelocity += accumulatedAngularLambda * a->GetInvInertia();
+	}
+
+	SliderContactConstraint::SliderContactConstraint(Dynamicbody* A, Dynamicbody* B, const Vector2& AAnchor, const Vector2& BAnchor, const Vector2& direction, const Span& bounds = Span::Universe) noexcept
+		: AAnchor(AAnchor), BAnchor(BAnchor), direction(direction), bounds(bounds)
+	{
+		a = A;
+		b = B;
+	}
+
+	void SliderContactConstraint::UpdateConstraint(f64 dt) noexcept
+	{
+		if (!a || !b)
+			return;
+
+		Vector2 anchA = a->transform.TransformVector(AAnchor);
+		Vector2 anchB = b->transform.TransformVector(BAnchor);
+		Vector2 relativePos = anchA - anchB;
+		Vector2 ra = anchA - (a->transform.GetPosition() + a->transform.GetCOM());
+		Vector2 rb = anchB - (b->transform.GetPosition() + b->transform.GetCOM());
+		Vector2 norm(-direction.y, direction.x);
+
+		Vector2 relativeVel = a->velocity + Vector2::Cross(a->angularVelocity, ra) -
+			b->velocity - Vector2::Cross(b->angularVelocity, rb);
+		f64 vDot = relativeVel.Dot(norm);
+		f64 termA = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(norm));
+		f64 termB = b->GetInvMass() + b->GetInvInertia() * SQRD(rb.Cross(norm));
+
+		f64 constraintMass = termA + termB;
+		f64 offset = (anchB - anchA).Dot(norm);
+		f64 bias = -(biasFactor / dt) * offset;
+		f64 lambda = -(vDot + bias) / constraintMass;
+
+		f64 oldLambda = accumulatedLambda;
+		accumulatedLambda += lambda;
+		lambda = accumulatedLambda - oldLambda;
+		a->ApplyImpulse(lambda * norm, ra);
+		b->ApplyImpulse(-lambda * norm, rb);
+		if (rotationLock)
+		{
+			f64 relAngVel = a->angularVelocity - b->angularVelocity;
+			f64 rotOffset = a->transform.GetAngle() - b->transform.GetAngle();
+			f64 bias = -(biasFactor / dt) * rotOffset;
+
+			f64 angLambda = -(relAngVel + bias) / (a->GetInvInertia() + b->GetInvInertia());
+			f64 oldAngLambda = accumulatedAngularLambda;
+			accumulatedAngularLambda += angLambda;
+			angLambda = accumulatedAngularLambda - oldAngLambda;
+			a->angularVelocity += angLambda * a->GetInvInertia();
+			b->angularVelocity -= angLambda * b->GetInvInertia();
+		}
+	}
+
+	void SliderContactConstraint::WarmStart() noexcept
+	{
+		if (!a || !b)
+			return;
+		Vector2 anchA = a->transform.TransformVector(AAnchor);
+		Vector2 anchB = b->transform.TransformVector(BAnchor);
+		Vector2 relativePos = anchA - anchB;
+		Vector2 ra = anchA - (a->transform.GetPosition() + a->transform.GetCOM());
+		Vector2 rb = anchB - (b->transform.GetPosition() + b->transform.GetCOM());
+		Vector2 norm(-direction.y, direction.x);
+
+		a->ApplyImpulse(accumulatedLambda * norm, ra);
+		b->ApplyImpulse(-accumulatedLambda * norm, rb);
+		if (rotationLock)
+		{
+			a->angularVelocity += accumulatedAngularLambda * a->GetInvInertia();
+			b->angularVelocity -= accumulatedAngularLambda * b->GetInvInertia();
+		}
 	}
 }
