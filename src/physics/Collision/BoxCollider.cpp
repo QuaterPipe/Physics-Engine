@@ -1,4 +1,5 @@
 #include "physics/Collision/Collision.hpp"
+#include <iostream>
 
 namespace physics
 {
@@ -46,17 +47,35 @@ namespace physics
 		return p.BoundingBox(t);
 	}
 
+	Collider* BoxCollider::Clone() const noexcept
+	{
+		return new BoxCollider(*this);
+	}
+
 	bool BoxCollider::Contains(const Vector2& point, const Transform& t) const noexcept
 	{
 		Vector2 pt = t.GetInverseTransform().TransformVector(point);
 		return x <= pt.x && pt.x <= x + width && y <= pt.y && pt.y <= y + height;
 	}
-
-
-	Collider* BoxCollider::Clone() const noexcept
+	
+	f64 BoxCollider::CrossSectionalArea(const Vector2& direction) const noexcept
 	{
-		return new BoxCollider(*this);
+		Vector2 topl(x - width / 2, y + height / 2), bottoml(x - width / 2, y - height / 2);
+		Vector2 topr(x + width / 2, y + height / 2), bottomr(x + width / 2, y - height / 2);
+		Vector2 arr[4] = { topl, bottoml, topr, bottomr };
+		Vector2 d(direction.Normalized());
+		f64 minP = std::numeric_limits<f64>::infinity(), maxP = -std::numeric_limits<f64>::infinity();
+		for (Vector2& v : arr)
+		{
+			f64 proj = v.Dot(d);
+			if (proj < minP)
+				minP = proj;
+			if (proj > maxP)
+				maxP = proj;
+		}
+		return maxP - minP;
 	}
+
 
 	BoxCollider& BoxCollider::operator=(const BoxCollider& b)
 	{

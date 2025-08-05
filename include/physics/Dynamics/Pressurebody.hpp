@@ -29,7 +29,7 @@ namespace physics
 			void ApplyForce(const Vector2& Force, const Vector2& contactPoint = Vector2::Infinity) noexcept override;
 			void ApplyImpulse(const Vector2& impulse, const Vector2& contactVec = Vector2::Infinity) noexcept override;
 			CollisionObject* Clone() const noexcept override;
-			Vector2 ComputeForce(const Vector2& position, const Vector2& Velocity) const noexcept override;
+			Vector2 ComputeForce(const Vector2& position, const Vector2& Velocity, f64 orient) const noexcept override;
 			void DerivePositionAndAngle() noexcept;
 			f64 GetRadius() const noexcept;
 			const std::vector<PointMass>& GetPoints() const noexcept;

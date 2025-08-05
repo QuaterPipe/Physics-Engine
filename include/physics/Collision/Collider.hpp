@@ -41,6 +41,7 @@ namespace physics
 		virtual ~Collider() noexcept;
 		virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept = 0;
 		virtual bool Contains(const Vector2& point, const Transform& t = Transform()) const noexcept = 0;
+		virtual f64 CrossSectionalArea(const Vector2& direction) const noexcept = 0;
 		virtual Vector2 GetCenter() const noexcept = 0;
 		virtual std::vector<Vector2> GetPoints(const Transform& t = Transform()) const noexcept = 0;
 		virtual Vector2 Max() const noexcept = 0;

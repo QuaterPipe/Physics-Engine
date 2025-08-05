@@ -52,8 +52,8 @@ namespace physics
 	}
 
 	Dynamicbody::Dynamicbody(const Collider& c, const Transform& t, bool isTrigger, const PhysicsMaterial& p,
-		f64 mass, bool usesGravity, const Vector2& drag) noexcept
-	: CollisionObject(c, t, isTrigger),  _mass(mass), drag(drag), physicsMaterial(p), usesGravity(usesGravity)
+		f64 mass, bool usesGravity, f64 dragCoef) noexcept
+	: CollisionObject(c, t, isTrigger),  _mass(mass), dragCoefficient(dragCoef), physicsMaterial(p), usesGravity(usesGravity)
 	{
 		_isDynamic = true;
 		_mass = mass;
@@ -62,10 +62,10 @@ namespace physics
 	}
 
 	Dynamicbody::Dynamicbody(const Dynamicbody& d) noexcept
-	: CollisionObject(d), _mass(d.GetMass()), _inertia(d.GetInertia()), gravity(d.gravity), velocity(d.velocity), drag(d.drag),
-		force(d.force), angularVelocity(d.angularVelocity), angularForce(d.angularForce), physicsMaterial(d.physicsMaterial),
+	: CollisionObject(d), _mass(d.GetMass()), _inertia(d.GetInertia()), gravity(d.gravity), velocity(d.velocity), dragCoefficient(d.dragCoefficient),
+		_force(d._force), angularVelocity(d.angularVelocity), angularForce(d.angularForce), physicsMaterial(d.physicsMaterial),
 		usesGravity(d.usesGravity), isStatic(d.isStatic), appliedForce(d.appliedForce), appliedAngularForce(d.appliedAngularForce),
-		posState(d.posState), angleState(d.angleState)
+		posState(d.posState), angleState(d.angleState), fluidDensity(d.fluidDensity)
 	{
 		_isDynamic = true;
 		_invMass = _mass ? 1 / _mass : 0;
@@ -73,10 +73,10 @@ namespace physics
 
 	Dynamicbody::Dynamicbody(Dynamicbody&& d) noexcept
 		: CollisionObject((CollisionObject&&)d), _mass(d.GetMass()), _inertia(d.GetInertia()),
-		gravity(d.gravity), velocity(d.velocity), drag(d.drag), force(d.force), angularVelocity(d.angularVelocity),
+		gravity(d.gravity), velocity(d.velocity), dragCoefficient(d.dragCoefficient), _force(d._force), angularVelocity(d.angularVelocity),
 		angularForce(d.angularForce), physicsMaterial(d.physicsMaterial), usesGravity(d.usesGravity), isStatic(d.isStatic),
 		appliedForce(d.appliedForce), appliedAngularForce(d.appliedAngularForce), angleState(d.angleState),
-		posState(d.posState)
+		posState(d.posState), fluidDensity(d.fluidDensity)
 	{
 		_isDynamic = true;
 		_invMass = _mass ? 1 / _mass : 0;
@@ -92,15 +92,16 @@ namespace physics
 		usesGravity = d.usesGravity;
 		gravity = d.gravity;
 		velocity = d.velocity;
-		drag = d.drag;
+		dragCoefficient = d.dragCoefficient;
 		angularVelocity = d.angularVelocity;
 		angularForce = d.angularForce;
 		isStatic = d.isStatic;
-		force = d.force;
+		_force = d._force;
 		appliedForce = d.appliedForce;
 		appliedAngularForce = d.appliedAngularForce;
 		posState = d.posState;
 		angleState = d.angleState;
+		fluidDensity = d.fluidDensity;
 		return *this;
 	}
 
@@ -112,9 +113,9 @@ namespace physics
 		return CollisionObject::operator==(other) && _mass == o.GetMass() &&
 			_inertia == o.GetInertia() && physicsMaterial == o.physicsMaterial &&
 			usesGravity == o.usesGravity && gravity == o.gravity && velocity == o.velocity &&
-			drag == o.drag && angularVelocity == o.angularVelocity && angularForce == o.angularForce &&
-			isStatic == o.isStatic && force == o.force && appliedForce == o.appliedForce &&
-			appliedAngularForce == o.appliedAngularForce;
+			dragCoefficient == o.dragCoefficient && angularVelocity == o.angularVelocity && angularForce == o.angularForce &&
+			isStatic == o.isStatic && _force == o._force && appliedForce == o.appliedForce &&
+			appliedAngularForce == o.appliedAngularForce && fluidDensity == o.fluidDensity;
 	}
 
 	bool Dynamicbody::operator!=(const CollisionObject& other) const noexcept
@@ -125,9 +126,9 @@ namespace physics
 		return CollisionObject::operator!=(other) || _mass != o.GetMass() ||
 			_inertia != o.GetInertia() || physicsMaterial != o.physicsMaterial ||
 			usesGravity != o.usesGravity || gravity != o.gravity || velocity != o.velocity ||
-			drag != o.drag || angularVelocity != o.angularVelocity || angularForce != o.angularForce ||
-			isStatic != o.isStatic || force != o.force || appliedForce != o.appliedForce ||
-			appliedAngularForce != o.appliedAngularForce;
+			dragCoefficient != o.dragCoefficient || angularVelocity != o.angularVelocity || angularForce != o.angularForce ||
+			isStatic != o.isStatic || _force != o._force || appliedForce != o.appliedForce ||
+			appliedAngularForce != o.appliedAngularForce || fluidDensity != o.fluidDensity;
 	}
 
 	void Dynamicbody::AddConstraint(Constraint* constraint) noexcept

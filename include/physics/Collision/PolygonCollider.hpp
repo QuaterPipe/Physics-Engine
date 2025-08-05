@@ -29,6 +29,7 @@ namespace physics
 			Collider* Clone() const noexcept override;
 			void ComputeMass(f64 density, f64* mass, f64* inertia) const noexcept;
 			virtual bool Contains(const Vector2& point, const Transform& t = Transform()) const noexcept override;
+			virtual f64 CrossSectionalArea(const Vector2& direction) const noexcept override;
 			virtual Vector2 GetCenter() const noexcept override;
 			bool operator==(const Collider& c) const noexcept override;
 			bool operator!=(const Collider& c) const noexcept override;

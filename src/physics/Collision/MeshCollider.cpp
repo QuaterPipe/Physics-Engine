@@ -71,6 +71,26 @@ namespace physics
 		return result;
 	}
 
+	Collider* MeshCollider::Clone() const noexcept
+	{
+		return (Collider*)new MeshCollider(*this);
+	}
+
+	bool MeshCollider::Contains(const Vector2& point, const Transform& t) const noexcept
+	{
+		for (Collider* c : colliders)
+		{
+			if (c->Contains(point, t))
+				return true;
+		}
+		return false;
+	}
+
+	f64 MeshCollider::CrossSectionalArea(const Vector2& direction) const noexcept
+	{
+		return BoundingBox().CrossSectionalArea(direction); // cannot compute exact CSA unfortunately
+	}
+
 	Vector2 MeshCollider::GetCenter() const noexcept
 	{
 		std::vector<Vector2> coms;
@@ -90,21 +110,6 @@ namespace physics
 			v.insert(v.end(), p.begin(), p.end());
 		}
 		return v;
-	}
-
-	bool MeshCollider::Contains(const Vector2& point, const Transform& t) const noexcept
-	{
-		for (Collider* c : colliders)
-		{
-			if (c->Contains(point, t))
-				return true;
-		}
-		return false;
-	}
-
-	Collider* MeshCollider::Clone() const noexcept
-	{
-		return (Collider*)new MeshCollider(*this);
 	}
 
 	Vector2 MeshCollider::Max() const noexcept

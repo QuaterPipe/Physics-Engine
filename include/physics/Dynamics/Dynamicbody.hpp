@@ -28,9 +28,9 @@ namespace physics
 	struct PhysicsMaterial
 	{
 		public:
-			f64 staticFriction = .3;
 			f64 kineticFriction = .1;
 			f64 restitution = .5;
+			f64 staticFriction = .3;
 			PhysicsMaterial() noexcept;
 			PhysicsMaterial(f64 staticFriction, f64 kineticFriction, f64 restitution) noexcept;
 			bool operator==(const PhysicsMaterial& other) const noexcept;
@@ -43,33 +43,34 @@ namespace physics
 	class Dynamicbody : public CollisionObject
 	{
 		protected:
-			f64 _mass = 1000;
-			f64 _invMass = 0.001;
 			f64 _inertia = 1000;
 			f64 _invInertia = 0.001;
+			f64 _invMass = 0.001;
+			f64 _mass = 1000;
+			Vector2 _force = Vector2(0, 0);
 		public:
+			Vector2 appliedForce = Vector2(0, 0);
 			Vector2 gravity = Vector2(0, -9.81);
 			Vector2 velocity = Vector2(0, 0);
-			Vector2 force = Vector2(0, 0);
-			Vector2 appliedForce = Vector2(0, 0);
-			Vector2 drag = Vector2(0.1, 0.1);
 			f64 angularVelocity = 0;
 			f64 angularForce = 0;
 			f64 appliedAngularForce = 0;
-			PhysicsMaterial physicsMaterial;
-			bool usesGravity = true;
-			bool isStatic = false;
-			bool hadCollisionLastFrame = false;
-			f64& staticFriction = physicsMaterial.staticFriction;
+			f64 dragCoefficient = 0;
+			f64 fluidDensity = 1.293e-3; // air
 			f64& kineticFriction = physicsMaterial.kineticFriction;
 			f64& restitution = physicsMaterial.restitution;
+			f64& staticFriction = physicsMaterial.staticFriction;
+			bool hadCollisionLastFrame = false;
+			bool isStatic = false;
+			bool usesGravity = true;
+			PhysicsMaterial physicsMaterial;
 			RK4State posState;
 			RK4State angleState;
 			std::vector<Constraint*> constraints;
 			Dynamicbody() noexcept;
 			Dynamicbody(const Collider& c, const Transform& t = Transform(), bool isTrigger = false,
 			const PhysicsMaterial& p = PhysicsMaterial(), f64 mass = 1000, bool usesGravity = true,
-			const Vector2& drag = Vector2(0.1, 0.1)) noexcept;
+			f64 dragCoef = 0) noexcept;
 			Dynamicbody(const Dynamicbody& d) noexcept;
 			Dynamicbody(Dynamicbody && d) noexcept;
 			virtual bool operator==(const CollisionObject& c) const noexcept override;
@@ -80,7 +81,7 @@ namespace physics
 			virtual void ApplyAngularImpulse(f64 force) noexcept = 0;
 			virtual void ApplyForce(const Vector2& Force, const Vector2& contactPoint = Vector2::Infinity) noexcept = 0;
 			virtual void ApplyImpulse(const Vector2& impulse, const Vector2& contactVec = Vector2::Infinity) noexcept = 0;
-			virtual Vector2 ComputeForce(const Vector2& position, const Vector2& velocity) const noexcept = 0;
+			virtual Vector2 ComputeForce(const Vector2& position, const Vector2& velocity, f64 orient) const noexcept = 0;
 			f64 GetInertia() const noexcept;
 			f64 GetInvInertia() const noexcept;
 			f64 GetMass() const noexcept;

@@ -10,8 +10,8 @@ namespace physics
 	}
 
 	Rigidbody::Rigidbody(const Collider& c, const Transform& t, const bool& isTrigger, const PhysicsMaterial& p,
-		const f64& mass, bool usesGravity, const Vector2& drag) noexcept
-	: Dynamicbody(c, t, isTrigger, p, mass, usesGravity, drag)
+		const f64& mass, bool usesGravity, f64 dragCoef) noexcept
+	: Dynamicbody(c, t, isTrigger, p, mass, usesGravity, dragCoef)
 	{
 	}
 
@@ -71,7 +71,7 @@ namespace physics
 	{
 		if (!isStatic && !isKinematic)
 		{
-		 	force += Force;
+		 	_force += Force;
 			if (contactPoint != Vector2::Infinity && Force.GetMagnitudeExact())
 			{
 				angularForce += (transform.GetCOM()).Cross(Force);
@@ -94,9 +94,13 @@ namespace physics
 		return appliedAngularForce;
 	}
 
-	Vector2 Rigidbody::ComputeForce(const Vector2& position, const Vector2 &velocity) const noexcept
+	Vector2 Rigidbody::ComputeForce(const Vector2& position, const Vector2 &velocity, f64 orient) const noexcept
 	{
-		return appliedForce + (usesGravity ? gravity : Vector2(0, 0));
+		Vector2 normV = velocity.Normalized();
+		Vector2 dragForce = -normV;
+		normV.Rotate(Vector2::Origin, orient);
+		dragForce *= 0.5 * fluidDensity * velocity.GetMagnitudeSquared() * dragCoefficient * collider->CrossSectionalArea(normV);
+		return appliedForce + dragForce;
 	}
 
 	CollisionObject* Rigidbody::Clone() const noexcept
@@ -119,7 +123,7 @@ namespace physics
 			switch (RK4Step)
 			{
 				case 0:
-					posState.a1 = ComputeForce(position, velocity);
+					posState.a1 = ComputeForce(position, velocity, orient);
 					posState.k1X = velocity;
 					posState.k1V = posState.a1;
 
@@ -130,7 +134,7 @@ namespace physics
 				case 1:
 					posState.tmpX = position + 0.5 * dt * posState.k1X;
 					posState.tmpV = velocity + 0.5 * dt * posState.k1V;
-					posState.a2 = ComputeForce(posState.tmpX, posState.tmpV);
+					posState.a2 = ComputeForce(posState.tmpX, posState.tmpV, angleState.k1X.x);
 					posState.k2X = posState.tmpV;
 					posState.k2V = posState.a2;
 
@@ -143,7 +147,7 @@ namespace physics
 				case 2:
 					posState.tmpX = position + 0.5 * dt * posState.k2X;
 					posState.tmpV = velocity + 0.5 * dt * posState.k2V;
-					posState.a3 = ComputeForce(posState.tmpX, posState.tmpV);
+					posState.a3 = ComputeForce(posState.tmpX, posState.tmpV, angleState.k2X.x);
 					posState.k3X = posState.tmpV;
 					posState.k3V = posState.a3;
 
@@ -156,7 +160,7 @@ namespace physics
 				case 3:
 					posState.tmpX = position + dt * posState.k3X;
 					posState.tmpV = velocity + dt * posState.k3V;
-					posState.a4 = ComputeForce(posState.tmpX, posState.tmpV);
+					posState.a4 = ComputeForce(posState.tmpX, posState.tmpV, angleState.k3X.x);
 					posState.k4X = posState.tmpV;
 					posState.k4V = posState.a4;
 
@@ -176,7 +180,7 @@ namespace physics
 					transform.SetAngle(orient);
 					appliedAngularForce = 0;
 					appliedForce.Set(0, 0);
-					force.Set(0, 0);
+					_force.Set(0, 0);
 					angularForce = 0;
 					break;
 				default:

@@ -44,14 +44,19 @@ namespace physics
 		return BoxCollider(c, Vector2(radius * 2, radius * 2));
 	}
 
+	Collider* CircleCollider::Clone() const noexcept
+	{
+		return new CircleCollider(*this);
+	}
+
 	bool CircleCollider::Contains(const Vector2& point, const Transform& t) const noexcept
 	{
 		return DistanceSquared(point, t.TransformVector(center)) <= SQRD(radius * physics::Max(t.GetScale().x, t.GetScale().y));
 	}
 
-	Collider* CircleCollider::Clone() const noexcept
+	f64 CircleCollider::CrossSectionalArea(const Vector2& direcition) const noexcept
 	{
-		return new CircleCollider(*this);
+		return radius * 2;
 	}
 
 	Vector2 CircleCollider::GetCenter() const noexcept

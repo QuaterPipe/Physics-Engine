@@ -224,7 +224,7 @@ namespace physics
 		if (fabs(offset) < EPSILON)
 			return;
 		Vector2 offsetDir = relativePos / curDis;
-		Vector2 ra = aHinge - (a->transform.GetPosition() + a->transform.GetCOM()));
+		Vector2 ra = aHinge - (a->transform.GetPosition() + a->transform.GetCOM());
 		Vector2 rb = bHinge - (b->transform.GetPosition() + b->transform.GetCOM());
 
 		f64 termA = a->GetInvMass() + a->GetInvInertia() * SQRD(ra.Cross(offsetDir));
@@ -375,7 +375,7 @@ namespace physics
 			a->angularVelocity += accumulatedAngularLambda * a->GetInvInertia();
 	}
 
-	SliderContactConstraint::SliderContactConstraint(Dynamicbody* A, Dynamicbody* B, const Vector2& AAnchor, const Vector2& BAnchor, const Vector2& direction, const Span& bounds = Span::Universe) noexcept
+	SliderContactConstraint::SliderContactConstraint(Dynamicbody* A, Dynamicbody* B, const Vector2& AAnchor, const Vector2& BAnchor, const Vector2& direction, const Span& bounds) noexcept
 		: AAnchor(AAnchor), BAnchor(BAnchor), direction(direction), bounds(bounds)
 	{
 		a = A;

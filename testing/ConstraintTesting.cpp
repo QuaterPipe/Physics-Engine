@@ -4,6 +4,8 @@ using namespace physics;
 
 #define WIN_WIDTH 1000
 #define WIN_HEIGHT 500
+#define PHYSICS_HERTZ 2000.0
+#define WINDOW_HERTZ 120.0
 
 void ConstraintTest()
 {
@@ -16,20 +18,20 @@ void ConstraintTest()
     v.setSize(WIN_WIDTH, -WIN_HEIGHT);
     window.setView(v);
     Rigidbody anchor(BoxCollider(1, 1));
-    anchor.isActive = false;
+    //anchor.isActive = false;
     anchor.isStatic = true;
     anchor.transform.SetPosition(500, 250);
     Rigidbody top(BoxCollider(10, 90));
     top.transform.SetPosition(500, 250);
     top.transform.SetRotation(Matrix2(Radians(-0.00)));
     Rigidbody bottom(BoxCollider(10, 90));
-    bottom.transform.SetRotation(Matrix2(Radians(1)));
+    //bottom.transform.SetRotation(Matrix2(Radians(1)));
     bottom.transform.SetPosition(500, 180);
     Rigidbody b2(BoxCollider(10, 90));
     b2.transform.SetPosition(500, 100);
     Rigidbody b3(BoxCollider(10, 90));
     b3.transform.SetPosition(500, 20);
-    //b3.gravity.Set(0, -9000);
+    top.dragCoefficient = bottom.dragCoefficient = b2.dragCoefficient = b3.dragCoefficient = 0.0001;
     DistanceConstraint constraint2(&anchor, &top, 0, Vector2(0, 0), Vector2(0, 45));
    
     DistanceConstraint constraint(&top, &bottom, 0, Vector2(0, -40), Vector2(0, 40));
@@ -57,6 +59,10 @@ void ConstraintTest()
     Timer timer;
     timer.Start();
     timer.Tick();
+    f64 accumulator = 0;
+    f64 renderAccumulator = 0;
+    f64 total = 0;
+    size_t loops = 0;
     while (window.isOpen())
     {
         sf::Event e;
@@ -68,7 +74,7 @@ void ConstraintTest()
             {
                 if (e.key.code == sf::Keyboard::Space)
                 {
-                    top.ApplyImpulse(Vector2(-3, 2), Vector2(10, 10));
+                    top.ApplyImpulse(Vector2(-3000, 200), Vector2(10, 10));
                 }
                 if (e.key.code == sf::Keyboard::D)
                 {
@@ -80,39 +86,52 @@ void ConstraintTest()
                 }
             }
         }
-        sf::RectangleShape rect(sf::Vector2f(10, 90));
-        rect.setOrigin(5, 45);
-        rect.setFillColor(sf::Color::Transparent);
-        rect.setOutlineColor(sf::Color::White);
-        rect.setOutlineThickness(2);
-
-        rect.setPosition(top.transform.GetPosition().x, top.transform.GetPosition().y);
-        rect.setRotation(Degrees(top.transform.GetAngle()));
-        win->draw(rect);
-
-        rect.setPosition(bottom.transform.GetPosition().x, bottom.transform.GetPosition().y);
-        rect.setRotation(Degrees(bottom.transform.GetAngle()));
-        win->draw(rect);
-
-        rect.setPosition(b2.transform.GetPosition().x, b2.transform.GetPosition().y);
-        rect.setRotation(Degrees(b2.transform.GetAngle()));
-        win->draw(rect);
-
-        rect.setPosition(b3.transform.GetPosition().x, b3.transform.GetPosition().y);
-        rect.setRotation(Degrees(b3.transform.GetAngle()));
-        win->draw(rect);
-
-        Vector2 v = top.transform.TransformVector(Vector2(0, 10));
-        sf::CircleShape c(2);
-        c.setPosition(500, 250);
-        c.setOrigin(2, 2);
-        win->draw(c);
-        c.setPosition(v.x, v.y);
-        c.setFillColor(sf::Color::Red);
-        win->draw(c);
         timer.Tick();
-        world.Update(1.0 / 200.0);
-        win->display();
-        win->clear();
+        accumulator += timer.deltaTime;
+        if (accumulator >= (1.0 / PHYSICS_HERTZ) * 1000)
+        {
+            world.Update(1.0 / PHYSICS_HERTZ);
+            accumulator -= (1.0 / PHYSICS_HERTZ) * 1000;
+        }
+        renderAccumulator += timer.deltaTime;
+        if (renderAccumulator >= 1.0 / WINDOW_HERTZ * 1000)
+        {
+            sf::RectangleShape rect(sf::Vector2f(10, 90));
+            rect.setOrigin(5, 45);
+            rect.setFillColor(sf::Color::Transparent);
+            rect.setOutlineColor(sf::Color::White);
+            rect.setOutlineThickness(2);
+
+            rect.setPosition(top.transform.GetPosition().x, top.transform.GetPosition().y);
+            rect.setRotation(Degrees(top.transform.GetAngle()));
+            win->draw(rect);
+
+            rect.setPosition(bottom.transform.GetPosition().x, bottom.transform.GetPosition().y);
+            rect.setRotation(Degrees(bottom.transform.GetAngle()));
+            win->draw(rect);
+
+            rect.setPosition(b2.transform.GetPosition().x, b2.transform.GetPosition().y);
+            rect.setRotation(Degrees(b2.transform.GetAngle()));
+            win->draw(rect);
+
+            rect.setPosition(b3.transform.GetPosition().x, b3.transform.GetPosition().y);
+            rect.setRotation(Degrees(b3.transform.GetAngle()));
+            win->draw(rect);
+
+            Vector2 v = top.transform.TransformVector(Vector2(0, 10));
+            sf::CircleShape c(2);
+            c.setPosition(500, 250);
+            c.setOrigin(2, 2);
+            win->draw(c);
+            c.setPosition(v.x, v.y);
+            c.setFillColor(sf::Color::Red);
+            win->draw(c);
+            win->display();
+            win->clear();
+            renderAccumulator -= 1.0 / WINDOW_HERTZ * 1000;
+        }
+        loops++;
+        total += timer.deltaTime;
     }
+    std::cout << (total / loops) << "\n";
 }

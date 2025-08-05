@@ -37,7 +37,7 @@ namespace physics
 			void ApplyImpulse(const Vector2& impulse, const Vector2& contactVec = Vector2::Infinity) noexcept override;
 			CollisionObject* Clone() const noexcept override;
 			f64 ComputeAngularForce(f64 orient, f64 angVelocity) const noexcept;
-			Vector2 ComputeForce(const Vector2& position, const Vector2& velocity) const noexcept override;
+			Vector2 ComputeForce(const Vector2& position, const Vector2& velocity, f64 orient) const noexcept override;
 			void DerivePositionAndAngle() noexcept;
 			void FixCollapsing() noexcept;
 			PointMass* GetClosestMassPoint(const Vector2& point) const noexcept;

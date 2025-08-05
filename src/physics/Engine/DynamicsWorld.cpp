@@ -76,8 +76,9 @@ namespace physics
 						continue;
 					if (!a || !b)
 						continue;
-					if (!a->isActive || !b->isActive);
+					if ((!a->isActive || !b->isActive))
 						continue;
+					continue;
 					if (a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform)))
 					{
 						Manifold points = a->GetCollider().TestCollision(

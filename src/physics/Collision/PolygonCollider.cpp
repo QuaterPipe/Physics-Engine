@@ -196,6 +196,11 @@ namespace physics
 		return result;
 	}
 
+	Collider* PolygonCollider::Clone() const noexcept
+	{
+		return new PolygonCollider(*this);
+	}
+
 	void PolygonCollider::ComputeMass(f64 density, f64* mass, f64* inertia) const noexcept
 	{
 		Vector2 c;
@@ -247,6 +252,21 @@ namespace physics
 		return inside;
 	}
 
+	f64 PolygonCollider::CrossSectionalArea(const Vector2& direction) const noexcept
+	{
+		Vector2 d(direction.Normalized());
+		f64 minP = std::numeric_limits<f64>::infinity(), maxP = -std::numeric_limits<f64>::infinity();
+		for (size_t i = 0; i < _pointCount; i++)
+		{
+			f64 proj = _points[i].Dot(d);
+			if (proj < minP)
+				minP = proj;
+			if (proj > maxP)
+				maxP = proj;
+		}
+		return maxP - minP;
+	}
+
 	Vector2 PolygonCollider::GetCenter() const noexcept
 	{
 		return _center;
@@ -293,11 +313,6 @@ namespace physics
 	Vector2* PolygonCollider::GetVectorArray() const noexcept
 	{
 		return _points;
-	}
-
-	Collider* PolygonCollider::Clone() const noexcept
-	{
-		return new PolygonCollider(*this);
 	}
 
 	Vector2 PolygonCollider::Max() const noexcept

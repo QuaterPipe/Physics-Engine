@@ -226,9 +226,9 @@ namespace physics
 	}
 
 
-	Vector2 Softbody::ComputeForce(const Vector2& position, const Vector2& velocity) const noexcept
+	Vector2 Softbody::ComputeForce(const Vector2& position, const Vector2& velocity, f64 orient) const noexcept
 	{
-		return appliedForce + (usesGravity ? gravity : Vector2(0 ,0));
+		return appliedForce;
 	}
 
 

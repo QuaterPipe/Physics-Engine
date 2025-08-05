@@ -203,9 +203,9 @@ namespace physics
 		return new Pressurebody(*this);
 	}
 
-	Vector2 Pressurebody::ComputeForce(const Vector2& position, const Vector2& Velocity) const noexcept
+	Vector2 Pressurebody::ComputeForce(const Vector2& position, const Vector2& Velocity, f64 orient) const noexcept
 	{
-		return Vector2(0, 0);
+		return Vector2::Origin;
 	}
 
 	void Pressurebody::DerivePositionAndAngle() noexcept

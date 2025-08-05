@@ -12,6 +12,7 @@ namespace physics
 		f64 accumulatedAngularLambda = 0;
 		f64 dampingFactor = 0.01;
 		Span lambdaBounds;
+		bool selfcollision = true;
 		virtual void UpdateConstraint(f64 dt) noexcept = 0;
 		virtual void WarmStart() noexcept = 0;
 		void Reset() noexcept;
