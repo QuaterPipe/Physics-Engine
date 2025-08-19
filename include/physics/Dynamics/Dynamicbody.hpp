@@ -92,7 +92,7 @@ namespace physics
 			void SetInertia(f64 inertia) noexcept;
 			void SetMass(f64 mass) noexcept;
 			virtual void Update(f64 dt, int rk4step) noexcept = 0;
-			virtual void Translate(Vector2 offset, Vector2* points, size_t ptCount) noexcept;
+			virtual void Translate(Vector2 offset, std::vector<Vector2>) noexcept;
 	};
 
 	struct Joint

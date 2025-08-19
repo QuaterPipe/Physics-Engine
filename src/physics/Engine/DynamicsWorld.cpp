@@ -8,7 +8,7 @@ namespace physics
 	DynamicsWorld::DynamicsWorld(BoxCollider area) noexcept
 		: quadtree(0, 8, 10, BoxCollider(area), &_objects)
 	{
-		_solvers.push_back(new PhysicsSolver());
+		_solvers.push_back(new CollisionSolver());
 		_solvers.push_back(new PositionalCorrectionSolver());
 	}
 
@@ -47,7 +47,6 @@ namespace physics
 		{
 			if (!db->usesGravity)
 				continue;
-			db->velocity += db->gravity * dt;
 		}
 	}
 
@@ -78,7 +77,7 @@ namespace physics
 						continue;
 					if ((!a->isActive || !b->isActive))
 						continue;
-					continue;
+					//continue;
 					if (a->GetCollider().BoundingBox(a->transform).Overlaps(b->GetCollider().BoundingBox(b->transform)))
 					{
 						Manifold points = a->GetCollider().TestCollision(

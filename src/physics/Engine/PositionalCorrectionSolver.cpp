@@ -10,13 +10,13 @@ namespace physics
 			Dynamicbody* a = dynamic_cast<Dynamicbody*>(c.a);
 			Dynamicbody* b = dynamic_cast<Dynamicbody*>(c.b);
 			if (!a || !b) return;
-			const f64 k_slop = 0.05; // Penetration allowance
+			const f64 k_slop = 0.005; // Penetration allowance
 			const f64 percent = 0.4; // Penetration percentage to correct
 			Vector2 correction = (std::max(c.points.depth - k_slop, 0.0) / (a->GetInvMass() * a->MassScaler() + b->GetInvMass() * b->MassScaler())) * c.points.normal * percent;
 			if (!a->isStatic)
-				a->Translate(-correction * a->GetInvMass() * a->MassScaler(), c.points.points, c.points.pointCount);
+				a->Translate(-correction * a->GetInvMass() * a->MassScaler(), c.points.points);
 			if (!b->isStatic)
-				b->Translate(correction * b->GetInvMass() * b->MassScaler(), c.points.points, c.points.pointCount);
+				b->Translate(correction * b->GetInvMass() * b->MassScaler(), c.points.points);
 		}
 	}
 }

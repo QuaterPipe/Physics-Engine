@@ -19,7 +19,7 @@ namespace physics
 			virtual BoxCollider BoundingBox(const Transform& t = Transform()) const noexcept override;
 			virtual bool Contains(const Vector2& point, const Transform& t = Transform()) const noexcept override;
 			Collider* Clone() const noexcept override;
-			virtual f64 CrossSectionalArea(const Vector2& direction) const noexcept override;
+			virtual f64 CrossSectionalArea(const Vector2& direction, const Transform& t = Transform()) const noexcept override;
 			virtual Vector2 GetCenter() const noexcept override;
 			Vector2 Max() const noexcept override;
 			Vector2 Min() const noexcept override;
@@ -44,5 +44,9 @@ namespace physics
 				const Transform& transform,
 				const MeshCollider* collider,
 				const Transform& colliderTransform) const noexcept override;
+			virtual Manifold TestCollision(
+				const Transform& transform,
+				const PointMatrixCollider* collider,
+				const Transform& colldierTransform) const noexcept override;
 	};
 }

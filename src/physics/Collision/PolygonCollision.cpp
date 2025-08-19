@@ -4,92 +4,7 @@
 #define MIN -MAX
 
 namespace physics::algo
-{
-
-    bool BiasGreaterThan(f64 a, f64 b)
-    {
-        const f64 k_biasRelative = 0.95;
-        const f64 k_biasAbsolute = 0.01;
-        return a >= b * k_biasRelative + a * k_biasAbsolute;
-    }
-
-    int Clip(const Vector2& n, f64 c, Vector2* face)
-    {
-        int sp = 0;
-        Vector2 out[2] = {
-            face[0],
-            face[1]
-        };
-        f64 d1 = n.Dot(face[0]) - c;
-        f64 d2 = n.Dot(face[1]) - c;
-        if (d1 <= 0.0) out[sp++] = face[0];
-        if (d2 <= 0.0) out[sp++] = face[1];
-        if (d1 * d2 < 0.0)
-        {
-            f64 alpha = d1 / (d1 - d2);
-            out[sp] = face[0] + alpha * (face[1] - face[0]);
-            sp++;
-        }
-        face[0] = out[0];
-        face[1] = out[1];
-        assert(sp != 3);
-        return sp;
-    }
-
-    f64 FindAxisLeastPenetration(size_t* faceIndex, const PolygonCollider* a, const Transform& ta, const PolygonCollider* b, const Transform& tb)
-    {
-        f64 bestDistance = MIN;
-        size_t bestIndex = 0;
-        Matrix2 aRot = ta.GetRotation();
-        Matrix2 bRot = tb.GetRotation();
-        Matrix2 bRotxScale = bRot * Matrix2(tb.GetScale().x, 0, 0, tb.GetScale().y);
-        Matrix2 binvRotxScale = bRotxScale.GetTranspose();
-        Matrix3 bTransformMatrix = tb.GetTransformationMatrix();
-        for (size_t i = 0; i < a->GetPointCount(); i++)
-        {
-            Vector2 n = a->GetNormal(i);
-            Vector2 nw = aRot * n;
-            Matrix2 buT = bRot.GetTranspose();
-            n = buT * nw;
-            Vector2 s = b->SupportPoint(-n);
-            Vector2 v = a->GetPoint(i);
-            v = ta.TransformVector(v);
-            v.x -= bTransformMatrix(0, 2);
-            v.y -= bTransformMatrix(1, 2);
-            v = binvRotxScale * v;
-            f64 d = n.Dot(s - v);
-            if (d > bestDistance)
-            {
-                bestDistance = d;
-                bestIndex = i;
-            }
-        }
-        *faceIndex = bestIndex;
-        return bestDistance;
-    }
-
-    void FindIncidentFace(Vector2* v, const PolygonCollider* refPoly, const Transform& refTransform, const PolygonCollider* incPoly, const Transform& incTransform, size_t referenceIndex)
-    {
-        Vector2 referenceNormal = refPoly->GetNormal(referenceIndex);
-        referenceNormal = refTransform.GetRotation() * referenceNormal;
-        referenceNormal = incTransform.GetRotation().GetTranspose() * referenceNormal;
-        size_t incidentFace = 0;
-        f64 minDot = MAX;
-        for (size_t i = 0; i < incPoly->GetPointCount(); i++)
-        {
-            f64 dot = referenceNormal.Dot(incPoly->GetNormal(i));
-            if (dot < minDot)
-            {
-                minDot = dot;
-                incidentFace = i;
-            }
-        }
-        v[0] = incTransform.TransformVector(incPoly->GetPoint(incidentFace));
-        incidentFace = incidentFace + 1 >= (size_t)incPoly->GetPointCount() ? 0 : incidentFace + 1;
-        v[1] = incTransform.TransformVector(incPoly->GetPoint(incidentFace));
-
-    }
-
+{    
     Manifold PolygonCircleCollision(
         const PolygonCollider* a, const Transform& ta,
         const CircleCollider* b, const Transform& tb, bool flipped
@@ -102,13 +17,13 @@ namespace physics::algo
         if (a->GetPointCount() < 3)
             return c;
         size_t aSize = a->GetPointCount();
-        Vector2 aPoints[MAX_POLYGONCOLLIDER_SIZE];
+        Vector2* aPoints = new Vector2[aSize];
         for (size_t i = 0; i < aSize; i++)
             aPoints[i] = ta.TransformVector(a->GetPoint(i));
         Vector2 bCenter = tb.TransformVector(b->center);
         f64 bRadius = b->radius * Max(tb.GetScale().x, tb.GetScale().y);
         bool centerInA = VectorInPolygon(aPoints, bCenter, aSize), polyInB = true;
-        Vector2 projections[MAX_POLYGONCOLLIDER_SIZE];
+        Vector2* projections = new Vector2[aSize];
         size_t projInd = 0;
         for (size_t i = 0; i < aSize; i++)
             polyInB &= b->Contains(aPoints[i], tb);
@@ -139,11 +54,14 @@ namespace physics::algo
         }
         if (!b->Contains(closest, tb) && !centerInA)
         {
+            delete[] projections;
+            delete[] aPoints;
             return c;
         }
         if (centerInA || polyInB || closest != Vector2::Infinity)
         {
             c.hasCollision = true;
+            c.points.resize(2, Vector2());
             c.points[0] = closest;
             c.depth = (Distance(bCenter, closest)) + bRadius;
             if (centerInA)
@@ -161,6 +79,8 @@ namespace physics::algo
         if (!flipped)
             c.normal = -c.normal;
         c.pointCount = 2;
+        delete[] projections;
+        delete[] aPoints;
         return c;
     }
 
@@ -204,6 +124,67 @@ namespace physics::algo
         return inside;
     }
 
+    Vector3 SAT(Vector2* aPoints, size_t aSize, Vector2* bPoints, size_t bSize) noexcept
+    {
+        f64 minOverlap = MAX;
+        size_t minInd = 0;
+        Vector2 smallestAxis;
+        Vector2* edges = new Vector2[aSize + bSize];
+        for (size_t i = 0; i < aSize; i++)
+        {
+            edges[i] = aPoints[(i + 1) % aSize] - aPoints[i];
+            edges[i].Set(-edges[i].y, edges[i].x);
+            edges[i].Normalize();
+        }
+        for (size_t i = 0; i < bSize; i++)
+        {
+            edges[i + aSize] = bPoints[(i + 1) % bSize] - bPoints[i];
+            edges[i + aSize].Set(-edges[i + aSize].y, edges[i + aSize].x);
+            edges[i + aSize].Normalize();
+        }
+        for (size_t i = 0; i < aSize + bSize; i++)
+        {
+            if (edges[i].GetMagnitudeSquared() <= SQRD(EPSILON))
+                continue;
+            f64 minA = MAX, maxA = MIN;
+            for (size_t j = 0; j < aSize; j++)
+            {
+                f64 p = aPoints[j].Dot(edges[i]);
+                minA = Min(minA, p);
+                maxA = Max(maxA, p);
+            }
+
+            f64 minB = MAX, maxB = MIN;
+            for (size_t j = 0; j < bSize; j++)
+            {
+                f64 p = bPoints[j].Dot(edges[i]);
+                minB = Min(minB, p);
+                maxB = Max(maxB, p);
+            }
+
+            if (maxA < minB || maxB < minA)
+            {
+                delete[] edges;
+                return Vector3::Infinity;
+            }
+            f64 overlap = Min(maxB - minA, maxA - minB);
+            if (overlap < minOverlap)
+            {
+                minOverlap = overlap;
+                smallestAxis = edges[i];
+                minInd = i;
+                f64 centerA = 0.5 * (minA + maxA);
+                f64 centerB = 0.5 * (minB + maxB);
+                if (centerB < centerA)
+                    smallestAxis *= -1;
+            }
+        }
+        delete[] edges;
+        smallestAxis *= minOverlap;
+        Vector3 result(smallestAxis.x, smallestAxis.y, minInd);
+        return result;
+    }
+
     Manifold PolygonPolygonCollision(
         const PolygonCollider* a, const Transform& ta,
         const PolygonCollider* b, const Transform& tb, bool flipped
@@ -216,85 +197,33 @@ namespace physics::algo
         if (a->GetPointCount() < 3 || b->GetPointCount() < 3)
             return c;
         size_t aSize = a->GetPointCount(), bSize = b->GetPointCount();
-        Vector2 aPoints [MAX_POLYGONCOLLIDER_SIZE];
-        Vector2 bPoints[MAX_POLYGONCOLLIDER_SIZE];
+        Vector2* aPoints = new Vector2[aSize];
+        Vector2* bPoints = new Vector2[bSize];
         for (size_t i = 0; i < aSize; i++)
             aPoints[i] = ta.TransformVector(a->GetPoint(i));
         for (size_t i = 0; i < bSize; i++)
             bPoints[i] = tb.TransformVector(b->GetPoint(i));
-        size_t faceA;
-        f64 penetrationA = FindAxisLeastPenetration(&faceA, a, ta, b, tb);
-        if (penetrationA >= 0.0)
-            return c;
-        size_t faceB;
-        f64 penetrationB = FindAxisLeastPenetration(&faceB, b, tb, a, ta);
-        if (penetrationB >= 0.0)
-            return c;
-        size_t referenceIndex;
-        bool flip;
-        const PolygonCollider* refPoly;
-        const PolygonCollider* incPoly;
-        Transform refTransform;
-        Transform incTransform;
-        if (BiasGreaterThan(penetrationA, penetrationB))
+        
+        Vector3 check = SAT(aPoints, aSize, bPoints, bSize);
+        if (check == Vector3::Infinity)
         {
-            refPoly = a;
-            refTransform = ta;
-            incPoly = b;
-            incTransform = tb;
-            referenceIndex = faceA;
-            flip = false;
-        }
-
-        else
-        {
-            refPoly = b;
-            refTransform = tb;
-            incPoly = a;
-            incTransform = ta;
-            referenceIndex = faceB;
-            flip = true;
-        }
-
-        Vector2 incidentFace[2];
-        FindIncidentFace(incidentFace, refPoly, refTransform, incPoly, incTransform, referenceIndex);
-        Vector2 v1 = refPoly->GetPoint(referenceIndex);
-        referenceIndex = referenceIndex + 1 == refPoly->GetPointCount() ? 0 : referenceIndex + 1;
-        Vector2 v2 = refPoly->GetPoint(referenceIndex);
-        v1 = refTransform.TransformVector(v1);
-        v2 = refTransform.TransformVector(v2);
-        Vector2 sidePlaneNormal = (v2 - v1);
-        sidePlaneNormal.Normalize();
-        Vector2 refFaceNormal(sidePlaneNormal.y, -sidePlaneNormal.x);
-        f64 refC = refFaceNormal.Dot(v1);
-        f64 negSide = -sidePlaneNormal.Dot(v1);
-        f64 posSide = sidePlaneNormal.Dot(v2);
-        if (Clip(-sidePlaneNormal, negSide, (Vector2*)incidentFace) < 2)
+            delete[] aPoints;
+            delete[] bPoints;
             return c;
-        if (Clip(sidePlaneNormal, posSide, (Vector2*)incidentFace) < 2)
-            return c;
-        c.normal = flip ? -refFaceNormal : refFaceNormal;
-        size_t cp = 0;
-        f64 separation = refFaceNormal.Dot(incidentFace[0]) - refC;
-        if (separation <= 0.0)
-        {
-            c.points[cp] = incidentFace[0];
-            c.depth = -separation;
-            ++cp;
         }
-        else
-            c.depth = 0;
+        Vector2 axis(check.x, check.y);
 
-        separation = refFaceNormal.Dot(incidentFace[1]) - refC;
-        if (separation <= 0.0)
-        {
-            c.points[cp] = incidentFace[1];
-            c.depth += -separation;
-            ++cp;
-            c.depth /= (f64)cp;
-        }
-
-        c.pointCount = cp;
+        for (size_t i = 0; i < aSize; i++)
+            if (VectorInPolygon(bPoints, aPoints[i], bSize))
+                c.points.push_back(aPoints[i]);
+        for (size_t i = 0; i < bSize; i++)
+            if (VectorInPolygon(aPoints, bPoints[i], aSize))
+                c.points.push_back(bPoints[i]);
+        delete[] aPoints;
+        delete[] bPoints;
+        c.pointCount = c.points.size();
+        c.depth = axis.GetMagnitudeExact();
+        c.normal = axis / c.depth;
         c.hasCollision = true;
         if (flipped)
             c.normal = -c.normal;
@@ -321,28 +250,22 @@ namespace physics::algo
         Manifold c;
         if (!a || !b)
             return c;
-        f64 avg = 0;
+        c.depth = -std::numeric_limits<f64>::infinity();
         for (const Collider* ptr : b->colliders)
         {
             Manifold tmp = ptr->TestCollision(tb, a, ta);
             if (tmp.hasCollision)
             {
-                avg += tmp.depth;
                 c.hasCollision = true;
                 if (c.depth < tmp.depth)
                 {
                     c.depth = tmp.depth;
                     c.normal = -tmp.normal;
                 }
-                for (size_t i = 0; i < tmp.pointCount; i++)
-                {
-                    if (c.pointCount < MAX_MANIFOLD_POINT_COUNT)
-                        c.points[c.pointCount++] = tmp.points[i];
-                }
+                c.points.insert(c.points.begin(), tmp.points.begin(), tmp.points.end());
+                c.pointCount += tmp.pointCount;
             }
         }
-        if (avg)
-            c.depth = avg / (f64)c.pointCount;
         if (flipped)
             c.normal = -c.normal;
         return c;

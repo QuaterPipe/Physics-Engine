@@ -42,6 +42,13 @@ namespace physics
 		return algo::CircleMeshCollision(this, transform, collider, colliderTransform);
 	}
 
+	Manifold CircleCollider::TestCollision(const Transform& transform,
+		const PointMatrixCollider* collider,
+		const Transform& colliderTransform) const noexcept
+	{
+		return algo::PointMatrixCircleCollision(collider, colliderTransform, this, transform, true);
+	}
+
 	Manifold PolygonCollider::TestCollision(const Transform& transform,
 		const Collider* collider,
 		const Transform& colliderTransform) const noexcept
@@ -77,6 +84,13 @@ namespace physics
 		const Transform& colliderTransform) const noexcept
 	{
 		return algo::PolygonMeshCollision(this, transform, collider, colliderTransform);
+	}
+
+	Manifold PolygonCollider::TestCollision(const Transform& transform,
+		const PointMatrixCollider* collider,
+		const Transform& colliderTransform) const noexcept
+	{
+		return algo::PointMatrixPolygonCollision(collider, colliderTransform, this, transform, true);
 	}
 
 	Manifold BoxCollider::TestCollision(const Transform& transform,
@@ -116,6 +130,13 @@ namespace physics
 		return algo::BoxMeshCollision(this, transform, collider, colliderTransform);
 	}
 
+	Manifold BoxCollider::TestCollision(const Transform& transform,
+		const PointMatrixCollider* collider,
+		const Transform& colliderTransform) const noexcept
+	{
+		return algo::PointMatrixBoxCollision(collider, colliderTransform, this, transform, true);
+	}
+
 	Manifold MeshCollider::TestCollision(const Transform& transform,
 		const Collider* collider,
 		const Transform& colliderTransform
@@ -152,5 +173,47 @@ namespace physics
 		const Transform& colliderTransform) const noexcept
 	{
 		return algo::MeshMeshCollision(this, transform, collider, colliderTransform);
+	}
+
+	Manifold MeshCollider::TestCollision(const Transform& transform,
+		const PointMatrixCollider* collider,
+		const Transform& colliderTransform) const noexcept
+	{
+		return algo::PointMatrixMeshCollision(collider, colliderTransform, this, transform, true);
+	}
+
+	Manifold PointMatrixCollider::TestCollision(const Transform& transform,
+		const CircleCollider* collider,
+		const Transform& colliderTransform) const noexcept
+	{
+		return algo::PointMatrixCircleCollision(this, transform, collider, colliderTransform);
+	}
+
+	Manifold PointMatrixCollider::TestCollision(const Transform& transform,
+		const BoxCollider* collider,
+		const Transform& colliderTransform) const noexcept
+	{
+		return algo::PointMatrixBoxCollision(this, transform, collider, colliderTransform);
+	}
+
+	Manifold PointMatrixCollider::TestCollision(const Transform& transform,
+		const PolygonCollider* collider,
+		const Transform& colliderTransform) const noexcept
+	{
+		return algo::PointMatrixPolygonCollision(this, transform, collider, colliderTransform);
+	}
+
+	Manifold PointMatrixCollider::TestCollision(const Transform& transform,
+		const MeshCollider* collider,
+		const Transform& colliderTransform) const noexcept
+	{
+		return algo::PointMatrixMeshCollision(this, transform, collider, colliderTransform);
+	}
+
+	Manifold PointMatrixCollider::TestCollision(const Transform& transform,
+		const PointMatrixCollider* collider,
+		const Transform& colliderTransform) const noexcept
+	{
+		return algo::PointMatrixPointMatrixCollision(this, transform, collider, colliderTransform);
 	}
 }

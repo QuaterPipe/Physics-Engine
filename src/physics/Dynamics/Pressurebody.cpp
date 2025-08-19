@@ -279,21 +279,17 @@ namespace physics
 
 	void Pressurebody::Update(f64 dt, int rk4step) noexcept
 	{
+		Vector2 grav = usesGravity ? gravity : Vector2(0, 0);
 		if (rk4step == 0)
 		{
-			std::cout << "PE: " << _springs[0].PotentialEnergy() << " KE: " << _points[0].KineticEnergy() + _points[1].KineticEnergy() << "\n";
 			_UpdatePressureForces(rk4step);
-			std::cout << _pressureForces[0].GetMagnitude() << "\n";
-			std::cout << transform.GetPosition() << "\n";
 			for (size_t i = 0; i < _pointCount; i++)
 			{
-				_pointStates[i].a1 = _points[i].ComputeForce(_points[i].position, _points[i].velocity) + _pressureForces[i];
+				_pointStates[i].a1 = _points[i].ComputeForce(_points[i].position, _points[i].velocity) + _pressureForces[i]
+					+ (1.0 / _points[i].invMass) * grav;
 				_pointStates[i].k1X = _points[i].velocity;
 				_pointStates[i].k1V = _pointStates[i].a1;
 			}
-			/*std::cout << _pointStates[0].a1 << "\n_";
-			std::cout << _points[0].ComputeForce(_points[0].position, _points[0].velocity)<<"\n=";
-			std::cout << GetAngle(_springs[0].a->position, _springs[0].b->position) << "\n";*/
 		}
 		else if (rk4step == 1)
 		{
@@ -305,7 +301,8 @@ namespace physics
 			_UpdatePressureForces(rk4step);
 			for (size_t i = 0; i < _pointCount; i++)
 			{
-				_pointStates[i].a2 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV) + _pressureForces[i];
+				_pointStates[i].a2 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV) + _pressureForces[i]
+					+ (1.0 / _points[i].invMass) * grav;
 				_pointStates[i].k2X = _pointStates[i].tmpV;
 				_pointStates[i].k2V = _pointStates[i].a2;
 			}
@@ -320,7 +317,8 @@ namespace physics
 			_UpdatePressureForces(rk4step);
 			for (size_t i = 0; i < _pointCount; i++)
 			{
-				_pointStates[i].a3 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV) + _pressureForces[i];
+				_pointStates[i].a3 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV) + _pressureForces[i]
+					+ (1.0 / _points[i].invMass) * grav;
 				_pointStates[i].k3X = _pointStates[i].tmpV;
 				_pointStates[i].k3V = _pointStates[i].a3;
 			}
@@ -335,7 +333,8 @@ namespace physics
 			_UpdatePressureForces(rk4step);
 			for (size_t i = 0; i < _pointCount; i++)
 			{
-				_pointStates[i].a4 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV) + _pressureForces[i];
+				_pointStates[i].a4 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV) + _pressureForces[i]
+					+ (1.0 / _points[i].invMass) * grav;
 				_pointStates[i].k4X = _pointStates[i].tmpV;
 				_pointStates[i].k4V = _pointStates[i].a4;
 
@@ -367,13 +366,13 @@ namespace physics
 		transform.Translate(-diff);
 	}
 
-	void Pressurebody::Translate(Vector2 offset, Vector2* points, size_t ptCount) noexcept
+	void Pressurebody::Translate(Vector2 offset, std::vector<Vector2> points) noexcept
 	{
-		for (size_t i = 0; i < ptCount; i++)
+		for (auto p: points)
 		{
 			for (auto& m : _points)
 			{
-				if (DistanceSquared(transform.TransformVector(m.position), points[i]) <= SQRD(EPSILON))
+				if (DistanceSquared(transform.TransformVector(m.position), p) <= SQRD(EPSILON))
 				{
 					m.position += offset;
 					return;

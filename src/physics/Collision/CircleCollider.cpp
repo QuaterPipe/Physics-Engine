@@ -54,9 +54,9 @@ namespace physics
 		return DistanceSquared(point, t.TransformVector(center)) <= SQRD(radius * physics::Max(t.GetScale().x, t.GetScale().y));
 	}
 
-	f64 CircleCollider::CrossSectionalArea(const Vector2& direcition) const noexcept
+	f64 CircleCollider::CrossSectionalArea(const Vector2& direcition, const Transform& t) const noexcept
 	{
-		return radius * 2;
+		return radius * 2 * physics::Max(t.GetScale().x, t.GetScale().y);
 	}
 
 	Vector2 CircleCollider::GetCenter() const noexcept

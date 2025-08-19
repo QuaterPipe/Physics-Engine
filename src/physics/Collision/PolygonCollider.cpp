@@ -1,6 +1,7 @@
 #include "physics/Collision/Collision.hpp"
 namespace physics
 {
+	size_t PolygonCollider::MAX_POINTCOUNT = 300;
 	PolygonCollider::PolygonCollider(const BoxCollider& b) noexcept
 		: _pointCount(4), _center(b.pos)
 	{
@@ -47,7 +48,7 @@ namespace physics
 	}
 
 	PolygonCollider::PolygonCollider(f64 sideLength, size_t count) noexcept
-		: _pointCount(physics::Min(count, MAX_POLYGONCOLLIDER_SIZE)), _center(0, 0)
+		: _pointCount(physics::Min(count, MAX_POINTCOUNT)), _center(0, 0)
 	{
 		assert(count >= 3 && sideLength > EPSILON);
 		_points = new Vector2[_pointCount];
@@ -85,7 +86,7 @@ namespace physics
 		const Vector2& b,
 		const Vector2& c,
 		std::initializer_list<Vector2> extra) noexcept
-		: _pointCount(physics::Min(3 + extra.size(), MAX_POLYGONCOLLIDER_SIZE))
+		: _pointCount(physics::Min(3 + extra.size(), MAX_POINTCOUNT))
 	{
 		_points = new Vector2[_pointCount];
 		_normals = new Vector2[_pointCount];
@@ -93,7 +94,7 @@ namespace physics
 		_points[1] = b;
 		_points[2] = c;
 		auto beg = extra.begin();
-		for (size_t i = 0; i < physics::Min(extra.size(), MAX_POLYGONCOLLIDER_SIZE - 3); i++)
+		for (size_t i = 0; i < physics::Min(extra.size(), MAX_POINTCOUNT - 3); i++)
 			_points[i + 3] = *(beg++);
 
 		for (size_t i = 0; i < _pointCount; i++)
@@ -181,7 +182,6 @@ namespace physics
 		f64 miny = std::numeric_limits<f64>::max();
 		f64 maxx = -std::numeric_limits<f64>::max();
 		f64 maxy = -std::numeric_limits<f64>::max();
-		Vector2 transCenter = t.TransformVector(_center);
 		for (size_t i = 0; i < _pointCount; i++)
 		{
 			Vector2 tp = t.TransformVector(_points[i]);
@@ -252,13 +252,13 @@ namespace physics
 		return inside;
 	}
 
-	f64 PolygonCollider::CrossSectionalArea(const Vector2& direction) const noexcept
+	f64 PolygonCollider::CrossSectionalArea(const Vector2& direction, const Transform& t) const noexcept
 	{
 		Vector2 d(direction.Normalized());
 		f64 minP = std::numeric_limits<f64>::infinity(), maxP = -std::numeric_limits<f64>::infinity();
 		for (size_t i = 0; i < _pointCount; i++)
 		{
-			f64 proj = _points[i].Dot(d);
+			f64 proj = t.TransformVector(_points[i]).Dot(d);
 			if (proj < minP)
 				minP = proj;
 			if (proj > maxP)
@@ -338,7 +338,7 @@ namespace physics
 	void PolygonCollider::Set(const std::vector<Vector2>& points)
 	{
 		assert(points.size() > 2);
-		_pointCount = physics::Min(points.size(), MAX_POLYGONCOLLIDER_SIZE);
+		_pointCount = physics::Min(points.size(), MAX_POINTCOUNT);
 		delete[] _points;
 		delete[] _normals;
 		_points = new Vector2[_pointCount];

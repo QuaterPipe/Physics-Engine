@@ -67,7 +67,7 @@ void SoftbodyTest()
         softbody.shapeMatchingOn = false;
         f64 PE = 0;
         f64 KE = 0;
-        for (auto& p : softbody.points)
+        for (auto& p : softbody._points)
             KE += p.KineticEnergy();
         for (auto& spr : softbody.springs)
         {

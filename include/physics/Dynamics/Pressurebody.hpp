@@ -40,6 +40,6 @@ namespace physics
 			void Update(f64 dt, int rk4step) noexcept override;
 			void UpdateCollider() noexcept;
 			void UpdateTransform() noexcept;
-			virtual void Translate(Vector2 offset, Vector2* points, size_t ptCount) noexcept override;
+			virtual void Translate(Vector2 offset, std::vector<Vector2> points) noexcept override;
 	};
 }

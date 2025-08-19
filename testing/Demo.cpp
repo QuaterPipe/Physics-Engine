@@ -24,6 +24,7 @@ struct Object
     sf::Color color;
 };
 
+void onClsn(CollisionManifold& c, f64 dt);
 f64 Random(f64 l, f64 h);
 void RenderObjects();
 void CreateObject(Type type, sf::Vector2f pos, f64 rotVel);
@@ -46,7 +47,7 @@ void Demo()
     sf::View v = window.getView();
     v.setSize(WIN_WIDTH, -WIN_HEIGHT);
     window.setView(v);
-    //d.SetCollisionCallBack(onClsn, 0);
+    d.SetCollisionCallBack(onClsn, 0);
     Time::Tick();
     Object floor;
     floor.rigid = new Rigidbody(PolygonCollider(BoxCollider(WIN_WIDTH * 0.8, 30)));
@@ -132,10 +133,10 @@ void Demo()
             accumulator -= 1.0 / PHYSICS_HERTZ * 1000;
         }
         renderAccumulator += Time::deltaTime;
-        if (renderAccumulator >= 1.0 / 60.0 * 1000)
+        if (renderAccumulator >= 1.0 / 120.0 * 1000)
         {
             RenderObjects();
-            renderAccumulator -= 1.0 / 60.0 * 1000;
+            renderAccumulator -= 1.0 / 120.0 * 1000;
         }
     }
 }
@@ -190,8 +191,8 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
         f64 rad = Random(5, 10);
         obj.rigid = new Rigidbody(CircleCollider(rad), t);
         obj.rigid->angularVelocity = rotVel;
-        obj.rigid->SetMass(rad * 1e40);
-        obj.rigid->SetInertia(obj.rigid->GetMass());
+        obj.rigid->SetMass(rad * 3);
+        obj.rigid->SetInertia(obj.rigid->GetMass() * 1000);
         sf::CircleShape c;
         c.setRadius(rad);
         c.setOutlineThickness(1);
@@ -208,8 +209,8 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
         CreatePoly(&p, e, 150 / e);
         obj.rigid = new Rigidbody(p, t);
         obj.rigid->angularVelocity = rotVel;
-        obj.rigid->SetMass(e * 1e300);
-        obj.rigid->SetInertia(obj.rigid->GetMass());
+        obj.rigid->SetMass(e * 3);
+        obj.rigid->SetInertia(obj.rigid->GetMass() * 1000);
         sf::ConvexShape c(p.GetPointCount());
         for (size_t i = 0; i < p.GetPointCount(); i++)
             c.setPoint(i, sf::Vector2f(p.GetPoint(i).x, p.GetPoint(i).y));

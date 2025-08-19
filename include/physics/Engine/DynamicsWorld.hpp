@@ -15,7 +15,7 @@ namespace physics
 			Vector2 gravity = Vector2(0, 9.81);
 	};
 
-	class PhysicsSolver : public Solver
+	class CollisionSolver : public Solver
 	{
 		public:
 			void Solve(std::vector<CollisionManifold>& collisions, f64 dt) noexcept override;

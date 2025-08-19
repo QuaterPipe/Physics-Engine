@@ -13,7 +13,7 @@ namespace physics
 			bool _pointsChanged = false;
 		public:
 			std::vector<PointMass> _originalShape;
-			std::vector<PointMass> points;
+			std::vector<PointMass> _points;
 			std::vector<PointMassSpring> springs;
 			size_t pointCount = 0;
 			f64 radiusPerPoint = 0.01;
@@ -43,6 +43,7 @@ namespace physics
 			PointMass* GetClosestMassPoint(const Vector2& point) const noexcept;
 			const std::vector<PointMass>& GetOriginalShape() const noexcept;
 			f64 MassScaler() const noexcept override;
+			virtual void Translate(Vector2 offset, std::vector<Vector2> points) noexcept override;
 			void Update(f64 dt, int rk4step) noexcept override;
 			void UpdateCollider() noexcept;
 			void UpdateTransform() noexcept;

@@ -2,6 +2,7 @@
 #include "physics/Geometry/main.hpp"
 #include "physics/Main.hpp"
 #include "SFML/Main.hpp"
+#include "SFML/Graphics.hpp"
 
 void CollisionTest();
 void ConstraintTest();

@@ -8,6 +8,26 @@ namespace physics::algo
 		const BoxCollider* b
 	);
 
+	Manifold PointMatrixCircleCollision(
+		const PointMatrixCollider* a, const Transform& ta,
+		const CircleCollider* b, const Transform& tb, bool flipped = false
+	);
+
+	Manifold PointMatrixBoxCollision(
+		const PointMatrixCollider* a, const Transform& ta,
+		const BoxCollider* b, const Transform& tb, bool flipped = false
+	);
+
+	Manifold PointMatrixPolygonCollision(
+		const PointMatrixCollider* a, const Transform& ta,
+		const PolygonCollider* b, const Transform& tb, bool flipped = false
+	);
+
+	Manifold PointMatrixMeshCollision(
+		const PointMatrixCollider* a, const Transform& ta,
+		const MeshCollider* b, const Transform& tb, bool flipped = false
+	);
+
 	Manifold PolygonCircleCollision(
 		const PolygonCollider* a, const Transform& ta,
 		const CircleCollider* b, const Transform& tb, bool flipped = false
@@ -22,7 +42,6 @@ namespace physics::algo
 		const PolygonCollider* a, const Transform& ta,
 		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
-
 
 	Manifold CircleCircleCollision(
 		const CircleCollider* a, const Transform& ta,
@@ -59,17 +78,15 @@ namespace physics::algo
 		const MeshCollider* b, const Transform& tb, bool flipped = false
 	);
 
-	void FindIncidentFace(Vector2* v, const PolygonCollider* refPoly,
-		const Transform& refTransform, const PolygonCollider* incPoly,
-		const Transform& incTransform, size_t refIndex
-	);
-
-	f64 FindAxisLeastPenetration(size_t* faceIndex, const PolygonCollider* a,
-		const Transform& ta, const PolygonCollider* b, const Transform& tb
+	Manifold PointMatrixPointMatrixCollision(
+		const PointMatrixCollider* a, const Transform& ta,
+		const PointMatrixCollider* b, const Transform& tb, bool flipped = false
 	);
 
 	bool VectorInPolygon(
 		const Vector2* points,
 		const Vector2& b, size_t pointsSize
 	);
+
+	Vector3 SAT(Vector2* aPoints, size_t aSize, Vector2* bPoints, size_t bSize) noexcept;
 }

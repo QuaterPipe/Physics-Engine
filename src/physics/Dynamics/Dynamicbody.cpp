@@ -195,7 +195,7 @@ namespace physics
 		_invMass = mass ? 1 / mass : 0;
 	}
 
-	void Dynamicbody::Translate(Vector2 offset, Vector2* point, size_t ptCount) noexcept
+	void Dynamicbody::Translate(Vector2 offset, std::vector<Vector2> points) noexcept
 	{
 		transform.Translate(offset);
 	}

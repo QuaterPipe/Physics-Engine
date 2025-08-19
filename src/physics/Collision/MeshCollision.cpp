@@ -13,28 +13,22 @@ namespace physics::algo
         Manifold c;
         if (!a || !b)
             return c;
-        f64 avg = 0;
+        c.depth = -std::numeric_limits<f64>::infinity();
         for (const Collider* ptr : b->colliders)
         {
             Manifold tmp = ptr->TestCollision(tb, a, ta);
             if (tmp.hasCollision)
             {
-                avg += tmp.depth;
                 c.hasCollision = true;
                 if (c.depth < tmp.depth)
                 {
                     c.depth = tmp.depth;
                     c.normal = -tmp.normal;
                 }
-                for (size_t i = 0; i < tmp.pointCount; i++)
-                {
-                    if (c.pointCount < MAX_MANIFOLD_POINT_COUNT)
-                        c.points[c.pointCount++] = tmp.points[i];
-                }
+                c.points.insert(c.points.begin(), tmp.points.begin(), tmp.points.end());
+                c.pointCount += tmp.pointCount;
             }
         }
-        if (avg)
-            c.depth = avg / (f64)c.pointCount;
         if (flipped)
             c.normal = -c.normal;
         return c;

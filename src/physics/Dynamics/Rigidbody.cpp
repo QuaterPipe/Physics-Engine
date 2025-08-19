@@ -74,7 +74,7 @@ namespace physics
 		 	_force += Force;
 			if (contactPoint != Vector2::Infinity && Force.GetMagnitudeExact())
 			{
-				angularForce += (transform.GetCOM()).Cross(Force);
+				angularForce += contactPoint.Cross(Force);
 			}
 		}
 	}
@@ -100,7 +100,8 @@ namespace physics
 		Vector2 dragForce = -normV;
 		normV.Rotate(Vector2::Origin, orient);
 		dragForce *= 0.5 * fluidDensity * velocity.GetMagnitudeSquared() * dragCoefficient * collider->CrossSectionalArea(normV);
-		return appliedForce + dragForce;
+		Vector2 grav = usesGravity ? gravity * _mass : Vector2::Origin;
+		return appliedForce + dragForce + grav;
 	}
 
 	CollisionObject* Rigidbody::Clone() const noexcept

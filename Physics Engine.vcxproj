@@ -29,6 +29,8 @@
     <ClCompile Include="src\physics\Collision\CollisionObject.cpp" />
     <ClCompile Include="src\physics\Collision\MeshCollider.cpp" />
     <ClCompile Include="src\physics\Collision\MeshCollision.cpp" />
+    <ClCompile Include="src\physics\Collision\PointMatrixCollider.cpp" />
+    <ClCompile Include="src\physics\Collision\PointMatrixCollision.cpp" />
     <ClCompile Include="src\physics\Collision\PolygonCollider.cpp" />
     <ClCompile Include="src\physics\Collision\PolygonCollision.cpp" />
     <ClCompile Include="src\physics\Collision\Transform.cpp" />
@@ -42,7 +44,7 @@
     <ClCompile Include="src\physics\Dynamics\Spring.cpp" />
     <ClCompile Include="src\physics\Engine\ConstraintSolver.cpp" />
     <ClCompile Include="src\physics\Engine\DynamicsWorld.cpp" />
-    <ClCompile Include="src\physics\Engine\PhysicsSolver.cpp" />
+    <ClCompile Include="src\physics\Engine\CollisionSolver.cpp" />
     <ClCompile Include="src\physics\Engine\PositionalCorrectionSolver.cpp" />
     <ClCompile Include="src\physics\Engine\Quadtree.cpp" />
     <ClCompile Include="src\physics\Engine\Time.cpp" />
@@ -130,7 +132,7 @@
     <ClInclude Include="include\physics\Collision\Collision.hpp" />
     <ClInclude Include="include\physics\Collision\CollisionObject.hpp" />
     <ClInclude Include="include\physics\Collision\MeshCollider.hpp" />
-    <ClInclude Include="include\physics\Collision\PointArrayCollider.hpp" />
+    <ClInclude Include="include\physics\Collision\PointMatrixCollider.hpp" />
     <ClInclude Include="include\physics\Collision\PolygonCollider.hpp" />
     <ClInclude Include="include\physics\Collision\Transform.hpp" />
     <ClInclude Include="include\physics\Dynamics\Constraint.hpp" />

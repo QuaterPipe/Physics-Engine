@@ -86,9 +86,9 @@ namespace physics
 		return false;
 	}
 
-	f64 MeshCollider::CrossSectionalArea(const Vector2& direction) const noexcept
+	f64 MeshCollider::CrossSectionalArea(const Vector2& direction, const Transform& t) const noexcept
 	{
-		return BoundingBox().CrossSectionalArea(direction); // cannot compute exact CSA unfortunately
+		return BoundingBox().CrossSectionalArea(direction, t); // cannot compute exact CSA unfortunately
 	}
 
 	Vector2 MeshCollider::GetCenter() const noexcept

@@ -1,6 +1,6 @@
 #include "../testing/Testing.hpp"
 int main()
 {
-	ConstraintTest();
+	Demo();
 	return 0;
 }

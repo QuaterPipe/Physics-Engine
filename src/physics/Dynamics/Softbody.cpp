@@ -11,12 +11,12 @@ namespace physics
 
 	Softbody::Softbody(const Softbody& s) noexcept
 	: Dynamicbody((const Dynamicbody&) s), _originalShape(s.GetOriginalShape()),
-	radiusPerPoint(s.radiusPerPoint), shapeMatchingOn(s.shapeMatchingOn), points(s.points), springs(s.springs)
+	radiusPerPoint(s.radiusPerPoint), shapeMatchingOn(s.shapeMatchingOn), _points(s._points), springs(s.springs)
 	{
 	}
 
 	Softbody::Softbody(Softbody && s) noexcept
-	: Dynamicbody((Dynamicbody &&) s), _originalShape(s.GetOriginalShape()), points(s.points), springs(s.springs),
+	: Dynamicbody((Dynamicbody &&) s), _originalShape(s.GetOriginalShape()), _points(s._points), springs(s.springs),
 	radiusPerPoint(s.radiusPerPoint), shapeMatchingOn(s.shapeMatchingOn)
 	{
 
@@ -37,7 +37,7 @@ namespace physics
 				m.position = vec;
 				m.invMass = invMassPerPoint;
 				m.radius = radiusPerPoint;
-				points.push_back(m);
+				_points.push_back(m);
 				vec.x += spacing;
 			}
 			vec.x = width * spacing * -0.5;
@@ -51,52 +51,52 @@ namespace physics
 				s.stiffness = referenceSpring.stiffness;
 				s.restingLength = spacing;
 				s.dampingFactor = referenceSpring.dampingFactor;
-				s.a = &points.at(i * width + j);
+				s.a = &_points.at(i * width + j);
 				s.aIndex = i * width + j;
 				if (i)
 				{
-					s.b = &points.at((i - 1) * width + j);
+					s.b = &_points.at((i - 1) * width + j);
 					s.bIndex = (i - 1) * width + j;
-					points.at(s.aIndex).AddSpring(s, true);
-					points.at(s.bIndex).AddSpring(s, false);
+					_points.at(s.aIndex).AddSpring(s, true);
+					_points.at(s.bIndex).AddSpring(s, false);
 					springs.push_back(s);
 				}
 				if (j != width - 1)
 				{
-					s.b = &points.at(i * width + j + 1);
+					s.b = &_points.at(i * width + j + 1);
 					s.bIndex = i * width + j + 1;
-					points.at(s.aIndex).AddSpring(s, true);
-					points.at(s.bIndex).AddSpring(s, false);
+					_points.at(s.aIndex).AddSpring(s, true);
+					_points.at(s.bIndex).AddSpring(s, false);
 					springs.push_back(s);
 				}
 				s.restingLength = (sqrt(2) * spacing);
 				if (i + 1 < height && j + 1 < width)
 				{
-					s.b = &points.at((i + 1) * width + j + 1);
+					s.b = &_points.at((i + 1) * width + j + 1);
 					s.bIndex = (i + 1) * width + j + 1;
-					points.at(s.aIndex).AddSpring(s, true);
-					points.at(s.bIndex).AddSpring(s, false);
+					_points.at(s.aIndex).AddSpring(s, true);
+					_points.at(s.bIndex).AddSpring(s, false);
 					springs.push_back(s);
 				}
 				if (i - 1 >= 0 && j + 1 < width)
 				{
-					s.b = &points.at((i - 1) * width + j + 1);
+					s.b = &_points.at((i - 1) * width + j + 1);
 					s.bIndex = (i - 1) * width + j + 1;
-					points.at(s.aIndex).AddSpring(s, true);
-					points.at(s.bIndex).AddSpring(s, false);
+					_points.at(s.aIndex).AddSpring(s, true);
+					_points.at(s.bIndex).AddSpring(s, false);
 					springs.push_back(s);
 				}
 			}
 		}
 		UpdateTransform();
-		_originalShape = points;
+		_originalShape = _points;
 		for (size_t i = 0; i < pointCount; i++)
 		{
 			PointMassSpring s = shapeSpring;
-			s.a = &points[i];
+			s.a = &_points[i];
 			s.b = &_originalShape[i];
-			points[i].AddCorrectionSpring(s, true);
-			points[i].correctionOn = shapeMatchingOn;
+			_points[i].AddCorrectionSpring(s, true);
+			_points[i].correctionOn = shapeMatchingOn;
 		}
 		_pointStates = std::vector<RK4State>(pointCount);
 	}
@@ -108,13 +108,13 @@ namespace physics
 		_originalShape = s.GetOriginalShape();
 		shapeMatchingOn = s.shapeMatchingOn;
 		radiusPerPoint = s.radiusPerPoint;
-		points = s.points;
+		_points = s._points;
 		springs = s.springs;
 		shapeSpring = s.shapeSpring;
 		for (size_t i = 0; i < pointCount; i++)
 		{
-			springs[i].a = &points[springs[i].aIndex];
-			springs[i].b = &points[springs[i].bIndex];
+			springs[i].a = &_points[springs[i].aIndex];
+			springs[i].b = &_points[springs[i].bIndex];
 		}
 		_pointStates = std::vector<RK4State>(pointCount);
 		return *this;
@@ -127,13 +127,13 @@ namespace physics
 		_originalShape = s.GetOriginalShape();
 		shapeMatchingOn = s.shapeMatchingOn;
 		radiusPerPoint = s.radiusPerPoint;
-		points = s.points;
+		_points = s._points;
 		springs = s.springs;
 		shapeSpring = s.shapeSpring;
 		for (size_t i = 0; i < pointCount; i++)
 		{
-			springs[i].a = &points[springs[i].aIndex];
-			springs[i].b = &points[springs[i].bIndex];
+			springs[i].a = &_points[springs[i].aIndex];
+			springs[i].b = &_points[springs[i].bIndex];
 		}
 		_pointStates = std::vector<RK4State>(pointCount);
 		return *this;
@@ -144,7 +144,7 @@ namespace physics
 		if (typeid(other).name() != typeid(*this).name())
 			return false;
 		auto o = dynamic_cast<const Softbody&>(other);
-		return Dynamicbody::operator==((const Dynamicbody&)other) && (o.points == this->points) && 
+		return Dynamicbody::operator==((const Dynamicbody&)other) && (o._points == this->_points) && 
 			(o.springs == this->springs) && (o.usesGravity == this->usesGravity) && (o.shapeMatchingOn == this->shapeMatchingOn)
 			&& (o.GetOriginalShape() == _originalShape);
 	}
@@ -154,7 +154,7 @@ namespace physics
 		if (typeid(other).name() != typeid(*this).name())
 			return true;
 		auto o = dynamic_cast<const Softbody&>(other);
-		return Dynamicbody::operator!=(other) || (o.points != this->points) || 
+		return Dynamicbody::operator!=(other) || (o._points != this->_points) || 
 			(o.springs != this->springs) || (o.usesGravity != this->usesGravity) || (o.shapeMatchingOn != this->shapeMatchingOn)
 			|| (o.GetOriginalShape() != _originalShape);
 	}
@@ -163,14 +163,14 @@ namespace physics
 	{
 		if (contactVec == Vector2::Infinity)
 		{
-			for (auto& m: points)
+			for (auto& m: _points)
 			{
 				m.velocity += impulse * m.invMass;
 			}
 		}
 		else
 		{
-			for (auto& m: points)
+			for (auto& m: _points)
 			{
 				if (DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
 				{
@@ -186,14 +186,14 @@ namespace physics
 	{
 		if (contactVec == Vector2::Infinity)
 		{
-			for (auto& m: points)
+			for (auto& m: _points)
 			{
 				m.force += force;
 			}
 		}
 		else
 		{
-			for (auto& m: points)
+			for (auto& m: _points)
 			{
 				if (DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
 				{
@@ -237,15 +237,15 @@ namespace physics
 		derivedPos.Set(0, 0);
 		for (size_t i = 0; i < pointCount; i++)
 		{
-			derivedPos += points[i].position;
-			derivedVel += points[i].velocity;
+			derivedPos += _points[i].position;
+			derivedVel += _points[i].velocity;
 		}
 		derivedPos /= pointCount;
 		f64 a = 0, b = 0;
 		for (size_t i = 0; i < pointCount; i++)
 		{
 			Vector2 q0 = _originalShape[i].position - _originalCenter;
-			Vector2 q = points[i].position - derivedPos;
+			Vector2 q = _points[i].position - derivedPos;
 			a += q.Dot(q0);
 			b += q0.Cross(q);
 		}
@@ -272,7 +272,7 @@ namespace physics
 	{
 		PointMass* closest = nullptr;
 		f64 closestDis = std::numeric_limits<f64>::infinity();
-		for (auto& m : points)
+		for (auto& m : _points)
 		{
 			const f64 dis = DistanceSquared(m.position + transform.GetPosition(), point);
 			if (dis < closestDis)
@@ -296,6 +296,21 @@ namespace physics
 		return pointCount;
 	}
 
+	void Softbody::Translate(Vector2 offset, std::vector<Vector2> points) noexcept
+	{
+		for (auto p : points)
+		{
+			for (auto& m : _points)
+			{
+				if (DistanceSquared(transform.TransformVector(m.position), p) <= SQRD(EPSILON))
+				{
+					m.position += offset;
+					return;
+				}
+			}
+		}
+		transform.Translate(offset);
+	}
 
 	void Softbody::Update(f64 dt, int RK4Step) noexcept
 	{
@@ -307,8 +322,8 @@ namespace physics
 					posState.Reset();
 					for (size_t i = 0; i < pointCount; i++)
 					{
-						_pointStates[i].a1 = points[i].ComputeForce(points[i].position, points[i].velocity);
-						_pointStates[i].k1X = points[i].velocity;
+						_pointStates[i].a1 = _points[i].ComputeForce(_points[i].position, _points[i].velocity);
+						_pointStates[i].k1X = _points[i].velocity;
 						_pointStates[i].k1V = _pointStates[i].a1;
 						posState.a1 += _pointStates[i].a1;
 						posState.k1X += _pointStates[i].k1X;
@@ -321,9 +336,9 @@ namespace physics
 				case 1:
 					for (size_t i = 0; i < pointCount; i++)
 					{
-						_pointStates[i].tmpX = points[i].position + 0.5 * dt * _pointStates[i].k1X;
-						_pointStates[i].tmpV = points[i].velocity + 0.5 * dt * _pointStates[i].k1V;
-						_pointStates[i].a2 = points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
+						_pointStates[i].tmpX = _points[i].position + 0.5 * dt * _pointStates[i].k1X;
+						_pointStates[i].tmpV = _points[i].velocity + 0.5 * dt * _pointStates[i].k1V;
+						_pointStates[i].a2 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
 						_pointStates[i].k2X = _pointStates[i].tmpV;
 						_pointStates[i].k2V = _pointStates[i].a2;
 						posState.a2 += _pointStates[i].a2;
@@ -341,9 +356,9 @@ namespace physics
 				case 2:
 					for (size_t i = 0; i < pointCount; i++)
 					{
-						_pointStates[i].tmpX = points[i].position + 0.5 * dt * _pointStates[i].k2X;
-						_pointStates[i].tmpV = points[i].velocity + 0.5 * dt * _pointStates[i].k2V;
-						_pointStates[i].a3 = points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
+						_pointStates[i].tmpX = _points[i].position + 0.5 * dt * _pointStates[i].k2X;
+						_pointStates[i].tmpV = _points[i].velocity + 0.5 * dt * _pointStates[i].k2V;
+						_pointStates[i].a3 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
 						_pointStates[i].k3X = _pointStates[i].tmpV;
 						_pointStates[i].k3V = _pointStates[i].a3;
 						posState.a3 += _pointStates[i].a3;
@@ -361,15 +376,15 @@ namespace physics
 				case 3:
 					for (size_t i = 0; i < pointCount; i++)
 					{
-						_pointStates[i].tmpX = points[i].position + dt * _pointStates[i].k3X;
-						_pointStates[i].tmpV = points[i].velocity + dt * _pointStates[i].k3V;
-						_pointStates[i].a4 = points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
+						_pointStates[i].tmpX = _points[i].position + dt * _pointStates[i].k3X;
+						_pointStates[i].tmpV = _points[i].velocity + dt * _pointStates[i].k3V;
+						_pointStates[i].a4 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
 						_pointStates[i].k4X = _pointStates[i].tmpV;
 						_pointStates[i].k4V = _pointStates[i].a4;
 
-						points[i].position += (dt / 6.0) * (_pointStates[i].k1X + 2 * _pointStates[i].k2X + 2 * _pointStates[i].k3X + _pointStates[i].k4X);
-						points[i].velocity += (dt / 6.0) * (_pointStates[i].k1V + 2 * _pointStates[i].k2V + 2 * _pointStates[i].k3V + _pointStates[i].k4V);
-						points[i].force.Set(0, 0);
+						_points[i].position += (dt / 6.0) * (_pointStates[i].k1X + 2 * _pointStates[i].k2X + 2 * _pointStates[i].k3X + _pointStates[i].k4X);
+						_points[i].velocity += (dt / 6.0) * (_pointStates[i].k1V + 2 * _pointStates[i].k2V + 2 * _pointStates[i].k3V + _pointStates[i].k4V);
+						_points[i].force.Set(0, 0);
 					}
 					DerivePositionAndAngle();
 					UpdateTransform();
@@ -392,13 +407,13 @@ namespace physics
 		Vector2 locAvg = transform.GetPosition() * pointCount;
 		for (size_t i = 0; i < pointCount; i++)
 		{
-			locAvg += points[i].position;
+			locAvg += _points[i].position;
 		}
 		locAvg /= pointCount;
 		Vector2 diff = locAvg - transform.GetPosition();
 		for (size_t i = 0; i < pointCount; i++)
 		{
-			points[i].position -= diff;
+			_points[i].position -= diff;
 		}
 		transform.SetPosition(locAvg);
 	}
