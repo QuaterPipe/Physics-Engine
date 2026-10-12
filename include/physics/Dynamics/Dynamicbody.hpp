@@ -1,29 +1,12 @@
 #pragma once
 #include "physics/Collision/CollisionObject.hpp"
+#include "RK4State.hpp"
 #define MAX_DYNAMICBODY_CONSTRAINT_COUNT 30
 
 namespace physics
 {
 	struct Constraint;
-	struct RK4Step
-	{
-		const static int STEP1 = 0;
-		const static int STEP2 = 1;
-		const static int STEP3 = 2;
-		const static int STEP4 = 3;
-	};
-
-	struct RK4State
-	{
-		Vector2 k1X, k2X, k3X, k4X;
-		Vector2 k1V, k2V, k3V, k4V;
-		Vector2 a1, a2, a3, a4;
-		Vector2 tmpX, tmpV;
-
-		RK4State();
-		void Reset() noexcept;
-	};
-
+	
 	struct Joint;
 	struct PhysicsMaterial
 	{
@@ -91,8 +74,9 @@ namespace physics
 			void RemoveConstraint(Constraint* constraint) noexcept;
 			void SetInertia(f64 inertia) noexcept;
 			void SetMass(f64 mass) noexcept;
+			virtual void Translate(const Vector2& offset, const std::vector<Vector2>& points) noexcept;
 			virtual void Update(f64 dt, int rk4step) noexcept = 0;
-			virtual void Translate(Vector2 offset, std::vector<Vector2>) noexcept;
+			virtual Vector2 VelocityAt(const Vector2& vec) const noexcept;
 	};
 
 	struct Joint

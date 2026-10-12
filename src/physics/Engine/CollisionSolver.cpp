@@ -28,31 +28,27 @@ namespace physics
 			{
 				Vector2 ra = c.points.points[i] - (a->transform.GetPosition() + a->transform.GetCOM());
 				Vector2 rb = c.points.points[i] - (b->transform.GetPosition() + b->transform.GetCOM());
-				Vector2 rv = b->velocity + Vector2::Cross(b->angularVelocity, rb) -
-					a->velocity - Vector2::Cross(a->angularVelocity, ra);
+				Vector2 rv = b->VelocityAt(rb) - a->VelocityAt(ra);
 				f64 contactVel = rv.Dot(c.points.normal);
 				if (contactVel > 0)
 					break;
 				f64 raCrossN = ra.Cross(c.points.normal);
 				f64 rbCrossN = rb.Cross(c.points.normal);
-				f64 invMassSum = a->GetInvMass() * a->MassScaler() + b->GetInvMass() * b->MassScaler() + SQRD(raCrossN) * a->GetInvInertia() +
+				f64 invMassSum = a->GetInvMass() * a->MassScaler() + b->GetInvMass() * b->MassScaler() +
+					SQRD(raCrossN) * a->GetInvInertia() +
 					SQRD(rbCrossN) * b->GetInvInertia();
 				f64 j = -(1.0 + e) * contactVel;
 				j /= invMassSum;
-				j /= (f64)c.points.pointCount;
 				Vector2 impulse = c.points.normal * j;
 				a->ApplyImpulse(-impulse, ra);
 				b->ApplyImpulse(impulse, rb);
-
-				rv = b->velocity + Vector2::Cross(b->angularVelocity, rb) -
-					a->velocity - Vector2::Cross(a->angularVelocity, ra);
+				rv = b->VelocityAt(rb) - a->VelocityAt(ra);
 
 				Vector2 t = rv - (c.points.normal * rv.Dot(c.points.normal));
 				t.Normalize();
 
 				f64 jt = -rv.Dot(t);
 				jt /= invMassSum;
-				jt /= (f64)c.points.pointCount;
 
 				if (Equal(jt, 0.0))
 					continue;

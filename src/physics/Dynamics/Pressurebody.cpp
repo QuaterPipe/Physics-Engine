@@ -1,6 +1,6 @@
 #include <iostream>
 #include "physics/Dynamics/PressureBody.hpp"
-
+#define DAMPING 1
 namespace physics
 {
 	Pressurebody::Pressurebody() noexcept
@@ -8,23 +8,25 @@ namespace physics
 	}
 
 	Pressurebody::Pressurebody(f64 pressure, f64 radius, size_t pointCount, f64 mass, const PointMassSpring& sideSpring) noexcept
-		: _pressureScalar(pressure), _radius(radius), _pointCount(pointCount), _pointStates(pointCount, RK4State()), _pressureForces(pointCount, Vector2::Origin)
+		: _pressureScalar(pressure), _radius(radius), _pointCount(pointCount), _pressureForces(pointCount, Vector2::Origin)
 	{
 		this->_mass = mass;
 		this->_invMass = 1 / mass;
-		if (pointCount < 3)
+		this->_invInertia = 0;
+		if (pointCount < 3) // not a valid polygon
 			return;
-		f64 invMassPerPoint = ((f64)pointCount) / mass;
+		f64 invMassPerPoint = _invMass * pointCount;
 		Vector2 dir(0, 1);
 		const f64 rot = (2 * M_PI) / pointCount;
 		Vector2 sum(0, 0);
+		_points.resize(_pointCount);
 		for (size_t i = 0; i < _pointCount; i++)
 		{
 			PointMass m;
 			m.position = dir * radius;
 			sum += m.position;
 			m.invMass = invMassPerPoint;
-			_points.push_back(m);
+			_points[i] = m;
 			dir.Rotate(Vector2::Origin, rot);
 		}
 		f64 dist = (_points[0].position - _points[1].position).GetMagnitude();
@@ -39,7 +41,6 @@ namespace physics
 			_springs.push_back(s);
 		}
 		f64 dis = Distance(_points[0].position, _points[1].position);
-		std::cout << "dis: " << dis << "\n";
 		collider = std::unique_ptr<PolygonCollider>(new PolygonCollider(dis, pointCount));
 	}
 
@@ -51,7 +52,6 @@ namespace physics
 		_points = p._points;
 		_springs = p._springs;
 		_pointCount = p._pointCount;
-		_pointStates = p._pointStates;
 		_pressureForces = p._pressureForces;
 	}
 
@@ -63,7 +63,6 @@ namespace physics
 		_points = p._points;
 		_springs = p._springs;
 		_pointCount = p._pointCount;
-		_pointStates = p._pointStates;
 		_pressureForces = p._pressureForces;
 	}
 
@@ -75,7 +74,6 @@ namespace physics
 		_points = p._points;
 		_pointCount = p._pointCount;
 		_springs = p._springs;
-		_pointStates = p._pointStates;
 		_pressureForces = p._pressureForces;
 		return *this;
 	}
@@ -88,7 +86,6 @@ namespace physics
 		_points = p._points;
 		_pointCount = p._pointCount;
 		_springs = p._springs;
-		_pointStates = p._pointStates;
 		_pressureForces = p._pressureForces;
 		return *this;
 	}
@@ -127,22 +124,21 @@ namespace physics
 				f64 dis = Distance(a, b);
 				Vector2 norm(-(a.y - b.y) / dis, (a.x - b.x) / dis);
 				f64 pressurev = dis * _pressureScalar * (1.0 / volume);
-				_pressureForces[i] += norm * pressurev * _points[i].invMass * 0.5;
-				_pressureForces[(i + 1) % _pointCount] += norm * pressurev * _points[(i + 1) % _pointCount].invMass * 0.5;
+				_pressureForces[i] += DAMPING * norm * pressurev *_points[i].invMass;
+				_pressureForces[(i + 1) % _pointCount] += DAMPING * norm * pressurev * _points[(i + 1) % _pointCount].invMass;
 			}
 		}
 		else
 		{
 			for (size_t i = 0; i < _pointCount; i++)
 			{
-				Vector2 a = _pointStates[i].tmpX;
-				Vector2 b = _pointStates[(i + 1) % _pointCount].tmpX;
-				Vector2 n1 = a - _points[i == 0 ? _pointCount - 1 : i - 1].position;
+				Vector2 a = _points[i].rk4State.tmpX;
+				Vector2 b = _points[(i + 1) % _pointCount].rk4State.tmpX;
 				f64 dis = Distance(a, b);
 				Vector2 norm(-(a.y - b.y) / dis, (a.x - b.x) / dis);
 				f64 pressurev = dis * _pressureScalar * (1.0 / volume);
-				_pressureForces[i] += norm * pressurev * _points[i].invMass * 0.5;
-				_pressureForces[(i + 1) % _pointCount] += norm * pressurev * _points[(i + 1) % _pointCount].invMass * 0.5;
+				_pressureForces[i] += norm * pressurev * _points[i].invMass;
+				_pressureForces[(i + 1) % _pointCount] += norm * pressurev * _points[(i + 1) % _pointCount].invMass;
 			}
 		}
 	}
@@ -181,10 +177,8 @@ namespace physics
 	void Pressurebody::ApplyImpulse(const Vector2& impulse, const Vector2 & contactVec) noexcept
 	{
 		if (contactVec == Vector2::Infinity)
-		{
 			for (auto& m : _points)
-				m.velocity += impulse* m.invMass;
-		}
+				m.velocity += impulse * m.invMass;
 		else
 		{
 			for (auto& m : _points)
@@ -196,6 +190,7 @@ namespace physics
 				}
 			}
 		}
+		// for now any impulses that do not lie on a point are ignored.
 	}
 
 	CollisionObject* Pressurebody::Clone() const noexcept
@@ -217,6 +212,7 @@ namespace physics
 			derivedPos += _points[i].position;
 			derivedVel += _points[i].velocity;
 		}
+		//derivedVel /= _pointCount;
 		derivedPos /= _pointCount;
 		velocity = derivedVel;
 	}
@@ -252,22 +248,22 @@ namespace physics
 					volume += (_points[i].position.x * _points[(i + 1) % _pointCount].position.y) -
 						(_points[(i + 1) % _pointCount].position.x * _points[i].position.y);
 				}
-				return volume;
+				return abs(volume) * 0.5;
 			case 0:
 				for (int i = 0; i < _pointCount; i++)
 				{
 					volume += (_points[i].position.x * _points[(i + 1) % _pointCount].position.y) -
 						(_points[(i + 1) % _pointCount].position.x * _points[i].position.y);
 				}
-				return volume;
+				return abs(volume) * 0.5;
 			default:
 				for (int i = 0; i < _pointCount; i++)
 				{
-					Vector2 a = _pointStates[i].tmpX;
-					Vector2 b = _pointStates[(i + 1) % _pointCount].tmpX;
+					Vector2 a = _points[i].rk4State.tmpX;
+					Vector2 b = _points[(i + 1) % _pointCount].rk4State.tmpX;
 					volume += (a.x * b.y) - (b.x * a.y);
 				}
-				return volume;
+				return abs(volume) * 0.5;
 		}
 	}
 
@@ -276,75 +272,92 @@ namespace physics
 		return _pointCount;
 	}
 
+	void Pressurebody::Translate(const Vector2& offset, const std::vector<Vector2>& points) noexcept
+	{
+		for (auto p : points)
+		{
+			for (auto& m : _points)
+			{
+				if (DistanceSquared(transform.TransformVector(m.position), p) <= SQRD(EPSILON))
+				{
+					m.position += offset;
+					continue;
+				}
+			}
+		}
+	}
+
 
 	void Pressurebody::Update(f64 dt, int rk4step) noexcept
 	{
 		Vector2 grav = usesGravity ? gravity : Vector2(0, 0);
-		if (rk4step == 0)
+		switch (rk4step)
 		{
-			_UpdatePressureForces(rk4step);
-			for (size_t i = 0; i < _pointCount; i++)
-			{
-				_pointStates[i].a1 = _points[i].ComputeForce(_points[i].position, _points[i].velocity) + _pressureForces[i]
-					+ (1.0 / _points[i].invMass) * grav;
-				_pointStates[i].k1X = _points[i].velocity;
-				_pointStates[i].k1V = _pointStates[i].a1;
-			}
-		}
-		else if (rk4step == 1)
-		{
-			for (size_t i = 0; i < _pointCount; i++)
-			{
-				_pointStates[i].tmpX = _points[i].position + 0.5 * dt * _pointStates[i].k1X;
-				_pointStates[i].tmpV = _points[i].velocity + 0.5 * dt * _pointStates[i].k1V;
-			}
-			_UpdatePressureForces(rk4step);
-			for (size_t i = 0; i < _pointCount; i++)
-			{
-				_pointStates[i].a2 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV) + _pressureForces[i]
-					+ (1.0 / _points[i].invMass) * grav;
-				_pointStates[i].k2X = _pointStates[i].tmpV;
-				_pointStates[i].k2V = _pointStates[i].a2;
-			}
-		}
-		else if (rk4step == 2)
-		{
-			for (size_t i = 0; i < _pointCount; i++)
-			{
-				_pointStates[i].tmpX = _points[i].position + 0.5 * dt * _pointStates[i].k2X;
-				_pointStates[i].tmpV = _points[i].velocity + 0.5 * dt * _pointStates[i].k2V;
-			}
-			_UpdatePressureForces(rk4step);
-			for (size_t i = 0; i < _pointCount; i++)
-			{
-				_pointStates[i].a3 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV) + _pressureForces[i]
-					+ (1.0 / _points[i].invMass) * grav;
-				_pointStates[i].k3X = _pointStates[i].tmpV;
-				_pointStates[i].k3V = _pointStates[i].a3;
-			}
-		}
-		else if (rk4step == 3)
-		{
-			for (size_t i = 0; i < _pointCount; i++)
-			{
-				_pointStates[i].tmpX = _points[i].position + dt * _pointStates[i].k3X;
-				_pointStates[i].tmpV = _points[i].velocity + dt * _pointStates[i].k3V;
-			}
-			_UpdatePressureForces(rk4step);
-			for (size_t i = 0; i < _pointCount; i++)
-			{
-				_pointStates[i].a4 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV) + _pressureForces[i]
-					+ (1.0 / _points[i].invMass) * grav;
-				_pointStates[i].k4X = _pointStates[i].tmpV;
-				_pointStates[i].k4V = _pointStates[i].a4;
+			case 0:
+				_UpdatePressureForces(rk4step);
+				for (size_t i = 0; i < _pointCount; i++)
+				{
+					_points[i].rk4State.a1 = _points[i].ComputeForce(_points[i].position, _points[i].velocity, rk4step) + _pressureForces[i]
+						+ grav;
+					_points[i].rk4State.k1X = _points[i].velocity;
+					_points[i].rk4State.k1V = _points[i].rk4State.a1;
+				}
+				break;
 
-				_points[i].position += (dt / 6.0) * (_pointStates[i].k1X + 2 * _pointStates[i].k2X + 2 * _pointStates[i].k3X + _pointStates[i].k4X);
-				_points[i].velocity += (dt / 6.0) * (_pointStates[i].k1V + 2 * _pointStates[i].k2V + 2 * _pointStates[i].k3V + _pointStates[i].k4V);
-				_points[i].force.Set(0, 0);
-			}
-			//UpdateTransform();
-			UpdateCollider();
-			DerivePositionAndAngle();
+			case 1:
+				for (size_t i = 0; i < _pointCount; i++)
+				{
+					_points[i].rk4State.tmpX = _points[i].position + 0.5 * dt * _points[i].rk4State.k1X;
+					_points[i].rk4State.tmpV = _points[i].velocity + 0.5 * dt * _points[i].rk4State.k1V;
+				}
+				_UpdatePressureForces(rk4step);
+				for (size_t i = 0; i < _pointCount; i++)
+				{
+					_points[i].rk4State.a2 = _points[i].ComputeForce(Vector2(0, 0), Vector2(0, 0), rk4step) + _pressureForces[i]
+						+ grav;
+					_points[i].rk4State.k2X = _points[i].rk4State.tmpV;
+					_points[i].rk4State.k2V = _points[i].rk4State.a2;
+				}
+				break;
+			
+			case 2:
+				for (size_t i = 0; i < _pointCount; i++)
+				{
+					_points[i].rk4State.tmpX = _points[i].position + 0.5 * dt * _points[i].rk4State.k2X;
+					_points[i].rk4State.tmpV = _points[i].velocity + 0.5 * dt * _points[i].rk4State.k2V;
+				}
+				_UpdatePressureForces(rk4step);
+				for (size_t i = 0; i < _pointCount; i++)
+				{
+					_points[i].rk4State.a3 = _points[i].ComputeForce(Vector2(0, 0), Vector2(0, 0), rk4step) + _pressureForces[i]
+						+ grav;
+					_points[i].rk4State.k3X = _points[i].rk4State.tmpV;
+					_points[i].rk4State.k3V = _points[i].rk4State.a3;
+				}
+				break;
+			
+			case 3:
+				for (size_t i = 0; i < _pointCount; i++)
+				{
+					_points[i].rk4State.tmpX = _points[i].position + dt * _points[i].rk4State.k3X;
+					_points[i].rk4State.tmpV = _points[i].velocity + dt * _points[i].rk4State.k3V;
+				}
+				_UpdatePressureForces(rk4step);
+				Vector2 minDiff(Vector2::Infinity());
+				for (size_t i = 0; i < _pointCount; i++)
+				{
+					_points[i].rk4State.a4 = _points[i].ComputeForce(Vector2(0, 0), Vector2(0, 0), rk4step) + _pressureForces[i]
+						+ grav;
+					_points[i].rk4State.k4X = _points[i].rk4State.tmpV;
+					_points[i].rk4State.k4V = _points[i].rk4State.a4;
+					_points[i].position += (dt / 6.0) * (_points[i].rk4State.k1X + 2 * _points[i].rk4State.k2X + 2 * _points[i].rk4State.k3X + _points[i].rk4State.k4X);
+					_points[i].velocity += (dt / 6.0) * (_points[i].rk4State.k1V + 2 * _points[i].rk4State.k2V + 2 * _points[i].rk4State.k3V + _points[i].rk4State.k4V);
+					_points[i].force.Set(0, 0);
+				}
+				UpdateTransform();
+				UpdateCollider();
+				DerivePositionAndAngle();
+				break;
 		}
 	}
 
@@ -356,31 +369,21 @@ namespace physics
 
 	void Pressurebody::UpdateTransform() noexcept
 	{
-		Vector2 com(0, 0);
-		for (PointMass m : _points)
-			com += m.position;
-		com /= _pointCount;
-		Vector2 diff = transform.GetPosition() - com;
-		for (PointMass& m : _points)
-			m.position += diff;
-		transform.Translate(-diff);
+		Vector2 initialCOM(0, 0);
+		for (auto p : _points)
+			initialCOM += p.position;
+		initialCOM /= _pointCount;
+		transform.Translate(initialCOM);
+		for (auto& p : _points)
+			p.position -= initialCOM;
 	}
 
-	void Pressurebody::Translate(Vector2 offset, std::vector<Vector2> points) noexcept
+	Vector2 Pressurebody::VelocityAt(const Vector2& vec) const noexcept
 	{
-		for (auto p: points)
-		{
-			for (auto& m : _points)
-			{
-				if (DistanceSquared(transform.TransformVector(m.position), p) <= SQRD(EPSILON))
-				{
-					m.position += offset;
-					return;
-				}
-			}
-		}
-		transform.Translate(offset);
+		for (auto m : _points)
+			if (DistanceSquared(m.position, vec) <= SQRD(EPSILON))
+				return m.velocity;
+		return velocity + Vector2::Cross(angularVelocity, vec);
 	}
-
 
 }

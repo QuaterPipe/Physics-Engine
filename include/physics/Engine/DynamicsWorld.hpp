@@ -45,14 +45,12 @@ namespace physics
 			void AddDynamicbody(Dynamicbody* dynamicbody) noexcept;
 			void AddObject(CollisionObject* o) noexcept;
 			void AddSolver(Solver* s) noexcept;
-			void ApplyGravity(f64 dt) noexcept;
 			void CheckCollisions(f64 dt) noexcept;
 			const std::vector<CollisionObject*>& GetAllObjects() const noexcept;
 			void RemoveConstraint(Constraint* c) noexcept;
 			void RemoveDynamicbody(Dynamicbody* dynamicbody) noexcept;
 			void RemoveObject(CollisionObject* o) noexcept;
 			void RemoveSolver(Solver* s) noexcept;
-			void ResolveConstraints(Constraint* c) noexcept;
 			void SendCollisionCallBacks(f64 dt) noexcept;
 			void SetCollisionCallBack(const std::function<void(CollisionManifold&, f64)>& callback, f64 dt) noexcept;
 			void Update(f64 dt) noexcept;

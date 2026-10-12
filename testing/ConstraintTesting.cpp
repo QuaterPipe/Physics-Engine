@@ -18,10 +18,11 @@ void ConstraintTest()
     v.setSize(WIN_WIDTH, -WIN_HEIGHT);
     window.setView(v);
     Rigidbody anchor(BoxCollider(1, 1));
-    //anchor.isActive = false;
+    anchor.isActive = false;
     anchor.isStatic = true;
     anchor.transform.SetPosition(500, 250);
     Rigidbody top(BoxCollider(10, 90));
+    top.isActive = false;
     top.transform.SetPosition(500, 250);
     top.transform.SetRotation(Matrix2(Radians(-0.00)));
     Rigidbody bottom(BoxCollider(10, 90));
@@ -31,7 +32,7 @@ void ConstraintTest()
     b2.transform.SetPosition(500, 100);
     Rigidbody b3(BoxCollider(10, 90));
     b3.transform.SetPosition(500, 20);
-    top.dragCoefficient = bottom.dragCoefficient = b2.dragCoefficient = b3.dragCoefficient = 0.0001;
+    top.dragCoefficient = bottom.dragCoefficient = b2.dragCoefficient = b3.dragCoefficient = 0.001;
     DistanceConstraint constraint2(&anchor, &top, 0, Vector2(0, 0), Vector2(0, 45));
    
     DistanceConstraint constraint(&top, &bottom, 0, Vector2(0, -40), Vector2(0, 40));
@@ -47,13 +48,13 @@ void ConstraintTest()
     DynamicsWorld world(BoxCollider(Vector2(WIN_WIDTH * 0.5, WIN_HEIGHT * 0.5), Vector2(WIN_WIDTH, WIN_HEIGHT)));
     world.AddDynamicbody(&top);
     world.AddDynamicbody(&bottom);
-    world.AddDynamicbody(&b2);
-    world.AddDynamicbody(&b3);
+    //world.AddDynamicbody(&b2);
+    //world.AddDynamicbody(&b3);
 
     world.AddConstraint(&constraint);
     world.AddConstraint(&constraint2);
-    world.AddConstraint(&constraint3);
-    world.AddConstraint(&constraint4);
+    //world.AddConstraint(&constraint3);
+    //world.AddConstraint(&constraint4);
     //world.AddConstraint(&slider);
     world.constraintIterationCount = 15;
     Timer timer;

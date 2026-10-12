@@ -27,7 +27,9 @@ namespace physics
 	: Dynamicbody(BoxCollider(), t, false), radiusPerPoint(radiusPerPoint), pointCount(width * height), shapeSpring(shapeSpring)
 	{
 		const f64 spacing = referenceSpring.restingLength;
+		const f64 massPerPoint = (1 / invMassPerPoint);
 		Vector2 vec(width * spacing * -0.5, height * spacing * 0.5);
+		f64 inertiaSum = 0;
 		for (size_t i = 0; i < height; i++)
 		{
 			std::vector<PointMass> arr;
@@ -39,10 +41,13 @@ namespace physics
 				m.radius = radiusPerPoint;
 				_points.push_back(m);
 				vec.x += spacing;
+				inertiaSum += massPerPoint * (SQRD(vec.x) + SQRD(vec.y));
 			}
 			vec.x = width * spacing * -0.5;
 			vec.y -= spacing;
 		}
+		SetMass(massPerPoint * pointCount);
+		SetInertia(inertiaSum);
 		for (int i = 0; i < height; i++)
 		{
 			for (int j = 0; j < width; j++)
@@ -89,6 +94,19 @@ namespace physics
 			}
 		}
 		UpdateTransform();
+		std::vector<size_t> edges;
+		for (size_t i = 0; i < width; i++)
+			edges.push_back(i);
+		for (size_t i = 1; i < height; i++)
+			edges.push_back(width * i - 1);
+		for (long long i = width - 2; i >= 0; i--)
+			edges.push_back(height * (width - 1) + i);
+		for (long long i = height - 2; i > 0; i--)
+			edges.push_back(width * i);
+		std::vector<Vector2> pts(pointCount);
+		for (size_t i = 0; i < pointCount; i++)
+			pts[i] = _points[i].position;
+		collider = std::unique_ptr<Collider>(new PointMatrixCollider(pts, edges));
 		_originalShape = _points;
 		for (size_t i = 0; i < pointCount; i++)
 		{
@@ -164,18 +182,15 @@ namespace physics
 		if (contactVec == Vector2::Infinity)
 		{
 			for (auto& m: _points)
-			{
 				m.velocity += impulse * m.invMass;
-			}
 		}
 		else
 		{
 			for (auto& m: _points)
 			{
-				if (DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
+				if (DistanceSquared(m.position, contactVec) <= SQRD(EPSILON))
 				{
 					m.velocity += impulse * m.invMass;
-					_pointsChanged = true;
 					return;
 				}
 			}
@@ -198,7 +213,6 @@ namespace physics
 				if (DistanceSquared(transform.TransformVector(m.position), contactVec) <= SQRD(EPSILON))
 				{
 					m.force += force;
-					_pointsChanged = true;
 					return;
 				}
 			}
@@ -240,6 +254,8 @@ namespace physics
 			derivedPos += _points[i].position;
 			derivedVel += _points[i].velocity;
 		}
+		derivedVel /= pointCount;
+		velocity = derivedVel;
 		derivedPos /= pointCount;
 		f64 a = 0, b = 0;
 		for (size_t i = 0; i < pointCount; i++)
@@ -250,7 +266,6 @@ namespace physics
 			b += q0.Cross(q);
 		}
 		derivedAngle = atan2(b, a);
-
 	}
 
 	void Softbody::FixCollapsing() noexcept
@@ -293,17 +308,18 @@ namespace physics
 
 	f64 Softbody::MassScaler() const noexcept
 	{
-		return pointCount;
+		return 1;// pointCount;
 	}
 
-	void Softbody::Translate(Vector2 offset, std::vector<Vector2> points) noexcept
+	void Softbody::Translate(const Vector2& offset, const std::vector<Vector2>& points) noexcept
 	{
 		for (auto p : points)
 		{
-			for (auto& m : _points)
+			for (auto& m: _points)
 			{
 				if (DistanceSquared(transform.TransformVector(m.position), p) <= SQRD(EPSILON))
 				{
+					std::cout << "bruh\n";
 					m.position += offset;
 					return;
 				}
@@ -314,6 +330,8 @@ namespace physics
 
 	void Softbody::Update(f64 dt, int RK4Step) noexcept
 	{
+		Vector2 grav = usesGravity ? gravity : Vector2(0, 0);
+		Vector2 minDiff(Vector2::Infinity());
 		if (!isStatic)
 		{
 			switch (RK4Step)
@@ -322,7 +340,8 @@ namespace physics
 					posState.Reset();
 					for (size_t i = 0; i < pointCount; i++)
 					{
-						_pointStates[i].a1 = _points[i].ComputeForce(_points[i].position, _points[i].velocity);
+						_pointStates[i].a1 = _points[i].ComputeForce(_points[i].position, _points[i].velocity, RK4Step)
+							+ (1.0 / _points[i].invMass) * grav;
 						_pointStates[i].k1X = _points[i].velocity;
 						_pointStates[i].k1V = _pointStates[i].a1;
 						posState.a1 += _pointStates[i].a1;
@@ -338,7 +357,8 @@ namespace physics
 					{
 						_pointStates[i].tmpX = _points[i].position + 0.5 * dt * _pointStates[i].k1X;
 						_pointStates[i].tmpV = _points[i].velocity + 0.5 * dt * _pointStates[i].k1V;
-						_pointStates[i].a2 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
+						_pointStates[i].a2 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV, RK4Step)
+							+ (1.0 / _points[i].invMass) * grav;
 						_pointStates[i].k2X = _pointStates[i].tmpV;
 						_pointStates[i].k2V = _pointStates[i].a2;
 						posState.a2 += _pointStates[i].a2;
@@ -358,7 +378,8 @@ namespace physics
 					{
 						_pointStates[i].tmpX = _points[i].position + 0.5 * dt * _pointStates[i].k2X;
 						_pointStates[i].tmpV = _points[i].velocity + 0.5 * dt * _pointStates[i].k2V;
-						_pointStates[i].a3 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
+						_pointStates[i].a3 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV, RK4Step)
+							+ (1.0 / _points[i].invMass) * grav;
 						_pointStates[i].k3X = _pointStates[i].tmpV;
 						_pointStates[i].k3V = _pointStates[i].a3;
 						posState.a3 += _pointStates[i].a3;
@@ -378,18 +399,17 @@ namespace physics
 					{
 						_pointStates[i].tmpX = _points[i].position + dt * _pointStates[i].k3X;
 						_pointStates[i].tmpV = _points[i].velocity + dt * _pointStates[i].k3V;
-						_pointStates[i].a4 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV);
+						_pointStates[i].a4 = _points[i].ComputeForce(_pointStates[i].tmpX, _pointStates[i].tmpV, RK4Step)
+							+ (1.0 / _points[i].invMass) * grav;
 						_pointStates[i].k4X = _pointStates[i].tmpV;
 						_pointStates[i].k4V = _pointStates[i].a4;
-
 						_points[i].position += (dt / 6.0) * (_pointStates[i].k1X + 2 * _pointStates[i].k2X + 2 * _pointStates[i].k3X + _pointStates[i].k4X);
 						_points[i].velocity += (dt / 6.0) * (_pointStates[i].k1V + 2 * _pointStates[i].k2V + 2 * _pointStates[i].k3V + _pointStates[i].k4V);
 						_points[i].force.Set(0, 0);
 					}
 					DerivePositionAndAngle();
 					UpdateTransform();
-					if (_pointsChanged)
-						UpdateCollider();
+					UpdateCollider();
 					FixCollapsing();
 					break;
 				default:
@@ -400,21 +420,28 @@ namespace physics
 
 	void Softbody::UpdateCollider() noexcept
 	{
+		PointMatrixCollider* p = (PointMatrixCollider*)collider.get();
+		for (size_t i = 0; i < pointCount; i++)
+			p->SetPoint(i, _points[i].position);
 	}
 
 	void Softbody::UpdateTransform() noexcept
 	{
-		Vector2 locAvg = transform.GetPosition() * pointCount;
-		for (size_t i = 0; i < pointCount; i++)
-		{
-			locAvg += _points[i].position;
-		}
-		locAvg /= pointCount;
-		Vector2 diff = locAvg - transform.GetPosition();
-		for (size_t i = 0; i < pointCount; i++)
-		{
-			_points[i].position -= diff;
-		}
-		transform.SetPosition(locAvg);
+		Vector2 initialCOM(0, 0);
+		for (auto p: _points)
+			initialCOM += p.position;
+		initialCOM /= pointCount;
+		transform.Translate(initialCOM);
+		for (auto& p : _points)
+			p.position -= initialCOM;
 	}
+
+	Vector2 Softbody::VelocityAt(const Vector2& vec) const noexcept
+	{
+		for (auto& m : _points)
+			if (DistanceSquared(m.position + transform.GetPosition() + transform.GetCOM(), vec) <= SQRD(EPSILON))
+				return m.velocity;
+		return velocity + Vector2::Cross(angularVelocity, vec);
+	}
+
 }

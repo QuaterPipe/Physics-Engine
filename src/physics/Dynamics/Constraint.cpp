@@ -160,7 +160,6 @@ namespace physics
 	{
 		a = A;
 		b = B;
-
 	}
 
 	void HingeConstraint::UpdateConstraint(f64 dt) noexcept

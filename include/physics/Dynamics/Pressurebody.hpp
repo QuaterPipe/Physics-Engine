@@ -13,7 +13,6 @@ namespace physics
 			std::vector<PointMass> _points;
 			std::vector<PointMassSpring> _springs;
 			std::vector<Vector2> _pressureForces;
-			std::vector<RK4State> _pointStates;
 			void _UpdatePressureForces(int rk4step) noexcept;
 		public:
 			Pressurebody() noexcept;
@@ -37,9 +36,11 @@ namespace physics
 			const std::vector<PointMassSpring>& GetSprings() const noexcept;
 			f64 GetVolume(int rk4step = -1) const noexcept;
 			f64 MassScaler() const noexcept override;
+			virtual void Translate(const Vector2& offset, const std::vector<Vector2>& points) noexcept override;
 			void Update(f64 dt, int rk4step) noexcept override;
 			void UpdateCollider() noexcept;
 			void UpdateTransform() noexcept;
-			virtual void Translate(Vector2 offset, std::vector<Vector2> points) noexcept override;
+			virtual Vector2 VelocityAt(const Vector2& vec) const noexcept;
+
 	};
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "physics/Geometry/Vector.hpp"
+#include "RK4State.hpp"
 #include "Integration.hpp"
 #define DEFAULT_POINTMASS_RADIUS 0.01
 namespace physics
@@ -23,19 +23,20 @@ namespace physics
 		size_t bIndex = 0;
 		f64 CalculateForce() const noexcept;
 		void ApplyForces() const noexcept;
-		Vector2 GetAForceVector(Vector2 aPosition, Vector2 aVelocity) const noexcept;
-		Vector2 GetBForceVector(Vector2 bPosition, Vector2 bVelocity) const noexcept;
+		Vector2 GetAForceVector(Vector2 aPosition, Vector2 aVelocity, int rk4step) const noexcept;
+		Vector2 GetBForceVector(Vector2 bPosition, Vector2 bVelocity, int rk4step) const noexcept;
 		f64 PotentialEnergy() const noexcept;
 		bool operator==(const PointMassSpring& other) const noexcept;
 		bool operator!=(const PointMassSpring& other) const noexcept;
 	};
-
-	struct PointMass : public ForceComputer
+	
+	struct PointMass
 	{
 		public:
 			Vector2 position;
 			Vector2 velocity;
 			Vector2 force;
+			RK4State rk4State;
 			f64 radius = DEFAULT_POINTMASS_RADIUS;
 			f64 invMass = 1;
 			bool correctionOn = false;
@@ -45,7 +46,7 @@ namespace physics
 			bool operator!=(const PointMass& other) const noexcept;
 			void AddSpring(const PointMassSpring& spring, bool isA) noexcept;
 			void AddCorrectionSpring(const PointMassSpring& spring, bool isA) noexcept;
-			Vector2 ComputeForce(const Vector2& Position, const Vector2& Velocity) const noexcept override;
+			Vector2 ComputeForce(const Vector2& Position, const Vector2& Velocity, int rk4step) const noexcept;
 			f64 KineticEnergy() const noexcept;
 			bool RemoveSpring(const PointMassSpring& spring) noexcept;
 			bool RemoveCorrectionSpring(const PointMassSpring& spring) noexcept;

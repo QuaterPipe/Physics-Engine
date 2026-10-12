@@ -1,5 +1,6 @@
 #include "physics/Dynamics/Rigidbody.hpp"
 #include "physics/Dynamics/Integration.hpp"
+#include <iostream>
 
 
 namespace physics
@@ -100,7 +101,7 @@ namespace physics
 		Vector2 dragForce = -normV;
 		normV.Rotate(Vector2::Origin, orient);
 		dragForce *= 0.5 * fluidDensity * velocity.GetMagnitudeSquared() * dragCoefficient * collider->CrossSectionalArea(normV);
-		Vector2 grav = usesGravity ? gravity * _mass : Vector2::Origin;
+		Vector2 grav = usesGravity ? gravity : Vector2::Origin;
 		return appliedForce + dragForce + grav;
 	}
 
@@ -176,7 +177,7 @@ namespace physics
 
 					orient = orient + (dt / 6.0) * (angleState.k1X.x + 2 * angleState.k2X.x + 2 * angleState.k3X.x + angleState.k4X.x);
 					angularVelocity = angularVelocity + (dt / 6.0) * (angleState.k1V.x + 2 * angleState.k2V.x + 2 * angleState.k3V.x + angleState.k4V.x);
-					
+
 					transform.SetPosition(position);
 					transform.SetAngle(orient);
 					appliedAngularForce = 0;

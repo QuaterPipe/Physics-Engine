@@ -7,14 +7,17 @@ namespace physics
 	{
 		private:
 			Vector2* _points = nullptr;
-			size_t _pointCount;
+			size_t _pointCount = 0;
 			BoxCollider _boundingBox;
 			Vector2 _min = Vector2::Infinity;
 			Vector2 _max = -Vector2::Infinity;
-			f64 _height;
-			f64 _width;
+			f64 _height = 0;
+			f64 _width = 0;
 		public:
+			size_t* edges = nullptr;
+			size_t edgeCount = 0;
 			PointMatrixCollider() noexcept;
+			PointMatrixCollider(std::vector<Vector2> points, std::vector<size_t> edgeIndices) noexcept;
 			PointMatrixCollider(size_t width, size_t height, size_t spacing) noexcept;
 			PointMatrixCollider(const PointMatrixCollider& p) noexcept;
 			PointMatrixCollider(PointMatrixCollider&& p) noexcept;

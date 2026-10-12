@@ -88,6 +88,8 @@ namespace physics::algo
         const Vector2* points,
         const Vector2& b, size_t pointsSize)
     {
+        if (b.GetMagnitudeSquared() == std::numeric_limits<f64>::infinity())
+            return false;
         f64 x = b.x, y = b.y;
         bool inside = false;
         Vector2 p1, p2;

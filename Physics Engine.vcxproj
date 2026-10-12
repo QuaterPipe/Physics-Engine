@@ -141,6 +141,7 @@
     <ClInclude Include="include\physics\Dynamics\Integration.hpp" />
     <ClInclude Include="include\physics\Dynamics\Pressurebody.hpp" />
     <ClInclude Include="include\physics\Dynamics\Rigidbody.hpp" />
+    <ClInclude Include="include\physics\Dynamics\RK4State.hpp" />
     <ClInclude Include="include\physics\Dynamics\SocketConstraint.hpp" />
     <ClInclude Include="include\physics\Dynamics\Softbody.hpp" />
     <ClInclude Include="include\physics\Dynamics\Spring.hpp" />

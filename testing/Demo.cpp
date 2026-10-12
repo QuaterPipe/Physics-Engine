@@ -5,6 +5,7 @@
 #define WIN_WIDTH 1000
 #define WIN_HEIGHT 500
 #define PHYSICS_HERTZ 200.0
+#define GRAVITY_SCALAR -160 * 4
 using namespace physics;
 
 enum class Type
@@ -12,6 +13,7 @@ enum class Type
     Circ,
     Poly,
     Pres,
+    Soft
 };
 
 struct Object
@@ -20,6 +22,7 @@ struct Object
     sf::ConvexShape conv;
     Rigidbody* rigid = nullptr;
     Pressurebody* ball = nullptr;
+    Softbody* soft = nullptr;
     Type t;
     sf::Color color;
 };
@@ -32,6 +35,9 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel);
 int avgCounter = 0;
 f64 frameAvg = 0;
 bool hitBoxesOn = false;
+bool frameSteppingOn = false;
+bool canStep = false;
+bool renderQuadtree = false;
 sf::RenderWindow* win = NULL;
 std::vector<Object> objects;
 DynamicsWorld d(BoxCollider(Vector2(WIN_WIDTH * 0.5, WIN_HEIGHT * 0.5), Vector2(WIN_WIDTH, WIN_HEIGHT)));
@@ -54,14 +60,15 @@ void Demo()
     floor.rigid->transform.SetPosition(WIN_WIDTH * 0.5, 40);
     floor.rigid->isStatic = true;
     floor.rigid->restitution = 1;
-    floor.rigid->staticFriction = 0.8;
-    floor.rigid->kineticFriction = 0.6;
+    floor.rigid->staticFriction = 1;
+    floor.rigid->kineticFriction = 1;
     floor.rigid->transform.SetRotation(Radians(0));
     floor.t = Type::Poly;
     sf::ConvexShape c(4);
     for (int i = 0; i < 4; i++)
         c.setPoint(i, sf::Vector2f(floor.rigid->collider->GetPoints()[i].x, floor.rigid->collider->GetPoints()[i].y));
     c.setOutlineThickness(1);
+    c.setOutlineColor(sf::Color::Black);
     c.setFillColor(sf::Color::Transparent);
     c.setOrigin(floor.rigid->transform.GetCOM().x, floor.rigid->transform.GetCOM().y);
     c.setPosition(250, 40);
@@ -117,17 +124,54 @@ void Demo()
                         CreateObject(Type::Pres, vec, x * 0.1);
                     }
                 }
+                if (e.mouseButton.button == sf::Mouse::XButton1)
+                {
+                    tm.Stop();
+                    f64 x = tm.deltaTime < 1000 ? 0 : 1000 - tm.deltaTime;
+                    for (int i = 0; i < 1; i++)
+                    {
+                        sf::Vector2f vec(worldPos.x + Random(-15, 15), worldPos.y + Random(-15, 15));
+                        CreateObject(Type::Soft, vec, x * 0.1);
+                    }
+                }
             }
             if (e.type == sf::Event::KeyReleased)
             {
                 if (e.key.code == sf::Keyboard::B)
                     hitBoxesOn = !hitBoxesOn;
+                if (e.key.code == sf::Keyboard::N)
+                    renderQuadtree = !renderQuadtree;
+                if (e.key.code == sf::Keyboard::Space)
+                {
+                    frameSteppingOn = true;
+                    canStep = true;
+                }
+                if (e.key.code == sf::Keyboard::LShift)
+                {
+                    frameSteppingOn = false;
+                    canStep = false;
+                }
+            }
+            if (e.type == sf::Event::KeyPressed)
+            {
+                if (e.key.code == sf::Keyboard::Space)
+                {
+                    frameSteppingOn = true;
+                    canStep = true;
+                }
             }
         }
         Time::Tick();
-        //std::cout << Time::deltaTime << "\r";
-        accumulator += Time::deltaTime;
-        if (accumulator >= 1.0 / PHYSICS_HERTZ * 1000)
+
+        if (frameSteppingOn)
+        {
+            if (canStep)
+                d.Update(1.0 / PHYSICS_HERTZ);
+            canStep = false;
+        }
+        if (!frameSteppingOn)
+            accumulator += Time::deltaTime;
+        if (accumulator >= 1.0 / PHYSICS_HERTZ * 1000.0 && !frameSteppingOn)
         {
             d.Update(1.0 / PHYSICS_HERTZ);
             accumulator -= 1.0 / PHYSICS_HERTZ * 1000;
@@ -191,13 +235,15 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
         f64 rad = Random(5, 10);
         obj.rigid = new Rigidbody(CircleCollider(rad), t);
         obj.rigid->angularVelocity = rotVel;
-        obj.rigid->SetMass(rad * 3);
+        obj.rigid->SetMass(rad * 30);
         obj.rigid->SetInertia(obj.rigid->GetMass() * 1000);
+        obj.rigid->gravity.Set(0, GRAVITY_SCALAR);
         sf::CircleShape c;
         c.setRadius(rad);
         c.setOutlineThickness(1);
+        sf::Color col = sf::Color(Random(30, 255), Random(30, 255), Random(30, 255));
         c.setFillColor(sf::Color::Transparent);
-        c.setOutlineColor(sf::Color(Random(30, 255), Random(30, 255), Random(30, 255)));
+        c.setOutlineColor(col);
         obj.circ = c;
         objects.push_back(obj);
         d.AddDynamicbody(obj.rigid);
@@ -209,14 +255,16 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
         CreatePoly(&p, e, 150 / e);
         obj.rigid = new Rigidbody(p, t);
         obj.rigid->angularVelocity = rotVel;
-        obj.rigid->SetMass(e * 3);
+        obj.rigid->SetMass(e * 30);
         obj.rigid->SetInertia(obj.rigid->GetMass() * 1000);
+        obj.rigid->gravity.Set(0, GRAVITY_SCALAR);
         sf::ConvexShape c(p.GetPointCount());
         for (size_t i = 0; i < p.GetPointCount(); i++)
             c.setPoint(i, sf::Vector2f(p.GetPoint(i).x, p.GetPoint(i).y));
         c.setOutlineThickness(1);
-        c.setFillColor(sf::Color::Transparent);
-        c.setOutlineColor(sf::Color(Random(30, 255), Random(30, 255), Random(30, 255)));
+        sf::Color col = sf::Color(Random(30, 255), Random(30, 255), Random(30, 255));
+        c.setFillColor(col);
+        c.setOutlineColor(sf::Color::Transparent);
         c.setOrigin(obj.rigid->transform.GetCOM().x, obj.rigid->transform.GetCOM().y);
         obj.conv = c;
         objects.push_back(obj);
@@ -226,16 +274,34 @@ void CreateObject(Type type, sf::Vector2f pos, f64 rotVel)
     {
         f64 rad = Random(5, 10);
         PointMassSpring s;
-        s.stiffness = 200;
-        s.dampingFactor = 20;
-        s.restingLength = 40;
-        obj.ball = new Pressurebody(1000000, 50, 12, 10, s);
-        obj.ball->gravity.Set(0, -16);
-        obj.ball->SetInertia(obj.ball->GetMass());
+        s.stiffness = 2000;
+        s.dampingFactor = 2 * sqrt(s.stiffness * 100 / 12);
+        obj.ball = new Pressurebody(1000000, 1, 17, 100, s);
+        obj.ball->restitution = 0;
+        obj.ball->gravity.Set(0, GRAVITY_SCALAR);
         obj.ball->transform = t;
+        obj.ball->restitution = 0.9;
+        obj.ball->staticFriction = 0.1;
+        obj.ball->kineticFriction = 0.01;
         obj.color = sf::Color(Random(30, 255), Random(30, 255), Random(30, 255));
         objects.push_back(obj);
         d.AddDynamicbody(obj.ball);
+    }
+    if (type == Type::Soft)
+    {
+        f64 length = Random(5, 7);
+        PointMassSpring shpSpr;
+        shpSpr.stiffness = 0;
+        shpSpr.dampingFactor = 0;
+        shpSpr.restingLength = 1e-50;
+        PointMassSpring spr;
+        spr.stiffness = 1;
+        spr.dampingFactor = 0.1;
+        spr.restingLength = 15;
+        obj.soft = new Softbody(t, length, length, spr, shpSpr, 0.01, 1.0 / 100.0);
+        obj.color = sf::Color(Random(30, 255), Random(30, 255), Random(30, 255));
+        objects.push_back(obj);
+        d.AddDynamicbody(obj.soft);
     }
 }
 
@@ -253,7 +319,7 @@ void RenderTree(Quadtree *q)
         sf::RectangleShape r(sf::Vector2f(q->rect.width, q->rect.height));
         r.setOrigin(q->rect.width * 0.5f, q->rect.height * 0.5f);
         r.setFillColor(sf::Color::Transparent);
-        r.setOutlineColor(sf::Color::White);
+        r.setOutlineColor(sf::Color::Black);
         r.setOutlineThickness(1);
         r.setPosition(q->rect.x, q->rect.y);
         win->draw(r);
@@ -281,17 +347,42 @@ void RenderObjects()
             sf::CircleShape c;
             c.setRadius(2);
             c.setOrigin(2, 2);
-            for (auto& p : obj.ball->GetPoints())
+            /*for (auto& p : obj.ball->GetPoints())
             {
                 c.setPosition(p.position.x + obj.ball->transform.GetPosition().x, p.position.y + obj.ball->transform.GetPosition().y);
                 c.setFillColor(obj.color);
                 win->draw(c);
+            }*/
+            /*sf::ConvexShape conv(obj.ball->GetPoints().size());
+            auto t = obj.ball->GetPoints();
+            std::cout << conv.getPointCount() << t.size() << std::endl;
+            for (int i = 0; i < conv.getPointCount(); i++)
+            {
+                conv.setPoint(i, sf::Vector2f(obj.ball->transform.GetPosition().x + t[i].position.x, obj.ball->transform.GetPosition().y + t[i].position.y));
             }
+            conv.setFillColor(obj.color);
+            win->draw(conv);*/
             for (auto& s : obj.ball->GetSprings())
             {
                 sf::Vertex line[2] = {
                 sf::Vertex(sf::Vector2f(s.a->position.x + obj.ball->transform.GetPosition().x, s.a->position.y + obj.ball->transform.GetPosition().y), obj.color),
                 sf::Vertex(sf::Vector2f(s.b->position.x + obj.ball->transform.GetPosition().x, s.b->position.y + obj.ball->transform.GetPosition().y), obj.color)
+                };
+                win->draw(line, 2, sf::Lines);
+            }
+        }
+        else if (obj.t == Type::Soft)
+        {
+            Transform ogToWorld;
+            ogToWorld.SetPosition(obj.soft->derivedPos);
+            ogToWorld.SetAngle(obj.soft->derivedAngle);
+            for (auto& spr : obj.soft->springs)
+            {
+                Vector2 tmpA = ogToWorld.TransformVector(obj.soft->_originalShape[spr.aIndex].position);
+                Vector2 tmpB = ogToWorld.TransformVector(obj.soft->_originalShape[spr.bIndex].position);
+                sf::Vertex line[2] = {
+                sf::Vertex(sf::Vector2f(tmpA.x + obj.soft->transform.GetPosition().x, tmpA.y + obj.soft->transform.GetPosition().y), obj.color),
+                sf::Vertex(sf::Vector2f(tmpB.x + obj.soft->transform.GetPosition().x, tmpB.y + obj.soft->transform.GetPosition().y), obj.color)
                 };
                 win->draw(line, 2, sf::Lines);
             }
@@ -325,7 +416,9 @@ void RenderObjects()
     {
         if (!objects[i].rigid)
         {
-            if (objects[i].ball->transform.GetPosition().y < -60)
+            if (objects[i].ball && objects[i].ball->transform.GetPosition().y < -60)
+                indices.insert(indices.begin(), i);
+            if (objects[i].soft && objects[i].soft->transform.GetPosition().y < -60)
                 indices.insert(indices.begin(), i);
         }
         else if (objects[i].rigid->transform.GetPosition().y < -60)
@@ -338,14 +431,20 @@ void RenderObjects()
             d.RemoveDynamicbody(objects[i].rigid);
             delete objects[i].rigid;
         }
-        else
+        else if (objects[i].ball)
         {
             d.RemoveDynamicbody(objects[i].ball);
             delete objects[i].ball;
         }
+        else if (objects[i].soft)
+        {
+            d.RemoveDynamicbody(objects[i].soft);
+            delete objects[i].soft;
+        }
         objects.erase(objects.begin() + i);
     }
-    //RenderTree(&d.quadtree);
+    if (renderQuadtree)
+        RenderTree(&d.quadtree);
     win->display();
-    win->clear();
+    win->clear(sf::Color::White);
 }

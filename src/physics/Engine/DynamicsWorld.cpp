@@ -41,15 +41,6 @@ namespace physics
 		_solvers.push_back(s);
 	}
 
-	void DynamicsWorld::ApplyGravity(f64 dt) noexcept
-	{
-		for (auto& db: _dynamicbodies)
-		{
-			if (!db->usesGravity)
-				continue;
-		}
-	}
-
 	void DynamicsWorld::CheckCollisions(f64 dt) noexcept
 	{
 		_collisions.clear();
@@ -183,15 +174,12 @@ namespace physics
 	
 	void DynamicsWorld::Update(f64 dt) noexcept
 	{
-		
-		ApplyGravity(dt);
 		for (int i = 0; i < 4; i++)
 			for (auto& db : _dynamicbodies)
 				db->Update(dt, i);
 		quadtree.Update();
 		CheckCollisions(dt);
 		SendCollisionCallBacks(dt);
-
 		for (Constraint* c : _constraints)
 		{
 			c->WarmStart();

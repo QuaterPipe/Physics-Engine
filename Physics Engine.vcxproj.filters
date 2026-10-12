@@ -770,6 +770,9 @@
     <ClInclude Include="include\physics\Geometry\Math.hpp">
       <Filter>include\physics\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="include\physics\Dynamics\RK4State.hpp">
+      <Filter>include\physics\Dynamics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />

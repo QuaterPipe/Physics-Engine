@@ -13,28 +13,28 @@ void IntegrateA(f64 dt, int step)
     switch (step)
     {
         case 0:
-            sA.a1 = massA.ComputeForce(massA.position, massA.velocity);
+            sA.a1 = massA.ComputeForce(massA.position, massA.velocity, step);
             sA.k1X = massA.velocity;
             sA.k1V = sA.a1;
             break;
         case 1:
             sA.tmpX = massA.position + 0.5 * dt * sA.k1X;
             sA.tmpV = massA.velocity + 0.5 * dt * sA.k1V;
-            sA.a2 = massA.ComputeForce(sA.tmpX, sA.tmpV);
+            sA.a2 = massA.ComputeForce(sA.tmpX, sA.tmpV, step);
             sA.k2X = sA.tmpV;
             sA.k2V = sA.a2;
             break;
         case 2:
             sA.tmpX = massA.position + 0.5 * dt *sA.k2X;
             sA.tmpV = massA.velocity + 0.5 * dt *sA.k2V;
-            sA.a3 = massA.ComputeForce(sA.tmpX, sA.tmpV);
+            sA.a3 = massA.ComputeForce(sA.tmpX, sA.tmpV, step);
             sA.k3X = sA.tmpV;
             sA.k3V = sA.a3;
             break;
         case 3:
             sA.tmpX = massA.position + dt * sA.k3X;
             sA.tmpV = massA.velocity + dt * sA.k3V;
-            sA.a4 = massA.ComputeForce(sA.tmpX, sA.tmpV);
+            sA.a4 = massA.ComputeForce(sA.tmpX, sA.tmpV, step);
             sA.k4X = sA.tmpV;
             sA.k4V = sA.a4;
             massA.position += (dt / 6.0) * (sA.k1X + 2 * sA.k2X + 2 * sA.k3X + sA.k4X);
@@ -49,28 +49,28 @@ void IntegrateB(f64 dt, int step)
     switch (step)
     {
         case 0:
-            sB.a1 = massB.ComputeForce(massB.position, massB.velocity);
+            sB.a1 = massB.ComputeForce(massB.position, massB.velocity, step);
             sB.k1X = massB.velocity;
             sB.k1V = sB.a1;
             break;
         case 1:
             sB.tmpX = massB.position + 0.5 * dt * sB.k1X;
             sB.tmpV = massB.velocity + 0.5 * dt * sB.k1V;
-            sB.a2 = massB.ComputeForce(sB.tmpX, sB.tmpV);
+            sB.a2 = massB.ComputeForce(sB.tmpX, sB.tmpV, step);
             sB.k2X = sB.tmpV;
             sB.k2V = sB.a2;
             break;
         case 2:
             sB.tmpX = massB.position + 0.5 * dt *sB.k2X;
             sB.tmpV = massB.velocity + 0.5 * dt *sB.k2V;
-            sB.a3 = massB.ComputeForce(sB.tmpX, sB.tmpV);
+            sB.a3 = massB.ComputeForce(sB.tmpX, sB.tmpV, step);
             sB.k3X = sB.tmpV;
             sB.k3V = sB.a3;
             break;
         case 3:
             sB.tmpX = massB.position + dt * sB.k3X;
             sB.tmpV = massB.velocity + dt * sB.k3V;
-            sB.a4 = massB.ComputeForce(sB.tmpX, sB.tmpV);
+            sB.a4 = massB.ComputeForce(sB.tmpX, sB.tmpV, step);
             sB.k4X = sB.tmpV;
             sB.k4V = sB.a4;
             massB.position += (dt / 6.0) * (sB.k1X + 2 * sB.k2X + 2 * sB.k3X + sB.k4X);
@@ -132,7 +132,7 @@ void SpringTest()
         f64 KE = massB.KineticEnergy() + massA.KineticEnergy();
         f64 PE = spring.PotentialEnergy();
         std::cout << "KE: " << KE << " PE: " << PE << "\n" << "TE: " << (KE + PE) << std::endl;
-        std::cout << massB.ComputeForce(massB.position, massB.velocity)<<" " << (massA.position - massB.position).GetMagnitudeExact()<< std::endl;
+        std::cout << massB.ComputeForce(massB.position, massB.velocity, 0)<<" " << (massA.position - massB.position).GetMagnitudeExact()<< std::endl;
         std::cout << massB.velocity << std::endl;
         std::cout << "------------------------------------------------------------------" << std::endl;
         //massA.force += Vector2(0, -9.81);

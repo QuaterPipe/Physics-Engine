@@ -10,7 +10,6 @@ namespace physics
 		private:
 			std::vector<RK4State> _pointStates;
 			Vector2 _originalCenter;
-			bool _pointsChanged = false;
 		public:
 			std::vector<PointMass> _originalShape;
 			std::vector<PointMass> _points;
@@ -43,9 +42,10 @@ namespace physics
 			PointMass* GetClosestMassPoint(const Vector2& point) const noexcept;
 			const std::vector<PointMass>& GetOriginalShape() const noexcept;
 			f64 MassScaler() const noexcept override;
-			virtual void Translate(Vector2 offset, std::vector<Vector2> points) noexcept override;
+			virtual void Translate(const Vector2& offset, const std::vector<Vector2>& points) noexcept override;
 			void Update(f64 dt, int rk4step) noexcept override;
 			void UpdateCollider() noexcept;
 			void UpdateTransform() noexcept;
+			virtual Vector2 VelocityAt(const Vector2& vec) const noexcept override;
 	};
 }

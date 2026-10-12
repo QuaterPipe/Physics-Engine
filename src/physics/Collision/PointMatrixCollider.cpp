@@ -1,5 +1,6 @@
 #include "physics/Collision/PointMatrixCollider.hpp"
 #include "physics/Collision/Algo.hpp"
+#include <iostream>
 
 namespace physics
 {
@@ -9,6 +10,17 @@ namespace physics
 	PointMatrixCollider::PointMatrixCollider() noexcept
 	{
 
+	}
+
+	PointMatrixCollider::PointMatrixCollider(std::vector<Vector2> points, std::vector<size_t> edgeIndices) noexcept
+		: _pointCount(points.size()), edgeCount(edgeIndices.size())
+	{
+		_points = new Vector2[points.size()];
+		for (size_t i = 0; i < points.size(); i++)
+			_points[i] = points[i];
+		edges = new size_t[edgeIndices.size()];
+		for (size_t i = 0; i < edgeIndices.size(); i++)
+			edges[i] = edgeIndices[i];
 	}
 
 	PointMatrixCollider::PointMatrixCollider(size_t width, size_t height, size_t spacing) noexcept
@@ -32,24 +44,31 @@ namespace physics
 	}
 
 	PointMatrixCollider::PointMatrixCollider(const PointMatrixCollider& p) noexcept
-		: _width(p._width), _height(p._height), _pointCount(p._width* p._height),
-		_min(p._min), _max(p._max), _boundingBox(p._boundingBox)
+		: _width(p._width), _height(p._height), _pointCount(p._width * p._height),
+		_min(p._min), _max(p._max), _boundingBox(p._boundingBox), edgeCount(p.edgeCount)
 	{
 		_points = new Vector2[_width * _height];
 		std::memcpy(_points, p._points, _width * _height * sizeof(f64));
+		if (edgeCount)
+		{
+			edges = new size_t[edgeCount];
+			std::memcpy(edges, p.edges, edgeCount * sizeof(size_t));
+		}
 	}
 
 	PointMatrixCollider::PointMatrixCollider(PointMatrixCollider&& p) noexcept
 		: _width(p._width), _height(p._height), _pointCount(p._width* p._height),
-		_min(p._min), _max(p._max), _boundingBox(p._boundingBox)
+		_min(p._min), _max(p._max), _boundingBox(p._boundingBox), edgeCount(p.edgeCount)
 	{
 		_points = p._points;
+		edges = p.edges;
 		p.Release();
 	}
 
 	PointMatrixCollider::~PointMatrixCollider() noexcept
 	{
 		delete[] _points;
+		delete[] edges;
 	}
 
 	BoxCollider PointMatrixCollider::BoundingBox(const Transform& t) const noexcept
@@ -123,7 +142,7 @@ namespace physics
 
 	Vector2 PointMatrixCollider::GetPoint(size_t index) const noexcept
 	{
-		if (index >= _pointCount);
+		if (index >= _pointCount)
 			return Vector2::Infinity();
 		return _points[index];
 	}
@@ -185,6 +204,7 @@ namespace physics
 	void PointMatrixCollider::Release() noexcept
 	{
 		_points = nullptr;
+		edges = nullptr;
 		_pointCount = 0;
 		_width = 0;
 		_height = 0;

@@ -52,13 +52,9 @@ namespace physics
 		{
 			Split();
 			for (const auto& index : index)
-			{
 				for (const auto& subnode : subnodes)
-				{
 					if (subnode->Contains(index))
 						subnode->Insert(index);
-				}
-			}
 			index.clear();
 			index.shrink_to_fit();
 		}
